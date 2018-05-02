@@ -1,0 +1,419 @@
+/* ==========================================================================
+   Component: Button
+ ============================================================================ */
+.am-btn {
+  display: inline-block;
+  margin-bottom: 0;
+  padding: 0.5em 1em;
+  vertical-align: middle;
+  font-size: 1.6rem;
+  font-weight: normal;
+  line-height: 1.2;
+  text-align: center;
+  white-space: nowrap;
+  background-image: none;
+  border: 1px solid transparent;
+  border-radius: 0;
+  cursor: pointer;
+  outline: 0;
+  -webkit-appearance: none;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+      -ms-user-select: none;
+          user-select: none;
+  -webkit-transition: background-color 300ms ease-out, border-color 300ms ease-out;
+          transition: background-color 300ms ease-out, border-color 300ms ease-out;
+  height: 25px;
+  padding: 0.5em 1em 1.6em;
+  line-height: 20px;
+  font-size: 16px;
+}
+.am-btn:focus,
+.am-btn:active:focus {
+  outline: thin dotted;
+  outline: 1px auto -webkit-focus-ring-color;
+  outline-offset: -2px;
+}
+.am-btn:hover,
+.am-btn:focus {
+  color: #444444;
+  text-decoration: none;
+}
+.am-btn:active,
+.am-btn.am-active {
+  background-image: none;
+  -webkit-box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.15);
+          box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.15);
+}
+.am-btn.am-disabled,
+.am-btn[disabled],
+fieldset[disabled] .am-btn {
+  pointer-events: none;
+  border-color: transparent;
+  cursor: not-allowed;
+  opacity: 0.45;
+  -webkit-box-shadow: none;
+          box-shadow: none;
+}
+.am-btn.am-round {
+  border-radius: 1000px;
+}
+.am-btn.am-radius {
+  border-radius: 2px;
+}
+.am-btn-default {
+  color: #444444;
+  background-color: #e6e6e6;
+  border-color: #e6e6e6;
+}
+a.am-btn-default:visited {
+  color: #444444;
+}
+.am-btn-default:hover,
+.am-btn-default:focus,
+.am-btn-default:active,
+.am-btn-default.am-active,
+.am-active .am-btn-default.am-dropdown-toggle {
+  color: #444444;
+  border-color: #c7c7c7;
+}
+.am-btn-default:hover,
+.am-btn-default:focus {
+  background-color: #d4d4d4;
+}
+.am-btn-default:active,
+.am-btn-default.am-active,
+.am-active .am-btn-default.am-dropdown-toggle {
+  background-image: none;
+  background-color: #c2c2c2;
+}
+.am-btn-default.am-disabled,
+.am-btn-default[disabled],
+fieldset[disabled] .am-btn-default,
+.am-btn-default.am-disabled:hover,
+.am-btn-default[disabled]:hover,
+fieldset[disabled] .am-btn-default:hover,
+.am-btn-default.am-disabled:focus,
+.am-btn-default[disabled]:focus,
+fieldset[disabled] .am-btn-default:focus,
+.am-btn-default.am-disabled:active,
+.am-btn-default[disabled]:active,
+fieldset[disabled] .am-btn-default:active,
+.am-btn-default.am-disabled.am-active,
+.am-btn-default[disabled].am-active,
+fieldset[disabled] .am-btn-default.am-active {
+  background-color: #e6e6e6;
+  border-color: #e6e6e6;
+}
+.am-btn-group .am-btn-default,
+.am-btn-group-stacked .am-btn-default {
+  border-color: #d9d9d9;
+}
+.am-btn-primary {
+  color: #ffffff;
+  background-color: #0e90d2;
+  border-color: #0e90d2;
+}
+a.am-btn-primary:visited {
+  color: #ffffff;
+}
+.am-btn-primary:hover,
+.am-btn-primary:focus,
+.am-btn-primary:active,
+.am-btn-primary.am-active,
+.am-active .am-btn-primary.am-dropdown-toggle {
+  color: #ffffff;
+  border-color: #0a6999;
+}
+.am-btn-primary:hover,
+.am-btn-primary:focus {
+  background-color: #0c79b1;
+}
+.am-btn-primary:active,
+.am-btn-primary.am-active,
+.am-active .am-btn-primary.am-dropdown-toggle {
+  background-image: none;
+  background-color: #0a628f;
+}
+.am-btn-primary.am-disabled,
+.am-btn-primary[disabled],
+fieldset[disabled] .am-btn-primary,
+.am-btn-primary.am-disabled:hover,
+.am-btn-primary[disabled]:hover,
+fieldset[disabled] .am-btn-primary:hover,
+.am-btn-primary.am-disabled:focus,
+.am-btn-primary[disabled]:focus,
+fieldset[disabled] .am-btn-primary:focus,
+.am-btn-primary.am-disabled:active,
+.am-btn-primary[disabled]:active,
+fieldset[disabled] .am-btn-primary:active,
+.am-btn-primary.am-disabled.am-active,
+.am-btn-primary[disabled].am-active,
+fieldset[disabled] .am-btn-primary.am-active {
+  background-color: #0e90d2;
+  border-color: #0e90d2;
+}
+.am-btn-group .am-btn-primary,
+.am-btn-group-stacked .am-btn-primary {
+  border-color: #0c80ba;
+}
+.am-btn-warning {
+  color: #ffffff;
+  background-color: #f37b1d;
+  border-color: #f37b1d;
+}
+a.am-btn-warning:visited {
+  color: #ffffff;
+}
+.am-btn-warning:hover,
+.am-btn-warning:focus,
+.am-btn-warning:active,
+.am-btn-warning.am-active,
+.am-active .am-btn-warning.am-dropdown-toggle {
+  color: #ffffff;
+  border-color: #c85e0b;
+}
+.am-btn-warning:hover,
+.am-btn-warning:focus {
+  background-color: #e0690c;
+}
+.am-btn-warning:active,
+.am-btn-warning.am-active,
+.am-active .am-btn-warning.am-dropdown-toggle {
+  background-image: none;
+  background-color: #be590a;
+}
+.am-btn-warning.am-disabled,
+.am-btn-warning[disabled],
+fieldset[disabled] .am-btn-warning,
+.am-btn-warning.am-disabled:hover,
+.am-btn-warning[disabled]:hover,
+fieldset[disabled] .am-btn-warning:hover,
+.am-btn-warning.am-disabled:focus,
+.am-btn-warning[disabled]:focus,
+fieldset[disabled] .am-btn-warning:focus,
+.am-btn-warning.am-disabled:active,
+.am-btn-warning[disabled]:active,
+fieldset[disabled] .am-btn-warning:active,
+.am-btn-warning.am-disabled.am-active,
+.am-btn-warning[disabled].am-active,
+fieldset[disabled] .am-btn-warning.am-active {
+  background-color: #f37b1d;
+  border-color: #f37b1d;
+}
+.am-btn-group .am-btn-warning,
+.am-btn-group-stacked .am-btn-warning {
+  border-color: #ea6e0c;
+}
+.am-btn-danger {
+  color: #ffffff;
+  background-color: #dd514c;
+  border-color: #dd514c;
+}
+a.am-btn-danger:visited {
+  color: #ffffff;
+}
+.am-btn-danger:hover,
+.am-btn-danger:focus,
+.am-btn-danger:active,
+.am-btn-danger.am-active,
+.am-active .am-btn-danger.am-dropdown-toggle {
+  color: #ffffff;
+  border-color: #c62b26;
+}
+.am-btn-danger:hover,
+.am-btn-danger:focus {
+  background-color: #d7342e;
+}
+.am-btn-danger:active,
+.am-btn-danger.am-active,
+.am-active .am-btn-danger.am-dropdown-toggle {
+  background-image: none;
+  background-color: #be2924;
+}
+.am-btn-danger.am-disabled,
+.am-btn-danger[disabled],
+fieldset[disabled] .am-btn-danger,
+.am-btn-danger.am-disabled:hover,
+.am-btn-danger[disabled]:hover,
+fieldset[disabled] .am-btn-danger:hover,
+.am-btn-danger.am-disabled:focus,
+.am-btn-danger[disabled]:focus,
+fieldset[disabled] .am-btn-danger:focus,
+.am-btn-danger.am-disabled:active,
+.am-btn-danger[disabled]:active,
+fieldset[disabled] .am-btn-danger:active,
+.am-btn-danger.am-disabled.am-active,
+.am-btn-danger[disabled].am-active,
+fieldset[disabled] .am-btn-danger.am-active {
+  background-color: #dd514c;
+  border-color: #dd514c;
+}
+.am-btn-group .am-btn-danger,
+.am-btn-group-stacked .am-btn-danger {
+  border-color: #d93c37;
+}
+.am-btn-success {
+  color: #ffffff;
+  background-color: #5eb95e;
+  border-color: #5eb95e;
+}
+a.am-btn-success:visited {
+  color: #ffffff;
+}
+.am-btn-success:hover,
+.am-btn-success:focus,
+.am-btn-success:active,
+.am-btn-success.am-active,
+.am-active .am-btn-success.am-dropdown-toggle {
+  color: #ffffff;
+  border-color: #429842;
+}
+.am-btn-success:hover,
+.am-btn-success:focus {
+  background-color: #4aaa4a;
+}
+.am-btn-success:active,
+.am-btn-success.am-active,
+.am-active .am-btn-success.am-dropdown-toggle {
+  background-image: none;
+  background-color: #3f913f;
+}
+.am-btn-success.am-disabled,
+.am-btn-success[disabled],
+fieldset[disabled] .am-btn-success,
+.am-btn-success.am-disabled:hover,
+.am-btn-success[disabled]:hover,
+fieldset[disabled] .am-btn-success:hover,
+.am-btn-success.am-disabled:focus,
+.am-btn-success[disabled]:focus,
+fieldset[disabled] .am-btn-success:focus,
+.am-btn-success.am-disabled:active,
+.am-btn-success[disabled]:active,
+fieldset[disabled] .am-btn-success:active,
+.am-btn-success.am-disabled.am-active,
+.am-btn-success[disabled].am-active,
+fieldset[disabled] .am-btn-success.am-active {
+  background-color: #5eb95e;
+  border-color: #5eb95e;
+}
+.am-btn-group .am-btn-success,
+.am-btn-group-stacked .am-btn-success {
+  border-color: #4db14d;
+}
+.am-btn-secondary {
+  color: #ffffff;
+  background-color: #3bb4f2;
+  border-color: #3bb4f2;
+}
+a.am-btn-secondary:visited {
+  color: #ffffff;
+}
+.am-btn-secondary:hover,
+.am-btn-secondary:focus,
+.am-btn-secondary:active,
+.am-btn-secondary.am-active,
+.am-active .am-btn-secondary.am-dropdown-toggle {
+  color: #ffffff;
+  border-color: #0f9ae0;
+}
+.am-btn-secondary:hover,
+.am-btn-secondary:focus {
+  background-color: #19a7f0;
+}
+.am-btn-secondary:active,
+.am-btn-secondary.am-active,
+.am-active .am-btn-secondary.am-dropdown-toggle {
+  background-image: none;
+  background-color: #0e93d7;
+}
+.am-btn-secondary.am-disabled,
+.am-btn-secondary[disabled],
+fieldset[disabled] .am-btn-secondary,
+.am-btn-secondary.am-disabled:hover,
+.am-btn-secondary[disabled]:hover,
+fieldset[disabled] .am-btn-secondary:hover,
+.am-btn-secondary.am-disabled:focus,
+.am-btn-secondary[disabled]:focus,
+fieldset[disabled] .am-btn-secondary:focus,
+.am-btn-secondary.am-disabled:active,
+.am-btn-secondary[disabled]:active,
+fieldset[disabled] .am-btn-secondary:active,
+.am-btn-secondary.am-disabled.am-active,
+.am-btn-secondary[disabled].am-active,
+fieldset[disabled] .am-btn-secondary.am-active {
+  background-color: #3bb4f2;
+  border-color: #3bb4f2;
+}
+.am-btn-group .am-btn-secondary,
+.am-btn-group-stacked .am-btn-secondary {
+  border-color: #23abf0;
+}
+/* Style links like a button */
+.am-btn-link {
+  color: #0e90d2;
+  font-weight: normal;
+  cursor: pointer;
+  border-radius: 0;
+}
+.am-btn-link,
+.am-btn-link:active,
+.am-btn-link[disabled],
+fieldset[disabled] .am-btn-link {
+  background-color: transparent;
+  -webkit-box-shadow: none;
+          box-shadow: none;
+}
+.am-btn-link,
+.am-btn-link:hover,
+.am-btn-link:focus,
+.am-btn-link:active {
+  border-color: transparent;
+}
+.am-btn-link:hover,
+.am-btn-link:focus {
+  color: #095f8a;
+  text-decoration: underline;
+  background-color: transparent;
+}
+.am-btn-link[disabled]:hover,
+fieldset[disabled] .am-btn-link:hover,
+.am-btn-link[disabled]:focus,
+fieldset[disabled] .am-btn-link:focus {
+  color: #999999;
+  text-decoration: none;
+}
+/* button size */
+.am-btn-xs {
+  font-size: 1.2rem;
+}
+.am-btn-sm {
+  font-size: 1.4rem;
+}
+.am-btn-lg {
+  font-size: 1.8rem;
+}
+.am-btn-xl {
+  font-size: 2rem;
+}
+/* Block button  */
+.am-btn-block {
+  display: block;
+  width: 100%;
+  padding-left: 0;
+  padding-right: 0;
+}
+/* Multiple block buttons vertically space */
+.am-btn-block + .am-btn-block {
+  margin-top: 5px;
+}
+/* Specificity overrides */
+input[type="submit"].am-btn-block,
+input[type="reset"].am-btn-block,
+input[type="button"].am-btn-block {
+  width: 100%;
+}
+/* Button with loading spinner */
+.am-btn.am-btn-loading .am-icon-spin {
+  margin-right: 5px;
+}
