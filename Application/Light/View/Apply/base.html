@@ -219,18 +219,16 @@
                 <block name="copyto">
                     <div class="weui-panel" style="margin-top: 0px;">
                         <div class="weui-panel__hd" style="font-size: 16px;background-color: #f8f8f8;color:black;padding-top: 10px;">抄送<span style="color: #f12e2e">（点击+手动添加抄送人）</span></div>
-                        <div class="weui-panel__bd">
+                        <div class="weui-panel__bd" >
                             <div class="weui-media-box weui-media-box_small-appmsg" style="padding-bottom: 10px;">
-
                                 <div class="weui-cells" style="margin-top:0px;">
                                     <div class="weui-cell" style="padding-top: 5px;padding-bottom: 5px;border-bottom: 1px solid #f8f8f8;">
                                         <div class="weui-cell__bd">
                                             <div class="weui-uploader">
-                                                <div class="weui-uploader__bd" style="height: 100px;">
+                                                <div class="weui-uploader__bd">
                                                     <ul class="weui-uploader__files" style="margin-bottom: 0px;">
-
                                                         <volist name="already_cp" id="acp">
-                                                            <li class="weui-uploader__file wk-select__css" id="{$acp.id}">
+                                                            <li class="weui-uploader__file wk-select__css" id="{$acp.id}"  style="height: 130px; box-sizing: border-box;display:flex; flex-direction:column; justify-content:center;">
                                                                 <if condition="in_array($acp['id'],$fixed_id)">
                                                                     <span style="margin-right: 6px;font-size: 14px;">[固定]</span>
                                                                     <else/>
@@ -242,7 +240,6 @@
                                                                     <img src="{$acp.url}" class="weui-selet__user" style="margin-bottom: 0px;margin-right: 6px;" />
                                                                 </if>
                                                                 <span style="margin-right: 6px;font-size: 14px;">{$acp.name}</span>
-
                                                                 <if condition="in_array($acp['id'],$readedArr)">
                                                                     <span style="margin-right: 6px;font-size: 14px;color: green;">[已读]</span>
                                                                     <else/>
@@ -251,33 +248,23 @@
                                                             </li>
                                                         </volist>
                                                     </ul>
+                                                    <eq name="isApplyer" value="1">
+                                                        <eq name="apply.state" value="1">
+                                                        
+                                                            <div class="weui-uploader__input-box" style="width: 2.5em;height: 2.5em;margin-right: 0px;margin-bottom: 0px;margin-top:20px;">
+                                                                <input id="uploaderInput" class="weui-uploader__input" type="button" name="copyto" data-toggle="modal" data-target="#myModal" readonly />
+                                                                <input type="hidden" name="copyto_id" id="copyto_id">
+                                                            </div>
+                                                                        
+                                                        </eq>
+                                                    </eq>
+                                                    
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-
-                                <eq name="isApplyer" value="1">
-                                    <eq name="apply.stat" value="0">
-                                        <div class="weui-cells" style="margin-top:0px;">
-                                            <div class="weui-cell" style="padding-top: 5px;padding-bottom: 5px;">
-                                                <div class="weui-cell__bd">
-                                                    <div class="weui-uploader">
-                                                        <div class="weui-uploader__bd">
-                                                            <ul class="weui-uploader__files" id="selectUser" style="margin-bottom: 0px;">
-                                                            </ul>
-                                                            <div class="weui-uploader__input-box" style="width: 2.5em;height: 2.5em;margin-right: 0px;margin-bottom: 0px;margin-top:10px;">
-                                                                <input id="uploaderInput" class="weui-uploader__input" type="button" name="copyto" data-toggle="modal" data-target="#myModal"
-                                                                    readonly />
-                                                                <input type="hidden" name="copyto_id" id="copyto_id">
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </eq>
-                                </eq>
+                               
                             </div>
                         </div>
                     </div>
@@ -332,14 +319,14 @@
                                             <div class="weui-textarea-counter"></div>
                                         </div>
                                     </div>
-                                    <div class="button-sp-area" id="apply-area" style="margin-bottom: 20px;display: flex;flex-direction: row;width: 100%;justify-content: space-around;align-items: baseline;}">
+                                    <div class="button-sp-area" id="apply-area" style="margin-bottom: 20px;display: flex;flex-direction: row;width: 100%;justify-content: space-around;align-items: baseline;">
                                         <a href="javascript:;" id="apply-agree" class="weui-btn weui-btn_primary" style="width: 40%">同意</a>
                                         <a href="javascript:;" id="apply-refuse" class="weui-btn weui-btn_warn" style="width: 40%;">退审</a>
                                         <!-- <a href="javascript:;" class="weui-btn weui-btn_default">转审</a> -->
                                         <input type="hidden" name="aid" id="aid" value="{$aid}">
                                         <input type="hidden" name="apply_user" id="apply_user" value="{$applyerID}">
                                     </div>
-                                    <div class="button-sp-area" style="margin-bottom: 20px;display: flex;flex-direction: row;width: 100%;justify-content: space-around;align-items: baseline;}">
+                                    <div class="button-sp-area" style="margin-bottom: 20px;display: flex;flex-direction: row;width: 100%;justify-content: space-around;align-items: baseline;">
                                         <button id="apply-change" class="weui-btn weui-btn_primary" style="width: 90%">转审</button>
                                     </div>
                                 </div>
@@ -378,7 +365,7 @@
                         <span class="glyphicon glyphicon-align-left" aria-hidden="true"></span>
                         <span class="weui-badge weui-badge_dot" style="position: absolute;top: 0;right: -6px;"></span>
                     </span> -->
-                                <p class="weui-tabbar__label" style="font-size: 15px;color:black;">
+                                <p class="weui-tabbar__label" style="font-size: 15px;color:black;" data-toggle="modal" data-target="#iosDialog_delete">
                                     <span class="glyphicon glyphicon-share-alt" aria-hidden="true" style="margin-right: 5px;"></span>撤销</p>
                             </a>
                             <a href="javascript:;" class="weui-tabbar__item" id="btn-urge">
@@ -673,8 +660,8 @@
         $.post("{:U('Light/WorkFlow/urgeWorkFlow')}",
             {
                 "aid": aid,
-                "mod_name": '{$mod_name}',
-                "system": '{$system}'
+                "mod_name": "{$mod_name}",
+                "system": "{$system}"
             }, function (data) {
                 // console.log(data);
                 if (data == 'success') {
@@ -704,7 +691,7 @@
         $.post("{:U('Light/Apply/delCommentRecord')}",
             {
                 "id": id,
-                system: '{$system}'
+                system: "{$system}"
             }, function (data) {
                 // console.log(data);
                 if (data == 'success') {
@@ -724,7 +711,7 @@
     // Confirm dialog
     function dialog_delete_confirm() {
         $("#iosDialog_delete").fadeOut(100);
-        var id = { $aid };
+        var id = {$aid};
         var $dtoast = $('#doingToast');
         if ($dtoast.css('display') != 'none') return;
         $('#doing').text('撤销中...');
@@ -732,10 +719,10 @@
         $.post("{:U('Light/Apply/delRecord')}",
             {
                 "id": id,
-                mod_name: '{$mod_name}',
-                system: '{$system}'
+                mod_name: "{$mod_name}",
+                system: "{$system}"
             }, function (data) {
-                // console.log(data);
+                 //console.log(data);
                 if (data == 'success') {
                     $('#doing').text('撤销成功');
                 } else {
@@ -868,8 +855,8 @@
                 dataType: "json",
                 data: {
                     id: id,
-                    mod_name: '{$mod_name}',
-                    system: '{$system}',
+                    mod_name: "{$mod_name}",
+                    system: "{$system}",
                     apply_user: apply_user, //中文申请人姓名，用于发送审批结果 
                     option: option,
                     copyto_id: copyto_id,
@@ -898,8 +885,8 @@
         $("#apply-change").on("click", function (e) {
             e.stopPropagation();
             var id = $("#aid").val();
-            var mod_name = '{$mod_name}';
-            var system = '{$system}';
+            var mod_name = "{$mod_name}";
+            var system = "{$system}";
             window.location = "{:U('Light/Apply/applyChange?aid=')}" + id + "&mod_name=" + mod_name + "&system=" + system;
         });
         // 催审按钮
@@ -912,7 +899,7 @@
         });
         // 删除按钮
         $("#btn-delete").on("click", function () {
-            if ({ $applyerID } != { $uid }) {
+            if ({$applyerID} != {$uid}) {
                 alert("非申请人不可撤销！");
                 return false;
             }
@@ -937,8 +924,8 @@
                 data: {
                     aid: aid,
                     ctoid: ctoid,
-                    mod_name: '{$mod_name}',
-                    system: '{$system}',
+                    mod_name: "{$mod_name}",
+                    system: "{$system}",
                     word: comment_content,
                     __hash__: hash
                 },
@@ -954,7 +941,7 @@
                     // console.log(id);
                     setTimeout(function () {
                         $toast.fadeOut(100);
-                        window.location = "{:U('Light/Apply/applyInfo?aid=')}" + aid + "&modname=" + '{$mod_name}' + "&system=" + '{$system}';
+                        window.location = "{:U('Light/Apply/applyInfo?aid=')}" + aid + "&modname=" + "{$mod_name}" + "&system=" + "{$system}";
                     }, 500);
                 }
             });
@@ -1078,7 +1065,7 @@
                     $.post("{:U('Light/Apply/getSearchUser')}",
                         {
                             "key": keys,
-                            "system": '{$system}'
+                            "system": "{$system}"
                         }, function (data) {
                             console.log(data);
                             console.log($commentSearchInput.val());

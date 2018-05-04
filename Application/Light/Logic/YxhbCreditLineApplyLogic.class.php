@@ -40,7 +40,7 @@ class YxhbCreditLineApplyLogic extends Model {
                                      'type'=>'string'
                                     );
         $result['content'][] = array('name'=>'当前额度：',
-                                     'value'=>number_format($res['online'],2,'.',',')."元",
+                                     'value'=>number_format($res['oline'],2,'.',',')."元",
                                      'type'=>'number'
                                     );
         $result['content'][] = array('name'=>'发货下限：',
@@ -69,6 +69,45 @@ class YxhbCreditLineApplyLogic extends Model {
         $result['stat'] = $res['stat'];
         return $result;
     }
+
+         /**
+     * 记录内容
+     * @param  integer $id 记录ID
+     * @return array       记录数组
+     */
+    public function getDescription($id){
+        $res = $this->record($id);
+        $result = array();
+        $clientname = M('yxhb_guest2')->field('g_khjc')->where(array('id' => $res['clientid']))->find();
+        $result[] = array('name'=>'申请日期：',
+                                     'value'=>$res['date'],
+                                     'type'=>'date'
+                                    );
+        $result[] = array('name'=>'客户名称：',
+                                     'value'=>$clientname['g_khjc'],
+                                     'type'=>'string'
+                                    );
+        $result[] = array('name'=>'当前额度：',
+                                     'value'=>number_format($res['oline'],2,'.',',')."元",
+                                     'type'=>'number'
+                                    );
+ 
+        $result[] = array('name'=>'申请额度：',
+                                     'value'=>number_format($res['line'],2,'.',',')."元",
+                                     'type'=>'number'
+                                    );
+        $result[] = array('name'=>'申&nbsp;&nbsp;请&nbsp;&nbsp;人：',
+                                     'value'=>$res['sales'],
+                                     'type'=>'string'
+                                    );
+        $result[] = array('name'=>'申请理由：',
+                                     'value'=>$res['notice'],
+                                     'type'=>'text'
+                                    );
+        return $result;
+    }
+
+
 
     /**
      * 删除记录

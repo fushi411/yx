@@ -4,20 +4,39 @@ use Think\Controller;
 class TempQuoteController extends BaseController
 {
     private $today = null;
+    private $pageArr = '';
 
     public function __construct(){
         parent::__construct();
         $this->today = date('Y-m-d',time());
+        $this->pageArr = array(
+            array('name' => '临时额度','url' => U('Light/TempQuote/tempQuote'),'modname' => 'TempCreditLineApply'),
+            array('name' => '信用额度','url' => U('Light/TempQuote/creditLine'),'modname' => 'CreditLineApply')
+        );
     }
+
     /**
      * 临时额度申请页面
      */
     public function tempQuote(){
         $appflow = GetAppFlow('TempCreditLineApply');
+        $this ->assign('type',$this->pageArr);
         $this ->assign('appflow',json_encode($appflow));
         $this->assign('today',$this->today);
         $this->display('YxhbTempQuoteApply/TempQuoteApply');
     }
+
+    /**
+     * 临时额度申请页面
+     */
+    public function creditLine(){
+        $appflow = GetAppFlow('CreditLineApply');
+        $this ->assign('type',$this->pageArr);
+        $this ->assign('appflow',$appflow);
+        $this->assign('today',$this->today);
+        $this->display('YxhbTempQuoteApply/creditLine');
+    }
+
 
     /**
      * 合同客户获取
@@ -57,6 +76,8 @@ class TempQuoteController extends BaseController
             'line' => number_format($ye['line'],2),  // 信用额度 1
             'ysye' => number_format(-$ye['ysye'],2)// 应收余额 0
         );
+        
+        $res['ysflag'] = -$ye['ysye']<20000?true:false;
         $res['info'] = $info;
         $res['fhye'] = number_format($ye['line']-$ye['ysye']+$existTempQuote,2); // 发货额度 由前面3个决定
         $res['ye'] =  $res['fhye'];
@@ -439,6 +460,61 @@ class TempQuoteController extends BaseController
         return $data;
     }
 
+    // 信用额度增加
+    public function addCreditLineApply(){
+        $user_id = I('post.user_id');
+        $reason = I('post.text');
+        $money = I('post.money');
+        $date = I('post.date');
+        $copyto_id = I('post.copyto_id');
+        $system = 'yxhb';
+        
+        // 参数检验
+        if($user_id=='' || $reason=='' || $money=='') $this ->ajaxReturn(array('code' => 404,'msg' => '请刷新页面，重新提交！'));
+        // 申请金额校验
+        if($money=='' || $money<0 ) $this ->ajaxReturn(array('code' => 404,'msg' => '申请金额不能为空，且不能为负数！'));
+        // 字数校验
+        if(strlen($reason)<5 ||strlen($reason)>200) $this ->ajaxReturn(array('code' => 404,'msg' => '申请理由不能少于5个字，且不能多于200字！'));
+
+        $clientname = $this->getClientname($user_id);
+        $sales = session('name');
+        $salesid = session('yxhb_id');
+        $dtime=$this->getDatetimeMk(time());
+        $yeArr =$this->getClientFHYE($user_id,$this->today);
+        $aid = M('yxhb_creditlineconfig')->field('1')->group('clientid,dtime')->select();
+        $aid = count($aid)+1;
+
+        $insertData = array(
+            'aid'  => $aid,
+            'date' => $date,
+            'clientname' => $clientname,
+            'clientid' => $user_id,
+            'lower' => 0,
+            'upper' => 0,
+            'sales' => $sales,
+            'salesid' => $salesid,
+            'stat' => 2,
+            'dtime' => $dtime,
+            'notice' => $reason,
+            'line' => $money,
+            'oline' => $yeArr['line']
+        );
+        // 表单重复提交
+        if(M('yxhb_creditlineconfig')->autoCheckToken($_POST))$this ->ajaxReturn(array('code' => 404,'msg' => '网络延迟，请勿点击提交按钮！'));
+        $result = M('yxhb_creditlineconfig')->add($insertData);
+        if(!$result) $this ->ajaxReturn(array('code' => 404,'msg' => '提交失败，请重新尝试！'));
+        // 抄送
+        $copyto_id = trim($copyto_id,',');
+        if (!empty($copyto_id)) {
+            $fix = explode(",", $copyto_id);
+            // 发送抄送消息
+            D($system.'Appcopyto')->copyTo($copyto_id,'CreditLineApply', $aid);
+        }
+        $wf = new WorkFlowController();
+        $res = $wf->setWorkFlowSV('CreditLineApply', $aid, $salesid, $system);
+        $this ->ajaxReturn(array('code' => 200,'msg' => '提交成功' , 'aid' =>$aid));
+    }
+
     // 临时额度增加
     public function addtempQuote(){
          $user_id = I('post.user_id');
@@ -487,16 +563,17 @@ class TempQuoteController extends BaseController
              'ed'           => $ed,
              'yxq'          => $yxq
          );
+         // 表单
          if(M('yxhb_tempcreditlineconfig')->autoCheckToken($_POST))$this ->ajaxReturn(array('code' => 404,'msg' => '网络延迟，请勿点击提交按钮！'));
         $result = M('yxhb_tempcreditlineconfig')->add($saveData);
+        if(!$result) $this ->ajaxReturn(array('code' => 404,'msg' => '提交失败，请重新尝试！'));
+        // 抄送
         $copyto_id = trim($copyto_id,',');
         if (!empty($copyto_id)) {
             $fix = explode(",", $copyto_id);
             // 发送抄送消息
             D($system.'Appcopyto')->copyTo($copyto_id,'TempCreditLineApply', $result);
-
         }
-        if(!$result) $this ->ajaxReturn(array('code' => 404,'msg' => '提交失败，请重新尝试！'));
         if($stat == 2)
         {
             $wf = new WorkFlowController();

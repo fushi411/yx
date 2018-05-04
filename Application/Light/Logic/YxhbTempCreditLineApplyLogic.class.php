@@ -56,8 +56,8 @@ class YxhbTempCreditLineApplyLogic extends Model {
      */
     public function delRecord($id)
     {
-        // $map = array('id' => $id);
-        // return $this->field(true)->where($map)->setField('stat',0);
+        $map = array('id' => $id);
+        return $this->field(true)->where($map)->setField('stat',0);
     }
 
     public function getInfo($clientid,$date){

@@ -42,10 +42,10 @@
                             </div>
                             <div style="display: flex;flex-direction: row;flex-wrap: nowrap;align-items: flex-start;">
                                 <p class="weui-media-box__desc" style="white-space:nowrap;overflow: visible;">应收余额：</p>&nbsp;
-                                <egt name="content.info.ye" value="0">
+                                <egt name="content.info.ye" value="-20000">
                                     <p class="weui-media-box__desc" style="color: #f12e2e;display: block;overflow: visible;">-{$content.info.ye}</p>
                                     <else/>
-                                    <p class="weui-media-box__desc" style="color: #0de20b;display: block;overflow: visible;">-{$content.info.ye}</p>
+                                    <p class="weui-media-box__desc" style="display: block;overflow: visible;">-{$content.info.ye}</p>
                                 </egt>
                             </div>
                             <div style="display: flex;flex-direction: row;flex-wrap: nowrap;align-items: flex-start;">
@@ -65,7 +65,7 @@
                                 <p class="weui-media-box__desc" style="white-space:nowrap;overflow: visible;">剩余次数：</p>&nbsp;
                                 <p class="weui-media-box__desc" style="color: black;display: block;overflow: visible;">
                                     <neq name="content.info.two" value="0">
-                                        <input class="weui-input color" type="text" style="color:#0de20b" name="custodian" id="two" readonly value="临额二万元 - 剩余{$content.info.two}次提交"
+                                        <input class="weui-input color" type="text"  name="custodian" id="two" readonly value="临额二万元 - 剩余{$content.info.two}次提交"
                                         />
                                     </neq>
                                     <eq name="content.info.two" value="0">
@@ -74,7 +74,7 @@
                                     </eq>
 
                                     <neq name="content.info.five" value="0">
-                                        <input class="weui-input color" type="text" style="color:#0de20b" name="custodian" id="two" readonly value="临额五万元 - 剩余{$content.info.five}次提交"
+                                        <input class="weui-input color" type="text"  name="custodian" id="two" readonly value="临额五万元 - 剩余{$content.info.five}次提交"
                                         />
                                     </neq>
                                     <eq name="content.info.five" value="0">
@@ -83,7 +83,7 @@
                                     </eq>
 
                                     <neq name="content.info.ten" value="0">
-                                        <input class="weui-input color" type="text" style="color:#0de20b" name="custodian" id="two" readonly value="临额十万元 - 剩余{$content.info.ten}次提交"
+                                        <input class="weui-input color" type="text"  name="custodian" id="two" readonly value="临额十万元 - 剩余{$content.info.ten}次提交"
                                         />
                                     </neq>
                                     <eq name="content.info.ten" value="0">

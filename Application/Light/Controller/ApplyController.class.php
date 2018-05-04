@@ -1,7 +1,7 @@
 <?php
 namespace Light\Controller;
 use Think\Controller;
-class ApplyController extends Controller {
+class ApplyController extends BaseController {
     public function index(){
     }
 
@@ -76,7 +76,7 @@ class ApplyController extends Controller {
         $copyTo->readCopytoApply($mod_name, $apply_id);
 
         if (!in_array($wxid, $authArr)) {
-            $this->error ( '无查看权限！', U('Light/Index/index'), 2 );
+            $this->error ( '无查看权限！', U('Light/Index/index',array('system'=>$system)), 2 );
         }
         $this->display(ucfirst($system).$mod_name.':applyInfo');
     }
@@ -224,15 +224,17 @@ class ApplyController extends Controller {
 
     public function delRecord()
     {
+
         $id = I('post.id');
         $mod_name = I('post.mod_name');
         $system = I('post.system');
-        if (!empty($id)) {
+        if ($id) {
             $res = D(ucfirst($system).$mod_name, 'Logic')->delRecord($id);
             $wf=new WorkFlowController();
-            $wf->workFlowSVReset($mod_name,$id);
+            $wf->workFlowSVReset($mod_name,$id,$system);
             $this->ajaxReturn('success');
         } else {
+            
             $this->ajaxReturn('failure');
         }
     }

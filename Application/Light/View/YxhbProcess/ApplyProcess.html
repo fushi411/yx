@@ -96,7 +96,12 @@
                                                                 <else/>
                                                                 <li class='weui-uploader__file wk-select__user' style='height:90px;'>
                                                             </neq>
-                                                            <img src="{$v.avatar}" class='weui-selet__user' style='margin-bottom: 0px;margin-right: 6px;margin-top:10px;'>
+                                                            <if condition="$v.avatar eq ''">
+                                                                    <img src="Public/assets/i/defaul.png" class='weui-selet__user' style='margin-bottom: 0px;margin-right: 6px;margin-top:10px;'>
+                                                                <else/>
+                                                                <img src="{$v.avatar}" class='weui-selet__user' style='margin-bottom: 0px;margin-right: 6px;margin-top:10px;'>
+                                                            </if>
+
                                                             <span style='margin-right: 6px;font-size: 14px;'> {$v.name}</span>
                                                             <if condition="$i-$vo.count elt 0">
                                                                 <span class="glyphicon glyphicon-arrow-right" style="position: relative;top: -2.8em;right: -1.8em;"></span>
