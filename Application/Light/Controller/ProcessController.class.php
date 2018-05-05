@@ -119,8 +119,12 @@ class ProcessController extends Controller
 
 
     private function test(){
-      
-       echo gmdate("Y-m-d H:i:s",time() + 3600 * 8);
+        $wx = new WorkFlowController();
+
+        $info = $wx->sendApplyCardMsg();
+
+        // $push = GetPush('TempCreditLineApply');
+    
     }
 
 }

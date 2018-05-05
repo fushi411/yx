@@ -10,33 +10,74 @@ class TempQuoteController extends BaseController
         parent::__construct();
         $this->today = date('Y-m-d',time());
         $this->pageArr = array(
-            array('name' => '临时额度','url' => U('Light/TempQuote/tempQuote'),'modname' => 'TempCreditLineApply'),
-            array('name' => '信用额度','url' => U('Light/TempQuote/creditLine'),'modname' => 'CreditLineApply')
+            array('name' => '环保临时额度','url' => U('Light/TempQuote/tempQuote'),'modname' => 'yxhbTempCreditLineApply'),
+            array('name' => '环保信用额度','url' => U('Light/TempQuote/creditLine'),'modname' => 'yxhbCreditLineApply'),
+            array('name' => '建材临时额度','url' => U('Light/TempQuote/kktempQuote'),'modname' => 'kkTempCreditLineApply'),
+            array('name' => '建材信用额度','url' => U('Light/TempQuote/kkcreditLine'),'modname' => 'kkCreditLineApply'),
         );
     }
-
     /**
-     * 临时额度申请页面
+     * 建材临时额度申请页面
      */
-    public function tempQuote(){
-        $appflow = GetAppFlow('TempCreditLineApply');
+    public function kktempQuote(){
+        // 流程
+        $appflow = GetAppFlow('kk','TempCreditLineApply');
+        // 推送
+        $push = GetPush('kk','TempCreditLineApply');
+        $this ->assign('push',$push['data']);
         $this ->assign('type',$this->pageArr);
         $this ->assign('appflow',json_encode($appflow));
         $this->assign('today',$this->today);
-        $this->display('YxhbTempQuoteApply/TempQuoteApply');
+        $this->display('YxhbTempQuoteApply/kkTempQuoteApply');
     }
 
     /**
-     * 临时额度申请页面
+     * 建材信用额度申请页面
      */
-    public function creditLine(){
-        $appflow = GetAppFlow('CreditLineApply');
+    public function kkcreditLine(){
+        // 流程
+        $appflow = GetAppFlow('kk','CreditLineApply');
+        // 推送
+        $push = GetPush('kk','CreditLineApply');
+
+        $this ->assign('push',$push['data']);
         $this ->assign('type',$this->pageArr);
         $this ->assign('appflow',$appflow);
         $this->assign('today',$this->today);
-        $this->display('YxhbTempQuoteApply/creditLine');
+        $this->display('YxhbTempQuoteApply/kkcreditLine');
     }
 
+
+    /**
+     * 环保临时额度申请页面
+     */
+    public function tempQuote(){
+        // 流程
+        $appflow = GetAppFlow('yxhb','TempCreditLineApply');
+        // 推送
+        $push = GetPush('yxhb','TempCreditLineApply');
+        $this ->assign('push',$push['data']);
+        $this ->assign('type',$this->pageArr);
+        $this ->assign('appflow',json_encode($appflow));
+        $this->assign('today',$this->today);
+        $this->display('YxhbTempQuoteApply/yxhbTempQuoteApply');
+    }
+
+    /**
+     * 环保信用额度申请页面
+     */
+    public function creditLine(){
+        // 流程
+        $appflow = GetAppFlow('yxhb','CreditLineApply');
+        // 推送
+        $push = GetPush('yxhb','CreditLineApply');
+
+        $this ->assign('push',$push['data']);
+        $this ->assign('type',$this->pageArr);
+        $this ->assign('appflow',$appflow);
+        $this->assign('today',$this->today);
+        $this->display('YxhbTempQuoteApply/yxhbcreditLine');
+    }
 
     /**
      * 合同客户获取
@@ -45,9 +86,9 @@ class TempQuoteController extends BaseController
      */
     public function getCustomerList(){
         $data = I('math');
-
+        $system = I('system');
         $like = $data?"where g_helpword like '%{$data}%' or g_name like '%{$data}%'":'';
-        $sql = "select id,g_name as text,g_khjc as jc from (select a.id as id,g_name,g_helpword,g_khjc FROM yxhb_guest2 as a,yxhb_ht as b where a.id=b.ht_khmc and ht_stday<='{$this->today}' and ht_enday>='{$this->today}' and ht_stat=2 and reid=0 group by ht_khmc UNION select id,g_name,g_helpword,g_khjc FROM yxhb_guest2 where id=any(select a.reid as id FROM yxhb_guest2 as a,yxhb_ht as b where a.id=b.ht_khmc and reid!= 0 and ht_stday<='{$this->today}' and ht_enday>='{$this->today}' and ht_stat=2  group by ht_khmc)) as t {$like} order by g_name ASC";
+        $sql = "select id,g_name as text,g_khjc as jc from (select a.id as id,g_name,g_helpword,g_khjc FROM {$system}_guest2 as a,{$system}_ht as b where a.id=b.ht_khmc and ht_stday<='{$this->today}' and ht_enday>='{$this->today}' and ht_stat=2 and reid=0 group by ht_khmc UNION select id,g_name,g_helpword,g_khjc FROM {$system}_guest2 where id=any(select a.reid as id FROM {$system}_guest2 as a,yxhb_ht as b where a.id=b.ht_khmc and reid!= 0 and ht_stday<='{$this->today}' and ht_enday>='{$this->today}' and ht_stat=2  group by ht_khmc)) as t {$like} order by g_name ASC";
         $res = M()->query($sql);
         $this->ajaxReturn($res);
     } 

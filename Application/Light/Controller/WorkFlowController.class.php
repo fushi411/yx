@@ -390,6 +390,17 @@ class WorkFlowController extends BaseController {
         return $info;
     }
 
+    // 审批后推送
+
+
+
+
+
+
+
+
+
+
     public function setOthersApply($mod_name, $pro_id, $aid, $stage_id, $others_id, $reason, $applyUserid, $system)
     {
       // 1.检查是否为流程最后一步
