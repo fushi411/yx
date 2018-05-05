@@ -51,7 +51,6 @@
         $tempStr = explode('|',$res['condition']);
         // where 条件拼接
         foreach($tempStr as $k => $v){
-            
             if($k != 0) $where .=' or ';
             $where .= "wxid = '{$v}'";
         }

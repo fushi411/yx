@@ -201,10 +201,11 @@
     });
     $.ajax({
             type:'POST',
-            url: "http://www.fjyuanxin.com/sngl/include/getClientCreditInfo.php",
+            url: "http://www.fjyuanxin.com/sngl/include/getClientCreditApi.php",
             dataType: 'json',
             data: {
-                name:'源鑫搅拌站（混凝土）'
+                name:'源鑫搅拌站（混凝土）',
+                auth:"kk"
             },
             dataType: 'json',
             success: function (res) {

@@ -1,3 +1,8 @@
 #My Configurations
 Application/Common/Conf/config.php
 Runtime/
+.idea/modules.xml
+.idea/vcs.xml
+.idea/WE.iml
+.idea/workspace.xml
+.idea/copyright/profiles_settings.xml

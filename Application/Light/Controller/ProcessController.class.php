@@ -15,9 +15,11 @@ class ProcessController extends Controller
     public function ApplyProcess(){
         $pro_mod = I('modname');
         // $pro_mod 为空的情况
+        $system = I('system');
+        if(!$system)$system='yxhb';
         if($pro_mod == '') die;
 
-        $proData = GetAppFlow($pro_mod);
+        $proData = GetAppFlow($system,$pro_mod);
         $temp['proName'] = str_replace('表','',$proData[0]['pro_name']); 
 
         // 特殊页面显示 （临时额度） 目前只有临时页面特殊，后期可能修改
@@ -118,10 +120,10 @@ class ProcessController extends Controller
     }
 
 
-    private function test(){
-        $wx = new WorkFlowController();
+    public function test(){
+        $wx = new \Org\Util\WeChat;
 
-        $info = $wx->sendApplyCardMsg();
+        $info = $wx->sendCardMessage('HuangShiQi','测试通过','中间显示内容？','123',15,'TempCreditLineApply','yxhb');
 
         // $push = GetPush('TempCreditLineApply');
     

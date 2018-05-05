@@ -167,6 +167,7 @@
                             </div>
                             <div class="weui-cell__bd">
                                 <input class="weui-input" type="text" name="custodian" id="exist" readonly placeholder=" 自动填写" />
+                                <input type="hidden" id="khye">
                             </div>
                         </div>
                         <div class="weui-cell weui-cell_select weui-cell_select-after">
@@ -227,7 +228,7 @@
                     </div>
 
                     <div class="weui-cells__title">审批流程
-                            <a href="{:U('Light/Process/ApplyProcess',array('modname'=>'TempCreditLineApply'))}">（查看可视化流程）</a>
+                            <a href="{:U('Light/Process/ApplyProcess',array('modname'=>'TempCreditLineApply','system' => 'kk'))}">（查看可视化流程）</a>
                     </div>
                     <div id="allproc">
                         <div class="weui-cells" style="margin-top:0px;">
@@ -313,7 +314,7 @@
         <div class="js_dialog" id="iosDialog2" style="display: none;">
             <div class="weui-mask"></div>
             <div class="weui-dialog">
-                <div class="weui-dialog__bd">客户提货余额超过1万，可以不用增加临时额度！</div>
+                <div class="weui-dialog__bd">客户提货余额超过2万，可以不用增加临时额度！</div>
                 <div class="weui-dialog__ft">
                     <a href="javascript:;" class="weui-dialog__btn weui-dialog__btn_primary">知道了</a>
                 </div>
@@ -447,9 +448,11 @@
     function app_proHtml(val){
         var html = '';
         for(i=0;i<val;i++){
+            var src='';
+            src = appflow[i]['avatar']?appflow[i]['avatar']:'Public/assets/i/defaul.png';
             html += "<li class='weui-uploader__file wk-select__user' id='"+appflow[i]['id']+"' style='height:90px;";        
             if(i != 0) html+= "margin-left:8px";
-            html += "'><img src='"+appflow[i]['avatar']+"' class='weui-selet__user' style='margin-bottom: 0px;margin-right: 6px;margin-top:10px;'>"+
+            html += "'><img src='"+src+"' class='weui-selet__user' style='margin-bottom: 0px;margin-right: 6px;margin-top:10px;'>"+
                              "<span style='margin-right: 6px;font-size: 14px;'>"+appflow[i]['name']+"</span>";
             if(val == 2 && i<val-1){
                 html+="<span class='glyphicon glyphicon-arrow-right' style='position: relative;top: -2.8em;right: -1.8em;'></span>";
@@ -495,10 +498,11 @@
         $("#user_name").on("select2:selecting", function (e) {
             $('.select2-selection__choice__remove').click();
             var selectArr = e.params.args.data;
+            getTempInfo(selectArr.id,selectArr.text);
+
             selectArr.text = selectArr.jc;
-                
             $('.select2-selection__choice').text(selectArr.text);
-            getTempInfo(selectArr.id);
+            
             user_id = selectArr.id;
 
             money.val('-1');
@@ -512,11 +516,13 @@
     });
 
     // 获取客户用户 各项余额
-    function getTempInfo(user_id) {
+    function getTempInfo(user_id,clientname) {
+
         $.ajax({
             url: "{:U('Light/TempQuote/getCustomerInfo')}",
             dataType: 'json',
             data: {
+                system:'kk',
                 user_id: user_id
             },
             dataType: 'json',
@@ -524,18 +530,22 @@
                 if (res.code != 200) {
                     tooltip('请重新刷新页面！')
                 } else {
-                    var data = res.data, info = data.info, classNmae = '';
-                    exist.val(data.exist);
-                    line.val(data.line);
-                    ye.val(data.ye);
-                    ysye.val(data.ysye);
+                    var data = res.data, info = data.info;
+                    line.val(formatMoney(data.line,2));
+
+                    getkk(data.line,data.name,clientname);
+
+                    // exist.val(data.exist);
+                    // ye.val(data.ye);
+                    // ysye.val(data.ysye);
                     
-                    if (data.ysflag) classNmae = 'redColor';
+                    // if (data.ysflag) classNmae = 'redColor';
                     
-                    ysye.removeClass('redColor').addClass(classNmae);
-                    if (data.fhye >= 10000) {
-                        $iosDialog2.fadeIn(200);
-                    }
+                    // ysye.removeClass('redColor').addClass(classNmae);
+
+                    // if (data.fhye >= 10000) {
+                    //     $iosDialog2.fadeIn(200);
+                    // }
 
                     twoTime = info[0].length;
                     fiveTime = info[1].length;
@@ -566,12 +576,55 @@
                     
                     two.val('临额二万元 - 剩余'+(5-twoTime)+'次提交');
                     five.val('临额五万元 - 剩余'+(3-fiveTime)+'次提交');
-                    ten.val('临额十万元 - 剩余'+(1-tenTime)+'次提交'); 
+                    ten.val('临额十万元 - 剩余'+(1-tenTime)+'次提交');
                 }
             }
         })
 
     }
+
+    function getkk(line,authCode,user_name){
+        $.ajax({
+            type:'POST',
+            url: "http://www.fjyuanxin.com/sngl/include/getClientCreditApi.php",
+            dataType: 'json',
+            data: {
+                name:user_name,
+                auth:authCode
+            },
+            success: function (res) {
+                var  classNmae = '';
+                var tmpNum = res['tmp'] == ''? 0 : res['tmp'];// 临时额度
+                var yeNum  = res['ye']  == ''? 0 : res['ye'];// 客户余额   发货的=余额+临时
+                $('#khye').val(yeNum);
+                if (-(line-yeNum+tmpNum)<20000) classNmae = 'redColor';
+
+                ysye.removeClass('redColor').addClass(classNmae);
+                
+                if ((tmpNum+yeNum) >= 20000) {
+                    $iosDialog2.fadeIn(200);
+                }
+                
+                exist.val(formatMoney(tmpNum,2));
+                ye.val(formatMoney(tmpNum+yeNum,2));
+                ysye.val(formatMoney(-(line+tmpNum-yeNum),2));
+            }
+        });
+    }
+
+    // 金钱格式转换
+    function formatMoney(number, places, symbol, thousand, decimal) {
+        number = number || 0;
+        places = !isNaN(places = Math.abs(places)) ? places : 2;
+        symbol = symbol !== undefined ? symbol : "$";
+        thousand = thousand || ",";
+        decimal = decimal || ".";
+        var negative = number < 0 ? "-" : "",
+            i = parseInt(number = Math.abs(+number || 0).toFixed(places), 10) + "",
+            j = (j = i.length) > 3 ? j % 3 : 0;
+        return  negative + (j ? i.substr(0, j) + thousand : "") + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + thousand) + (places ? decimal + Math.abs(number - i).toFixed(places).slice(2) : "");
+    }
+
 
     // 提交申请
     $('#submit').click(function () {
@@ -617,6 +670,8 @@
             url: "{:U('Light/TempQuote/addtempQuote')}",
             dataType: 'json',
             data: {
+                ye:$('#khye').val(),
+                system:'kk',
                 user_id: user_id,
                 text: reason,
                 money: money.val(),
@@ -626,13 +681,12 @@
             success: function (res) {
                 toast.fadeOut(200);
                 if (res.code == 200) {
-                    window.location.href = "{:U('Light/Apply/applyInfo',array('modname'=>'TempCreditLineApply','system'=>'yxhb'))}"+"&aid="+res.aid;
+                    window.location.href = "{:U('Light/Apply/applyInfo',array('modname'=>'TempCreditLineApply','system'=>'kk'))}"+"&aid="+res.aid;
                 } else {
                     tooltip(res.msg);
                 }
             }
         });
-
     });
  // 选择重置
  function moneyHtml(){

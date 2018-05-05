@@ -88,7 +88,7 @@ class TempQuoteController extends BaseController
         $data = I('math');
         $system = I('system');
         $like = $data?"where g_helpword like '%{$data}%' or g_name like '%{$data}%'":'';
-        $sql = "select id,g_name as text,g_khjc as jc from (select a.id as id,g_name,g_helpword,g_khjc FROM {$system}_guest2 as a,{$system}_ht as b where a.id=b.ht_khmc and ht_stday<='{$this->today}' and ht_enday>='{$this->today}' and ht_stat=2 and reid=0 group by ht_khmc UNION select id,g_name,g_helpword,g_khjc FROM {$system}_guest2 where id=any(select a.reid as id FROM {$system}_guest2 as a,yxhb_ht as b where a.id=b.ht_khmc and reid!= 0 and ht_stday<='{$this->today}' and ht_enday>='{$this->today}' and ht_stat=2  group by ht_khmc)) as t {$like} order by g_name ASC";
+        $sql = "select id,g_name as text,g_khjc as jc from (select a.id as id,g_name,g_helpword,g_khjc FROM {$system}_guest2 as a,{$system}_ht as b where a.id=b.ht_khmc and ht_stday<='{$this->today}' and ht_enday>='{$this->today}' and ht_stat=2 and reid=0 group by ht_khmc UNION select id,g_name,g_helpword,g_khjc FROM {$system}_guest2 where id=any(select a.reid as id FROM {$system}_guest2 as a,{$system}_ht as b where a.id=b.ht_khmc and reid!= 0 and ht_stday<='{$this->today}' and ht_enday>='{$this->today}' and ht_stat=2  group by ht_khmc)) as t {$like} order by g_name ASC";
         $res = M()->query($sql);
         $this->ajaxReturn($res);
     } 
@@ -100,14 +100,24 @@ class TempQuoteController extends BaseController
      */
     public function  getCustomerInfo(){
         $client_id = I('user_id');
+        $system = I('system');
+        if(!$system)$system='yxhb';
         if(!$client_id){
             $this->ajaxReturn(array('code' => 404,'msg' => '请重新刷新页面！'));
         }
-
-        // 临时额度
-        $existTempQuote = $this->getTempCredit($client_id);
         // 临额申请情况
-        $info = $this->getQuoteTimes($client_id);
+        $info = $this->getQuoteTimes($client_id,$system);
+
+        if($system == 'kk') {
+            $clientname = $this->getClientname($client_id,$system);
+           // $name = htmlentities($clientname, ENT_QUOTES);
+            $res['name'] = data_auth_sign($clientname);
+            $res['line'] = $this->getkkline($client_id,$this->today);
+            $res['info'] = $info;
+            $this->ajaxReturn(array('code' => 200, 'data' => $res));
+        }
+        // 临时额度
+        $existTempQuote = $this->getTempCredit($client_id,$system);
 
         // 应收余额  信用额度
         $ye = $this->getClientFHYE($client_id,$this->today);
@@ -163,7 +173,14 @@ class TempQuoteController extends BaseController
         return $data;
 
     }
-
+    /***
+     * 获取建材信用额度
+     */
+    private  function  getkkline($client,$date){
+        //select line from kk_creditlineconfig where stat='1' and lower<=1 and clientid='467' and date<='2018-05-04' order by date desc,lower desc
+        $line = M('kk_creditlineconfig')->where("stat='1' and lower<=1 and clientid='{$client}' and date<='{$date}'")->order('date desc,lower desc')->find();
+        return $line['line']?$line['line']:'0';
+    }
     /**
      * 获取应收额度 client_qc
      */
@@ -480,18 +497,19 @@ class TempQuoteController extends BaseController
      * @param int $client_id 客户id
      * @return arr   3种临时额度 申请情况
      */
-    public function getQuoteTimes($client_id,$date = ''){
+    public function getQuoteTimes($client_id,$system,$date = ''){
         $date = $date ==''?$this->today:$date;
+
         $tempClient = array('20000','50000','100000');
         $data = array();
         foreach($tempClient as $k=>$v){
             $where = array(
-                "date_format(date,'%Y-%m')" => date("Y-m", strtotime($this->today)),
+                "date_format(date,'%Y-%m')" => date("Y-m", strtotime($date)),
                 'stat' => 1,
                 'line' => $v,
                 'clientid' => $client_id
             );
-            $res = M('yxhb_tempcreditlineconfig')
+            $res = M($system.'_tempcreditlineconfig')
                 ->field('date,sales')
                 ->where($where)
                 ->select();
@@ -508,7 +526,8 @@ class TempQuoteController extends BaseController
         $money = I('post.money');
         $date = I('post.date');
         $copyto_id = I('post.copyto_id');
-        $system = 'yxhb';
+        $system = I('system');
+        if(!$system)$system='yxhb';
         
         // 参数检验
         if($user_id=='' || $reason=='' || $money=='') $this ->ajaxReturn(array('code' => 404,'msg' => '请刷新页面，重新提交！'));
@@ -517,12 +536,14 @@ class TempQuoteController extends BaseController
         // 字数校验
         if(strlen($reason)<5 ||strlen($reason)>200) $this ->ajaxReturn(array('code' => 404,'msg' => '申请理由不能少于5个字，且不能多于200字！'));
 
-        $clientname = $this->getClientname($user_id);
+        $clientname = $this->getClientname($user_id,$system);
         $sales = session('name');
-        $salesid = session('yxhb_id');
+        $salesid = session($system.'_id');
         $dtime=$this->getDatetimeMk(time());
+        
         $yeArr =$this->getClientFHYE($user_id,$this->today);
-        $aid = M('yxhb_creditlineconfig')->field('1')->group('clientid,dtime')->select();
+
+        $aid = M($system.'_creditlineconfig')->field('1')->group('clientid,dtime')->select();
         $aid = count($aid)+1;
 
         $insertData = array(
@@ -541,8 +562,8 @@ class TempQuoteController extends BaseController
             'oline' => $yeArr['line']
         );
         // 表单重复提交
-        if(M('yxhb_creditlineconfig')->autoCheckToken($_POST))$this ->ajaxReturn(array('code' => 404,'msg' => '网络延迟，请勿点击提交按钮！'));
-        $result = M('yxhb_creditlineconfig')->add($insertData);
+        if(M($system.'_creditlineconfig')->autoCheckToken($_POST))$this ->ajaxReturn(array('code' => 404,'msg' => '网络延迟，请勿点击提交按钮！'));
+        $result = M($system.'_creditlineconfig')->add($insertData);
         if(!$result) $this ->ajaxReturn(array('code' => 404,'msg' => '提交失败，请重新尝试！'));
         // 抄送
         $copyto_id = trim($copyto_id,',');
@@ -562,7 +583,8 @@ class TempQuoteController extends BaseController
          $reason = I('post.text');
          $money = I('post.money');
         $copyto_id = I('post.copyto_id');
-        $system = 'yxhb';
+        $system = I('system');
+        if(!$system)$system='yxhb';
         // 参数检验
          if($user_id=='' || $reason=='' || $money=='') $this ->ajaxReturn(array('code' => 404,'msg' => '请刷新页面，重新提交！'));
         
@@ -570,26 +592,29 @@ class TempQuoteController extends BaseController
         if(strlen($reason)<5 ||strlen($reason)>200) $this ->ajaxReturn(array('code' => 404,'msg' => '申请理由不能少于5个字，且不能多于200字！'));
         // 次数校验
          $timeArr = array(5,3,1);
-         $times = $this->getQuoteTimes($user_id);
+         $times = $this->getQuoteTimes($user_id,$system);
          if($timeArr[$money] <= count($times[$money]))$this ->ajaxReturn(array('code' => 404,'msg' => '申请次数已达本月上限！'));
 
          $yxqArr = array('2天','5天','7天');
          $lineArr = array(20000,50000,100000);
 
          $stat =  $money == 0? 1:2;
-         $clientname = $this->getClientname($user_id);
+         $clientname = $this->getClientname($user_id,$system);
          $sales = session('name');
-         $salesid = session('yxhb_id');
+         $salesid = session($system.'_id');
 
          $dtime=$this->getDatetimeMk(time());
 
          $yxq =$yxqArr[$money];
          $line = $lineArr[$money];
-         $yeArr =$this->getClientFHYE($user_id,$this->today);
-         $ye = $yeArr['line']-$yeArr['ysye'];
-         $ed = $this->getTempCredit($user_id);
+         if($system=='yxhb'){
+             $yeArr =$this->getClientFHYE($user_id,$this->today);
+             $ye = $yeArr['line']-$yeArr['ysye'];
+         }else{
+             $ye = I('ye');
+         }
+         $ed = $this->getTempCredit($user_id,$system);
 
-         
          $saveData = array(
              'date'         => $this->today ,
              'clientname'  => $clientname,
@@ -604,9 +629,9 @@ class TempQuoteController extends BaseController
              'ed'           => $ed,
              'yxq'          => $yxq
          );
-         // 表单
-         if(M('yxhb_tempcreditlineconfig')->autoCheckToken($_POST))$this ->ajaxReturn(array('code' => 404,'msg' => '网络延迟，请勿点击提交按钮！'));
-        $result = M('yxhb_tempcreditlineconfig')->add($saveData);
+         // 表单重复提交
+         if(M($system.'_tempcreditlineconfig')->autoCheckToken($_POST))$this ->ajaxReturn(array('code' => 404,'msg' => '网络延迟，请勿点击提交按钮！'));
+        $result = M($system.'_tempcreditlineconfig')->add($saveData);
         if(!$result) $this ->ajaxReturn(array('code' => 404,'msg' => '提交失败，请重新尝试！'));
         // 抄送
         $copyto_id = trim($copyto_id,',');
@@ -633,8 +658,8 @@ class TempQuoteController extends BaseController
     /**
      * 获取用户名
      */
-    private function getClientname($clientid){
-        $clientName = M('yxhb_guest2')->field('g_name')->where('id='.$clientid)->find();
+    private function getClientname($clientid,$system){
+        $clientName = M($system.'_guest2')->field('g_name')->where('id='.$clientid)->find();
         return $clientName['g_name'];
     }
     /**
@@ -643,8 +668,8 @@ class TempQuoteController extends BaseController
      * @param string $date  今天的日期
      * @return integer 临时额度
      */
-    public function getTempCredit($clientid){
-        $sql = "SELECT max(line) as line FROM `yxhb_tempcreditlineconfig` WHERE `clientid` = {$clientid} AND DATEDIFF('{$this->today}',date) <= SUBSTRING(yxq,1) AND `stat` = 1 ORDER BY date desc ";
+    public function getTempCredit($clientid,$system){
+        $sql = "SELECT max(line) as line FROM `{$system}_tempcreditlineconfig` WHERE `clientid` = {$clientid} AND DATEDIFF('{$this->today}',date) <= SUBSTRING(yxq,1) AND `stat` = 1 ORDER BY date desc ";
         $res = M()->query($sql);
         return empty($res[0]['line'])?0:$res[0]['line'];
     }

@@ -40,8 +40,7 @@ class WorkFlowOpTvController extends BaseController {
 	    if (!empty($wfStatus)&&$wfStatus['status']=='end'&&$wfStatus['option']==2) {
 	        $wfClass = new WorkFlowFuncController();
 	        $func = ucfirst($system).$mod_name.'End';
-			$funcRes = $wfClass->$func($id, $system);
-			
+	        $funcRes = $wfClass->$func($id, $system);
 	    }
 
 		$arr[] = array("optiontype"=>$optionType, "wfStatus"=>$wfStatus);

@@ -56,8 +56,8 @@ class WorkFlowController extends BaseController {
       // $applyUser=iconv('UTF-8', 'GBK', $applyUser);
       // $applyUserid=$this->getUserID($applyUser,$db);   
       $boss = D($systemU.'Boss');
-      $applyUserid = $boss->getIDFromName($applyUser);
-      $applyUserwxid = $boss->getWXFromID($applyUserid);
+      // $applyUserid = $boss->getIDFromName($applyUser);
+      $applyUserwxid = $boss->getWXFromID($applyUser);
       //如果审批结果为拒绝
       if($option==1){
         //会签同级+996
@@ -389,17 +389,6 @@ class WorkFlowController extends BaseController {
         $info = $this->WeChat->sendCardMessage($receviers,$title,$proName.$description.$applyerName,$url,$agentid,$flowName,$system);
         return $info;
     }
-
-    // 审批后推送
-
-
-
-
-
-
-
-
-
 
     public function setOthersApply($mod_name, $pro_id, $aid, $stage_id, $others_id, $reason, $applyUserid, $system)
     {

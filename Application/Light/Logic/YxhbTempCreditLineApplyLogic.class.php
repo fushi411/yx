@@ -64,7 +64,7 @@ class YxhbTempCreditLineApplyLogic extends Model {
         $result = array();
         $temp = A('tempQuote');
 
-        $info = $temp->getQuoteTimes($clientid,$date);
+        $info = $temp->getQuoteTimes($clientid,'yxhb',$date);
         $result['two'] = 5-count($info[0]);
         $result['five'] = 3-count($info[1]);
         $result['ten'] = 1-count($info[2]);
