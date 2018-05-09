@@ -4,17 +4,21 @@ use Think\Controller;
 class TempQuoteController extends BaseController
 {
     private $today = null;
-    private $pageArr = '';
+    private $TempPageArr = '';
+    private $CreditPageArr = '';
 
     public function __construct(){
         parent::__construct();
         $this->today = date('Y-m-d',time());
-        $this->pageArr = array(
+        $this->TempPageArr = array(
             array('name' => '环保临时额度','url' => U('Light/TempQuote/tempQuote'),'modname' => 'yxhbTempCreditLineApply'),
+            array('name' => '建材临时额度','url' => U('Light/TempQuote/kktempQuote'),'modname' => 'kkTempCreditLineApply'), 
+        );
+        $this->CreditPageArr = array(
             array('name' => '环保信用额度','url' => U('Light/TempQuote/creditLine'),'modname' => 'yxhbCreditLineApply'),
-            array('name' => '建材临时额度','url' => U('Light/TempQuote/kktempQuote'),'modname' => 'kkTempCreditLineApply'),
             array('name' => '建材信用额度','url' => U('Light/TempQuote/kkcreditLine'),'modname' => 'kkCreditLineApply'),
         );
+
     }
     /**
      * 建材临时额度申请页面
@@ -25,7 +29,7 @@ class TempQuoteController extends BaseController
         // 推送
         $push = GetPush('kk','TempCreditLineApply');
         $this ->assign('push',$push['data']);
-        $this ->assign('type',$this->pageArr);
+        $this ->assign('type',$this->TempPageArr);
         $this ->assign('appflow',json_encode($appflow));
         $this->assign('today',$this->today);
         $this->display('YxhbTempQuoteApply/kkTempQuoteApply');
@@ -41,7 +45,7 @@ class TempQuoteController extends BaseController
         $push = GetPush('kk','CreditLineApply');
 
         $this ->assign('push',$push['data']);
-        $this ->assign('type',$this->pageArr);
+        $this ->assign('type',$this->CreditPageArr);
         $this ->assign('appflow',$appflow);
         $this->assign('today',$this->today);
         $this->display('YxhbTempQuoteApply/kkcreditLine');
@@ -57,7 +61,7 @@ class TempQuoteController extends BaseController
         // 推送
         $push = GetPush('yxhb','TempCreditLineApply');
         $this ->assign('push',$push['data']);
-        $this ->assign('type',$this->pageArr);
+        $this ->assign('type',$this->TempPageArr);
         $this ->assign('appflow',json_encode($appflow));
         $this->assign('today',$this->today);
         $this->display('YxhbTempQuoteApply/yxhbTempQuoteApply');
@@ -72,7 +76,7 @@ class TempQuoteController extends BaseController
         // 推送
         $push = GetPush('yxhb','CreditLineApply');
         $this ->assign('push',$push['data']);
-        $this ->assign('type',$this->pageArr);
+        $this ->assign('type',$this->CreditPageArr);
         $this ->assign('appflow',$appflow);
         $this->assign('today',$this->today);
         $this->display('YxhbTempQuoteApply/yxhbcreditLine');
@@ -646,10 +650,20 @@ class TempQuoteController extends BaseController
             // 发送抄送消息
             D($system.'Appcopyto')->copyTo($copyto_id,'TempCreditLineApply', $result);
         }
+
+
         if($stat == 2)
         {
             $wf = new WorkFlowController();
             $res = $wf->setWorkFlowSV('TempCreditLineApply', $result, $salesid, $system);
+        }else{
+            $mod_name = 'TempCreditLineApply';          
+            $res = M($system.'_appflowtable')->field('condition')->where(array('pro_mod'=>$mod_name.'_push'))->find();
+            if(!empty($res)){
+                $pushArr = json_decode($res['condition'],true);
+                $push_id = $pushArr['two'];
+                D($system.'Appcopyto')->copyTo($push_id, $mod_name, $result,2);
+            }
         };
         $this ->ajaxReturn(array('code' => 200,'msg' => '提交成功' , 'aid' =>$result));
     }

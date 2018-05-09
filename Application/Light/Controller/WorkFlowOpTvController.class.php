@@ -43,7 +43,20 @@ class WorkFlowOpTvController extends BaseController {
 			$funcRes = $wfClass->$func($id, $system);
 			// 用户推送
 			$res = M($system.'_appflowtable')->field('condition')->where(array('pro_mod'=>$mod_name.'_push'))->find();
-			D($system.'Appcopyto')->copyTo($res['condition'], $mod_name, $id,2);
+			if(!empty($res)){
+				$pushArr = json_decode($res['condition'],true);
+				$push_id = $pushArr['push'];
+				
+				$del_arr = M($system.'_appflowproc a')->join($system.'_boss b on b.id=a.per_id')->field('b.wxid')->where(array('a.aid' => $id,'a.mod_name' => $mod_name))->order('a.app_stage desc')->find();
+				$del_id = $del_arr['wxid'];
+				$res = array_search($del_id,$push_id);
+				if($res !== false){
+					$push_id = str_replace($del_id,'',$push_id);
+					$push_id = explode(',',$push_id);
+					$push_id = implode(',',array_filter($push_id));
+				}
+				D($system.'Appcopyto')->copyTo($push_id, $mod_name, $id,2);
+			}
 	    }
 
 		$arr[] = array("optiontype"=>$optionType, "wfStatus"=>$wfStatus);

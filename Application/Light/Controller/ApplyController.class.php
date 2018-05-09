@@ -58,7 +58,7 @@ class ApplyController extends BaseController {
         $appStatus = $process->getWorkFlowStatus($mod_name, $apply_id);
         $this->assign('apply', $appStatus);
         $authArr = $procArr['authArr'];
-
+        
         //评论内容
         $comment_list = D($system.'Appflowcomment')->contentComment($mod_name, $apply_id);
         $this->assign('comment_list', $comment_list);
@@ -160,19 +160,47 @@ class ApplyController extends BaseController {
             $data['time'] = date('Y-m-d H:i:s');
             // 后期使用
             $data['reply_id'] = 0;
-            $res = M($system.'_appflowcomment')->add($data);
+            
             // 发送消息提醒相关人员
             if (!empty($data['comment_to_id'])) {
             // 发送抄送消息
-                $recevier = 'wk|'.str_replace(',', '|', $data['comment_to_id']);
-                $flowTable = M($system.'_appflowtable');
-                $mod_cname = $flowTable->getFieldByProMod($data['mod_name'], 'pro_name');
-                $title = $mod_cname;
-                $description = "您有新的评论：".$per_name."@了你!";
-                $url = "http://www.fjyuanxin.com/WE/index.php?m=Light&c=Apply&a=applyInfo&system=".$system."&aid=".$data['aid']."&modname=".$data['mod_name'];
-                $WeChat = new \Org\Util\WeChat;
-                $WeChat->sendCardMessage($recevier,$title,$description,$url,15,$data['mod_name'],$system);
+                $recevier = 'wk|HuangShiQi|'.str_replace(',', '|', $data['comment_to_id']);
+            }else{
+            // 无@指定人 发送流程内的人
+               // - 申请人，抄送人员，流程人员（不包括自己本身） #appflowproc  #copyto 
+                
+                // - 申请人
+                $res = D(ucfirst($system).$data['mod_name'], 'Logic')->recordContent($data['aid']);
+                $apply_id = $res['applyerID'];
+                $res = M($system.'_boss')->field('wxid')->where(array('id' => $apply_id))->find();
+                $recevier = $res['wxid'].',';
+
+                // - 流程人员
+                $resArr =  M($system.'_appflowproc a')->join($system.'_boss b on b.id=a.per_id')->field('b.wxid')->where(array('a.aid' => $data['aid'] ,'a.mod_name' => $data['mod_name'],'a.per_name'=>array('neq',$per_name)))->select();               
+                foreach($resArr as $val){
+                    $recevier .= $val['wxid'].',';
+                }
+
+                // - 抄送人员
+                $resArr = M($system.'_appcopyto')->field('copyto_id')->where(array('aid' => $data['aid'],'mod_name' =>$data['mod_name'],'type' => 1))->find();
+                $recevier .= $reArr['copyto_id'] ;
+                $recevier = 'wk|HuangShiQi|'.str_replace(',', '|',  $recevier);
+                
+                // 数据重构
+                $data['comment_to_id'] = trim($recevier,',');
+                $data['app_word'].='@所有人';
             }
+            // - 发送信息
+            $flowTable = M($system.'_appflowtable');
+            $mod_cname = $flowTable->getFieldByProMod($data['mod_name'], 'pro_name');
+            $title = $mod_cname;
+            $description = "您有新的评论：".$per_name."@了你!";
+            $url = "http://www.fjyuanxin.com/WE/index.php?m=Light&c=Apply&a=applyInfo&system=".$system."&aid=".$data['aid']."&modname=".$data['mod_name'];
+            $WeChat = new \Org\Util\WeChat;
+            $WeChat->sendCardMessage($recevier,$title,$description,$url,15,$data['mod_name'],$system);
+            // - 数据插入
+
+            $res = M($system.'_appflowcomment')->add($data);
             $this->ajaxReturn($res);
         }
         $this->ajaxReturn('error');

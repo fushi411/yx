@@ -121,16 +121,19 @@ class ProcessController extends Controller
 
 
     public function test(){
-        $system ='kk';
-        $mod_name = 'TempCreditLineApply';
-        $id = 421;
-        $res = M($system.'_appflowtable')->field('condition')->where(array('pro_mod'=>$mod_name.'_push'))->find();
-        if(!empty($res)){
-            $pushArr = json_decode($res['condition'],true);
-            $push_id = $pushArr['push'];
-            $push_id = 'HuangShiQi';
-            D($system.'Appcopyto')->copyTo($push_id, $mod_name, $id,2);
+        $system ='yxhb';
+        $mod_name = 'GuesttjApply';
+        $id = 21;
+        // - 流程人员
+        $name = session('name');
+        $resArr =  M($system.'_appflowproc a')->join($system.'_boss b on b.id=a.per_id')->field('b.wxid')->where(array('a.aid' => $id ,'a.mod_name' => $mod_name,'a.per_name'=>array('neq',$name)))->select();
+        $recevier = '';
+        foreach($resArr as $val){
+            $recevier .= $val['wxid'].',';
         }
+        // - 抄送人员
+        $resArr = M($system.'_appcopyto')->field('copyto_id')->where(array('aid' => $id,'mod_name' =>$mod_name,'type' => 1))->find();
+        $recevier .= $reArr['copyto_id'] ;
         
     }
 

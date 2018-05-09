@@ -48,7 +48,10 @@
         // 为空，返回空数组
         if(empty($res)) return $data;
         $data['receviers'] = $res['condition'];
-        $tempStr = explode(',',$res['condition']);
+        $pushArr = json_decode($res['condition'],true);
+		$push_id = $pushArr['push'];
+        $tempStr = explode(',',$push_id);
+        
         // where 条件拼接
         foreach($tempStr as $k => $v){
             if($k != 0) $where .=' or ';
