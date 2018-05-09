@@ -30,12 +30,15 @@ class KkTempCreditLineApplyLogic extends Model {
     public function recordContent($id)
     {
         $res = $this->record($id);
-        $info = $this->getInfo($res['clientid'],$res['date']);
+        $info = $this->getInfo($res['clientid'],$res['date'],$res['clientname']);
+        $info['flag'] =true;
         $result = array();
         $result['content']['date'] = $res['date'];
-        $clientname = M('yxhb_guest2')->field('g_khjc')->where(array('id' => $res['clientid']))->find();
+        $clientname = M('kk_guest2')->field('g_khjc')->where(array('id' => $res['clientid']))->find();
         $result['content']['clientname'] = $clientname['g_khjc'];
-
+        //计算应收额度
+        if($info['tmpline']-$info['ye']+$res['ed'] >=20000)$info['flag'] =false;
+        $info['ye'] = number_format(-($info['tmpline']-$info['ye']+$res['ed']),2,'.',',')."元";
         $result['content']['ye'] = number_format($res['ye'],2,'.',',')."元";
         $result['content']['ed'] = number_format($res['ed'],2,'.',',')."元";
         $result['content']['line'] = number_format($res['line'],2,'.',',')."元";
@@ -49,7 +52,7 @@ class KkTempCreditLineApplyLogic extends Model {
         return $result;
     }
 
-        /**
+    /**
      * 删除记录
      * @param  integer $id 记录ID
      * @return integer     影响行数
@@ -60,9 +63,9 @@ class KkTempCreditLineApplyLogic extends Model {
         return $this->field(true)->where($map)->setField('stat',0);
     }
 
-    public function getInfo($clientid,$date){
+    public function getInfo($clientid,$date,$name){
         $result = array();
-        $temp = A('tempQuote');
+        $temp = A('TempQuote');
 
         $info = $temp->getQuoteTimes($clientid,'kk',$date);
         $result['two'] = 5-count($info[0]);
@@ -70,8 +73,18 @@ class KkTempCreditLineApplyLogic extends Model {
         $result['ten'] = 1-count($info[2]);
 
         $ye = $temp->getkkline($clientid,$date);
-        $result['ye'] =  number_format($ye['ysye'],2,'.',',')."元";
-        $result['line'] =  number_format($ye['line'],2,'.',',')."元";
+        // 计算应收额度
+        $post_data = array(
+            'name' => $name,
+            'auth' => data_auth_sign($name),
+            'date' => $date
+          );
+        $res = send_post('http://www.fjyuanxin.com/sngl/include/getClientCreditApi.php', $post_data);
+        
+        // $result['ye'] = number_format(-($ye-$res['ye']+$res['tmp']),2,'.',',')."元";
+        $result['ye'] = $res['ye'];
+        $result['line'] =  number_format($ye,2,'.',',')."元"; // 信用额度
+        $result['tmpline'] = $ye;
         return $result;
     }
 
@@ -121,8 +134,8 @@ class KkTempCreditLineApplyLogic extends Model {
      */
     public function getApplyer($id)
     {
-        // $map = array('id' => $id);
-        // return $this->field(true)->where($map)->getField('jbr');
+        $map = array('id' => $id);
+        return $this->field(true)->where($map)->getField('sales');
     }
     
 }

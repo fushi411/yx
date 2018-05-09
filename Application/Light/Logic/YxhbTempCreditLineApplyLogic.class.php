@@ -32,11 +32,14 @@ class YxhbTempCreditLineApplyLogic extends Model {
         $res = $this->record($id);
         $info = $this->getInfo($res['clientid'],$res['date']);
         $result = array();
+        $result['content']['flag']  = false;
         $result['content']['date'] = $res['date'];
         $clientname = M('yxhb_guest2')->field('g_khjc')->where(array('id' => $res['clientid']))->find();
         $result['content']['clientname'] = $clientname['g_khjc'];
-
-        $result['content']['ye'] = number_format($res['ye'],2,'.',',')."元";
+       
+        if($info['flag']) $result['content']['flag'] = true;
+        
+        $result['content']['ye'] = number_format($res['ye'],2,'.',',')."元"; 
         $result['content']['ed'] = number_format($res['ed'],2,'.',',')."元";
         $result['content']['line'] = number_format($res['line'],2,'.',',')."元";
         $result['content']['yxq'] = $res['yxq'];
@@ -70,7 +73,9 @@ class YxhbTempCreditLineApplyLogic extends Model {
         $result['ten'] = 1-count($info[2]);
 
         $ye = $temp->getClientFHYE($clientid,$date);
-        $result['ye'] =  number_format($ye['ysye'],2,'.',',')."元";
+
+        $result['flag'] = -$ye['ysye']<20000?true:false;
+        $result['ye'] =  number_format(-$ye['ysye'],2,'.',',')."元";
         $result['line'] =  number_format($ye['line'],2,'.',',')."元";
         return $result;
     }
@@ -124,8 +129,8 @@ class YxhbTempCreditLineApplyLogic extends Model {
      */
     public function getApplyer($id)
     {
-        // $map = array('id' => $id);
-        // return $this->field(true)->where($map)->getField('jbr');
+        $map = array('id' => $id);
+        return $this->field(true)->where($map)->getField('sales');
     }
 
 

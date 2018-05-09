@@ -72,8 +72,19 @@ class ApplyController extends BaseController {
         $this->assign('isCopyto',$copyArr['isCopyto']);
         $authArr = $copyArr['authArr'];
 
+        //推送内容
+        $copyTo = D($system.'Appcopyto');
+        $copyArr = $copyTo->contentCopyto($mod_name, $apply_id, $authArr,2);
+        $this->assign('readedArrPush',$copyArr['readedArr']);
+        $this->assign('fixed_idPush',$copyArr['fixed_id']);
+        $this->assign('already_cpPush', $copyArr['already_cp']);
+        $this->assign('isCopytoPush',$copyArr['isCopyto']);
+        $authArr = $copyArr['authArr'];
+
         // 抄送标记为已读
-        $copyTo->readCopytoApply($mod_name, $apply_id);
+        $copyTo->readCopytoApply($mod_name, $apply_id,null,1);
+        // 推送标记为已读
+        $copyTo->readCopytoApply($mod_name, $apply_id,null,2);
 
         if (!in_array($wxid, $authArr)) {
             $this->error ( '无查看权限！', U('Light/Index/index',array('system'=>$system)), 2 );

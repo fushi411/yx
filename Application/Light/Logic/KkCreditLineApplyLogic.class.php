@@ -47,7 +47,7 @@ class KkCreditLineApplyLogic extends Model {
                                      'value'=>number_format($res['lower'],2,'.',',')."元",
                                      'type'=>'number'
                                     );
-        $result['content'][] = array('name'=>'信用额度：',
+        $result['content'][] = array('name'=>'申请额度：',
                                      'value'=>number_format($res['line'],2,'.',',')."元",
                                      'type'=>'number'
                                     );
@@ -59,7 +59,7 @@ class KkCreditLineApplyLogic extends Model {
         //                              'value'=>$res['sales'],
         //                              'type'=>'string'
         //                             );
-        $result['content'][] = array('name'=>'备&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;注：',
+        $result['content'][] = array('name'=>'申请理由：',
                                      'value'=>$res['notice'],
                                      'type'=>'text'
                                     );
@@ -68,6 +68,17 @@ class KkCreditLineApplyLogic extends Model {
         $result['applyerName'] = $res['sales'];
         $result['stat'] = $res['stat'];
         return $result;
+    }
+
+    /**
+     * 删除记录
+     * @param  integer $id 记录ID
+     * @return integer     影响行数
+     */
+    public function delRecord($id)
+    {
+        $map = array('aid' => $id);
+        return $this->field(true)->where($map)->setField('stat',0);
     }
 
          /**
@@ -108,16 +119,6 @@ class KkCreditLineApplyLogic extends Model {
     }
 
 
-    /**
-     * 删除记录
-     * @param  integer $id 记录ID
-     * @return integer     影响行数
-     */
-    public function delRecord($id)
-    {
-        // $map = array('id' => $id);
-        // return $this->field(true)->where($map)->setField('stat',0);
-    }
 
     /**
      * 获取申请人名/申请人ID（待定）
@@ -126,8 +127,8 @@ class KkCreditLineApplyLogic extends Model {
      */
     public function getApplyer($id)
     {
-        // $map = array('id' => $id);
-        // return $this->field(true)->where($map)->getField('jbr');
+        $map = array('id' => $id);
+        return $this->field(true)->where($map)->getField('sales');
     }
     
 }

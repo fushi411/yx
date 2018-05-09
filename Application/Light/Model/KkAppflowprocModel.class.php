@@ -6,7 +6,7 @@ use Think\Model;
  * @author 
  */
 
-class YxhbAppflowprocModel extends Model {
+class KkAppflowprocModel extends Model {
 
     /**
      * 获取审批流程记录
@@ -16,15 +16,14 @@ class YxhbAppflowprocModel extends Model {
      */
     public function contentProc($mod_name, $aid, $authArr)
     {
-        $uid = session('yxhb_id');
+        $uid = session('kk_id');
         $resArr = $this->field(true)->where(array('aid'=>$aid, 'mod_name'=>$mod_name, 'app_stat'=>array(array('egt',0), array('lt',3), 'and')))->order('app_stat desc,app_stage asc,approve_time asc')->select();
-
         $isCopyto = 0;
         $isApplyer = 0;
         $isPasser = 0;
         $isRefuse = 0;
         $isFlowBegin = 0;
-        $boss = D('yxhb_boss');
+        $boss = D('kk_boss');
         foreach ($resArr as $k=> $val) {
             if ($val['app_stat']==0 && $val['per_id']==$uid) {
                 $isApplyer = 1;
@@ -74,7 +73,7 @@ class YxhbAppflowprocModel extends Model {
     public function getStepInfo($mod_name, $aid, $uid='')
     {
         if (empty($uid)) {
-            $uid = session('yxhb_id');
+            $uid = session('kk_id');
         }
         $map['mod_name'] = $mod_name;
         $map['aid'] = $aid;

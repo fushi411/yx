@@ -15,8 +15,9 @@ class KkAppcopytoModel extends Model {
      * @param  arry    $authArr 权限数组
      * @return array   摘要数组
      */
-    public function contentCopyto($mod_name, $aid, $authArr)
+    public function contentCopyto($mod_name, $aid, $authArr,$type='')
     {
+        if($type=='')$type=1;
         // 抄送名单
         $already_cp = array();
         $readedArr = array();
@@ -24,7 +25,7 @@ class KkAppcopytoModel extends Model {
         $isCopyto = 0;
         $wxid = session('wxid');
         $boss = D('kk_boss');
-        $cp = $this->field('fixed_copyto_id,copyto_id,from_id,readed_id')->where(array('aid'=>$aid, 'mod_name'=>$mod_name, 'stat'=>1))->select();
+        $cp = $this->field('fixed_copyto_id,copyto_id,from_id,readed_id')->where(array('aid'=>$aid, 'mod_name'=>$mod_name, 'stat'=>1,'type'=>$type))->select();
 
         foreach ($cp as $v) {
           $idArr = explode(',', $v['copyto_id']);
@@ -54,10 +55,10 @@ class KkAppcopytoModel extends Model {
      * 抄送审批记录已读
      * @param  string $mod_name 审批名
      * @param  int $aid      审批记录ID
-     * @param  int $pid      YXHB用户ID
+     * @param  int $pid      kk用户ID
      * @return int           修改影响记录数
      */
-    public function readCopytoApply($mod_name, $aid, $pid='')
+    public function readCopytoApply($mod_name, $aid, $pid='',$type='')
     {
         if (empty($pid)) {
             $pid = session('kk_id');
@@ -65,7 +66,7 @@ class KkAppcopytoModel extends Model {
         $res = 0;
         $wxid = D('kk_boss')->getWXFromID($pid);
         $mergeReader = array();
-        $copytoRes = $this->field('readed_id')->where("mod_name='{$mod_name}' and aid='{$aid}' and stat='1' and find_in_set('{$wxid}', copyto_id)")->select();
+        $copytoRes = $this->field('readed_id')->where("mod_name='{$mod_name}' and aid='{$aid}' and stat='1' and find_in_set('{$wxid}', copyto_id) and type='{$type}'")->select();
         foreach ($copytoRes as $key => $value) {
             $readedArr = explode(',', $value['readed_id']);
             $mergeReader = array_merge($mergeReader, $readedArr);
@@ -75,30 +76,60 @@ class KkAppcopytoModel extends Model {
             $mergeReader = array_unique($mergeReader);
             $readList = implode(',', $mergeReader).','.$wxid;
             $readList = trim($readList, ',');
-            $res = $this->where("mod_name='{$mod_name}' and aid='{$aid}' and stat='1' and find_in_set('{$wxid}', copyto_id)")->setField('readed_id', $readList);
+            $res = $this->where("mod_name='{$mod_name}' and aid='{$aid}' and stat='1' and find_in_set('{$wxid}', copyto_id) and type='{$type}'")->setField('readed_id', $readList);
         }
         return $res;
     }
 
 
-    public function copyTo($cpid, $mod_name, $aid)
+    public function copyTo($cpid, $mod_name, $aid,$type='')
     {
+        if($type=='')$type=1;
         $recevier = str_replace(',', '|', $cpid);
         $flowTable = M('kk_appflowtable');
         $mod_cname = $flowTable->getFieldByProMod($mod_name, 'pro_name');
-        $title = $mod_cname;
+        $title = '建材ERP'.str_replace('表','',$mod_cname);
         $copy_man = session('name');
-        $description = $copy_man."抄送了".$mod_cname."给你!";
-        $url = "http://www.fjyuanxin.com/WE/index.php?m=Light&c=Apply&a=applyInfo&system=kk&aid=".$aid."&modname=".$mod_name;
         $WeChat = new \Org\Util\WeChat;
-        $WeChat->sendCardMessage($recevier,$title,$description,$url,15,$mod_name,'kk');
+        $url = "http://www.fjyuanxin.com/WE/index.php?m=Light&c=Apply&a=applyInfo&system=kk&aid=".$aid."&modname=".$mod_name;    
+        if($type == 1 ){
+            $str = '抄送了';
+            $description = $copy_man.$str.$mod_cname."给你!";
+            $WeChat->sendCardMessage($recevier,$title,$description,$url,15,$mod_name,'kk');
+        }else{
+              $title = str_replace('表','',$mod_cname);
+              $template = "【审批后推送信息】【建材】\n类&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;型：{$title}";
+              $logic = D('Kk'.$mod_name,'Logic');
+              $descriptionData = $logic->getDescription($aid);
+              $description = $this->ReDescription($descriptionData);
+              $template =$template."\n".$description."<a href='".$url."'>点击查看审批详情</a>";
+              $WeChat->sendMessage($recevier,$template,15,'kk');
+        } 
+        
         // 保存抄送消息
         $cpdata['aid'] = $aid;
+        if($type==2){
+            $cpdata['fixed_copyto_id'] = $cpid;
+        }
         $cpdata['copyto_id'] = $cpid;
         $cpdata['from_id'] = session('wxid');
         $cpdata['time'] = date('Y-m-d H:i:s');
         $cpdata['mod_name'] = $mod_name;
+        $cpdata['type'] = $type;
         $insertID = $this->add($cpdata);
         return $insertID;
+    }
+
+    /**
+     *  根据返回值，重组字符串
+     * @param  array $data 重组数组
+     * @return string       description
+     */
+    public function ReDescription($data){
+        $description = '';
+        foreach($data as $k =>$v){
+          $description.=$v['name'].$v['value']."\n";
+        }
+        return $description;
     }
 }

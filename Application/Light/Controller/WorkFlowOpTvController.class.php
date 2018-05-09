@@ -40,7 +40,10 @@ class WorkFlowOpTvController extends BaseController {
 	    if (!empty($wfStatus)&&$wfStatus['status']=='end'&&$wfStatus['option']==2) {
 	        $wfClass = new WorkFlowFuncController();
 	        $func = ucfirst($system).$mod_name.'End';
-	        $funcRes = $wfClass->$func($id, $system);
+			$funcRes = $wfClass->$func($id, $system);
+			// 用户推送
+			$res = M($system.'_appflowtable')->field('condition')->where(array('pro_mod'=>$mod_name.'_push'))->find();
+			D($system.'Appcopyto')->copyTo($res['condition'], $mod_name, $id,2);
 	    }
 
 		$arr[] = array("optiontype"=>$optionType, "wfStatus"=>$wfStatus);

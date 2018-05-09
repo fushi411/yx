@@ -135,5 +135,38 @@ class WorkFlowFuncController extends Controller {
   		$resArr = $res?array("status"=>"success"):array("status"=>"failure");
 		return $resArr;
 	}
+    /**
+     * 临时额度审批通过后调用函数
+     * @param  [integre] $aid [临时额度记录ID]
+     * @return [array]      [状态]
+     */
+    public function KkTempCreditLineApplyEnd($aid)
+    {
+        $res = M('kk_tempcreditlineconfig')->where(array('stat'=>2, 'id'=>$aid))->setField('stat', 1);
+        $resArr = $res?array("status"=>"success"):array("status"=>"failure");
+        return $resArr;
+    }
+    /**
+     * 临时额度审批通过后调用函数
+     * @param  [integre] $aid [临时额度记录ID]
+     * @return [array]      [状态]
+     */
+    public function YxhbCreditLineApplyEnd($aid)
+    {
+        $res = M('yxhb_creditlineconfig')->where(array('stat'=>2, 'aid'=>$aid))->setField('stat', 1);
+        $resArr = $res?array("status"=>"success"):array("status"=>"failure");
+        return $resArr;
+    }
+    /**
+     * 临时额度审批通过后调用函数
+     * @param  [integre] $aid [临时额度记录ID]
+     * @return [array]      [状态]
+     */
+    public function KkCreditLineApplyEnd($aid)
+    {
+        $res = M('kk_tempcreditlineconfig')->where(array('stat'=>2, 'aid'=>$aid))->setField('stat', 1);
+        $resArr = $res?array("status"=>"success"):array("status"=>"failure");
+        return $resArr;
+    }
 // -----END------
 }

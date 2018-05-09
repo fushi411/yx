@@ -13,7 +13,6 @@
   .weui-cells:after {
             border-bottom: 0px solid #fff;
         }
-
         .weui-selet__user {
             width: 2.5em;
             height: 2.5em;
@@ -21,7 +20,6 @@
             margin-right: 16px;
             border-radius: 5px;
         }
-
         .wk-select__user {
             height: 60px;
             width: 52px;
@@ -30,7 +28,14 @@
             align-items: center;
             margin-right: 6px;
         }
-
+        .wk-select__css {
+            height: 100px;
+            width: 52px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-right: 6px;
+        }
         .wk-comment__user {
             height: 60px;
             width: 52px;
@@ -39,48 +44,31 @@
             align-items: center;
             margin-right: 12px;
         }
-
         a:hover {
             text-decoration: none;
         }
-
-        label {
-            font-weight: 400;
-            margin-bottom: 0px;
+        .weui-tabbar{
+            position: fixed;
         }
-
-        .select2-results__option {
-            font-size: 16px;
-        }
-
-        .select2-search__field {
-            line-height: normal;
-        }
-
-        /* end */
-
-        /* textarea 自适应父容器大小 */
-
-        .comment {
-            width: 100%;
-            /*自动适应父布局宽度*/
-            overflow: auto;
-            word-break: break-all;
+        /* textarea 自适应父容器大小 */  
+        .comment {  
+            width: 100%; /*自动适应父布局宽度*/  
+            overflow: auto;  
+            word-break: break-all;  
             margin-top: 5px;
-        }
+        }  
     </style>
 </head>
 
 <body>
     <div class="container" id="container">
-        <div class="page js_show" >
+        <div class="page tabbar js_show" >
             <div class="page__bd" style="height: 100%;">
-                <block name="content_body">
-                    <if condition="($apply.stat eq 0) AND (($isApplyer eq 1) OR ($isApplyUser eq 1) OR ($isPasser eq 1) OR ($isCopyto eq 1))">
+                <if condition="($apply.stat eq 0) AND (($isApplyer eq 1) OR ($isApplyUser eq 1) OR ($isPasser eq 1) OR ($isCopyto eq 1))">
                         <div class="weui-tab">
                             <div class="weui-tab__panel">
                     </if>
-
+                <block name="content_body"> 
                     <div class="weui-panel weui-panel_access">
                         <!-- <div class="weui-panel__hd">审批信息</div> -->
                         <div class="weui-panel__bd">
@@ -142,7 +130,7 @@
                 <block name="process">
                     <div class="weui-panel" style="margin-top: 0px;">
                         <div class="weui-panel__hd" style="font-size: 16px;background-color: #f8f8f8;color:black;padding-top: 10px;">审批流程
-                            <a href="{:U('Light/Process/ApplyProcess',array('modname'=>$mod_name))}">（查看可视化流程）</a> 
+                            <a href="{:U('Light/Process/ApplyProcess',array('modname'=>$mod_name,'system'=>$system))}">（查看可视化流程）</a> 
                         </div>
                         <div class="weui-cells" style="margin-top:0px;">
                             <div class="weui-cell">
@@ -183,33 +171,42 @@
                         <div class="weui-panel__bd">
                             <div class="weui-media-box weui-media-box_small-appmsg" style="padding-bottom: 10px;">
                                 <div class="weui-cells">
-                                    <volist name="process" id="proc">
-                                        <span class="weui-media-box weui-media-box_appmsg" style="    align-items: flex-start;padding-top: 10px;">
-                                            <div class="weui-media-box__hd" style="width: 2.5em;height: 2.5em;">
-                                                <img class="weui-media-box__thumb" src="{$proc.avatar}" alt="" style="border-radius: 5px;">
-                                            </div>
-                                            <div class="weui-media-box__bd">
-                                                <h4 class="weui-media-box__title" style="/*font-weight: 800;*/margin-top: 0px;margin-bottom: 5px;color:grey;">
-                                                    <eq name="proc.app_stat" value="0"> {$proc.per_name}&nbsp;&nbsp;&nbsp;&nbsp;[审批中]</eq>
-                                                    <eq name="proc.app_stat" value="1"> {$proc.per_name}&nbsp;&nbsp;&nbsp;&nbsp;
-                                                        <span style="color:red;">[已退审]</span>
-                                                    </eq>
-                                                    <eq name="proc.app_stat" value="2">
-                                                        <if condition="$proc.app_name eq '已转审'">
-                                                            {$proc.per_name}&nbsp;&nbsp;&nbsp;&nbsp;[已转审]
-                                                            <else/> {$proc.per_name}&nbsp;&nbsp;&nbsp;&nbsp;[已同意]
-                                                        </if>
-                                                    </eq>
-                                                </h4>
-                                                <p class="weui-media-box__desc" style="display: block;overflow: visible; word-break:break-all; word-wrap:break-word;margin-bottom: 0px;color:black;">
-                                                    {$proc.app_word}
-                                                </p>
-                                                <p class="weui-media-box__desc" style="display: block;overflow: visible; word-break:break-all; word-wrap:break-word;font-size: 15px;margin-bottom: 0px;">
-                                                    {$proc.approve_time|substr=2,14}
-                                                </p>
-                                            </div>
-                                        </span>
-                                    </volist>
+                                   
+                                    <if condition="empty($process)">
+                                            <span class="weui-media-box weui-media-box_appmsg" style="    align-items: flex-start;padding-top: 10px;">
+                                                    <h4 class="weui-media-box__title" style="/*font-weight: 800;*/margin-top: 0px;margin-bottom: 5px;color:grey;">
+                                                        无审批记录
+                                                    </h4>
+                                            </span>
+                                        <else/>
+                                        <volist name="process" id="proc">
+                                            <span class="weui-media-box weui-media-box_appmsg" style="    align-items: flex-start;padding-top: 10px;">
+                                                <div class="weui-media-box__hd" style="width: 2.5em;height: 2.5em;">
+                                                    <img class="weui-media-box__thumb" src="{$proc.avatar}" alt="" style="border-radius: 5px;">
+                                                </div>
+                                                <div class="weui-media-box__bd">
+                                                    <h4 class="weui-media-box__title" style="/*font-weight: 800;*/margin-top: 0px;margin-bottom: 5px;color:grey;">
+                                                        <eq name="proc.app_stat" value="0"> {$proc.per_name}&nbsp;&nbsp;&nbsp;&nbsp;[审批中]</eq>
+                                                        <eq name="proc.app_stat" value="1"> {$proc.per_name}&nbsp;&nbsp;&nbsp;&nbsp;
+                                                            <span style="color:red;">[已退审]</span>
+                                                        </eq>
+                                                        <eq name="proc.app_stat" value="2">
+                                                            <if condition="$proc.app_name eq '已转审'">
+                                                                {$proc.per_name}&nbsp;&nbsp;&nbsp;&nbsp;[已转审]
+                                                                <else/> {$proc.per_name}&nbsp;&nbsp;&nbsp;&nbsp;[已同意]
+                                                            </if>
+                                                        </eq>
+                                                    </h4>
+                                                    <p class="weui-media-box__desc" style="display: block;overflow: visible; word-break:break-all; word-wrap:break-word;margin-bottom: 0px;color:black;">
+                                                        {$proc.app_word}
+                                                    </p>
+                                                    <p class="weui-media-box__desc" style="display: block;overflow: visible; word-break:break-all; word-wrap:break-word;font-size: 15px;margin-bottom: 0px;">
+                                                        {$proc.approve_time|substr=2,14}
+                                                    </p>
+                                                </div>
+                                            </span>
+                                        </volist>
+                                    </if>
                                 </div>
                             </div>
                         </div>
@@ -227,26 +224,34 @@
                                             <div class="weui-uploader">
                                                 <div class="weui-uploader__bd">
                                                     <ul class="weui-uploader__files" style="margin-bottom: 0px;">
-                                                        <volist name="already_cp" id="acp">
-                                                            <li class="weui-uploader__file wk-select__css" id="{$acp.id}"  style="height: 130px; box-sizing: border-box;display:flex; flex-direction:column; justify-content:center;">
-                                                                <if condition="in_array($acp['id'],$fixed_id)">
-                                                                    <span style="margin-right: 6px;font-size: 14px;">[固定]</span>
-                                                                    <else/>
-                                                                    <span style="margin-right: 6px;font-size: 14px;">[手动]</span>
-                                                                </if>
-                                                                <if condition="$acp.url eq ''">
-                                                                    <img src="__PUBLIC__/i/defaulthead.png" class="weui-selet__user" style="margin-bottom: 0px;margin-right: 6px;" />
-                                                                    <else/>
-                                                                    <img src="{$acp.url}" class="weui-selet__user" style="margin-bottom: 0px;margin-right: 6px;" />
-                                                                </if>
-                                                                <span style="margin-right: 6px;font-size: 14px;">{$acp.name}</span>
-                                                                <if condition="in_array($acp['id'],$readedArr)">
-                                                                    <span style="margin-right: 6px;font-size: 14px;color: green;">[已读]</span>
-                                                                    <else/>
-                                                                    <span style="margin-right: 6px;font-size: 14px;color: red;">[未读]</span>
-                                                                </if>
+                                                        <if condition="empty($already_cp)">
+                                                            <li>
+                                                                    <h4 class="weui-media-box__title" style="/*font-weight: 800;*/margin-top: 0px;margin-bottom: 5px;color:grey;">
+                                                                    无抄送人
+                                                                    </h4>
                                                             </li>
-                                                        </volist>
+                                                            <else/>
+                                                            <volist name="already_cp" id="acp">
+                                                                <li class="weui-uploader__file wk-select__css" id="{$acp.id}"  style="height: 130px; box-sizing: border-box;display:flex; flex-direction:column; justify-content:center;">
+                                                                    <if condition="in_array($acp['id'],$fixed_id)">
+                                                                        <span style="margin-right: 6px;font-size: 14px;">[固定]</span>
+                                                                        <else/>
+                                                                        <span style="margin-right: 6px;font-size: 14px;">[手动]</span>
+                                                                    </if>
+                                                                    <if condition="$acp.url eq ''">
+                                                                        <img src="__PUBLIC__/i/defaulthead.png" class="weui-selet__user" style="margin-bottom: 0px;margin-right: 6px;" />
+                                                                        <else/>
+                                                                        <img src="{$acp.url}" class="weui-selet__user" style="margin-bottom: 0px;margin-right: 6px;" />
+                                                                    </if>
+                                                                    <span style="margin-right: 6px;font-size: 14px;">{$acp.name}</span>
+                                                                    <if condition="in_array($acp['id'],$readedArr)">
+                                                                        <span style="margin-right: 6px;font-size: 14px;color: green;">[已读]</span>
+                                                                        <else/>
+                                                                        <span style="margin-right: 6px;font-size: 14px;color: red;">[未读]</span>
+                                                                    </if>
+                                                                </li>
+                                                            </volist>
+                                                        </if>
                                                     </ul>
                                                     <eq name="isApplyer" value="1">
                                                         <eq name="apply.state" value="1">
@@ -269,13 +274,79 @@
                         </div>
                     </div>
                 </block>
-
+                <block name="push">
+                        <div class="weui-panel" style="margin-top: 0px;">
+                            <div class="weui-panel__hd" style="font-size: 16px;background-color: #f8f8f8;color:black;padding-top: 10px;">推送<span style="color: #f12e2e">（审批通过后群发推送人）</span></div>
+                            <div class="weui-panel__bd">
+                                <div class="weui-media-box weui-media-box_small-appmsg" style="padding-bottom: 10px;">
+                                    <div class="weui-cells" style="margin-top:0px;">
+                                        <div class="weui-cell" style="padding-top: 5px;padding-bottom: 5px;border-bottom: 1px solid #f8f8f8;">
+                                            <div class="weui-cell__bd">
+                                                <div class="weui-uploader">
+                                                    <div class="weui-uploader__bd" >
+                                                        <ul class="weui-uploader__files" id="selectUser" style="margin-bottom: 0px;">
+                                                            <if condition="empty($already_cpPush)">
+                                                                    <li>
+                                                                        <h4 class="weui-media-box__title" style="/*font-weight: 800;*/margin-top: 0px;margin-bottom: 5px;color:grey;">
+                                                                        无推送人
+                                                                        </h4>
+                                                                    </li>
+                                                                    <else/>
+                                                                    <volist name="already_cpPush" id="acp">
+                                                                        <li class="weui-uploader__file wk-select__css" id="{$acp.id}" style="height: 100px;">
+                                                                            <if condition="in_array($acp['id'],$fixed_idPush)">
+                                                                                <span style="margin-right: 6px;font-size: 14px;">[固定]</span>
+                                                                                <else/>
+                                                                                <span style="margin-right: 6px;font-size: 14px;">[手动]</span>    
+                                                                            </if> 
+                                                                            <if condition="$acp.url eq ''">
+                                                                                <img src="__PUBLIC__/i/defaul.png" class="weui-selet__user" style="margin-bottom: 0px;margin-right: 6px;" />
+                                                                                <else/>
+                                                                                <img src="{$acp.url}" class="weui-selet__user" style="margin-bottom: 0px;margin-right: 6px;" />
+                                                                            </if>
+                                                                            <span style="margin-right: 6px;font-size: 14px;">{$acp.name}</span>
+                                                                            
+                                                                            <if condition="in_array($acp['id'],$readedArrPush)">
+                                                                                <span style="margin-right: 6px;font-size: 14px;color: green;">[已读]</span>
+                                                                                <else/>
+                                                                                <span style="margin-right: 6px;font-size: 14px;color: red;">[未读]</span>
+                                                                            </if>  
+                                                                        </li>
+                                                                    </volist>
+                                                            </if>
+                                                        </ul>
+                                                        <eq name="isApplyer" value="1">
+                                                            <eq name="apply.state" value="1">
+                                                            
+                                                                <div class="weui-uploader__input-box" style="width: 2.5em;height: 2.5em;margin-right: 0px;margin-bottom: 0px;margin-top:20px;">
+                                                                    <input id="uploaderInput" class="weui-uploader__input" type="button" name="copyto" data-toggle="modal" data-target="#myModal" readonly />
+                                                                    <input type="hidden" name="copyto_id" id="copyto_id">
+                                                                </div>
+                                                                            
+                                                            </eq>
+                                                        </eq> 
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </block>
                 <block name="comment">
                     <div class="weui-panel" style="margin-top: 0px;">
                         <div class="weui-panel__hd" style="font-size: 16px;background-color: #f8f8f8;color:black;padding-top: 10px;">评论<span style="color: #f12e2e">（流程及抄送人员均可评论或@指定人）</span></div>
                         <div class="weui-panel__bd">
                             <div class="weui-media-box weui-media-box_small-appmsg" style="padding-bottom: 10px;">
                                 <div class="weui-cells">
+                                    <if condition="empty($comment_list)">
+                                            <span class="weui-media-box weui-media-box_appmsg" style="    align-items: flex-start;padding-top: 10px;">
+                                                        <h4 class="weui-media-box__title" style="/*font-weight: 800;*/margin-top: 0px;margin-bottom: 5px;color:grey;">
+                                                        无评论
+                                                        </h4>
+                                                    </span>
+                                            <else/>
                                     <volist name="comment_list" id="clist">
                                         <span class="weui-media-box weui-media-box_appmsg" style="    align-items: flex-start;padding-top: 10px;">
                                             <div class="weui-media-box__hd" style="width: 2.5em;height: 2.5em;">
@@ -295,18 +366,18 @@
                                                                 <span style="color:grey;">（2小时内）</span>删除</span>
                                                         </eq>
                                                     </eq>
-
                                                 </p>
-
                                             </div>
                                         </span>
                                     </volist>
+                                    </if>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </block>
-
+                
+                
                 <block name="apply">
                     <eq name="isApplyer" value="1">
                         <eq name="apply.stat" value="0">
@@ -347,7 +418,7 @@
                 <block name="operation">
                     <if condition="(($apply.stat eq 0)) AND (($isApplyer eq 1) OR ($isApplyUser eq 1) OR ($isPasser eq 1) OR ($isCopyto eq 1))">
                         </div>
-                        <div class="weui-tabbar" style="padding-top: 8px;position: fixed;">
+                        <div class="weui-tabbar" style="padding-top: 8px;/*position: fixed;*/">
                             <a href="#" class="weui-tabbar__item" style="text-decoration: none;">
                                 <!--  <span style="display: inline-block;position: relative;">
                         <span class="glyphicon glyphicon-align-left" aria-hidden="true"></span>

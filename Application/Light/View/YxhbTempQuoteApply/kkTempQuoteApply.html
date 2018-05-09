@@ -594,8 +594,8 @@
             },
             success: function (res) {
                 var  classNmae = '';
-                var tmpNum = res['tmp'] == ''? 0 : res['tmp'];// 临时额度
-                var yeNum  = res['ye']  == ''? 0 : res['ye'];// 客户余额   发货的=余额+临时
+                var tmpNum = res['tmp'] == ''? 0 : parseFloat(res['tmp']);// 临时额度
+                var yeNum  = res['ye']  == ''? 0 : parseFloat(res['ye']);// 客户余额   发货的=余额+临时
                 $('#khye').val(yeNum);
                 if (-(line-yeNum+tmpNum)<20000) classNmae = 'redColor';
 
@@ -604,7 +604,7 @@
                 if ((tmpNum+yeNum) >= 20000) {
                     $iosDialog2.fadeIn(200);
                 }
-                
+                // console.log(res);
                 exist.val(formatMoney(tmpNum,2));
                 ye.val(formatMoney(tmpNum+yeNum,2));
                 ysye.val(formatMoney(-(line+tmpNum-yeNum),2));

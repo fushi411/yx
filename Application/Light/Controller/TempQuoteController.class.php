@@ -71,7 +71,6 @@ class TempQuoteController extends BaseController
         $appflow = GetAppFlow('yxhb','CreditLineApply');
         // 推送
         $push = GetPush('yxhb','CreditLineApply');
-
         $this ->assign('push',$push['data']);
         $this ->assign('type',$this->pageArr);
         $this ->assign('appflow',$appflow);
@@ -176,7 +175,7 @@ class TempQuoteController extends BaseController
     /***
      * 获取建材信用额度
      */
-    private  function  getkkline($client,$date){
+    public  function  getkkline($client,$date){
         //select line from kk_creditlineconfig where stat='1' and lower<=1 and clientid='467' and date<='2018-05-04' order by date desc,lower desc
         $line = M('kk_creditlineconfig')->where("stat='1' and lower<=1 and clientid='{$client}' and date<='{$date}'")->order('date desc,lower desc')->find();
         return $line['line']?$line['line']:'0';
@@ -540,9 +539,14 @@ class TempQuoteController extends BaseController
         $sales = session('name');
         $salesid = session($system.'_id');
         $dtime=$this->getDatetimeMk(time());
+        if($system =='yxhb'){
+            $yeArr =$this->getClientFHYE($user_id,$this->today);
+            $oline = $yeArr['line'];
+        }else{
+            $yeArr= $this->getkkline($user_id,$this->today);
+            $oline = $yeArr;
+        }
         
-        $yeArr =$this->getClientFHYE($user_id,$this->today);
-
         $aid = M($system.'_creditlineconfig')->field('1')->group('clientid,dtime')->select();
         $aid = count($aid)+1;
 
@@ -559,7 +563,7 @@ class TempQuoteController extends BaseController
             'dtime' => $dtime,
             'notice' => $reason,
             'line' => $money,
-            'oline' => $yeArr['line']
+            'oline' => $oline
         );
         // 表单重复提交
         if(M($system.'_creditlineconfig')->autoCheckToken($_POST))$this ->ajaxReturn(array('code' => 404,'msg' => '网络延迟，请勿点击提交按钮！'));
@@ -608,8 +612,9 @@ class TempQuoteController extends BaseController
          $yxq =$yxqArr[$money];
          $line = $lineArr[$money];
          if($system=='yxhb'){
+             $existTempQuote = $this->getTempCredit($user_id,$system);
              $yeArr =$this->getClientFHYE($user_id,$this->today);
-             $ye = $yeArr['line']-$yeArr['ysye'];
+             $ye = $yeArr['line']-$yeArr['ysye']+$existTempQuote;
          }else{
              $ye = I('ye');
          }
@@ -629,6 +634,7 @@ class TempQuoteController extends BaseController
              'ed'           => $ed,
              'yxq'          => $yxq
          );
+         
          // 表单重复提交
          if(M($system.'_tempcreditlineconfig')->autoCheckToken($_POST))$this ->ajaxReturn(array('code' => 404,'msg' => '网络延迟，请勿点击提交按钮！'));
         $result = M($system.'_tempcreditlineconfig')->add($saveData);

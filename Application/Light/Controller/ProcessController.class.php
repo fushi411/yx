@@ -31,7 +31,7 @@ class ProcessController extends Controller
                         $func = 'getApplyProcess';
         }
         $temp['data'] = $this->$func($proData);
-        $authGroup =  $this->getAuthGroup($pro_mod);
+        $authGroup =  $this->getAuthGroup($system,$pro_mod);
         $this->assign('group',$authGroup);
         $this->assign('data',$proData);
         $this->assign('show',$temp);
@@ -44,13 +44,13 @@ class ProcessController extends Controller
      * @param string $type 类型
      * @return array  权限组及其成员
      */
-    private function getAuthGroup($type=''){
+    private function getAuthGroup($system,$type=''){
         $reArr = array(
             'group'   => '暂无',
             'leaguer' => '暂无'
         );
 
-        $res = M('auth_rule')->field('id')->where(array('title' => array('like',$type.'|%')))->find();
+        $res = M('auth_rule')->field('id')->where(array('title' => array('like',$system.$type.'|%')))->find();
         if(!$res) return $reArr; // ---都无权限
         
         $group = M('auth_group')->field('id,title')->where(array('rules' => array('like',"%{$res['id']}%")))->select();
@@ -68,7 +68,7 @@ class ProcessController extends Controller
 
         $leaguer = M('auth_group_access a')
                     ->field('b.name')
-                    ->join('yxhb_boss b on a.uid=b.wxid')
+                    ->join($system.'_boss b on a.uid=b.wxid')
                     ->where($where)
                     ->group('a.uid')
                     ->select();
@@ -121,12 +121,17 @@ class ProcessController extends Controller
 
 
     public function test(){
-        $wx = new \Org\Util\WeChat;
-
-        $info = $wx->sendCardMessage('HuangShiQi','测试通过','中间显示内容？','123',15,'TempCreditLineApply','yxhb');
-
-        // $push = GetPush('TempCreditLineApply');
-    
+        $system ='kk';
+        $mod_name = 'TempCreditLineApply';
+        $id = 421;
+        $res = M($system.'_appflowtable')->field('condition')->where(array('pro_mod'=>$mod_name.'_push'))->find();
+        if(!empty($res)){
+            $pushArr = json_decode($res['condition'],true);
+            $push_id = $pushArr['push'];
+            $push_id = 'HuangShiQi';
+            D($system.'Appcopyto')->copyTo($push_id, $mod_name, $id,2);
+        }
+        
     }
 
 }

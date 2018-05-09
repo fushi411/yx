@@ -63,7 +63,7 @@ class WorkFlowController extends BaseController {
         //会签同级+996
         $is_done3 = $appflowproc->refuse($flowName, $id, $nowStepArr['app_stage']);
         // $content = $applyUser.iconv('UTF-8', 'GBK', '您好,您在建材ERP系统中有一个<').$tableStepArr['pro_name'].iconv('UTF-8', 'GBK', '>被拒绝');
-        $msgInfo = $this->sendApplyMsg($flowName, $id, $pid, $applyUserid, $system, 'refuse');
+        $msgInfo = $this->sendApplyMsg($flowName, $id, $pid, $applyUserwxid, $system, 'refuse');
 
         $resArr = array(
                     "option" => $option,
@@ -78,8 +78,8 @@ class WorkFlowController extends BaseController {
           if($tableStepArr['stage_next']!=0){
             $stageID = $tableStepArr['stage_next'];
             //没有下级插入记录，可能是最后一个条件不满足
-            if(!$this->nextStep($flowName,$id,$stageID,$applyUserid,$system)){
-              $msgInfo = $this->sendApplyMsg($flowName, $id, $pid, $applyUserid, $system, 'pass');
+            if(!$this->nextStep($flowName,$id,$stageID,$applyUserwxid,$system)){
+              $msgInfo = $this->sendApplyMsg($flowName, $id, $pid, $applyUserwxid, $system, 'pass');
 
               $resArr = array(
                     "option" => $option,
@@ -94,7 +94,7 @@ class WorkFlowController extends BaseController {
                         );
             }
           } else {
-            $msgInfo = $this->sendApplyMsg($flowName, $id, $pid, $applyUserid, $system, 'pass');
+            $msgInfo = $this->sendApplyMsg($flowName, $id, $pid, $applyUserwxid, $system, 'pass');
             $resArr = array(
                     "option" => $option,
                     "status" => "end",
@@ -141,9 +141,9 @@ class WorkFlowController extends BaseController {
               //echo "cons_array:<br>";
               //var_dump($cons_array);
               $con_query="SELECT 1 from ".$cons_array['table']." WHERE id=$id ".$cons_array['conditions'];
-              $db->SetQuery($con_query);
-              $db->Execute();
-              if($db->GetTotalRow()){
+              $res = M()->query($con_query);
+              $count=count($res);
+              if($count){
                 $con_flag*=1; //满足条件
               } else {
                 $con_flag*=0;//不满足条件
@@ -346,6 +346,7 @@ class WorkFlowController extends BaseController {
 
     public function sendApplyCardMsg($flowName, $id, $pid, $applyerid, $system, $type='', $subTitle='')
     {
+        $systemName = array('kk'=>'建材', 'yxhb'=>'环保');
       // 微信发送
         $flowTable = M($system.'_appflowtable');
         $mod_cname = $flowTable->getFieldByProMod($flowName, 'pro_name');
