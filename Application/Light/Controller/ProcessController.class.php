@@ -11,6 +11,7 @@ class ProcessController extends Controller
     /**
      * 流程审批详情页面
      * @param string $pro_mod 流程名 
+     * 推送可视化页面
      */
     public function ApplyProcess(){
         $pro_mod = I('modname');
@@ -119,22 +120,15 @@ class ProcessController extends Controller
         return $temp;
     }
 
+     /**
+     * 推送可视化页面
+     */
+    // public function PushProcess(){
+        
+    // }
 
-    public function test(){
-        $system ='yxhb';
-        $mod_name = 'GuesttjApply';
-        $id = 21;
-        // - 流程人员
-        $name = session('name');
-        $resArr =  M($system.'_appflowproc a')->join($system.'_boss b on b.id=a.per_id')->field('b.wxid')->where(array('a.aid' => $id ,'a.mod_name' => $mod_name,'a.per_name'=>array('neq',$name)))->select();
-        $recevier = '';
-        foreach($resArr as $val){
-            $recevier .= $val['wxid'].',';
-        }
-        // - 抄送人员
-        $resArr = M($system.'_appcopyto')->field('copyto_id')->where(array('aid' => $id,'mod_name' =>$mod_name,'type' => 1))->find();
-        $recevier .= $reArr['copyto_id'] ;
+
+    private function test(){
         
     }
-
 }

@@ -386,9 +386,37 @@
                                 <div class="weui-panel__bd">
                                     <div class="weui-cell">
                                         <div class="weui-cell__bd">
-                                            <textarea class="weui-textarea" placeholder="请输入审批意见（必填）" rows="3" id="comment" style="font-size: 1.2em"></textarea>
-                                            <div class="weui-textarea-counter"></div>
+                                            <textarea class="weui-textarea" placeholder="请输入审批意见（必填）;
+审核意见可@指定人;
+无指定默认@所有人（含抄送）;" rows="3" id="comment" style="font-size: 1.2em"></textarea>
+                                            <div class="weui-textarea-counter">
+                                                <!-- 指定@ -->
+                                                <div class="weui-tabbar" style="position: initial;">
+                                                    <a href="#" class="weui-tabbar__item" style="text-decoration: none;">
+                                                        <p class="weui-tabbar__label" style="font-size: 15px;color:black;" id="btn-sp">
+                                                            <span class="glyphicon" aria-hidden="true" style="margin-right: 5px;"></span>@ 指定人</p>
+                                                    </a>
+                                                </div>
+                                                <div class="page js_show" id="approve_at" style="position: relative;display: none;">
+                                                    <div class="page__bd">
+                                                        <div class="weui-cells" id="" style="margin-top: 5px;margin-bottom: 5px;">
+                                                            <div class="weui-uploader">
+                                                                <div class="weui-uploader__bd" style="margin-right: 0px;margin-bottom: 0px;padding-top: 12px;">
+                                                                    <ul class="weui-uploader__files" id="selectapprovetUser" style="margin-bottom: 0px;">
+                                                                    </ul>
+                                                                    <input type="hidden" name="approve_to_id" id="approve_to_id">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                        
+                                                        <div class="weui-cells searchbar-result" id="approveSearchResult" style="margin-top: 0px;">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <!-- end   指定@ -->
+                                            </div>
                                         </div>
+                                        
                                     </div>
                                     <div class="button-sp-area" id="apply-area" style="margin-bottom: 20px;display: flex;flex-direction: row;width: 100%;justify-content: space-around;align-items: baseline;">
                                         <a href="javascript:;" id="apply-agree" class="weui-btn weui-btn_primary" style="width: 40%">同意</a>
@@ -529,7 +557,9 @@
                     <div class="modal-body" id="select_content" style="padding-top: 0px;padding-bottom: 0px;">
                         <div class="page js_show" style="position: relative;">
                             <div class="page__bd">
-                                <textarea name="comment_content" id="comment_content" class="comment" data-aid="{$aid}" placeholder="请输入评论内容" rows="5" cols="30"></textarea> {__TOKEN__}
+                                <textarea name="comment_content" id="comment_content" class="comment" data-aid="{$aid}" placeholder="请输入评论内容;
+评论内容可@指定人;
+无指定默认@所有人（含抄送）;" rows="5" cols="30"></textarea> {__TOKEN__}
                             </div>
                         </div>
                         <div class="weui-tabbar" style="padding-top: 8px;position: initial;">
@@ -548,20 +578,7 @@
                         </div>
                         <div class="page js_show" id="comment_at" style="position: relative;display: none;">
                             <div class="page__bd">
-                                <div class="weui-search-bar" id="commentSearchBar">
-                                    <form class="weui-search-bar__form">
-                                        <div class="weui-search-bar__box">
-                                            <i class="weui-icon-search"></i>
-                                            <input type="search" class="weui-search-bar__input" id="commentSearchInput" placeholder="输入姓名或拼音首字母搜索" required/>
-                                            <a href="javascript:" class="weui-icon-clear" id="commentSearchClear"></a>
-                                        </div>
-                                        <label class="weui-search-bar__label" id="commentSearchText">
-                                            <i class="weui-icon-search"></i>
-                                            <span>输入姓名或拼音首字母搜索</span>
-                                        </label>
-                                    </form>
-                                    <a href="javascript:" class="weui-search-bar__cancel-btn" id="commentSearchCancel">取消</a>
-                                </div>
+                                
 
                                 <div class="weui-cells" id="" style="margin-top: 5px;margin-bottom: 5px;">
                                     <div class="weui-uploader">
@@ -647,6 +664,18 @@
                     </div>
                 </div>
             </div>
+            <div class="js_dialog" id="iosDialog_approve_del" style="display: none;">
+                    <div class="weui-mask"></div>
+                    <div class="weui-dialog">
+                        <div class="weui-dialog__hd">
+                            <strong class="weui-dialog__title">是否删除审批评论人</strong>
+                        </div>
+                        <div class="weui-dialog__ft">
+                            <a href="javascript:;" onclick="dialog_approve_del_close()" class="weui-dialog__btn weui-dialog__btn_default">取消</a>
+                            <a href="javascript:;" onclick="dialog_approve_del_confirm()" class="weui-dialog__btn weui-dialog__btn_primary">确认</a>
+                        </div>
+                    </div>
+                </div>
             <div class="js_dialog" id="iosDialog_comment_record_del" style="display: none;">
                 <div class="weui-mask"></div>
                 <div class="weui-dialog">
@@ -680,6 +709,7 @@
     }
     // Confirm dialog
     function dialog_comment_del_confirm() {
+
         var id = $li_dom_comment.attr("id");
         // console.log(id);
         var ids = $("#comment_to_id").val() + ",";
@@ -694,6 +724,28 @@
         $("#comment_to_id").val(id_str);
         $li_dom_comment.remove();
         $("#iosDialog_comment_del").fadeOut(100);
+    }
+    // Close dialog
+    function dialog_approve_del_close() {
+        $("#iosDialog_approve_del").fadeOut(100);
+    }
+    // Confirm dialog
+    function dialog_approve_del_confirm() {
+
+        var id = $li_dom_comment.attr("id");
+        // console.log(id);
+        var ids = $("#approve_to_id").val() + ",";
+        var old_ids_arr = ids.split(",");
+        var id_str = '';
+        var location = $.inArray(id, old_ids_arr);
+        // // console.log(old_name_arr);
+        if (location >= 0) {
+            var repl_id = ',' + id + ',';
+            id_str = ids.replace(repl_id, ',');
+        }
+        $("#approve_to_id").val(id_str);
+        $li_dom_comment.remove();
+        $("#iosDialog_approve_del").fadeOut(100);
     }
     // Close dialog
     function dialog_close() {
@@ -833,7 +885,6 @@
                     "id": id
                 }, function (data) {
                     $('#searchResult').empty();
-                    // console.log(data);
                     if (data == '') {
                         $('#searchResult').append(noresult);
                     } else {
@@ -911,8 +962,9 @@
             var copyto_id = $("#copyto_id").val();
             var id = $("#aid").val();
             var hash = $(":input[name='__hash__']").val();
-            // console.log(apply_user);
-
+            var approve_id = $("#approve_to_id").val();
+             //console.log(approve_id);
+           
             // 审批类型
             if (type == "apply-agree") {
                 option = 2;
@@ -926,6 +978,7 @@
                 dataType: "json",
                 data: {
                     id: id,
+                    approve_id:approve_id,
                     mod_name: "{$mod_name}",
                     system: "{$system}",
                     apply_user: apply_user, //中文申请人姓名，用于发送审批结果 
@@ -1018,19 +1071,20 @@
             });
         });
 
-        // @按钮
-        $("#btn-at").on("click", function () {
-            $("#comment_at").toggle(200);
-            if ($("#comment_at").css('display') != 'none') {
+ 
 
-            }
-        });
         // select comment user
         $("#commentSearchResult").on("click", ".select-comment-user", function () {
             var id = $(this).attr('data-id');
             var uid = $(this).attr('data-uid');
             var name = $(this).attr('data-name');
             var img = $(this).attr('data-img');
+            // 重复点击
+            var ids = $("#comment_to_id").val() + ",";
+            var old_ids_arr = ids.split(",");
+            if($.inArray(id,old_ids_arr)!=-1){
+                return false;
+            }
             var ids = $("#comment_to_id").val() + "," + id;
             var comment_content = $("#comment_content").val();
             var new_comment_content = "";
@@ -1043,10 +1097,39 @@
             $("#selectCommentUser").append($(tmpl.replace('#url#', img)));
             $("#comment_to_id").val(ids);
         });
+        
+        $("#approveSearchResult").on("click", ".select-comment-user", function () {
+            var id = $(this).attr('data-id');
+            var uid = $(this).attr('data-uid');
+            var name = $(this).attr('data-name');
+            var img = $(this).attr('data-img');
+            // 重复点击
+            var ids = $("#approve_to_id").val() + ",";
+            var old_ids_arr = ids.split(",");
+            if($.inArray(id,old_ids_arr)!=-1){
+                return false;
+            }
+            var ids = $("#approve_to_id").val() + "," + id;
+            var comment_content = $("#approve_content").val();
+            var new_comment_content = "";
+            // new_comment_content = comment_content+'@'+name;
+            // $("#comment_content").val(new_comment_content);
+            var tmpl = '<li class="weui-uploader__file wk-comment__user" id="#id#" style="margin-bottom:12px;height:90px;"><img src="#url#" class="weui-selet__user" style="margin-bottom: 0px;margin-right: 6px;" /><span style="margin-right: 6px;font-size: 14px;">#name#</span><span class="weui-badge" style="position: relative;top: -5.8em;right: -1.4em;">X</span></li>';
+            // console.log(id);
+            tmpl = tmpl.replace('#id#', id);
+            tmpl = tmpl.replace('#name#', name);
+            $("#selectapprovetUser").append($(tmpl.replace('#url#', img)));
+            $("#approve_to_id").val(ids);
+        });
+
         // delete comment user
         $("#selectCommentUser").on("click", ".wk-comment__user", function () {
             $li_dom_comment = $(this);
             $("#iosDialog_comment_del").fadeIn(200);
+        });
+        $("#selectapprovetUser").on("click", ".wk-comment__user", function () {
+            $li_dom_comment = $(this);
+            $("#iosDialog_approve_del").fadeIn(200);
         });
         // delete comment record
         $(".comment_del").on("click", function () {
@@ -1100,75 +1183,60 @@
         });
 
         // 评论搜索框
-        var $commentSearchBar = $('#commentSearchBar'),
+        var //$commentSearchBar = $('#commentSearchBar'),
             $commentSearchResult = $('#commentSearchResult'),
-            $commentSearchText = $('#commentSearchText'),
-            $commentSearchInput = $('#commentSearchInput'),
-            $commentSearchClear = $('#commentSearchClear'),
+            //$commentSearchText = $('#commentSearchText'),
+            //$commentSearchInput = $('#commentSearchInput'),
+            //$commentSearchClear = $('#commentSearchClear'),
             $commentSearchCancel = $('#commentSearchCancel');
-
-        function hideCommentSearchResult() {
-            $commentSearchResult.hide();
-            $commentSearchInput.val('');
-        }
-        function cancelCommentSearch() {
-            hideCommentSearchResult();
-            $commentSearchBar.removeClass('weui-search-bar_focusing');
-            $commentSearchText.show();
-        }
-        function emptyCommentSearchResult() {
-            $commentSearchResult.empty();
-        }
-        $commentSearchText.on('click', function () {
-            $commentSearchBar.addClass('weui-search-bar_focusing');
-            $commentSearchInput.focus();
+       // @按钮
+       $("#btn-at").on("click", function () {
+            $("#comment_at").toggle(200);
+            // if ($("#comment_at").css('display') != 'none') {
+            // }
+            getCommentResult($commentSearchResult);
         });
-        $commentSearchInput
-            .on('blur', function () {
-                if (!this.value.length) cancelCommentSearch();
-            })
-            .on('input', function () {
-                if ($commentSearchInput.val()) {
-                    $commentSearchResult.show();
-                    $('#loadingToast').fadeIn(100);
-                    var keys = $commentSearchInput.val();
-                    console.log('1-' + keys);
-                    $.post("{:U('Light/Apply/getSearchUser')}",
-                        {
-                            "key": keys,
-                            "system": "{$system}"
-                        }, function (data) {
-                            console.log(data);
-                            console.log($commentSearchInput.val());
-                            if (data == '') {
-                                $commentSearchResult.append(noresult);
-                            } else if (data.keywords == $commentSearchInput.val()) {
-                                //do nothing
-                                //     console.log('Do nothing!');
-                                // } else {
-                                // console.log(data.keywords);
-                                $commentSearchResult.empty();
-                                $('#loadingToast').fadeOut(100);
-                                $commentSearchResult.append(data.html);
-                            }
-                        }
-                    );
-                    // }
-                } else {
-                    // alert('nothing!');
-                    $('#loadingToast').fadeOut(100);
-                    $commentSearchResult.hide();
+        
+        
+        function getCommentResult($dom){
+            var id = $("#aid").val();
+            $dom.show();
+            $.post("{:U('Light/Apply/getSearchUser')}",
+                {
+                    id: id,
+                    system: "{$system}",
+                    mod_name:"{$mod_name}"
+                }, function (data) {
+                    console.log();
+                    if (data == '') { 
+                        $dom.append(noresult);
+                    } else{
+                        $dom.empty();
+                        $('#loadingToast').fadeOut(100);
+                        $dom.append(data.html);
+                    }
                 }
-            })
-            ;
-        $commentSearchClear.on('click', function () {
-            hideCommentSearchResult();
-            $commentSearchInput.focus();
+            );
+        }
+
+
+        // @按钮 -- 审批
+        $("#btn-sp").on("click", function () {
+            $("#approve_at").toggle(200);
+            getCommentResult($approveSearchResult);
         });
-        $commentSearchCancel.on('click', function () {
-            cancelCommentSearch();
-            $commentSearchInput.blur();
-        });
+         // 评论搜索框 --审批
+         var //$approveSearchBar = $('#approveSearchBar'),
+            $approveSearchResult = $('#approveSearchResult'),
+            //$approveSearchText = $('#approveSearchText'),
+            //$approveSearchInput = $('#approveSearchInput'),
+           // $approveSearchClear = $('#approveSearchClear'),
+            $approveSearchCancel = $('#approveSearchCancel');
+
+        
+        
+        
+        
     });
 </script>
 

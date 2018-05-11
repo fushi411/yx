@@ -125,14 +125,39 @@ class ApplyController extends BaseController {
     // 获取搜索通讯录用户
     public function getSearchUser()
     {
-        $keywords = I('post.key');
-        $system = I('post.system');
+        $aid      = I('post.id');
+        $system   = I('post.system');
+        $mod_name = I('post.mod_name');
+        $per_name = session('name'); // 去除自己
+        // - 申请人
+        $res = D(ucfirst($system).$mod_name, 'Logic')->recordContent($aid);
+        $apply_id = $res['applyerID'];
+        $res = M($system.'_boss')->field('wxid')->where(array('id' => $apply_id))->find();
+        $receviers = $res['wxid'].',';
+
+        // - 流程人员
+        $resArr =  M($system.'_appflowproc a')->join($system.'_boss b on b.id=a.per_id')->field('b.wxid')->where(array('a.aid' => $aid ,'a.mod_name' => $mod_name,'a.per_name'=>array('neq',$per_name)))->select();               
+        foreach($resArr as $val){
+            $receviers .= $val['wxid'].',';
+        }
+
+        // - 抄送人员
+        $resArr = M($system.'_appcopyto')->field('copyto_id')->where(array('aid' => $aid,'mod_name' =>$mod_name,'type' => 1))->find();
+        $receviers .= $reArr['copyto_id'] ;
+        $recevier = str_replace(',', '|',  $receviers);
+        
+        // 数据重构  -- 去除重复的人员
+        $tmpRecevierArr = explode('|',$recevier);  
+        $tmpRecevierArr = array_filter($tmpRecevierArr); // ---- 去除空值
+        $tmpRecevierArr = array_unique($tmpRecevierArr); // -- 去除重复
+
+        // 查询数组
         $User = D($system.'_boss');
         $resArr = array();
-        $matchUser = $User->where(array('name'=>array('like', "%{$keywords}%"), 'wxid'=>array('like', "%{$keywords}%"), '_logic'=>'or'))->field(true)->select();
+        
         // dump($matchUser);
-        foreach ($matchUser as $key => $value) {
-            $info = $User->getWXInfo($value['wxid']);
+        foreach ($tmpRecevierArr as $key => $value) {
+            $info = $User->getWXInfo($value);
             if (!empty($info)) {
                 $html .= '<a class="weui-cell weui-cell_access select-comment-user" href="javascript:;" data-id="'.$info['id'].'" data-uid="'.$value['userid'].'" data-type="user" data-img="'.$info['avatar'].'" data-name="'.$info['name'].'" style="text-decoration:none;"><div class="weui-cell__hd"><img src="'.$info['avatar'].'" alt="" style="width:20px;margin-right:5px;display:block"></div><div class="weui-cell__bd"><p style="margin-bottom: 0px;">'.$info['name'].'</p></div><div class="weui-cell__ft"></div></a>';
             }
@@ -141,6 +166,8 @@ class ApplyController extends BaseController {
         // dump($resArr);
         $this->ajaxReturn(array("html"=>$html, "keywords"=>$keywords));
     }
+
+
 
     // 评论记录
     public function saveApplyComment()
@@ -161,7 +188,7 @@ class ApplyController extends BaseController {
             // 后期使用
             $data['reply_id'] = 0;
             
-            // 发送消息提醒相关人员
+            // 发送消息提醒相关人员 
             if (!empty($data['comment_to_id'])) {
             // 发送抄送消息
                 $recevier = 'wk|HuangShiQi|'.str_replace(',', '|', $data['comment_to_id']);
@@ -173,21 +200,27 @@ class ApplyController extends BaseController {
                 $res = D(ucfirst($system).$data['mod_name'], 'Logic')->recordContent($data['aid']);
                 $apply_id = $res['applyerID'];
                 $res = M($system.'_boss')->field('wxid')->where(array('id' => $apply_id))->find();
-                $recevier = $res['wxid'].',';
+                $receviers = $res['wxid'].',';
 
                 // - 流程人员
                 $resArr =  M($system.'_appflowproc a')->join($system.'_boss b on b.id=a.per_id')->field('b.wxid')->where(array('a.aid' => $data['aid'] ,'a.mod_name' => $data['mod_name'],'a.per_name'=>array('neq',$per_name)))->select();               
                 foreach($resArr as $val){
-                    $recevier .= $val['wxid'].',';
+                    $receviers .= $val['wxid'].',';
                 }
 
                 // - 抄送人员
                 $resArr = M($system.'_appcopyto')->field('copyto_id')->where(array('aid' => $data['aid'],'mod_name' =>$data['mod_name'],'type' => 1))->find();
-                $recevier .= $reArr['copyto_id'] ;
-                $recevier = 'wk|HuangShiQi|'.str_replace(',', '|',  $recevier);
+                $receviers .= $reArr['copyto_id'] ;
+                $recevier = 'wk|HuangShiQi|'.str_replace(',', '|',  $receviers);
                 
-                // 数据重构
-                $data['comment_to_id'] = trim($recevier,',');
+                // 数据重构  -- 去除重复的人员
+                $tmpRecevierArr = explode('|',$recevier);  
+                $tmpRecevierArr = array_filter($tmpRecevierArr); // ---- 去除空值
+                $tmpRecevierArr = array_unique($tmpRecevierArr); // -- 去除重复
+                $tmpRecevier = implode(',',$tmpRecevierArr);
+
+                $temrecevier = str_replace('|',',',$tmpRecevier);
+                $data['comment_to_id'] = $tmpRecevier;
                 $data['app_word'].='@所有人';
             }
             // - 发送信息
