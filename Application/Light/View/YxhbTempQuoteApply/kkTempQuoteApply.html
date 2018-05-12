@@ -269,13 +269,15 @@
                             </div>
                         </div>
                     </div>
-                <div class="weui-cells__title">推送<span style="color: #f12e2e">（审批通过后群发推送人）</span></div>
+                <div class="weui-cells__title">推送
+                        <a href="{:U('Light/Process/PushProcess',array('modname'=>'TempCreditLineApply'))}">（查看可视化流程）</a>
+                </div>
                 <div >
                     <div class="weui-cells" style="margin-top:0px;">
                         <div class="weui-cell">
                             <div class="weui-cell__bd">
                                 <div class="weui-uploader">
-                                    <div class="weui-uploader__bd" style="height: 85px;">
+                                    <div class="weui-uploader__bd" style="min-height: 85px;">
                                         <ul class="weui-uploader__files" id="app_pro" style="margin-bottom: 0px;">
                                             <volist name="push" id="vo">
                                                 <neq name="i" value="1">                                                   
@@ -297,6 +299,7 @@
                             </div>
                         </div>
                     </div>
+                    <div class="weui-cells__title"><span style="color: #f12e2e">（审批通过后群发推送人）</span></div>
                 </div>
 
 
@@ -432,6 +435,8 @@
     $('#edType').change(function(){
         window.location.href=$(this).val();
     });
+    // 2w额度显示推送
+    $('#app_pro .wk-select__user').eq(1).toggle();
     // 选择临时额度
     money.change(function () {
         if (user_id == 0) {
@@ -440,7 +445,11 @@
             $('#detail').html(html);
         }
         var val = $(this).val(),html = '';
-         if(val !=0) html = app_proHtml(val);
+         if(val !=0) {
+             html = app_proHtml(val);
+             // 2w额度显示推送
+            $('#app_pro .wk-select__user').eq(1).toggle();
+        }
         app_pro.html(html);
     });
 

@@ -82,8 +82,6 @@ class ProcessController extends Controller
         return $reArr;
     }
 
-
-
     /**
      * 临时额度审批流程数据
      * @param array  流程数据
@@ -123,11 +121,96 @@ class ProcessController extends Controller
      /**
      * 推送可视化页面
      */
-    // public function PushProcess(){
+    public function PushProcess(){
+        // 进入指定的位置所需参数
+        $pro_mod = I('modname'); 
         
-    // }
+        $where   = array(
+            'stat' => 1,
+            'pro_mod' => array('like','%_push')
+        );
+        $yxhbArr = M('yxhb_appflowtable')->where($where)->field('pro_name,pro_mod,condition')->select();
+        $kkArr   = M('kk_appflowtable')->where($where)->field('pro_name,pro_mod,condition')->select();
+        $yxhbPush = $this->recombinant($yxhbArr,'yxhb');
+        $kkPush = $this->recombinant($kkArr,'kk');
+        $this->assign('yxhb',$yxhbPush);
+        $this->assign('kk',$kkPush);
+        $this->display('YxhbProcess/PushProcess');
+    }
 
+    /**
+     * 推送信息重构
+     * @param array $condition condition 数据
+     * @return array  $result 重构后的数组
+     */
+    private function recombinant($condition,$system){
+        // 数据检验
+        if(!is_array($condition)) return false;
+        foreach($condition as $k => $v){
+            $v['condition'] = json_decode($v['condition'],true);
 
+            // 特殊页面显示 （临时额度） 目前只有临时页面特殊，后期可能修改
+            switch($v['pro_mod']){
+                case 'TempCreditLineApply_push': 
+                            $func = 'TempCreditLinePush'; 
+                    break;
+                default:
+                            $func = 'getApplyPush';
+            }
+            $condition[$k]['condition'] = $this->$func($v,$system);
+        }
+        return $condition;
+    }
+
+    private function TempCreditLinePush($data,$system){
+        $result = array();
+        $pushManStr = $data['condition']['two'];
+        $pushManArr = explode(',',$pushManStr);
+        $pushManArr = $this->getUserInfo($pushManArr,$system);
+        $result[] = array(
+            'title' => '二万临时额度',
+            'pushMan' =>$pushManArr
+        );
+        $pushManStr = $data['condition']['push'];
+        $pushManArr = explode(',',$pushManStr);
+        $pushManArr = $this->getUserInfo($pushManArr,$system);
+        $result[] = array(
+            'title' => '五万,十万临时额度',
+            'pushMan' =>$pushManArr
+        );
+
+        return $result;
+    }
+
+    private function getApplyPush($data,$system){
+        $result = array();
+        $pushManStr = $data['condition']['push'];
+        $pushManArr = explode(',',$pushManStr);
+        $pushManArr = $this->getUserInfo($pushManArr,$system);
+
+        $result[] = array(
+            'title' => $data['pro_name'],
+            'pushMan' =>$pushManArr
+        );
+        return $result;
+    }
+
+    // 用户名字头像获取
+    private function getUserInfo($data,$system){
+        // 条件语句拼接
+        $where = '(';
+        foreach($data as $k => $v){
+            if($k!=0) $where.=' or ';
+            $where .= "wxid='{$v}'";
+        }
+        $where .= ')';
+        $res =M($system.'_boss')->where($where)->field('name,avatar')->select();
+        return $res;
+    }
+
+    /**
+     * 测试
+     */
     private function test(){
         
     }
