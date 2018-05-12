@@ -253,15 +253,15 @@
                                                             </volist>
                                                         </if>
                                                     </ul>
+                                                    
+
                                                     <eq name="isApplyer" value="1">
-                                                        <eq name="apply.state" value="1">
-                                                        
+                                                        <if condition="$apply.state == 0">
                                                             <div class="weui-uploader__input-box" style="width: 2.5em;height: 2.5em;margin-right: 0px;margin-bottom: 0px;margin-top:20px;">
                                                                 <input id="uploaderInput" class="weui-uploader__input" type="button" name="copyto" data-toggle="modal" data-target="#myModal" readonly />
                                                                 <input type="hidden" name="copyto_id" id="copyto_id">
-                                                            </div>
-                                                                        
-                                                        </eq>
+                                                            </div>    
+                                                        </if>
                                                     </eq>
                                                     
                                                 </div>
@@ -1015,7 +1015,7 @@
         });
         // 催审按钮
         $("#btn-urge").on("click", function () {
-            if ({ $applyerID } != { $uid }) {
+            if ({$applyerID} != {$uid}) {
                 alert("非申请人不可催审！");
                 return false;
             }

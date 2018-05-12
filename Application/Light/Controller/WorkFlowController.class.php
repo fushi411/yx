@@ -57,13 +57,13 @@ class WorkFlowController extends BaseController {
       // $applyUserid=$this->getUserID($applyUser,$db);   
       $boss = D($systemU.'Boss');
       // $applyUserid = $boss->getIDFromName($applyUser);
-      $applyUserwxid = $boss->getWXFromID($applyUser);
+      // $applyUserwxid = $boss->getWXFromID($applyUser);
       //如果审批结果为拒绝
       if($option==1){
         //会签同级+996
         $is_done3 = $appflowproc->refuse($flowName, $id, $nowStepArr['app_stage']);
         // $content = $applyUser.iconv('UTF-8', 'GBK', '您好,您在建材ERP系统中有一个<').$tableStepArr['pro_name'].iconv('UTF-8', 'GBK', '>被拒绝');
-        $msgInfo = $this->sendApplyMsg($flowName, $id, $pid, $applyUserwxid, $system, 'refuse');
+        $msgInfo = $this->sendApplyMsg($flowName, $id, $pid, $applyUser, $system, 'refuse');
 
         $resArr = array(
                     "option" => $option,
@@ -78,8 +78,8 @@ class WorkFlowController extends BaseController {
           if($tableStepArr['stage_next']!=0){
             $stageID = $tableStepArr['stage_next'];
             //没有下级插入记录，可能是最后一个条件不满足
-            if(!$this->nextStep($flowName,$id,$stageID,$applyUserwxid,$system)){
-              $msgInfo = $this->sendApplyMsg($flowName, $id, $pid, $applyUserwxid, $system, 'pass');
+            if(!$this->nextStep($flowName,$id,$stageID,$applyUser,$system)){
+              $msgInfo = $this->sendApplyMsg($flowName, $id, $pid, $applyUser, $system, 'pass');
 
               $resArr = array(
                     "option" => $option,
@@ -94,7 +94,7 @@ class WorkFlowController extends BaseController {
                         );
             }
           } else {
-            $msgInfo = $this->sendApplyMsg($flowName, $id, $pid, $applyUserwxid, $system, 'pass');
+            $msgInfo = $this->sendApplyMsg($flowName, $id, $pid, $applyUser, $system, 'pass');
             $resArr = array(
                     "option" => $option,
                     "status" => "end",

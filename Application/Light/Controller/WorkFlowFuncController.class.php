@@ -164,7 +164,7 @@ class WorkFlowFuncController extends Controller {
      */
     public function KkCreditLineApplyEnd($aid)
     {
-        $res = M('kk_tempcreditlineconfig')->where(array('stat'=>2, 'aid'=>$aid))->setField('stat', 1);
+		$res = M('kk_creditlineconfig')->where(array('stat'=>2, 'aid'=>$aid))->setField('stat', 1);
         $resArr = $res?array("status"=>"success"):array("status"=>"failure");
         return $resArr;
     }
