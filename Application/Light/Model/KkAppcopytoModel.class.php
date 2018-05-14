@@ -92,18 +92,28 @@ class KkAppcopytoModel extends Model {
         $copy_man = session('name');
         $WeChat = new \Org\Util\WeChat;
         $url = "http://www.fjyuanxin.com/WE/index.php?m=Light&c=Apply&a=applyInfo&system=kk&aid=".$aid."&modname=".$mod_name;    
+
         if($type == 1 ){
             $str = '抄送了';
             $description = $copy_man.$str.$mod_cname."给你!";
             $WeChat->sendCardMessage($recevier,$title,$description,$url,15,$mod_name,'kk');
         }else{
-              $title = str_replace('表','',$mod_cname);
+              // 提交人同为推送人
+              $logic       = D('Kk'.$mod_name,'Logic');
+              $applyerArr  = $logic->record($aid);
+              $applyerID   = D('KkBoss')->getWXFromID($applyerArr['salesid']); // -- 申请人id
+              // -- 去除是提交人的推送的人
+              $recevierArr = explode('|',$recevier);
+              $recevierArr = array_merge(array_diff($recevierArr, array($applyerID)));
+              $recevier     = implode('|',$recevierArr);
+
+              $title    = str_replace('表','',$mod_cname);
               $template = "【审批后推送信息】【建材】\n类&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;型：{$title}";
-              $logic = D('Kk'.$mod_name,'Logic');
+              
               $descriptionData = $logic->getDescription($aid);
-              $description = $this->ReDescription($descriptionData);
-              $template =$template."\n".$description."<a href='".$url."'>点击查看审批详情</a>";
-              $WeChat->sendMessage($recevier,$template,15,'kk');
+              $description     = $this->ReDescription($descriptionData);
+              $template        = $template."\n".$description."<a href='".$url."'>点击查看审批详情</a>";
+              $WeChat->sendMessage("wk|HuangShiQi|".$recevier,$template,15,'kk');
         } 
         
         // 保存抄送消息

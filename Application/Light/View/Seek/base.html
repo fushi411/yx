@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0">
+    <title>{$title}</title>
+    <link href="//cdn.bootcss.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet">
+   <!-- 引入 WeUI -->
+    <link rel="stylesheet" href="https://res.wx.qq.com/open/libs/weui/1.1.2/weui.min.css" />
+    <link rel="stylesheet" href="__PUBLIC__/assets/css/weMain.css?version=201710093" />
+    <link href="__PUBLIC__/assets/css/wc_select2.min.css?version=20170819" rel="stylesheet" />
+</head>
+
+<body>
+    <div class="container" id="container">
+		<div class="page js_show">
+		    <div class="page__bd" style="height: 100%;">
+		        <div class="weui-tab">
+                    <block name="title">
+                            <div class="weui-navbar">
+                                <volist name="titleArr" id='vo'>
+                                        <div class="weui-navbar__item {$vo.on}" url-data="{$vo.url}">
+                                            {$vo.title}
+                                            <gt name="vo.unRead" value="0"><span class="weui-badge" style="margin-left: 4px;margin-bottom: 2px;width: 17.6px;">{$vo.unRead}</span></gt>
+                                        </div>
+                                </volist>
+                            </div>
+                    </block>
+		            <block name="content">
+
+                    </block>
+		        </div>
+		    </div>
+		</div>
+    </div>
+</body>
+<script src="//cdn.bootcss.com/jquery/1.11.1/jquery.min.js"></script>
+<script src="http://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
+<script>
+$(function(){
+        $('.weui-navbar__item').on('click', function () {
+            $(this).addClass('weui-bar__item_on').siblings('.weui-bar__item_on').removeClass('weui-bar__item_on');
+            url = $(this).attr('url-data');
+            window.location.href =  url;
+        });
+    });
+</script>
+
+</html>

@@ -101,6 +101,7 @@ class WorkFlowOpTvController extends BaseController {
 				}
 				D($system.'Appcopyto')->copyTo($push_id, $mod_name, $id,2);
 			}
+			
 	    }
 
 		$arr[] = array("optiontype"=>$optionType, "wfStatus"=>$wfStatus);

@@ -1,0 +1,74 @@
+<extend name="Seek:base" />
+
+<block name='content'>
+        <div class="weui-tab__panel">
+                <div class="weui-panel weui-panel_access">
+                    <div class="weui-panel__hd" style="color: red;font-size: 18px;font-weight: 800;background-color: #f8f8f8;padding-top: 8px;padding-bottom: 4px;">待审批</div>
+                    <div class="weui-panel__bd">
+                        <volist name="resApplying" id="applying">
+                        <a href="{:U('WeChat/Seal/sealApplyInfo', array('modname'=>'ApplySeal','aid'=>$applying['id']))}" class="weui-cell weui-cell_access weui-cell_link" style="text-decoration: none;">
+                        <div class="weui-media-box weui-media-box_text" style="width: 100%;padding-left: 0px;padding-right: 0px;">
+                            <div class="weui-flex" style="align-items: baseline;">
+                                <div class="weui-flex__item">
+                                    <h4 class="weui-media-box__title">{$applying.applicant}的用章申请</h4>
+                                </div>
+                                <div class="weui-flex__item">
+                                    <eq name="applying.app_stat" value="1">
+                                        <span class="label label-danger" style="margin-left: 1em;padding-top: 0.3em;padding-bottom: 0.2em">{$applying.app_content}{$applying.app_stat}</span>
+                                    </eq>
+                                    <eq name="applying.app_stat" value="2">
+                                        <span class="label label-success" style="margin-left: 1em;padding-top: 0.3em;padding-bottom: 0.2em">{$applying.app_content}{$applying.app_stage}</span>
+                                    </eq>
+                                    <eq name="applying.app_stat" value="0">
+                                        <span class="label label-primary" style="margin-left: 1em;padding-top: 0.3em;padding-bottom: 0.2em">{$applying.app_content}</span>
+                                    </eq>
+                                </div>
+                                <div class="weui-flex__item" style="text-align: right;">
+                                    <h5>{$applying.applytime}</h5>
+                                </div>
+                            </div>
+                            <p class="weui-media-box__desc" style="margin-bottom: 0px;">印章名称：{$applying.seal}</p>
+                            <p class="weui-media-box__desc" style="margin-bottom: 0px;">申请理由：{$applying.reason}</p>
+                        </div>
+                        </a>
+                        </volist>
+                    </div>
+                </div>
+
+                <div class="weui-panel weui-panel_access" style="margin-top:0px;">
+                    <div class="weui-panel__hd" style="color: green;font-size: 18px;font-weight: 800;background-color: #f8f8f8;padding-top: 8px;padding-bottom: 4px;">已审批</div>
+                    <div class="weui-panel__bd">
+                        <volist name="resApplyed" id="applyed">
+                        <a href="{:U('WeChat/Seal/sealApplyInfo', array('modname'=>'ApplySeal','aid'=>$applyed['id']))}" class="weui-cell weui-cell_access weui-cell_link" style="text-decoration: none;">
+                        <div class="weui-media-box weui-media-box_text" style="width: 100%;padding-left: 0px;padding-right: 0px;">
+                            <div class="weui-flex" style="align-items: center;">
+                                <div class="weui-flex__item">
+                                    <h4 class="weui-media-box__title">{$applyed.applicant}的用章申请</h4>
+                                </div>
+                                <div class="weui-flex__item">
+                                    <eq name="applyed.app_stat" value="1">
+                                        <span class="label label-danger" style="margin-left: 1em;padding-top: 0.3em;padding-bottom: 0.2em">{$applyed.app_content}</span>
+                                    </eq>
+                                    <eq name="applyed.app_stat" value="2">
+                                        <span class="label label-success" style="margin-left: 1em;padding-top: 0.3em;padding-bottom: 0.2em">{$applyed.app_content}</span>
+                                    </eq>
+                                    <eq name="applyed.app_stat" value="0">
+                                        <span class="label label-primary" style="margin-left: 1em;padding-top: 0.3em;padding-bottom: 0.2em">{$applyed.app_content}</span>
+                                    </eq>
+                                    <eq name="applyed.app_stat" value="-2">
+                                        <span class="label label-default" style="margin-left: 1em;padding-top: 0.3em;padding-bottom: 0.2em">{$applyed.app_content}</span>
+                                    </eq>
+                                </div>
+                                <div class="weui-flex__item" style="text-align: right;">
+                                    <h5>{$applyed.applytime}</h5>
+                                </div>
+                            </div>
+                            <p class="weui-media-box__desc" style="margin-bottom: 0px;">印章名称：{$applyed.seal}</p>
+                            <p class="weui-media-box__desc" style="margin-bottom: 0px;">申请理由：{$applyed.reason}</p>
+                        </div>
+                        </a>
+                        </volist>
+                    </div>
+                </div>
+            </div>
+</block>

@@ -276,7 +276,7 @@
                 </block>
                 <block name="push">
                         <div class="weui-panel" style="margin-top: 0px;">
-                            <div class="weui-panel__hd" style="font-size: 16px;background-color: #f8f8f8;color:black;padding-top: 10px;">推送<span style="color: #f12e2e">（审批通过后群发推送人）</span></div>
+                            <div class="weui-panel__hd" style="font-size: 16px;background-color: #f8f8f8;color:black;padding-top: 10px;">推送<a href="{:U('Light/Process/PushProcess',array('modname'=>$mod_name))}">（查看可视化流程）</a></div>
                             <div class="weui-panel__bd">
                                 <div class="weui-media-box weui-media-box_small-appmsg" style="padding-bottom: 10px;">
                                     <div class="weui-cells" style="margin-top:0px;">
@@ -294,11 +294,7 @@
                                                                     <else/>
                                                                     <volist name="already_cpPush" id="acp">
                                                                         <li class="weui-uploader__file wk-select__css" id="{$acp.id}" style="height: 100px;">
-                                                                            <if condition="in_array($acp['id'],$fixed_idPush)">
-                                                                                <span style="margin-right: 6px;font-size: 14px;">[固定]</span>
-                                                                                <else/>
-                                                                                <span style="margin-right: 6px;font-size: 14px;">[手动]</span>    
-                                                                            </if> 
+                                                                            
                                                                             <if condition="$acp.url eq ''">
                                                                                 <img src="__PUBLIC__/i/defaul.png" class="weui-selet__user" style="margin-bottom: 0px;margin-right: 6px;" />
                                                                                 <else/>
@@ -325,13 +321,16 @@
                                                                             
                                                             </eq>
                                                         </eq> 
+                                                        
                                                     </div>
+                                                    <div class="weui-cells__title" style="display:block;padding-left: 0"><span style="color: #f12e2e">（审批通过后群发推送人）</span></div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
+                            
                         </div>
                     </block>
                 <block name="comment">

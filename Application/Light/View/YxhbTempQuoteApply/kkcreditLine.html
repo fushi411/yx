@@ -249,7 +249,7 @@
                                             
                                         </ul>
                                         <div class="weui-uploader__input-box" style="width: 2.5em;height: 2.5em;margin-right: 0px;margin-bottom: 0px;margin-top:10px;">
-                                            <input id="uploaderInput" class="weui-uploader__input" type="button" name="copyto" data-toggle="modal" data-target="#myModal" readonly />
+                                            <input id="uploaderInput" class="weui-uploader__input open_model" type="button" name="copyto" readonly /> <!--data-toggle="modal" data-target="#myModal" -->
                                             <if condition="$prevId eq '' or $prevId eq null">
                                                 <input type="hidden" name="copyto_id" id="copyto_id">
                                                 <else/>
@@ -685,7 +685,9 @@ function DateValue(dateArr){
         $("#pre-level").attr("data-pid", 0);
         getDepartment(id);
     });
-
+    $('.open_model').on('click',function(){
+        $('#myModal').modal('show');
+    });
     function getDepartment(id) {
         $('#searchResult').empty();
         $('#searchResult').append(loading);

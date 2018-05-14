@@ -656,11 +656,12 @@ class TempQuoteController extends BaseController
         {
             $wf = new WorkFlowController();
             $res = $wf->setWorkFlowSV('TempCreditLineApply', $result, $salesid, $system);
-        }else{
+        }else{ // -- 推送
             $mod_name = 'TempCreditLineApply';          
             $res = M($system.'_appflowtable')->field('condition')->where(array('pro_mod'=>$mod_name.'_push'))->find();
             if(!empty($res)){
                 $pushArr = json_decode($res['condition'],true);
+                // -- 2W额度推送人  
                 $push_id = $pushArr['two'];
                 D($system.'Appcopyto')->copyTo($push_id, $mod_name, $result,2);
             }
