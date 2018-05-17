@@ -107,7 +107,7 @@ class YxhbAppcopytoModel extends Model {
             $recevier     = implode('|',$recevierArr);
 
             $title = str_replace('表','',$mod_cname);
-            $template = "【审批后推送信息】【环保】\n类&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;型：{$title}";
+            $template = "【审批后推送信息】\n申请单位：环保\n申请类型：{$title}";
               
             $descriptionData = $logic->getDescription($aid);
             $description = $this->ReDescription($descriptionData);

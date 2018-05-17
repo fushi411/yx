@@ -96,6 +96,7 @@ class KkTempCreditLineApplyLogic extends Model {
     public function getDescription($id){
         $res = $this->record($id);
         $result = array();
+        $info = $this->getInfo($res['clientid'],$res['date'],$res['clientname']);
         $clientname = M('kk_guest2')->field('g_khjc')->where(array('id' => $res['clientid']))->find();
         $result[] = array('name'=>'申请日期：',
                                      'value'=>$res['date'],
@@ -105,8 +106,8 @@ class KkTempCreditLineApplyLogic extends Model {
                                      'value'=>$clientname['g_khjc'],
                                      'type'=>'string'
                                     );
-        $result[] = array('name'=>'客户余额：',
-                                     'value'=>number_format($res['ye'],2,'.',',')."元",
+        $result[] = array('name'=>'应收余额：',
+                                     'value'=>number_format(-($info['tmpline']-$info['ye']+$res['ed']),2,'.',',')."元",
                                      'type'=>'number'
                                     );
         $result[] = array('name'=>'已有临额：',
@@ -117,7 +118,7 @@ class KkTempCreditLineApplyLogic extends Model {
                                      'value'=>number_format($res['line'],2,'.',',')."元",
                                      'type'=>'number'
                                     );
-        $result[] = array('name'=>'申&nbsp;&nbsp;请&nbsp;&nbsp;人：',
+        $result[] = array('name'=>'申请人员：',
                                      'value'=>$res['sales'],
                                      'type'=>'string'
                                     );
@@ -136,6 +137,23 @@ class KkTempCreditLineApplyLogic extends Model {
     {
         $map = array('id' => $id);
         return $this->field(true)->where($map)->getField('sales');
+    }
+
+    /**
+     * 我的审批，抄送，提交 所需信息
+     * @param  integer $id 记录ID
+     * @return array    所需内容      
+     */
+    public function sealNeedContent($id){
+        $res = $this->record($id);
+        $result = array(
+            'sales'   => $res['sales'],
+            'approve' => number_format($res['line'],2,'.',',')."元",
+            'notice'  => $res['notice'],
+            'date'    => $res['date'],
+            'stat'    => $res['stat']
+        );
+        return $result;
     }
     
 }

@@ -16,7 +16,10 @@
                             <div style="display: flex;flex-direction: row;align-items: center;margin-bottom: 1em;">
                                 <img class="weui-media-box__thumb" src="{$avatar}" alt="" style="border-radius: 5px;width: 2.5em;height: 2.5em;margin-right: 1em;">
                                 <h4 class="weui-media-box__title" style="font-weight: 800;font-size:20px;">{$applyer}的{$title|str_replace="表",'',###}</h4>
-                                <gt name="stat" value="0">
+                                <eq name="stat" value="1">
+                                    <span class="label label-success" style="margin-left: 1em;padding-top: 0.3em;padding-bottom: 0.2em">已通过</span>
+                                </eq>
+                                <eq name="stat" value="2">
                                     <eq name="apply.stat" value="2">
                                         <span class="label label-success" style="margin-left: 1em;padding-top: 0.3em;padding-bottom: 0.2em">已通过</span>
                                     </eq>
@@ -26,7 +29,7 @@
                                     <eq name="apply.stat" value="0">
                                         <span class="label label-primary" style="margin-left: 1em;padding-top: 0.3em;padding-bottom: 0.2em">审批中</span>
                                     </eq>
-                                </gt>
+                                </eq>
                                 <eq name="stat" value="0">
                                     <span class="label label-default" style="margin-left: 1em;padding-top: 0.3em;padding-bottom: 0.2em">已撤销</span>
                                 </eq>
@@ -115,3 +118,61 @@
         </p>
     </if>
 </block>
+<block name="process">
+        <div class="weui-panel" style="margin-top: 0px;">
+            <div class="weui-panel__hd" style="font-size: 16px;background-color: #f8f8f8;color:black;padding-top: 10px;">审批流程
+                <a href="{:U('Light/Process/ApplyProcess',array('modname'=>$mod_name,'system'=>$system))}">（查看可视化流程）</a> 
+            </div>
+            <div class="weui-cells" style="margin-top:0px;">
+                <div class="weui-cell">
+                    <div class="weui-cell__bd">
+                        <div class="weui-uploader">
+                            <div class="weui-uploader__bd" >
+                                <ul class="weui-uploader__files" id="app_pro" style="margin-bottom: 0px;">
+                                    <!-- 2W额度显示 -->
+                                    <if condition="$content.line eq '20,000.00元'">
+                                        <li >
+                                            <h4 class="weui-media-box__title" style="/*font-weight: 800;*/margin-top: 0px;margin-bottom: 5px;color:grey;">
+                                                无审批人
+                                            </h4>
+                                        </li>
+                                    </if>
+                                    <!-- 2W额度显示 end -->
+                                    <!-- 5w额度显示 -->
+                                    <if condition="$content.line eq '50,000.00元'">
+                                        <li class='weui-uploader__file wk-select__user' id='{$first.id}' style='height:90px;'>
+                                            <img src={$first.avatar} class='weui-selet__user' style='margin-bottom: 0px;margin-right: 6px;margin-top:10px;'>
+                                            <span style='margin-right: 6px;font-size: 14px;'>{$first.realname}</span>
+                                        </li>
+                                    </if>
+                                    <!-- 5W额度显示 end -->
+                                    <!-- 10W额度显示 -->
+                                    <if condition="$content.line eq '100,000.00元'">
+                                        <volist name="proInfo" id="vo">
+                                            <if condition="$vo.id eq $first['id']">
+                                                <li class='weui-uploader__file wk-select__user' id='{$first.id}' style='height:90px;'>
+                                                    <img src={$first.avatar} class='weui-selet__user' style='margin-bottom: 0px;margin-right: 6px;margin-top:10px;'>
+                                                    <span style='margin-right: 6px;font-size: 14px;'>{$first.realname}</span>
+                                                </li>
+                                                <else/>
+                                                <li class='weui-uploader__file wk-select__user' id='{$vo.id}' style='height:90px;margin-left:8px'>
+                                                    <if condition="$vo.avatar eq ''">
+                                                        <img src='__PUBLIC__/assets/i/defaulthead.png' class='weui-selet__user' style='margin-bottom: 0px;margin-right: 6px;margin-top:10px;'>
+                                                        <else/>
+                                                        <img src={$vo.avatar} class='weui-selet__user' style='margin-bottom: 0px;margin-right: 6px;margin-top:10px;'>
+                                                    </if>
+                                                    <span style='margin-right: 6px;font-size: 14px;'>{$vo.realname}</span>
+                                                    <span class="glyphicon glyphicon-arrow-right" style="position: relative;top: -2.8em;right: 2.0em;"></span>
+                                                </li>
+                                            </if>
+                                        </volist>
+                                    </if>
+                                    <!-- 10W额度显示 end -->
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </block>

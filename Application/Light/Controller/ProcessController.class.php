@@ -212,11 +212,8 @@ class ProcessController extends Controller
      * 测试
      */
     public function test(){
-        $system = 'kk';
-        $mod_name = 'CreditLineApply';
-        $aid = 209;
-        $applyerArr  = D('kk'.$mod_name,'Logic')->record($aid);
-        $applyerID   = D('KkBoss')->getWXFromID($applyerArr['salesid']);
+        
+       
         
     }
 }

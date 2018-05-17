@@ -80,7 +80,9 @@ class ApplyController extends BaseController {
         $this->assign('already_cpPush', $copyArr['already_cp']);
         $this->assign('isCopytoPush',$copyArr['isCopyto']);
         $authArr = $copyArr['authArr'];
-
+        // 推送
+        $push = GetPush($system,$mod_name);
+        $this ->assign('push',$push['data']);
         // 抄送标记为已读
         $copyTo->readCopytoApply($mod_name, $apply_id,null,1);
         // 推送标记为已读

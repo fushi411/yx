@@ -11,7 +11,31 @@
     <link rel="stylesheet" href="__PUBLIC__/assets/css/weMain.css?version=201710093" />
     <link href="__PUBLIC__/assets/css/wc_select2.min.css?version=20170819" rel="stylesheet" />
 </head>
-
+<style>
+    .no-more{
+        display: none;
+        text-align: center;
+        line-height: 30px;
+        color: #cecece;
+        font-size: 12px;
+        background: #f0f0f0;
+    }
+    .load-more{
+        display: none;
+        text-align: center;
+        line-height: 30px;
+        color: #6ea3f3;
+        font-size: 12px;
+        border-radius: 5px;
+        width: 98%;
+        margin: 0 auto;
+        border-top:1px solid rgb(243, 237, 237);
+    }
+    .load-more:active {
+    background: #97d4ff;
+    color: #fff;
+    }
+    </style>
 <body>
     <div class="container" id="container">
 		<div class="page js_show">
@@ -27,16 +51,37 @@
                                 </volist>
                             </div>
                     </block>
+                    <div class="weui-tab__panel">
+                            <div class="weui-panel weui-panel_access">
+                                <div class="weui-panel__bd" id='show_data_content'>
 		            <block name="content">
 
+
                     </block>
+                        </div>
+                        <div class="no-more" >信息已经到底...</div>
+                        <div class="load-more" >点我加载更多...</div>
+                    </div>
+                </div>
 		        </div>
 		    </div>
 		</div>
     </div>
+    <!--BEGIN toast-->
+    <div id="loadingToast" style=" display: none;">
+        <div class="weui-mask_transparent"></div>
+        <div class="weui-toast">
+            <i class="weui-loading weui-icon_toast"></i>
+            <p class="weui-toast__content">数据加载中</p>
+        </div>
+    </div>
+    <!--end toast-->
 </body>
 <script src="//cdn.bootcss.com/jquery/1.11.1/jquery.min.js"></script>
 <script src="http://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
+<block name="js">
+
+</block>
 <script>
 $(function(){
         $('.weui-navbar__item').on('click', function () {

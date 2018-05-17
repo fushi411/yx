@@ -107,7 +107,7 @@ class KkCreditLineApplyLogic extends Model {
                                      'value'=>number_format($res['line'],2,'.',',')."元",
                                      'type'=>'number'
                                     );
-        $result[] = array('name'=>'申&nbsp;&nbsp;请&nbsp;&nbsp;人：',
+        $result[] = array('name'=>'申请人员：',
                                      'value'=>$res['sales'],
                                      'type'=>'string'
                                     );
@@ -130,5 +130,20 @@ class KkCreditLineApplyLogic extends Model {
         $map = array('id' => $id);
         return $this->field(true)->where($map)->getField('sales');
     }
-    
+    /**
+     * 我的审批，抄送，提交 所需信息
+     * @param  integer $id 记录ID
+     * @return array    所需内容      
+     */
+    public function sealNeedContent($id){
+        $res = $this->record($id);
+        $result = array(
+            'sales'   => $res['sales'],
+            'approve' => number_format($res['line'],2,'.',',')."元",
+            'notice'  => $res['notice'],
+            'date'    => $res['date'],
+            'stat'    => $res['stat']
+        );
+        return $result;
+    }
 }

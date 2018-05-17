@@ -297,7 +297,7 @@ class WorkFlowController extends BaseController {
             break;
         }
         $title = str_replace('表','',$title);
-        $template = "您有一个{$systemName[$system]}系统流程{$description}!\n类&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;型：{$title}";
+        $template = "您有一个流程{$description}\n申请单位：{$systemName[$system]}\n申请类型：{$title}";
 
         $logic = D(ucfirst($system).$flowName,'Logic');
         $descriptionData = $logic->getDescription($id);
@@ -311,25 +311,6 @@ class WorkFlowController extends BaseController {
         // $info=$this->WeChat->sendCardMessage($receivers,$title,$applyerName.$description,$url,14);
         return $info;
     }
-
-  // TODO 删除
-    // public function forTest(){
-    //     $agentid = 15;
-    //     $receviers = 'HuangShiQi';
-
-    //     $template = "您有一个环保系统流程需要处理!\n类&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;型：临时额度申请";
-    //     $flowName = 'TempCreditLineApply';
-    //     $system = 'yxhb';
-
-    //     $logic = D(ucfirst($system).$flowName,'Logic');
-    //     $descriptionData = $logic->getDescription(571);
-        
-    //     $description = $this->ReDescription($descriptionData);
-        
-    //     $template =$template."\n".$description."<a>点击查看</a>"; 
-        
-    //     $info = $this->WeChat->sendMessage($receviers,$template,$agentid,$system);
-    // }
     
     /**
      *  根据返回值，重组字符串

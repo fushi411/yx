@@ -280,11 +280,7 @@
                                     <div class="weui-uploader__bd" style="min-height: 85px;">
                                         <ul class="weui-uploader__files" id="app_pro" style="margin-bottom: 0px;">
                                             <volist name="push" id="vo">
-                                                <neq name="i" value="1">                                                   
-                                                    <li class='weui-uploader__file wk-select__user' style='height:90px;margin-left:8px'>
-                                                    <else/>
-                                                    <li class='weui-uploader__file wk-select__user' style='height:90px;'>
-                                                </neq>
+                                                <li class='weui-uploader__file wk-select__user' style='min-height:80px;margin-bottom: 0;'>
                                                 <if condition="$vo.avatar eq ''">
                                                     <img src="Public/assets/i/defaul.png" class='weui-selet__user' style='margin-bottom: 0px;margin-right: 6px;margin-top:10px;'>
                                                     <else/>
@@ -295,11 +291,12 @@
                                             </volist>
                                         </ul>
                                     </div>
+                                    <div class="weui-cells__title" style="display:block;padding-left: 0"><span style="color: #f12e2e">（审批通过后群发推送人）</span></div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="weui-cells__title"><span style="color: #f12e2e">（审批通过后群发推送人）</span></div>
+                    
                 </div>
 
 
