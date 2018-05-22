@@ -18,63 +18,60 @@
                     <a href="javascript:" class="weui-search-bar__cancel-btn" id="searchCancel">搜索</a>
                 </div>
             </div>
-                    <div class="weui-panel__hd" style="color: red;font-size: 18px;font-weight: 800;background-color: #f8f8f8;padding-top: 8px;padding-bottom: 4px;">待审批</div>
-                    <div class="weui-panel__bd">
-                        
-                            <volist name="noApprove" id="copy">
-                                <a href="{:U('Light/Apply/applyInfo', array('system'=>$copy['system'],'aid'=> $copy['aid'],'modname' =>$copy['mod_name'] ))}" class="weui-cell weui-cell_access weui-cell_link" style="text-decoration: none;">
-                                <div class="weui-media-box weui-media-box_text" style="width: 100%;padding-left: 0px;padding-right: 0px;">
-                                    <div class="weui-flex" style="align-items: center;">
-                                        <div class="weui-flex__item">
-                                            <h4 class="weui-media-box__title" >{$copy.applyer}的{$copy.title}</h4>
-                                        </div>
-                                        <div class="weui-flex__item">
-                                            <eq name="copy.stat" value="2">
-                                                <eq name="copy.apply.stat" value="2">
-                                                    <span class="label label-success" style="margin-left: 1em;padding-top: 0.3em;padding-bottom: 0.2em">已通过</span>
-                                                </eq>
-                                                <eq name="copy.apply.stat" value="1">
-                                                    <span class="label label-danger" style="margin-left: 1em;padding-top: 0.3em;padding-bottom: 0.2em">已退审</span>
-                                                </eq>
-                                                <eq name="copy.apply.stat" value="0">
-                                                    <span class="label label-primary" style="margin-left: 1em;padding-top: 0.3em;padding-bottom: 0.2em">审批中</span>
-                                                </eq>
-                                            </eq>
-                                            <eq name="copy.stat" value="0">
-                                                <span class="label label-default" style="margin-left: 1em;padding-top: 0.3em;padding-bottom: 0.2em">已撤销</span>
-                                            </eq>
-                                            <eq name="copy.stat" value="1">
-                                                <span class="label label-success" style="margin-left: 1em;padding-top: 0.3em;padding-bottom: 0.2em">已通过</span>
-                                            </eq>
-                                        </div>
-                                        
-                                        <div class="weui-flex__item">
-                                            <span class="weui-badge weui-badge_dot" style="margin-left: 5px;margin-right: 5px;margin-bottom: 8px;"></span>
-                                        </div>
-                                        
-                                        <div class="weui-flex__item" style="text-align: right;">
-                                            <h5>{$copy.date}</h5>
-                                        </div>
-                                    </div>
-                                    <p class="weui-media-box__desc" style="margin-bottom: 0px;">申请金额：{$copy.approve}</p>
-                                    <p class="weui-media-box__desc" style="margin-bottom: 0px;">申请理由：{$copy.notice}</p>
-                                </div> 
-                                </a>
-                                </volist> 
-                       
+        <div id='show_data_content'>
+            <volist name="copyto" id="copy">
+            <a href="{:U('Light/Apply/applyInfo', array('system'=>$copy['system'],'aid'=> $copy['aid'],'modname' =>$copy['mod_name'] ))}" class="weui-cell weui-cell_access weui-cell_link" style="text-decoration: none;">
+            <div class="weui-media-box weui-media-box_text" style="width: 100%;padding-left: 0px;padding-right: 0px;">
+                <div class="weui-flex" style="align-items: center;">
+                    <div class="weui-flex__item">
+                        <h4 class="weui-media-box__title" >{$copy.applyer}的{$copy.title}</h4>
+                    </div>
+                    <div class="weui-flex__item">
+                        <eq name="copy.stat" value="2">
+                            <eq name="copy.apply.stat" value="2">
+                                <span class="label label-success" style="margin-left: 1em;padding-top: 0.3em;padding-bottom: 0.2em">已通过</span>
+                            </eq>
+                            <eq name="copy.apply.stat" value="1">
+                                <span class="label label-danger" style="margin-left: 1em;padding-top: 0.3em;padding-bottom: 0.2em">已退审</span>
+                            </eq>
+                            <eq name="copy.apply.stat" value="0">
+                                <span class="label label-primary" style="margin-left: 1em;padding-top: 0.3em;padding-bottom: 0.2em">审批中</span>
+                            </eq>
+                        </eq>
+                        <eq name="copy.stat" value="0">
+                            <span class="label label-default" style="margin-left: 1em;padding-top: 0.3em;padding-bottom: 0.2em">已撤销</span>
+                        </eq>
+                        <eq name="copy.stat" value="1">
+                            <span class="label label-success" style="margin-left: 1em;padding-top: 0.3em;padding-bottom: 0.2em">已通过</span>
+                        </eq>
+                    </div>
+                    
+                    <div class="weui-flex__item">
+                        <span class="weui-badge weui-badge_dot" style="margin-left: 5px;margin-right: 5px;margin-bottom: 8px;"></span>
+                    </div>
+                    
+                    <div class="weui-flex__item" style="text-align: right;">
+                        <h5>{$copy.date}</h5>
                     </div>
                 </div>
-
-                <div class="weui-panel weui-panel_access" style="margin-top:0px;">
-                    <div class="weui-panel__hd" style="color: green;font-size: 18px;font-weight: 800;background-color: #f8f8f8;padding-top: 8px;padding-bottom: 4px;">已审批</div>
-                    <div class="weui-panel__bd" id="approve">
-                        
-                    </div>
+                <p class="weui-media-box__desc" style="margin-bottom: 0px;">申请金额：{$copy.approve}</p>
+                <p class="weui-media-box__desc" style="margin-bottom: 0px;">申请理由：{$copy.notice}</p>
+            </div> 
+            </a>
+            </volist>
+        </div> 
+    <!-- 全部按钮 -->
+    <div id="btn-all">
+        <a href="javascript:;" class="weui-btn weui-btn_mini weui-btn_primary">一键全读</a>
+    </div>
+    <!-- 全读按钮 end -->     
 </block>
-
 
 <block name="js">
     <script>
+        if(parseInt("{$titleArr.2.unRead}") >0){
+            $('#btn-all').show();
+        }
         var page = 1;
         var toast = $('#loadingToast'),
             no_more = $('.no-more'),
@@ -90,15 +87,38 @@
             getData();
 
         })
+    function dialog_confirm(){
+        $.ajax({
+            type:'POST',
+            url: "{:U('Light/Seek/seekApi')}",
+            dataType: 'json',
+            data: {
+                type: 'pushRead',
+            },
+            dataType: 'json',
+            success: function (res) {
+                if(res.code == 200){
+                    window.location.reload();
+                }
+            }
+        });
+    }
+    function searchGetDate(){
+        page = 1;
+        getData();
+        toast.fadeIn(200);
+        $('#show_data_content').empty();
+    }
 // 接口请求
     function getData(){
         $.ajax({
             type:'POST',
             url: "{:U('Light/Seek/seekApi')}",
-            dataType: 'submit',
+            dataType: 'json',
             data: {
-                type: 'approve',
-                page_num:page
+                type: 'push',
+                page_num:page,
+                search:$('#searchInput').val()
             },
             dataType: 'json',
             success: function (res) {
@@ -150,7 +170,7 @@
                     '<p class="weui-media-box__desc" style="margin-bottom: 0px;">申请理由：'+data[i]['notice']+'</p>'+
                     '</div> </a>';
         }
-        $('#approve').append(html);
+        $('#show_data_content').append(html);
     }  
     </script>
 </block>

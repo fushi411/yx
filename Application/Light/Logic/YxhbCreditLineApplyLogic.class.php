@@ -31,30 +31,52 @@ class YxhbCreditLineApplyLogic extends Model {
     {
         $res = $this->record($id);
         $result = array();
+        if(date('Y-m-d',strtotime($res['date'])) == date('Y-m-d',strtotime($res['dtime'])) ){
+            $date = date('Y-m-d',strtotime($res['date'].'-1 day'));
+        }
+        $info = $this->getInfo($res['clientid'],$date);
+        $clientname = M('yxhb_guest2')->field('g_khjc')->where(array('id' => $res['clientid']))->find();
+        $color = $info['flag']?'#f12e2e':'black';
+        
         $result['content'][] = array('name'=>'申请日期：',
                                      'value'=>$res['date'],
-                                     'type'=>'date'
+                                     'type'=>'date',
+                                     'color' => 'black'
                                     );
         $result['content'][] = array('name'=>'客户名称：',
-                                     'value'=>$res['clientname'],
-                                     'type'=>'string'
+                                     'value'=>$clientname['g_khjc'],
+                                     'type'=>'string',
+                                     'color' => 'black'
                                     );
-        $result['content'][] = array('name'=>'当前额度：',
+        $result['content'][] = array('name'=>'应收额度：',
+                                     'value'=>$info['ye'],
+                                     'type'=>'number',
+                                     'color' => $color
+                                    );
+        $result['content'][] = array('name'=>'信用额度：',
                                      'value'=>number_format($res['oline'],2,'.',',')."元",
-                                     'type'=>'number'
+                                     'type'=>'number',
+                                     'color' => 'black'
                                     );
-        $result['content'][] = array('name'=>'发货下限：',
-                                     'value'=>number_format($res['lower'],2,'.',',')."元",
-                                     'type'=>'number'
+        $result['content'][] = array('name'=>'已有临额：',
+                                     'value'=>$info['ed'],
+                                     'type'=>'number',
+                                     'color' => 'black'
                                     );
         $result['content'][] = array('name'=>'申请额度：',
                                      'value'=>number_format($res['line'],2,'.',',')."元",
-                                     'type'=>'number'
+                                     'type'=>'number',
+                                     'color' => 'black'
                                     );
-       
+        $result['content'][] = array('name'=>'申请人员：',
+                                     'value'=>$res['sales'],
+                                     'type'=>'string',
+                                     'color' => 'black'
+                                    );
         $result['content'][] = array('name'=>'申请理由：',
                                      'value'=>$res['notice'],
-                                     'type'=>'text'
+                                     'type'=>'text',
+                                     'color' => 'black'
                                     );
         $result['imgsrc'] = '';
         $result['applyerID'] = $res['salesid'];
@@ -63,7 +85,7 @@ class YxhbCreditLineApplyLogic extends Model {
         return $result;
     }
 
-         /**
+     /**
      * 记录内容
      * @param  integer $id 记录ID
      * @return array       记录数组
@@ -71,6 +93,10 @@ class YxhbCreditLineApplyLogic extends Model {
     public function getDescription($id){
         $res = $this->record($id);
         $result = array();
+        if(date('Y-m-d',strtotime($res['date'])) == date('Y-m-d',strtotime($res['dtime'])) ){
+            $date = date('Y-m-d',strtotime($res['date'].'-1 day'));
+        }
+        $info = $this->getInfo($res['clientid'],$date);
         $clientname = M('yxhb_guest2')->field('g_khjc')->where(array('id' => $res['clientid']))->find();
         $result[] = array('name'=>'申请日期：',
                                      'value'=>$res['date'],
@@ -80,11 +106,18 @@ class YxhbCreditLineApplyLogic extends Model {
                                      'value'=>$clientname['g_khjc'],
                                      'type'=>'string'
                                     );
-        $result[] = array('name'=>'当前额度：',
+        $result[] = array('name'=>'应收额度：',
+                                     'value'=>$info['ye'],
+                                     'type'=>'number'
+                                    );
+        $result[] = array('name'=>'信用额度：',
                                      'value'=>number_format($res['oline'],2,'.',',')."元",
                                      'type'=>'number'
                                     );
- 
+        $result[] = array('name'=>'已有临额：',
+                                     'value'=>$info['ed'],
+                                     'type'=>'number'
+                                    );
         $result[] = array('name'=>'申请额度：',
                                      'value'=>number_format($res['line'],2,'.',',')."元",
                                      'type'=>'number'
@@ -97,6 +130,23 @@ class YxhbCreditLineApplyLogic extends Model {
                                      'value'=>$res['notice'],
                                      'type'=>'text'
                                     );
+        return $result;
+    }
+
+    
+
+    public function getInfo($clientid,$date){
+        $result = array();
+        $temp = A('tempQuote');
+        
+        $ye = $temp->getClientFHYE($clientid,$date);
+        $ed = $temp->getTempCredit($clientid,'yxhb',$date);
+
+        $result['flag'] = -$ye['ysye']<20000?true:false;
+        $result['ye'] =  number_format(-$ye['ysye'],2,'.',',')."元";
+        $result['line'] =  number_format($ye['line'],2,'.',',')."元";
+        $result['ed']   = number_format($ed,2,'.',',')."元";
+       // $result['fhye'] = number_format($ed+$ye['line']-$ye['ysye'],2,'.',',')."元"; 发货余额
         return $result;
     }
 

@@ -594,17 +594,30 @@ class TempQuoteController extends BaseController
         $system = I('system');
         if(!$system)$system='yxhb';
         // 参数检验
-         if($user_id=='' || $reason=='' || $money=='') $this ->ajaxReturn(array('code' => 404,'msg' => '请刷新页面，重新提交！'));
+         if($user_id=='' || $reason=='' || $money=='') $this ->ajaxReturn(array('code' => 404,'msg' => '请刷新页面，重新提交'));
         
         // 字数校验
-        if(strlen($reason)<5 ||strlen($reason)>200) $this ->ajaxReturn(array('code' => 404,'msg' => '申请理由不能少于5个字，且不能多于200字！'));
+        if(strlen($reason)<5 ||strlen($reason)>200) $this ->ajaxReturn(array('code' => 404,'msg' => '申请理由不能少于5个字，且不能多于200字'));
         // 次数校验
          $timeArr = array(5,3,1);
          $times = $this->getQuoteTimes($user_id,$system);
-         if($timeArr[$money] <= count($times[$money]))$this ->ajaxReturn(array('code' => 404,'msg' => '申请次数已达本月上限！'));
-
+         if($timeArr[$money] <= count($times[$money]))$this ->ajaxReturn(array('code' => 404,'msg' => '申请次数已达本月上限'));
+       
          $yxqArr = array('2天','5天','7天');
          $lineArr = array(20000,50000,100000);
+
+         // 有效期校验
+         $res     = M($system.'_tempcreditlineconfig')
+                    ->field('date,dtime,stat,yxq')
+                    ->where(array('clientid' => $user_id ,'stat' => array('neq',0),'line' => $lineArr[$money]))
+                    ->order('date desc')
+                    ->find();
+        
+        //  为过审的
+        if($res['stat'] == 2) $this->ajaxReturn(array('code' => 404,'msg' => '已有一条同等额度申请在审批'));
+        // 过审的情况 有效期判断
+        $day = str_replace('天','',$res['yxq']);
+        if(strtotime($res['dtime'].' +'.$day.' day')>time())$this->ajaxReturn(array('code' => 404,'msg' => '已有同等额度在有效期内'));
 
          $stat =  $money == 0? 1:2;
          $clientname = $this->getClientname($user_id,$system);
@@ -689,7 +702,8 @@ class TempQuoteController extends BaseController
      * @param string $date  今天的日期
      * @return integer 临时额度
      */
-    public function getTempCredit($clientid,$system){
+    public function getTempCredit($clientid,$system,$date=''){
+        if(!empty($date)) $this->today=$date;
         $sql = "SELECT max(line) as line FROM `{$system}_tempcreditlineconfig` WHERE `clientid` = {$clientid} AND DATEDIFF('{$this->today}',date) <= SUBSTRING(yxq,1) AND `stat` = 1 ORDER BY date desc ";
         $res = M()->query($sql);
         return empty($res[0]['line'])?0:$res[0]['line'];

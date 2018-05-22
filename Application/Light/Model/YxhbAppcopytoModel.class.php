@@ -105,7 +105,7 @@ class YxhbAppcopytoModel extends Model {
             $recevierArr = explode('|',$recevier);
             $recevierArr = array_merge(array_diff($recevierArr, array($applyerID)));
             $recevier     = implode('|',$recevierArr);
-
+            $cpid = implode(',',$recevierArr);
             $title = str_replace('表','',$mod_cname);
             $template = "【审批后推送信息】\n申请单位：环保\n申请类型：{$title}";
               

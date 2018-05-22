@@ -316,16 +316,20 @@ class ApplyController extends BaseController {
     public function forTest()
     {
         // $wf = new WorkFlowController();
-        $system = 'yxhb';
+        //$system = 'yxhb';
         // $aid = 1;
         // $pid = 10;
         // $res = $wf->setWorkFlowSV('forTest', $aid, $pid, $system);
         // dump($res);
-        $mod_name = 'TempCreditLineApply';
-        $id = 589;
-        $wfClass = new WorkFlowFuncController();
-        $func = ucfirst($system).$mod_name.'End';
-        $funcRes = $wfClass->$func($id, $system);
+        // $mod_name = 'TempCreditLineApply';
+        // $id = 589;
+        // $wfClass = new WorkFlowFuncController();
+        // $func = ucfirst($system).$mod_name.'End';
+        // $funcRes = $wfClass->$func($id, $system);
+        header("Content-type:text/html;charset=utf-8");
+        $seek = A('Seek');
+        
+        $seek->SubmitSqlMake('','');
     }
 // ---END---
 }
