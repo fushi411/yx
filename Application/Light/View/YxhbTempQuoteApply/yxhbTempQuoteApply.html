@@ -135,7 +135,8 @@
                                 </label>
                             </div>
                             <div class="weui-cell__bd">
-                                <input class="weui-input" type="text" name="custodian" id="ysye" readonly placeholder=" 自动填写" />
+                                <input class="weui-input show_number" type="text" name="custodian" readonly placeholder="自动填写" />
+                                <span  id="ysye"></span>
                             </div>
                         </div>
                         <div class="weui-cell">
@@ -145,7 +146,8 @@
                                 </label>
                             </div>
                             <div class="weui-cell__bd">
-                                <input class="weui-input" type="text" name="custodian" id="line" readonly placeholder=" 自动填写" />
+                                <input class="weui-input  show_number" type="text" name="custodian"  readonly placeholder="自动填写" />
+                                <span  id="line"></span>
                             </div>
 
                         </div>
@@ -156,7 +158,8 @@
                                 </label>
                             </div>
                             <div class="weui-cell__bd">
-                                <input class="weui-input" type="text" name="custodian" id="ye" readonly placeholder=" 自动填写" />
+                                <input class="weui-input  show_number" type="text" name="custodian"  readonly placeholder="自动填写" />
+                                <span  id="ye"></span>
                             </div>
                         </div>
                         <div class="weui-cell ">
@@ -166,7 +169,8 @@
                                 </label>
                             </div>
                             <div class="weui-cell__bd">
-                                <input class="weui-input" type="text" name="custodian" id="exist" readonly placeholder=" 自动填写" />
+                                <input class="weui-input  show_number" type="text" name="custodian" readonly placeholder="自动填写" />
+                                <span  id="exist"></span>
                             </div>
                         </div>
                         <div class="weui-cell weui-cell_select weui-cell_select-after">
@@ -532,11 +536,13 @@
                     tooltip('请重新刷新页面！')
                 } else {
                     var data = res.data, info = data.info, classNmae = '';
-                    exist.val(data.exist);
-                    line.val(data.line);
-                    ye.val(data.ye);
-                    ysye.val(data.ysye);
-                    
+
+                    exist.html("&yen;"+data.exist);
+                    line.html("&yen;"+data.line);
+                    ye.html("&yen;"+data.ye);
+                    ysye.html("&yen;"+data.ysye);
+                    $('.show_number').hide();
+
                     if (data.ysflag) classNmae = 'redColor';
                     
                     ysye.removeClass('redColor').addClass(classNmae);

@@ -1,0 +1,266 @@
+<extend name="Apply:applyBase" />
+
+<!-- 去除不可选择日期 -->
+<block name="disable_date"></block> 
+<!-- 去除不可选择日期 end-->
+<block name="content_body">
+   
+    <div class="weui-cells ">
+        <!-- <div id="data_show"> -->
+            <div class="weui-cell weui-cell_select weui-cell_select-after">
+                <div class="weui-cell__hd">
+                    <label class="weui-label">供货单位&nbsp;&nbsp;
+                            <span style="color:red;">*</span>
+                    </label>
+                </div>
+                <div class="weui-cell__bd">
+                    <div class="weui-cell__bd">
+                        <select class="weui-select" name="user_name[]" id="user_name" multiple="multiple" style="width: 95%;" data-placeholder="请选择客户或拼音缩写">
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="weui-cell ">
+                <div class="weui-cell__hd">
+                    <label class="weui-label">应付余额&nbsp;&nbsp;
+
+                    </label>
+                </div>
+                <div class="weui-cell__bd">
+                    <input class="weui-input" type="text" name="custodian" id="ysye" readonly placeholder="自动填写" />
+                </div>
+            </div>  
+            <!-- <div class="weui-cell weui-cell_select weui-cell_select-after">
+                <div class="weui-cell__hd">
+                    <label class="weui-label">材料名称&nbsp;&nbsp;
+                            <span style="color:red;">*</span>
+                    </label>
+                </div>
+                <div class="weui-cell__bd">
+                    <select class="weui-select greyColor" name="type" id="" >
+                        <option selected="" value="0">原材料费</option>
+                        <option selected="" value="1">汽运费</option>
+                        <option value='-1' disabled selected style='display:none;'>请选择材料名称</option>
+                    </select>
+                </div>
+            </div>
+            <div class="weui-cell weui-cell_select weui-cell_select-after">
+                <div class="weui-cell__hd">
+                    <label class="weui-label">材料规格&nbsp;&nbsp;
+                            <span style="color:red;">*</span>
+                    </label>
+                </div>
+                <div class="weui-cell__bd">
+                    <select class="weui-select iptColor" name="type" id="type" style="color: #757575;">
+                        <option selected="" value="0">原材料费</option>
+                        <option selected="" value="1">汽运费</option>
+                        <option value='-1' disabled selected style='display:none;'>请选择材料规格</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="weui-cell weui-cell_select weui-cell_select-after">
+            <div class="weui-cell__hd">
+                <label class="weui-label">合同编号&nbsp;&nbsp;
+                        <span style="color:red;">*</span>
+                </label>
+            </div>
+            <div class="weui-cell__bd">
+                <select class="weui-select greyColor" name="type" id="" >
+                    <option selected="" value="0">原材料费</option>
+                    <option selected="" value="1">汽运费</option>
+                    <option value='-1' disabled selected style='display:none;'>请选择合同编号</option>
+                </select>
+            </div>
+        </div> -->
+        
+    <!-- </div>
+
+    <div class="weui-cells weui-cells_form"> -->
+        <div class="weui-cell weui-cell_select weui-cell_select-after">
+            <div class="weui-cell__hd">
+                <label class="weui-label">付款金额&nbsp;&nbsp;
+                        <span style="color:red;">*</span>
+                </label>
+            </div>
+            <div class="weui-cell__bd">
+                <input class="weui-select" type="number" maxlength="15" name="custodian" id="money"  placeholder="请输入付款金额" />
+                <div class="weui-select" id="show_number"></div>
+            </div>
+        </div>
+        <div class="weui-cell ">
+            <div class="weui-cell__hd">
+                <label class="weui-label">大写金额&nbsp;&nbsp;
+                </label>
+            </div>
+            <div class="weui-cell__bd greyColor" id="show_cap">自动填写
+            </div>
+        </div>
+    </div>
+
+    <div class="weui-cells weui-cells_form">
+        <div class="weui-cell">
+            <div class="weui-cell__hd">
+                <label class="weui-label">申请理由&nbsp;&nbsp;
+                <span style="color:red;">*</span>
+                </label>
+            </div>
+        </div>
+        <div class="weui-cell">
+            <div class="weui-cell__bd" id="cnt">
+                <textarea class="weui-textarea" name="reason" id="reason" placeholder="申请理由至少5个字(必填);
+请简要描述付款信息！"
+rows="3"></textarea>
+                <div class="weui-textarea-counter">
+                    <span id="reason_char">0</span>/200</div>
+            </div>
+        </div>
+    </div>
+</block>
+<block name="js">
+    <script src="__PUBLIC__/assets/js/AmountConversionformat.js"></script>
+<script>
+    
+    
+    var money    = $('#money'),
+        show_cap = $('#show_cap'),
+        ysye     = $('#ysye'),
+        submit   = $('#submit'),
+        user_id  = '';
+
+    var init_data = {
+        'input':money,
+        'show_div':$('#show_number'),
+        'symbol':"&yen;",
+        'input_show_bool':false
+    };
+    var forTest =new AmountConversionformat(init_data);
+    forTest.init();
+ $(function () {
+        // 金额输入 显示大写
+        money.keyup(function(){
+            var money = $(this).val();
+            if(money.length > 15){
+                money = money.substr(0,15);
+                $(this).val(money);
+            }
+            var cap = AmountLtoU(money);
+            if(cap == '零元整'){
+                show_cap.removeClass('redColor');
+                show_cap.addClass('greyColor');
+                show_cap.html('自动填写');
+            }else{
+                show_cap.removeClass('greyColor');
+                show_cap.addClass('redColor');
+                show_cap.html(cap);  
+            }
+               
+        });
+
+        // 用户选择
+        function formatRepo(repo) { return repo.text; }
+
+        function formatRepoSelection(repo) { return repo.text }
+        $("#user_name").select2({
+            ajax: {
+                url: "{:U('Light/Cgfk/CgfkApi')}"+"&system=yxhb&api=getCustomerList",
+                dataType: 'json',
+                delay: 350,
+                data: function (params) {
+                    return {
+                        math: params.term,
+                    };
+                },
+                processResults: function (data) {
+                    return {
+                        results: data
+                    };
+                },
+                cache: true
+            },
+            escapeMarkup: function (markup) { return markup; },
+            minimumInputLength: 0,
+            minimumResultsForSearch: 9,
+            // allowClear: true,
+            language: "zh-CN",
+            templateResult: formatRepo,
+            templateSelection: formatRepoSelection
+        });
+
+        // select2 点击触发
+        $("#user_name").on("select2:selecting", function (e) {
+            $('.select2-selection__choice__remove').click();
+            var selectArr = e.params.args.data;
+            user_id = selectArr.id;
+            if(selectArr.text.length > 9) {
+                selectArr.text =  selectArr.text.replace(/有限/, "");
+                selectArr.text =  selectArr.text.replace(/责任/, "");
+                selectArr.text =  selectArr.text.replace(/公司/, "");
+            }
+            $('.select2-selection__choice').text(selectArr.text);
+            
+        });
+        $("#user_name").on("select2:unselecting", function (e) {
+            user_id = '';
+            ysye.val('');
+        });   
+
+        submit.click(function(){
+            // 公司检测
+            if(!user_id) return tooltip('请选择供货单位');
+            // 付款金额
+            if(money.val()<= 0) return tooltip('付款金额不能小于0');
+            // 备注检测
+            var notice = $('#reason').val();
+            if(notice.length<5) return tooltip('备注不能少于5个字');
+            toast.fadeIn(200);
+            $.ajax({
+                type:'POST',
+                url: "{:U('Light/Cgfk/CgfkApi')}",
+                dataType: 'json',
+                data: {
+                    api:'submit',
+                    user_id: user_id,
+                    text: notice,
+                    money: money.val(),
+                    copyto_id:$("#copyto_id").val(),
+                    system:"{$system}"
+                },
+                dataType: 'json',
+                success: function (res) {
+                    toast.fadeOut(200);
+                    if (res.code == 200) {
+                        window.location.href = "$info[$system]['info']"+"&aid="+res.aid;
+                    } else {
+                        tooltip(res.msg);
+                    }
+                }
+            });
+        });
+    });
+
+    function AmountLtoU(num) {
+         ///<summery>小写金额转化大写金额</summery>
+         ///<param name=num type=number>金额</param>
+         if (isNaN(num)) return "";
+         var strPrefix = "";
+         if (num < 0) strPrefix = "(负)";
+         num = Math.abs(num);
+         if (num >= 1000000000000) return "您输入的数字太大，重新输入";
+         var strOutput = "";
+         var strUnit = '仟佰拾亿仟佰拾万仟佰拾元角分';
+         var strCapDgt = '零壹贰叁肆伍陆柒捌玖';
+         num += "00";
+         var intPos = num.indexOf('.');
+         if (intPos >= 0) {
+             num = num.substring(0, intPos) + num.substr(intPos + 1, 2);
+         }
+         strUnit = strUnit.substr(strUnit.length - num.length);
+         for (var i = 0; i < num.length; i++) {
+             strOutput += strCapDgt.substr(num.substr(i, 1), 1) + strUnit.substr(i, 1);
+         }
+         return strPrefix + strOutput.replace(/零角零分$/, '整').replace(/零[仟佰拾]/g, '零').replace(/零{2,}/g, '零').replace(/零([亿|万])/g, '$1').replace(/零+元/, '元').replace(/亿零{0,3}万/, '亿').replace(/^元/, "零元");
+     };
+
+</script>
+</block>

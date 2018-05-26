@@ -37,7 +37,7 @@ class KkTempCreditLineApplyLogic extends Model {
         $clientname = M('kk_guest2')->field('g_khjc')->where(array('id' => $res['clientid']))->find();
         $result['content']['clientname'] = $clientname['g_khjc'];
         //计算应收额度
-        if($info['tmpline']-$info['ye']+$res['ed'] >=20000)$info['flag'] =false;
+        if($info['tmpline']-$info['ye']+$res['ed'] <20000) $info['flag'] =false;
         $info['ye'] = number_format(-($info['tmpline']-$info['ye']+$res['ed']),2,'.',',')."元";
         $result['content']['ye'] = number_format($res['ye'],2,'.',',')."元";
         $result['content']['ed'] = number_format($res['ed'],2,'.',',')."元";
@@ -82,6 +82,8 @@ class KkTempCreditLineApplyLogic extends Model {
         $res = send_post('http://www.fjyuanxin.com/sngl/include/getClientCreditApi.php', $post_data);
         
         // $result['ye'] = number_format(-($ye-$res['ye']+$res['tmp']),2,'.',',')."元";
+        //$result['flag'] = -$res['ye']<20000?true:false;
+
         $result['ye'] = $res['ye'];
         $result['line'] =  number_format($ye,2,'.',',')."元"; // 信用额度
         $result['tmpline'] = $ye;

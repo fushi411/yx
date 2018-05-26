@@ -135,7 +135,8 @@
                                 </label>
                             </div>
                             <div class="weui-cell__bd">
-                                <input class="weui-input" type="text" name="custodian" id="ysye" readonly placeholder=" 自动填写" />
+                                <input class="weui-input show_number" type="text" name="custodian" readonly placeholder="自动填写" />
+                                <span  id="ysye"></span>
                             </div>
                         </div>
                         <div class="weui-cell">
@@ -145,7 +146,8 @@
                                 </label>
                             </div>
                             <div class="weui-cell__bd">
-                                <input class="weui-input" type="text" name="custodian" id="line" readonly placeholder=" 自动填写" />
+                                <input class="weui-input  show_number" type="text" name="custodian"  readonly placeholder="自动填写" />
+                                <span  id="line"></span>
                             </div>
 
                         </div>
@@ -156,7 +158,8 @@
                                 </label>
                             </div>
                             <div class="weui-cell__bd">
-                                <input class="weui-input" type="text" name="custodian" id="ye" readonly placeholder=" 自动填写" />
+                                <input class="weui-input  show_number" type="text" name="custodian"  readonly placeholder="自动填写" />
+                                <span  id="ye"></span>
                             </div>
                         </div>
                         <div class="weui-cell ">
@@ -166,7 +169,8 @@
                                 </label>
                             </div>
                             <div class="weui-cell__bd">
-                                <input class="weui-input" type="text" name="custodian" id="exist" readonly placeholder=" 自动填写" />
+                                <input class="weui-input  show_number" type="text" name="custodian" readonly placeholder="自动填写" />
+                                <span  id="exist"></span>
                                 <input type="hidden" id="khye">
                             </div>
                         </div>
@@ -395,7 +399,7 @@
     var user_name = $('#user_name'),
         user_id = 0, tjinfo = '';
         exist = $('#exist'),
-        line = $('#line'),
+        lineshow = $('#line'),
         ye = $('#ye'),
         ysye = $('#ysye'),
         two = $('#two'),
@@ -407,9 +411,11 @@
         $tooltips = $('.js_tooltips'),
         $iosDialog2 = $('#iosDialog2'),
         money = $('#money'),
+        tmp = 0,
         toast = $('#loadingToast'),
         app_pro = $('#app_pro');
     var appflow = {$appflow};
+    
 
     // diog提示
     $('#dialogs').on('click', '.weui-dialog__btn', function () {
@@ -538,7 +544,8 @@
                     tooltip('请重新刷新页面！')
                 } else {
                     var data = res.data, info = data.info;
-                    line.val(formatMoney(data.line,2));
+                    tmp = data.line;
+                    
 
                     getkk(data.line,data.name,clientname);
 
@@ -611,10 +618,12 @@
                 if ((tmpNum+yeNum) >= 20000) {
                     $iosDialog2.fadeIn(200);
                 }
-                // console.log(res);
-                exist.val(formatMoney(tmpNum,2));
-                ye.val(formatMoney(tmpNum+yeNum,2));
-                ysye.val(formatMoney(-(line+tmpNum-yeNum),2));
+                // console.log(res); 
+                lineshow.html("&yen;"+formatMoney(tmp,2));
+                exist.html("&yen;"+formatMoney(tmpNum,2));
+                ye.html("&yen;"+formatMoney(tmpNum+yeNum,2));
+                ysye.html("&yen;"+formatMoney(-(line+tmpNum-yeNum),2));
+                $('.show_number').hide();
             }
         });
     }

@@ -327,9 +327,9 @@ class ApplyController extends BaseController {
         // $func = ucfirst($system).$mod_name.'End';
         // $funcRes = $wfClass->$func($id, $system);
         header("Content-type:text/html;charset=utf-8");
-        $seek = A('Seek');
+        $seek = D('KkCgfkApply','Logic');
         
-        $seek->SubmitSqlMake('','');
+        dump($seek->getDescription(658));
     }
 // ---END---
 }

@@ -126,17 +126,30 @@ class SeekController extends BaseController
         $yxhb_id    = session('yxhb_id');
         $kk_id      = session('kk_id');
         $Mod        = array('kk' => '', 'yxhb' => '');
-        // sql语句构造
+        $where      = '';
+        // sql语句构造  -- 先进行模块查找，再做系统分析
         foreach ($table_info as $k => $v) {
             if(!empty($Mod[$v['system']])){
                 $Mod[$v['system']] .= ' or ';
             }
-             $Mod[$v['system']] .= "mod_name='{$v['mod_name']}'";
+            # 进行模块查找，拼接 条件限制语句
+            $res = $this->searchFind($v['search'],$searchText);
+            if($res){
+                empty($where)?$where = 'and (' : $where .= ' or ';
+                $where .=" mod_name='{$v['mod_name']}' ";
+            } 
+            $Mod[$v['system']] .= "mod_name='{$v['mod_name']}'";
         }
-       
+        if(!empty($where)) $where .= ')';
+        # 系统分析 -- 查看是否限制系统 3种情况 只处理 单系统情况
+        if($yxhbCount > 0 && $kkCount < 1){
+            $where .=' and a.1=1';
+        }elseif($yxhbCount <1  && $kkCount > 0){
+            $where .=' and a.1=2';
+        }
         $yxhbSql = 'SELECT *,1 from yxhb_appflowproc where per_id='.$yxhb_id.' and (app_stat=1 or app_stat=2) and ('.$Mod['yxhb'].')';
         $kkSql   = 'SELECT *,2 from kk_appflowproc where per_id='.$kk_id.' and (app_stat=1 or app_stat=2) and ('.$Mod['kk'].')';
-        $sql     = "select * from ({$yxhbSql} union all {$kkSql}) a order by time desc limit ".(($page-1)*20).",20";
+        $sql     = "select * from ({$yxhbSql} union all {$kkSql}) a where 1=1 {$where} order by time desc limit ".(($page-1)*20).",20";
         $approve = M()->query($sql);   
 
         foreach($approve as $k => $v){
