@@ -8,8 +8,8 @@ use Think\Model;
  */
 
 class MsgdataModel extends Model {
-    // 实际表名
-    protected $trueTableName = 'action';
+    // 虚拟模型
+    protected $autoCheckFields = false;
     
     /**
      * 获取所需的页面跳转信息、审批信息
@@ -21,15 +21,33 @@ class MsgdataModel extends Model {
         $obj = new MsgdataModel();
         $func = $mod_name;
         $result = method_exists($obj,$func) ? $this->$func():array();
+        $this->activeOn($result);
         return $result;
     }
 
-    // 
+    /**
+     * 对于页面显示当前页的处理
+     * @param array 需要处理的输出
+     */
+    public function activeOn(&$array){
+        if(empty($array)) return ;
+        $system = I('system');
+        $mod_name = I('modname');
+        $str = $system.$mod_name;
+        foreach($array['url'] as $k => $v){
+            if(strcasecmp($v['modname'],$str) == 0) {
+                $array['url'][$k]['on'] = 1;
+                $array['title'] = $v['name'];
+            }
+        }
+    }
+
+    // 采购付款
     public function CgfkApply(){
         $result = array();
         $result['url'] = array(
-            array('name' => '环保原材料采购付款','url' => U('Light/Cgfk/yxhbCgfk'),'modname' => 'yxhbCgfkApply'),
-            array('name' => '建材原材料采购付款','url' => U('Light/Cgfk/kkCgfk'),'modname' => 'kkCgfkApply'), 
+            array('name' => '环保原材料采购付款','url' => U('Light/View/View',array('modname'=>'CgfkApply','system' => 'yxhb')),'modname' => 'yxhbCgfkApply'),
+            array('name' => '建材原材料采购付款','url' => U('Light/View/View',array('modname'=>'CgfkApply','system' => 'kk')),'modname' => 'kkCgfkApply'), 
         );
         
         $result['kk']   =  array(
@@ -43,6 +61,42 @@ class MsgdataModel extends Model {
         return $result;      
     }
 
-        
+    // 信用额度
+    public function CreditLineApply(){
+        $result = array();
+        $result['url'] = array(
+            array('name' => '环保信用额度','url' => U('Light/View/View',array('modname'=>'CreditLineApply','system' => 'yxhb')),'modname' => 'yxhbCreditLineApply'),
+            array('name' => '建材信用额度','url' => U('Light/View/View',array('modname'=>'CreditLineApply','system' => 'kk')),'modname' => 'kkCreditLineApply'), 
+        );
+
+        $result['kk']   =  array(
+            'process' => U('Light/Process/ApplyProcess',array('modname'=>'CreditLineApply','system' => 'kk')),
+            'info'    => U('Light/Apply/applyInfo',array('modname'=>'CreditLineApply','system'=>'kk'))
+        );
+        $result['yxhb'] = array(
+            'process' => U('Light/Process/ApplyProcess',array('modname'=>'CreditLineApply','system' => 'yxhb')),
+            'info'    => U('Light/Apply/applyInfo',array('modname'=>'CreditLineApply','system'=>'yxhb'))
+        );   
+        return $result;      
+    }
+
+    // 临时额度
+    public function TempCreditLineApply(){
+        $result = array();
+        $result['url'] = array(
+            array('name' => '环保临时额度','url' => U('Light/View/View',array('modname'=>'TempCreditLineApply','system' => 'yxhb')),'modname' => 'yxhbTempCreditLineApply'),
+            array('name' => '建材临时额度','url' => U('Light/View/View',array('modname'=>'TempCreditLineApply','system' => 'kk')),'modname' => 'kkTempCreditLineApply'), 
+        );
+
+        $result['kk']   =  array(
+            'process' => U('Light/Process/ApplyProcess',array('modname'=>'TempCreditLineApply','system' => 'kk')),
+            'info'    => U('Light/Apply/applyInfo',array('modname'=>'TempCreditLineApply','system'=>'kk'))
+        );
+        $result['yxhb'] = array(
+            'process' => U('Light/Process/ApplyProcess',array('modname'=>'TempCreditLineApply','system' => 'yxhb')),
+            'info'    => U('Light/Apply/applyInfo',array('modname'=>'TempCreditLineApply','system'=>'yxhb'))
+        );   
+        return $result;      
+    }
 
 }

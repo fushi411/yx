@@ -167,6 +167,78 @@ class WorkFlowFuncController extends Controller {
 		$res = M('kk_creditlineconfig')->where(array('stat'=>2, 'aid'=>$aid))->setField('stat', 1);
         $resArr = $res?array("status"=>"success"):array("status"=>"failure");
         return $resArr;
-    }
+	}
+	/**
+     * 采购付款审批通过后调用函数
+     * @param  [integre] $aid [临时额度记录ID]
+     * @return [array]      [状态]
+     */
+	public function KkCgfkApplyEnd($aid)
+    {
+		$res = M('kk_cgfksq')->where(array('stat'=>3, 'id'=>$aid))->setField('stat', 1);
+		// 生成一条付款记录信息
+		$this->makeUnpayRecord('kk',$aid);
+        $resArr = $res?array("status"=>"success"):array("status"=>"failure");
+        return $resArr;
+	}
+	/**
+     * 采购付款审批通过后调用函数
+     * @param  [integre] $aid [临时额度记录ID]
+     * @return [array]      [状态]
+     */
+	public function YxhbCgfkApplyEnd($aid)
+    {
+		$res = M('yxhb_cgfksq')->where(array('stat'=>3, 'id'=>$aid))->setField('stat', 1);
+		// 生成一条付款记录信息
+		$this->makeUnpayRecord('yxhb',$aid);
+        $resArr = $res?array("status"=>"success"):array("status"=>"failure");
+        return $resArr;
+	}
+
+	/**
+	 * 采购申请审批通过，生成一条付款记录
+	 * @param string $system 系统
+	 * @param        $aid    标识值
+	 */
+	public function makeUnpayRecord($system,$aid){
+		// 生成一条付款记录信息
+		$today = date('Y-m-d',time());
+		$count = M($system.'_feecg')->where("date_format(jl_date, '%Y-%m-%d' )='$today' and dh like 'CY%'")->count();
+		$time  = str_replace('-','',$today);
+		$id    = "CY{$time}";
+		if($count < 9)    $dh = $id.'00'.($count+1);
+		elseif($count < 99)   $dh = $id.'0'.($count+1);
+		else $dh = $id.($count+1);
+		
+		$data = D(ucfirst($system).'CgfkApply','Logic')->record($aid);
+		$feeData = array(
+			'dh'      => $dh,
+			'sj_date' => $today,
+			'nmoney'  => -$data['fkje'],
+			'nbank'   => 1,
+			'jl_date' => date('Y-m-d h:i:m',time()),
+			'npeople' => '系统',
+			'ntext'   => $data['zy'],
+			'nfkfs'   => 2,
+			'nfylx'   => '',
+			'njbr'    => $data['rdy'],
+			'shy'     => '',
+			'nbm'     => 1,
+			'stat'    => 4,
+			'sqdh'    => $data['dh'],
+			'sqlx'    => 0,
+			'att_name' => ''
+		);
+		$clientname = M($system.'_gys')->field('g_name')->where(array('id' => $data['gys']))->find();
+		$dtgData = array(
+			'dh'  => $dh,
+			'gid' => $data['gys'],
+			'ang' => $clientname['g_name']
+		);
+		// 事务？
+		M($system.'_feecg') -> add($feeData);
+		M($system.'_dtg')   -> add($dtgData);
+	}
+
 // -----END------
 }

@@ -91,7 +91,7 @@ class ApplyController extends BaseController {
         if (!in_array($wxid, $authArr)) {
             $this->error ( '无查看权限！', U('Light/Index/index',array('system'=>$system)), 2 );
         }
-        $this->display(ucfirst($system).$mod_name.':applyInfo');
+        $this->display($mod_name.':'.ucfirst($system).'ApplyInfo');
     }
 
     // 获取当前目录
@@ -316,20 +316,59 @@ class ApplyController extends BaseController {
     public function forTest()
     {
         // $wf = new WorkFlowController();
-        //$system = 'yxhb';
+       
         // $aid = 1;
         // $pid = 10;
         // $res = $wf->setWorkFlowSV('forTest', $aid, $pid, $system);
         // dump($res);
-        // $mod_name = 'TempCreditLineApply';
+        
         // $id = 589;
         // $wfClass = new WorkFlowFuncController();
         // $func = ucfirst($system).$mod_name.'End';
         // $funcRes = $wfClass->$func($id, $system);
         header("Content-type:text/html;charset=utf-8");
-        $seek = D('KkCgfkApply','Logic');
-        
-        dump($seek->getDescription(658));
+        // $system = 'yxhb';
+        // $mod_name = 'CgfkApply';
+        $aid = 321;
+        $today = date('Y-m-d',time());
+        $count = M('yxhb_feecg')->where("date_format(jl_date, '%Y-%m-%d' )='$today' and dh like 'CY%'")->count();
+		$time  = str_replace('-','',$today);
+        $id    = "CY{$time}";
+        if($count < 9)    $dh = $id.'00'.($count+1);
+        elseif($count < 99)   $dh = $id.'0'.($count+1);
+		else $dh = $id.($count+1);
+		
+		$data = D('YxhbCgfkApply','Logic')->record($aid);
+		$feeData = array(
+			'dh'      => $dh,
+			'sj_date' => $today,
+			'nmoney'  => -$data['fkje'],
+			'nbank'   => 1,
+			'jl_date' => date('Y-m-d h:i:m',time()),
+			'npeople' => '系统',
+			'ntext'   => $data['zy'],
+			'nfkfs'   => 2,
+			'nfylx'   => '',
+			'njbr'    => $data['rdy'],
+			'shy'     => '',
+			'nbm'     => 1,
+			'sqdh'    => $data['dh'],
+			'sqlx'    => 0,
+			'att_name' => ''
+		);
+		$clientname = M('yxhb_gys')->field('g_name')->where(array('id' => $data['gys']))->find();
+		$dtgData = array(
+			'dh'  => $dh,
+			'gid' => $data['gys'],
+			'ang' => $clientname['g_name']
+        );
+
+        // $seek = A('View');
+        // $mod = 'TempCreditLineApply';
+        // $appflow = GetAppFlow('yxhb',$mod);
+        // echo 1;
+        // dump(json_encode($appflow));
+       // dump($seek->appflowJson($appflow,$mod));
     }
 // ---END---
 }

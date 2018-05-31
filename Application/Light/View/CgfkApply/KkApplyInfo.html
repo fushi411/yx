@@ -20,7 +20,7 @@
                                 <eq name="stat" value="1">
                                     <span class="label label-success" style="margin-left: 1em;padding-top: 0.3em;padding-bottom: 0.2em">已通过</span>
                                 </eq>
-                                <eq name="stat" value="2">
+                                <eq name="stat" value="3">
                                     <eq name="apply.stat" value="2">
                                         <span class="label label-success" style="margin-left: 1em;padding-top: 0.3em;padding-bottom: 0.2em">已通过</span>
                                     </eq>
@@ -37,7 +37,7 @@
                             </div>
                             <volist name="content" id="content">
                                 <p class="weui-media-box__desc">{$content.name}
-                                    <span style="color:{$content.color};">{$content.value}</span>
+                                    <span style="color:{$content.color} ">{$content.value}</span>
                                 </p>
                             </volist>
                             <!-- <div style="display: flex;flex-direction: row;flex-wrap: nowrap;align-items: flex-start;">

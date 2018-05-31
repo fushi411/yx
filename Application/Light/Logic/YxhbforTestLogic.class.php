@@ -7,9 +7,9 @@ use Think\Model;
  * @author 
  */
 
-class YxhbforTestLogic extends Model {
+class YxhbCgfkApplyLogic extends Model {
     // 实际表名
-    protected $trueTableName = 'yxhb_tempcreditlineconfig';
+    protected $trueTableName = 'yxhb_cgfksq';
 
     /**
      * 记录内容
@@ -29,25 +29,50 @@ class YxhbforTestLogic extends Model {
 
     public function recordContent($id)
     {
-        // $res = $this->record($id);
+        $res = $this->record($id);
         $result = array();
-        $result['content'][] = array('name'=>'执行日期：',
-                                     'value'=>'2018-02-27',
-                                     'type'=>'date'
+        $clientname = M('yxhb_gys')->field('g_name')->where(array('id' => $res['gys']))->find();
+
+        $color = '#f12e2e';
+        $result['content'][] = array('name'=>'申请日期：',
+                                     'value'=>$res['zd_date'],
+                                     'type'=>'date',
+                                     'color' => 'black'
                                     );
         $result['content'][] = array('name'=>'客户名称：',
-                                     'value'=>'ABC',
-                                     'type'=>'string'
+                                     'value'=>$clientname['g_name'],
+                                     'type'=>'string',
+                                     'color' => 'black'
                                     );
-
+        $result['content'][] = array('name'=>'申请单号：',
+                                     'value'=>$res['dh'],
+                                     'type'=>'string',
+                                     'color' => 'black'
+                                    );
+        $result['content'][] = array('name'=>'应付额度：',
+                                     'value'=>100000,
+                                     'type'=>'number',
+                                     'color' => $color
+                                    );
+        $result['content'][] = array('name'=>'申请额度：',
+                                     'value'=>number_format($res['fkje'],2,'.',',')."元",
+                                     'type'=>'number',
+                                     'color' => 'black'
+                                    );
+        $result['content'][] = array('name'=>'申请人员：',
+                                     'value'=>$res['rdy'],
+                                     'type'=>'string',
+                                     'color' => 'black'
+                                    );
         $result['content'][] = array('name'=>'申请理由：',
-                                     'value'=>'噢噢噢噢',
-                                     'type'=>'text'
+                                     'value'=>$res['zy'],
+                                     'type'=>'text',
+                                     'color' => 'black'
                                     );
         $result['imgsrc'] = '';
-        $result['applyerID'] = '10';
-        $result['applyerName'] = '魏锴';
-        $result['stat'] = 1;
+        $result['applyerID'] = D('YxhbBoss')->getIDFromName($res['rdy']);
+        $result['applyerName'] = $res['rdy'];
+        $result['stat'] = $res['stat'];
         return $result;
     }
 
@@ -58,8 +83,48 @@ class YxhbforTestLogic extends Model {
      */
     public function delRecord($id)
     {
-        // $map = array('id' => $id);
-        // return $this->field(true)->where($map)->setField('stat',0);
+        $map = array('id' => $id);
+        return $this->field(true)->where($map)->setField('stat',0);
+    }
+
+         /**
+     * 记录内容
+     * @param  integer $id 记录ID
+     * @return array       记录数组
+     */
+    public function getDescription($id){
+        $res = $this->record($id);
+        $result = array();
+        $clientname = M('yxhb_gys')->field('g_name')->where(array('id' => $res['gys']))->find();
+        $result[] = array('name'=>'申请日期：',
+                                     'value'=>$res['zd_date'],
+                                     'type'=>'date'
+                                    );
+        $result[] = array('name'=>'客户名称：',
+                                     'value'=>$clientname['g_name'],
+                                     'type'=>'string'
+                                    );
+        $result[] = array('name'=>'申请单号：',
+                                     'value'=>$res['dh'],
+                                     'type'=>'string'
+                                    );        
+        $result[] = array('name'=>'应付余额：',
+                                     'value'=>'1000',
+                                     'type'=>'number'
+                                    );
+        $result[] = array('name'=>'申请额度：',
+                                     'value'=>number_format($res['fkje'],2,'.',',')."元",
+                                     'type'=>'number'
+                                    );
+        $result[] = array('name'=>'申请人员：',
+                                     'value'=>$res['rdy'],
+                                     'type'=>'string'
+                                    );
+        $result[] = array('name'=>'申请理由：',
+                                     'value'=>$res['zy'],
+                                     'type'=>'text'
+                                    );
+        return $result;
     }
 
     /**
@@ -69,47 +134,30 @@ class YxhbforTestLogic extends Model {
      */
     public function getApplyer($id)
     {
-        // $map = array('id' => $id);
-        // return $this->field(true)->where($map)->getField('jbr');
+        $map = array('id' => $id);
+        return $this->field(true)->where($map)->getField('rdy');
     }
-
-     /**
-     * 记录内容
+    /**
+     * 我的审批，抄送，提交 所需信息
      * @param  integer $id 记录ID
-     * @return array       记录数组
+     * @return array    所需内容      
      */
-    public function getDescription($id){
+    public function sealNeedContent($id){
         $res = $this->record($id);
-        $result = array();
-        $clientname = M('yxhb_guest2')->field('g_khjc')->where(array('id' => $res['clientid']))->find();
-        $result[] = array('name'=>'申请日期：',
-                                     'value'=>$res['date'],
-                                     'type'=>'date'
-                                    );
-        $result[] = array('name'=>'客户名称：',
-                                     'value'=>$clientname['g_khjc'],
-                                     'type'=>'string'
-                                    );
-        $result[] = array('name'=>'客户余额：',
-                                     'value'=>number_format($res['ye'],2,'.',',')."元",
-                                     'type'=>'number'
-                                    );
-        $result[] = array('name'=>'已有临额：',
-                                     'value'=>number_format($res['ed'],2,'.',',')."元",
-                                     'type'=>'number'
-                                    );
-        $result[] = array('name'=>'申请额度：',
-                                     'value'=>number_format($res['line'],2,'.',',')."元",
-                                     'type'=>'number'
-                                    );
-        $result[] = array('name'=>'申&nbsp;&nbsp;请&nbsp;&nbsp;人：',
-                                     'value'=>$res['sales'],
-                                     'type'=>'string'
-                                    );
-        $result[] = array('name'=>'申请理由：',
-                                     'value'=>$res['notice'],
-                                     'type'=>'text'
-                                    );
+        $result = array(
+            'sales'   => $res['rdy'],
+            'approve' => number_format($res['fkje'],2,'.',',')."元",
+            'notice'  => $res['zy'],
+            'date'    => $res['zd_date'],
+            'stat'    => $res['stat']
+        );
         return $result;
     }
+
+    
+
+
+
+
+
 }

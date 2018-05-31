@@ -1,0 +1,274 @@
+<extend name="Apply:applyBase" />
+
+<!-- 去除不可选择日期 -->
+<block name="disable_date"></block> 
+<!-- 去除不可选择日期 end-->
+<block name="content_body">
+        <div class="weui-cells" id="content1">
+                <div class="weui-cell weui-cell_select weui-cell_select-after">
+                    <div class="weui-cell__hd">
+                        <label class="weui-label">客户名称&nbsp;&nbsp;
+                                <span style="color:red;">*</span>
+                        </label>
+                    </div>
+                    <div class="weui-cell__bd">
+                        <select class="weui-select" name="user_name[]" id="user_name" multiple="multiple" style="width: 95%;" data-placeholder="请选择客户或拼音缩写">
+                        </select>
+                    </div>
+                </div>
+                <div class="weui-cell ">
+                    <div class="weui-cell__hd">
+                        <label class="weui-label">应收余额&nbsp;&nbsp;
+
+                        </label>
+                    </div>
+                    <div class="weui-cell__bd">
+                        <input class="weui-input show_number" type="text" name="custodian" readonly placeholder="自动填写" />
+                        <span  id="ysye"></span>
+                    </div>
+                </div>
+                <div class="weui-cell">
+                    <div class="weui-cell__hd">
+                        <label class="weui-label">信用额度&nbsp;&nbsp;
+
+                        </label>
+                    </div>
+                    <div class="weui-cell__bd">
+                        <input class="weui-input  show_number" type="text" name="custodian"  readonly placeholder="自动填写" />
+                        <span  id="line"></span>
+                    </div>
+
+                </div>
+                <div class="weui-cell ">
+                    <div class="weui-cell__hd">
+                        <label class="weui-label">发货余额&nbsp;&nbsp;
+
+                        </label>
+                    </div>
+                    <div class="weui-cell__bd">
+                        <input class="weui-input  show_number" type="text" name="custodian"  readonly placeholder="自动填写" />
+                        <span  id="ye"></span>
+                    </div>
+                </div>
+                <div class="weui-cell ">
+                    <div class="weui-cell__hd">
+                        <label class="weui-label">已有临额&nbsp;&nbsp;
+
+                        </label>
+                    </div>
+                    <div class="weui-cell__bd">
+                        <input class="weui-input  show_number" type="text" name="custodian" readonly placeholder="自动填写" />
+                        <span  id="exist"></span>
+                    </div>
+                </div>
+        </div>
+        <div class="weui-cells " id="content2">
+            <div class="weui-cell weui-cell_select weui-cell_select-after">
+                <div class="weui-cell__hd">
+                    <label class="weui-label">申请额度&nbsp;&nbsp;
+                            <span style="color:red;">*</span>
+                    </label>
+                </div>
+                <div class="weui-cell__bd">
+                    <input class="weui-select" type="number" name="custodian" id="money"  placeholder="请输入申请额度" />
+                    <div class="weui-select" id="show_number"></div>
+                </div>
+            </div>
+        </div> 
+        <div class="weui-cells weui-cells_form">
+            <div class="weui-cell">
+                <div class="weui-cell__hd">
+                    <label class="weui-label">申请理由&nbsp;&nbsp;
+                    <span style="color:red;">*</span>
+                    </label>
+                </div>
+            </div>
+            <div class="weui-cell">
+                <div class="weui-cell__bd" id="cnt">
+                    <textarea class="weui-textarea" name="reason" id="reason" placeholder="申请理由至少5个字(必填);" rows="3"></textarea>
+                    <div class="weui-textarea-counter">
+                        <span id="reason_char">0</span>/200</div>
+                </div>
+            </div>
+        </div>
+</block>
+<block name="js">
+        <script src="__PUBLIC__/assets/js/AmountConversionformat.js"></script>
+    <script>
+        var user_id = 0,
+            exist = $('#exist'),
+            line = $('#line'),
+            ye = $('#ye'),
+            ysye = $('#ysye'),
+            two = $('#two'),
+            five = $('#five'),
+            ten = $('#ten'),
+            twoTime = 0,
+            fiveTime = 0,
+            tenTime = 0,
+            $iosDialog2 = $('#iosDialog2'),
+            money = $('#money');
+        var appflow = {$appflow};
+
+
+    $(function () {
+        // 用户选择
+        function formatRepo(repo) { return repo.text; }
+
+        function formatRepoSelection(repo) { return repo.text }
+        $("#user_name").select2({
+            ajax: {
+                url: "{:U('Light/Api/CreditLineApplyApi')}"+"&system=yxhb&modname=CreditLineApply&action=getCustomerList",
+                dataType: 'json',
+                delay: 350,
+                data: function (params) {
+                    return {
+                        math: params.term,
+                    };
+                },
+                processResults: function (data) {
+                    return {
+                        results: data
+                    };
+                },
+                cache: true
+            },
+            escapeMarkup: function (markup) { return markup; },
+            minimumInputLength: 0,
+            minimumResultsForSearch: 9,
+            // allowClear: true,
+            language: "zh-CN",
+            templateResult: formatRepo,
+            templateSelection: formatRepoSelection
+        });
+
+        // select2 点击触发
+        $("#user_name").on("select2:selecting", function (e) {
+            $('.select2-selection__choice__remove').click();
+            var selectArr = e.params.args.data;
+            selectArr.text = selectArr.jc;
+                
+            $('.select2-selection__choice').text(selectArr.text);
+            getTempInfo(selectArr.id);
+            user_id = selectArr.id;
+
+            money.val('');
+        });
+        $("#user_name").on("select2:unselecting", function (e) {
+          
+            $('.color').val('');
+            user_id = 0;
+        });
+
+    });
+
+    // 获取客户用户 各项余额
+    function getTempInfo(user_id) {
+        toastfadeIn(200,'数据加载中');
+        $.ajax({
+            url: "{:U('Light/Api/CreditLineApplyApi')}"+"&system=yxhb&modname=CreditLineApply&action=getCustomerInfo",
+            dataType: 'json',
+            data: {
+                user_id: user_id
+            },
+            dataType: 'json',
+            success: function (res) {
+                if (res.code != 200) {
+                    tooltip('请重新刷新页面！')
+                } else {
+                    var data = res.data, info = data.info, classNmae = '';
+                    exist.html("&yen;"+data.exist);
+                    line.html("&yen;"+data.line);
+                    ye.html("&yen;"+data.ye);
+                    ysye.html("&yen;"+data.ysye);
+                    $('.show_number').hide();
+
+                    
+                    if (data.ysflag) classNmae = 'redColor';
+                    
+                    ysye.removeClass('redColor').addClass(classNmae);
+                    if (data.fhye >= 10000) {
+                        $iosDialog2.fadeIn(200);
+                    }
+
+                    twoTime = info[0].length;
+                    fiveTime = info[1].length;
+                    tenTime = info[2].length;
+                    $('.color').removeClass('redColor greenColor');
+
+                    toast.fadeOut(200);
+                }
+            }
+        })
+
+    }
+
+    // 提交申请
+    $('#submit').click(function () {
+        
+        if (user_id == 0) {
+            tooltip('请选择用户');
+            return;
+        }
+  
+        if ($('#money').val() == '') {
+            tooltip('请输入申请额度');
+            return;
+        }
+        if ($('#money').val() <= 0) {
+            tooltip('申请额度不能小于0');
+            return;
+        }
+
+        // 留言判断
+        var reason = $('#reason').val();
+        if (reason.length < 5) {
+            tooltip('申请理由不得少于5个字！');
+            return;
+        }
+        if (reason.length > 200) {
+            tooltip('申请理由不得超过200个字！');
+            return;
+        }
+       
+        toastfadeIn(200,'数据提交中');
+        $.ajax({
+            type:'POST',
+            url: "{:U('Light/Api/CreditLineApplyApi')}",
+            dataType: 'json',
+            data: {
+                date: $('#showDatePicker').val(),
+                user_id: user_id,
+                text: reason,
+                money: money.val(),
+                copyto_id:$("#copyto_id").val(),
+                system:"{$system}",
+                modname:'CreditLineApply',
+                action:'submit'
+            },
+            dataType: 'json',
+            success: function (res) {
+                toast.fadeOut(200);
+                if (res.code == 200) {
+                    window.location.href = "{$info[$system]['info']}"+"&aid="+res.aid;
+                } else {
+                    tooltip(res.msg);
+                }
+            }
+        });
+
+    });
+
+
+        // 输入框插件
+        var init_data = {
+            'input':money,
+            'show_div':$('#show_number'),
+            'symbol':"&yen;",
+            'input_show_bool':false
+        };
+        var forTest =new AmountConversionformat(init_data);
+        forTest.init();
+
+    </script>
+</block>

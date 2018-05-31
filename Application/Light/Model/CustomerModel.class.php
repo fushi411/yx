@@ -1,100 +1,21 @@
 <?php
-namespace Light\Controller;
-use Think\Controller;
-class TempQuoteController extends BaseController
-{
-    private $today = null;
-    private $TempPageArr = '';
-    private $CreditPageArr = '';
+namespace Light\Model;
+use Think\Model;
+/**
+ * 客户信息
+ */
 
+class CustomerModel extends Model
+{
+   
+    // 虚拟模型
+    protected $autoCheckFields = false;
+    private $today = null;
+    
     public function __construct(){
         parent::__construct();
         $this->today = date('Y-m-d',time());
-        $this->TempPageArr = array(
-            array('name' => '环保临时额度','url' => U('Light/TempQuote/tempQuote'),'modname' => 'yxhbTempCreditLineApply'),
-            array('name' => '建材临时额度','url' => U('Light/TempQuote/kktempQuote'),'modname' => 'kkTempCreditLineApply'), 
-        );
-        $this->CreditPageArr = array(
-            array('name' => '环保信用额度','url' => U('Light/TempQuote/creditLine'),'modname' => 'yxhbCreditLineApply'),
-            array('name' => '建材信用额度','url' => U('Light/TempQuote/kkcreditLine'),'modname' => 'kkCreditLineApply'),
-        );
-
     }
-    /**
-     * 建材临时额度申请页面
-     */
-    public function kktempQuote(){
-        // 流程
-        $appflow = GetAppFlow('kk','TempCreditLineApply');
-        // 推送
-        $push = GetPush('kk','TempCreditLineApply');
-        $this ->assign('push',$push['data']);
-        $this ->assign('type',$this->TempPageArr);
-        $this ->assign('appflow',json_encode($appflow));
-        $this->assign('today',$this->today);
-        $this->display('YxhbTempQuoteApply/kkTempQuoteApply');
-    }
-
-    /**
-     * 建材信用额度申请页面
-     */
-    public function kkcreditLine(){
-        // 流程
-        $appflow = GetAppFlow('kk','CreditLineApply');
-        // 推送
-        $push = GetPush('kk','CreditLineApply');
-
-        $this ->assign('push',$push['data']);
-        $this ->assign('type',$this->CreditPageArr);
-        $this ->assign('appflow',$appflow);
-        $this->assign('today',$this->today);
-        $this->display('YxhbTempQuoteApply/kkcreditLine');
-    }
-
-
-    /**
-     * 环保临时额度申请页面
-     */
-    public function tempQuote(){
-        // 流程
-        $appflow = GetAppFlow('yxhb','TempCreditLineApply');
-        // 推送
-        $push = GetPush('yxhb','TempCreditLineApply');
-        $this ->assign('push',$push['data']);
-        $this ->assign('type',$this->TempPageArr);
-        $this ->assign('appflow',json_encode($appflow));
-        $this->assign('today',$this->today);
-        $this->display('YxhbTempQuoteApply/yxhbTempQuoteApply');
-    }
-
-    /**
-     * 环保信用额度申请页面
-     */
-    public function creditLine(){
-        // 流程
-        $appflow = GetAppFlow('yxhb','CreditLineApply');
-        // 推送
-        $push = GetPush('yxhb','CreditLineApply');
-        $this ->assign('push',$push['data']);
-        $this ->assign('type',$this->CreditPageArr);
-        $this ->assign('appflow',$appflow);
-        $this->assign('today',$this->today);
-        $this->display('YxhbTempQuoteApply/yxhbcreditLine');
-    }
-
-    /**
-     * 合同客户获取
-     * @param string $data  拼音缩写
-     * @return array $res   合同用户结果
-     */
-    public function getCustomerList(){
-        $data = I('math');
-        $system = I('system');
-        $like = $data?"where g_helpword like '%{$data}%' or g_name like '%{$data}%'":'';
-        $sql = "select id,g_name as text,g_khjc as jc from (select a.id as id,g_name,g_helpword,g_khjc FROM {$system}_guest2 as a,{$system}_ht as b where a.id=b.ht_khmc and ht_stday<='{$this->today}' and ht_enday>='{$this->today}' and ht_stat=2 and reid=0 group by ht_khmc UNION select id,g_name,g_helpword,g_khjc FROM {$system}_guest2 where id=any(select a.reid as id FROM {$system}_guest2 as a,{$system}_ht as b where a.id=b.ht_khmc and reid!= 0 and ht_stday<='{$this->today}' and ht_enday>='{$this->today}' and ht_stat=2  group by ht_khmc)) as t {$like} order by g_name ASC";
-        $res = M()->query($sql);
-        $this->ajaxReturn($res);
-    } 
 
     /**
      * 获取客户用户 各项余额
@@ -106,7 +27,7 @@ class TempQuoteController extends BaseController
         $system = I('system');
         if(!$system)$system='yxhb';
         if(!$client_id){
-            $this->ajaxReturn(array('code' => 404,'msg' => '请重新刷新页面！'));
+            return array('code' => 404,'msg' => '请重新刷新页面！');
         }
         // 临额申请情况
         $info = $this->getQuoteTimes($client_id,$system);
@@ -117,7 +38,7 @@ class TempQuoteController extends BaseController
             $res['name'] = data_auth_sign($clientname);
             $res['line'] = $this->getkkline($client_id,$this->today);
             $res['info'] = $info;
-            $this->ajaxReturn(array('code' => 200, 'data' => $res));
+            return array('code' => 200, 'data' => $res);
         }
         // 临时额度
         $existTempQuote = $this->getTempCredit($client_id,$system);
@@ -135,7 +56,7 @@ class TempQuoteController extends BaseController
         $res['info'] = $info;
         $res['fhye'] = number_format($ye['line']-$ye['ysye']+$existTempQuote,2); // 发货额度 由前面3个决定
         $res['ye'] =  $res['fhye'];
-        $this ->ajaxReturn(array('code' => 200,'data' => $res));
+        return array('code' => 200,'data' => $res);
     }
 
 
@@ -522,180 +443,19 @@ class TempQuoteController extends BaseController
         return $data;
     }
 
-    // 信用额度增加
-    public function addCreditLineApply(){
-        $user_id = I('post.user_id');
-        $reason = I('post.text');
-        $money = I('post.money');
-        $date = I('post.date');
-        $copyto_id = I('post.copyto_id');
-        $system = I('system');
-        if(!$system)$system='yxhb';
-        
-        // 参数检验
-        if($user_id=='' || $reason=='' || $money=='') $this ->ajaxReturn(array('code' => 404,'msg' => '请刷新页面，重新提交！'));
-        // 申请金额校验
-        if($money=='' || $money<0 ) $this ->ajaxReturn(array('code' => 404,'msg' => '申请金额不能为空，且不能为负数！'));
-        // 字数校验
-        if(strlen($reason)<5 ||strlen($reason)>200) $this ->ajaxReturn(array('code' => 404,'msg' => '申请理由不能少于5个字，且不能多于200字！'));
 
-        $clientname = $this->getClientname($user_id,$system);
-        $sales = session('name');
-        $salesid = session($system.'_id');
-        $dtime=$this->getDatetimeMk(time());
-        if($system =='yxhb'){
-            $yeArr =$this->getClientFHYE($user_id,$this->today);
-            $oline = $yeArr['line'];
-        }else{
-            $yeArr= $this->getkkline($user_id,$this->today);
-            $oline = $yeArr;
-        }
-        
-        $aid = M($system.'_creditlineconfig')->field('1')->group('clientid,dtime')->select();
-        $aid = count($aid)+1;
-
-        $insertData = array(
-            'aid'  => $aid,
-            'date' => $date,
-            'clientname' => $clientname,
-            'clientid' => $user_id,
-            'lower' => 0,
-            'upper' => 0,
-            'sales' => $sales,
-            'salesid' => $salesid,
-            'stat' => 2,
-            'dtime' => $dtime,
-            'notice' => $reason,
-            'line' => $money,
-            'oline' => $oline
-        );
-        // 表单重复提交
-        if(M($system.'_creditlineconfig')->autoCheckToken($_POST))$this ->ajaxReturn(array('code' => 404,'msg' => '网络延迟，请勿点击提交按钮！'));
-        $result = M($system.'_creditlineconfig')->add($insertData);
-        if(!$result) $this ->ajaxReturn(array('code' => 404,'msg' => '提交失败，请重新尝试！'));
-        // 抄送
-        $copyto_id = trim($copyto_id,',');
-        if (!empty($copyto_id)) {
-            $fix = explode(",", $copyto_id);
-            // 发送抄送消息
-            D($system.'Appcopyto')->copyTo($copyto_id,'CreditLineApply', $aid);
-        }
-        $wf = new WorkFlowController();
-        $res = $wf->setWorkFlowSV('CreditLineApply', $aid, $salesid, $system);
-        $this ->ajaxReturn(array('code' => 200,'msg' => '提交成功' , 'aid' =>$aid));
-    }
-
-    // 临时额度增加
-    public function addtempQuote(){
-         $user_id = I('post.user_id');
-         $reason = I('post.text');
-         $money = I('post.money');
-        $copyto_id = I('post.copyto_id');
-        $system = I('system');
-        if(!$system)$system='yxhb';
-        // 临时 关闭五W额度
-        if($money==1) $this ->ajaxReturn(array('code' => 404,'msg' => '五万额度暂时无法提交'));
-
-        // 参数检验
-         if($user_id=='' || $reason=='' || $money=='') $this ->ajaxReturn(array('code' => 404,'msg' => '请刷新页面，重新提交'));
-        
-        // 字数校验
-        if(strlen($reason)<5 ||strlen($reason)>200) $this ->ajaxReturn(array('code' => 404,'msg' => '申请理由不能少于5个字，且不能多于200字'));
-        // 次数校验
-         $timeArr = array(5,3,1);
-         $times = $this->getQuoteTimes($user_id,$system);
-         if($timeArr[$money] <= count($times[$money]))$this ->ajaxReturn(array('code' => 404,'msg' => '申请次数已达本月上限'));
-       
-         $yxqArr = array('2天','5天','7天');
-         $lineArr = array(20000,50000,100000);
-
-         // 有效期校验
-         $res     = M($system.'_tempcreditlineconfig')
-                    ->field('date,dtime,stat,yxq')
-                    ->where(array('clientid' => $user_id ,'stat' => array('neq',0),'line' => $lineArr[$money]))
-                    ->order('date desc')
-                    ->find();
-        
-        //  为过审的
-        if($res['stat'] == 2) $this->ajaxReturn(array('code' => 404,'msg' => '已有一条同等额度申请在审批'));
-        // 过审的情况 有效期判断
-        $day = str_replace('天','',$res['yxq']);
-        if(strtotime($res['dtime'].' +'.$day.' day')>time())$this->ajaxReturn(array('code' => 404,'msg' => '已有同等额度在有效期内'));
-
-         $stat =  $money == 0? 1:2;
-         $clientname = $this->getClientname($user_id,$system);
-         $sales = session('name');
-         $salesid = session($system.'_id');
-
-         $dtime=$this->getDatetimeMk(time());
-
-         $yxq =$yxqArr[$money];
-         $line = $lineArr[$money];
-         if($system=='yxhb'){
-             $existTempQuote = $this->getTempCredit($user_id,$system);
-             $yeArr =$this->getClientFHYE($user_id,$this->today);
-             $ye = $yeArr['line']-$yeArr['ysye']+$existTempQuote;
-         }else{
-             $ye = I('ye');
-         }
-         $ed = $this->getTempCredit($user_id,$system);
-
-         $saveData = array(
-             'date'         => $this->today ,
-             'clientname'  => $clientname,
-             'clientid'    => $user_id,
-             'line'         => $line,
-             'sales'        => $sales,
-             'salesid'      => $salesid,
-             'dtime'        => $dtime,
-             'stat'         => $stat,
-             'notice'       => $reason,
-             'ye'           => $ye,
-             'ed'           => $ed,
-             'yxq'          => $yxq
-         );
-         
-         // 表单重复提交
-         if(M($system.'_tempcreditlineconfig')->autoCheckToken($_POST))$this ->ajaxReturn(array('code' => 404,'msg' => '网络延迟，请勿点击提交按钮！'));
-        $result = M($system.'_tempcreditlineconfig')->add($saveData);
-        if(!$result) $this ->ajaxReturn(array('code' => 404,'msg' => '提交失败，请重新尝试！'));
-        // 抄送
-        $copyto_id = trim($copyto_id,',');
-        if (!empty($copyto_id)) {
-            $fix = explode(",", $copyto_id);
-            // 发送抄送消息
-            D($system.'Appcopyto')->copyTo($copyto_id,'TempCreditLineApply', $result);
-        }
-
-
-        if($stat == 2)
-        {
-            $wf = new WorkFlowController();
-            $res = $wf->setWorkFlowSV('TempCreditLineApply', $result, $salesid, $system);
-        }else{ // -- 推送
-            $mod_name = 'TempCreditLineApply';          
-            $res = M($system.'_appflowtable')->field('condition')->where(array('pro_mod'=>$mod_name.'_push'))->find();
-            if(!empty($res)){
-                $pushArr = json_decode($res['condition'],true);
-                // -- 2W额度推送人  
-                $push_id = $pushArr['two'];
-                D($system.'Appcopyto')->copyTo($push_id, $mod_name, $result,2);
-            }
-        };
-        $this ->ajaxReturn(array('code' => 200,'msg' => '提交成功' , 'aid' =>$result));
-    }
 
     /**
      * 时间
      */
-    private function GetDateTimeMk($mktime){
+    public function GetDateTimeMk($mktime){
         if($mktime==""||ereg("[^0-9]",$mktime)) return "";
         return gmdate("Y-m-d H:i:s",$mktime + 3600 * 8);
     }
     /**
      * 获取用户名
      */
-    private function getClientname($clientid,$system){
+    public function getClientname($clientid,$system){
         $clientName = M($system.'_guest2')->field('g_name')->where('id='.$clientid)->find();
         return $clientName['g_name'];
     }
@@ -965,15 +725,6 @@ class TempQuoteController extends BaseController
     }
 //------------------获取发货金额 结束-------------------
 
-
-
-
-    /**
-     *
-     */
-    public function test(){
-      
-    }
 
 }
 

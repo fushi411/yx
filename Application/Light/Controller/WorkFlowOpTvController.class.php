@@ -38,7 +38,12 @@ class WorkFlowOpTvController extends BaseController {
 				$receviers = $res['wxid'].',';
 		
 				// - 流程人员
-				$resArr =  M($system.'_appflowproc a')->join($system.'_boss b on b.id=a.per_id')->field('b.wxid')->where(array('a.aid' => $id ,'a.mod_name' => $mod_name,'a.per_name'=>array('neq',$per_name)))->select();               
+				$resArr =  M($system.'_appflowproc a')
+							->join($system.'_boss b on b.id=a.per_id')
+							->field('b.wxid')
+							->where(array('a.aid' => $id ,'a.mod_name' => $mod_name,'a.per_name'=>array('neq',$per_name)))
+							->select();               
+				
 				foreach($resArr as $val){
 					$receviers .= $val['wxid'].',';
 				}
@@ -79,6 +84,9 @@ class WorkFlowOpTvController extends BaseController {
 			// 发送抄送消息
 			D($system.'Appcopyto')->copyTo($copyto_id, $mod_name, $id);
 		}
+
+
+
 		// 调用审批后处理方法
 		// 同理可处理开始审批、过程中、拒绝后调用方法
 	    if (!empty($wfStatus)&&$wfStatus['status']=='end'&&$wfStatus['option']==2) {

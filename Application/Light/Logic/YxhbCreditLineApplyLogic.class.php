@@ -49,22 +49,22 @@ class YxhbCreditLineApplyLogic extends Model {
                                      'color' => 'black'
                                     );
         $result['content'][] = array('name'=>'应收额度：',
-                                     'value'=>$info['ye'],
+                                     'value'=>"&yen;".$info['ye'],
                                      'type'=>'number',
                                      'color' => $color
                                     );
         $result['content'][] = array('name'=>'信用额度：',
-                                     'value'=>number_format($res['oline'],2,'.',',')."元",
+                                     'value'=>"&yen;".number_format($res['oline'],2,'.',',')."元",
                                      'type'=>'number',
                                      'color' => 'black'
                                     );
         $result['content'][] = array('name'=>'已有临额：',
-                                     'value'=>$info['ed'],
+                                     'value'=>"&yen;".$info['ed'],
                                      'type'=>'number',
                                      'color' => 'black'
                                     );
         $result['content'][] = array('name'=>'申请额度：',
-                                     'value'=>number_format($res['line'],2,'.',',')."元",
+                                     'value'=>"&yen;".number_format($res['line'],2,'.',',')."元",
                                      'type'=>'number',
                                      'color' => 'black'
                                     );
@@ -137,7 +137,7 @@ class YxhbCreditLineApplyLogic extends Model {
 
     public function getInfo($clientid,$date){
         $result = array();
-        $temp = A('tempQuote');
+        $temp = D('Customer');
         
         $ye = $temp->getClientFHYE($clientid,$date);
         $ed = $temp->getTempCredit($clientid,'yxhb',$date);
@@ -189,4 +189,93 @@ class YxhbCreditLineApplyLogic extends Model {
         return $result;
     }
     
+    /**
+    * 合同客户获取
+    * @param string $data  拼音缩写
+    * @return array $res   合同用户结果
+    */
+    public function getCustomerList(){
+        $today = date('Y-m-d',time());
+        $data = I('math');
+        $like = $data?"where g_helpword like '%{$data}%' or g_name like '%{$data}%'":'';
+        $sql = "select id,g_name as text,g_khjc as jc from (select a.id as id,g_name,g_helpword,g_khjc FROM yxhb_guest2 as a,yxhb_ht as b where a.id=b.ht_khmc and ht_stday<='{$today}' and ht_enday>='{$today}' and ht_stat=2 and reid=0 group by ht_khmc UNION select id,g_name,g_helpword,g_khjc FROM yxhb_guest2 where id=any(select a.reid as id FROM yxhb_guest2 as a,yxhb_ht as b where a.id=b.ht_khmc and reid!= 0 and ht_stday<='{$today}' and ht_enday>='{$today}' and ht_stat=2  group by ht_khmc)) as t {$like} order by g_name ASC";
+        $res = M()->query($sql);
+        return $res;
+    } 
+
+    /**
+     * 获取客户用户 各项余额
+     * @param int $client_id 客户id
+     * @return array $res 各项余额  
+     */
+    public function  getCustomerInfo(){
+        $model = D('Customer');
+        $res = $model->getCustomerInfo();
+        return $res;
+    } 
+
+    // 信用额度增加
+    public function submit(){
+        $user_id = I('post.user_id');
+        $reason = I('post.text');
+        $money = I('post.money');
+        $date = I('post.date');
+        $copyto_id = I('post.copyto_id');
+        $today = date('Y-m-d',time());
+        
+        // 参数检验
+        if($user_id=='' || $reason=='' || $money=='') return array('code' => 404,'msg' => '请刷新页面，重新提交！');
+        // 申请金额校验
+        if($money=='' || $money<0 ) return array('code' => 404,'msg' => '申请金额不能为空，且不能为负数！');
+        // 字数校验
+        if(strlen($reason)<5 ||strlen($reason)>200) return array('code' => 404,'msg' => '申请理由不能少于5个字，且不能多于200字！');
+        $model = D('Customer');
+
+        $clientname = $model->getClientname($user_id,'yxhb');
+        $sales      = session('name');
+        $salesid    = session('yxhb_id');
+        $dtime      = $model->getDatetimeMk(time());
+        
+        $yeArr =$model->getClientFHYE($user_id,$today);
+        $oline = $yeArr['line'];
+        
+        $aid = M('yxhb_creditlineconfig')->field('1')->group('clientid,dtime')->select();
+        $aid = count($aid)+1;
+
+        $insertData = array(
+            'aid'  => $aid,
+            'date' => $date,
+            'clientname' => $clientname,
+            'clientid' => $user_id,
+            'lower' => 0,
+            'upper' => 0,
+            'sales' => $sales,
+            'salesid' => $salesid,
+            'stat' => 2,
+            'dtime' => $dtime,
+            'notice' => $reason,
+            'line' => $money,
+            'oline' => $oline
+        );
+
+        // 表单重复提交
+        if(M('yxhb_creditlineconfig')->autoCheckToken($_POST)) return array('code' => 404,'msg' => '网络延迟，请勿点击提交按钮！');
+        $result = M('yxhb_creditlineconfig')->add($insertData);
+        if(!$result) return array('code' => 404,'msg' => '提交失败，请重新尝试！');
+        // 抄送
+        $copyto_id = trim($copyto_id,',');
+        if (!empty($copyto_id)) {
+            $fix = explode(",", $copyto_id);
+            // 发送抄送消息
+            D('YxhbAppcopyto')->copyTo($copyto_id,'CreditLineApply', $aid);
+        }
+        $wf = A('WorkFlow');
+        $res = $wf->setWorkFlowSV('CreditLineApply', $aid, $salesid, 'yxhb');
+        return array('code' => 200,'msg' => '提交成功' , 'aid' =>$aid);
+    }
+
+
+
+
+
 }

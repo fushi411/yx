@@ -131,7 +131,7 @@
                         <div class="weui-uploader__bd" >
                             <ul class="weui-uploader__files" id="app_pro" style="margin-bottom: 0px;">
                                 <!-- 2W额度显示 -->
-                                <if condition="$content.line eq '20,000.00元'">
+                                <if condition="$content.line eq '&yen;20,000.00元'">
                                     <li >
                                         <h4 class="weui-media-box__title" style="/*font-weight: 800;*/margin-top: 0px;margin-bottom: 5px;color:grey;">
                                             无审批人
@@ -140,7 +140,7 @@
                                 </if>
                                 <!-- 2W额度显示 end -->
                                 <!-- 5w额度显示 -->
-                                <if condition="$content.line eq '50,000.00元'">
+                                <if condition="$content.line eq '&yen;50,000.00元'">
                                     <li class='weui-uploader__file wk-select__user' id='{$first.id}' style='height:90px;'>
                                         <img src={$first.avatar} class='weui-selet__user' style='margin-bottom: 0px;margin-right: 6px;margin-top:10px;'>
                                         <span style='margin-right: 6px;font-size: 14px;'>{$first.realname}</span>
@@ -148,7 +148,7 @@
                                 </if>
                                 <!-- 5W额度显示 end -->
                                 <!-- 10W额度显示 -->
-                                <if condition="$content.line eq '100,000.00元'">
+                                <if condition="$content.line eq '&yen;100,000.00元'">
                                     <volist name="proInfo" id="vo">
                                         <if condition="$vo.id eq $first['id']">
                                             <li class='weui-uploader__file wk-select__user' id='{$first.id}' style='height:90px;'>

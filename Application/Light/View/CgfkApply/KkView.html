@@ -27,7 +27,8 @@
                     </label>
                 </div>
                 <div class="weui-cell__bd">
-                    <input class="weui-input" type="text" name="custodian" id="ysye" readonly placeholder="自动填写" />
+                    <input class="weui-input show_number" type="text" name="custodian" readonly placeholder="自动填写" />
+                    <span  id="ysye"></span>
                 </div>
             </div>  
             <!-- <div class="weui-cell weui-cell_select weui-cell_select-after">
@@ -126,7 +127,9 @@ rows="3"></textarea>
         show_cap = $('#show_cap'),
         ysye     = $('#ysye'),
         submit   = $('#submit'),
-        user_id  = '';
+        notice   = $('#reason'),
+        user_id  = '',
+        ysyeVal  = 0;
 
     var init_data = {
         'input':money,
@@ -163,7 +166,7 @@ rows="3"></textarea>
         function formatRepoSelection(repo) { return repo.text }
         $("#user_name").select2({
             ajax: {
-                url: "{:U('Light/Cgfk/CgfkApi')}"+"&system=yxhb&api=getCustomerList",
+                url: "{:U('Light/Api/CgfkApplyApi')}"+"&system=kk&modname=CgfkApply&action=getCustomerList",
                 dataType: 'json',
                 delay: 350,
                 data: function (params) {
@@ -198,12 +201,56 @@ rows="3"></textarea>
                 selectArr.text =  selectArr.text.replace(/公司/, "");
             }
             $('.select2-selection__choice').text(selectArr.text);
-            
+            getSupplyPayment();
         });
         $("#user_name").on("select2:unselecting", function (e) {
             user_id = '';
-            ysye.val('');
+            $('.show_number').show();
+            ysye.html('');
         });   
+
+        // 获取应收余额
+        function getSupplyPayment(){
+            toastfadeIn(200,'数据加载中');
+            $.ajax({
+                type:'POST',
+                url: "{:U('Light/Api/CgfkApplyApi')}", //&system=yxhb&modname=CgfkApply&action=getCustomerList
+                dataType: 'json',
+                data: {
+                    user_id: user_id,
+                    system:"{$system}",
+                    modname:'CgfkApply',
+                    action:'getSupplyPaymentApi'
+                },
+                dataType: 'json',
+                success: function (res) {
+                    toast.fadeOut(200);
+                    var className = '';
+                    $('.show_number').hide();
+                    if(res.ye > 0) className="redColor";
+                    ysyeVal = res.ye.toFixed(2);
+                    
+                    ysye.removeClass('redColor').addClass(className);
+                    ysye.html("&yen;"+formatMoney(res.ye,2));
+
+                }
+            });
+        }
+
+
+        // 金钱格式转换
+        function formatMoney(number, places, symbol, thousand, decimal) {
+            number = number || 0;
+            places = !isNaN(places = Math.abs(places)) ? places : 2;
+            symbol = symbol !== undefined ? symbol : "$";
+            thousand = thousand || ",";
+            decimal = decimal || ".";
+            var negative = number < 0 ? "-" : "",
+                i = parseInt(number = Math.abs(+number || 0).toFixed(places), 10) + "",
+                j = (j = i.length) > 3 ? j % 3 : 0;
+            return  negative + (j ? i.substr(0, j) + thousand : "") + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + thousand) + (places ? decimal + Math.abs(number - i).toFixed(places).slice(2) : "");
+        }
+
 
         submit.click(function(){
             // 公司检测
@@ -216,21 +263,23 @@ rows="3"></textarea>
             toast.fadeIn(200);
             $.ajax({
                 type:'POST',
-                url: "{:U('Light/Cgfk/CgfkApi')}",
+                url: "{:U('Light/Api/CgfkApplyApi')}",
                 dataType: 'json',
                 data: {
-                    api:'submit',
                     user_id: user_id,
                     text: notice,
                     money: money.val(),
+                    ysye:ysyeVal,
                     copyto_id:$("#copyto_id").val(),
-                    system:"{$system}"
+                    system:"{$system}",
+                    modname:'CgfkApply',
+                    action:'submit'
                 },
                 dataType: 'json',
                 success: function (res) {
                     toast.fadeOut(200);
                     if (res.code == 200) {
-                        window.location.href = "$info[$system]['info']"+"&aid="+res.aid;
+                        window.location.href = "{$info[$system]['info']}"+"&aid="+res.aid;
                     } else {
                         tooltip(res.msg);
                     }

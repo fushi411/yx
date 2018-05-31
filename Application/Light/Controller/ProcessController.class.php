@@ -37,7 +37,7 @@ class ProcessController extends Controller
         $this->assign('data',$proData);
         $this->assign('show',$temp);
       
-        $this->display('YxhbProcess/ApplyProcess');
+        $this->display('Process/ApplyProcess');
     }
 
     /**
@@ -135,7 +135,7 @@ class ProcessController extends Controller
         $kkPush = $this->recombinant($kkArr,'kk');
         $this->assign('yxhb',$yxhbPush);
         $this->assign('kk',$kkPush);
-        $this->display('YxhbProcess/PushProcess');
+        $this->display('Process/PushProcess');
     }
 
     /**

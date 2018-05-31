@@ -38,10 +38,10 @@ class KkTempCreditLineApplyLogic extends Model {
         $result['content']['clientname'] = $clientname['g_khjc'];
         //计算应收额度
         if($info['tmpline']-$info['ye']+$res['ed'] <20000) $info['flag'] =false;
-        $info['ye'] = number_format(-($info['tmpline']-$info['ye']+$res['ed']),2,'.',',')."元";
-        $result['content']['ye'] = number_format($res['ye'],2,'.',',')."元";
-        $result['content']['ed'] = number_format($res['ed'],2,'.',',')."元";
-        $result['content']['line'] = number_format($res['line'],2,'.',',')."元";
+        $info['ye'] = "&yen;".number_format(-($info['tmpline']-$info['ye']+$res['ed']),2,'.',',')."元";
+        $result['content']['ye'] = "&yen;".number_format($res['ye'],2,'.',',')."元";
+        $result['content']['ed'] = "&yen;".number_format($res['ed'],2,'.',',')."元";
+        $result['content']['line'] = "&yen;".number_format($res['line'],2,'.',',')."元";
         $result['content']['yxq'] = $res['yxq'];
         $result['content']['notice'] = $res['notice'];
         $result['content']['info'] = $info;
@@ -85,7 +85,7 @@ class KkTempCreditLineApplyLogic extends Model {
         //$result['flag'] = -$res['ye']<20000?true:false;
 
         $result['ye'] = $res['ye'];
-        $result['line'] =  number_format($ye,2,'.',',')."元"; // 信用额度
+        $result['line'] =  "&yen;".number_format($ye,2,'.',',')."元"; // 信用额度
         $result['tmpline'] = $ye;
         return $result;
     }

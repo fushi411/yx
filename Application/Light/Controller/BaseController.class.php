@@ -42,11 +42,30 @@ class BaseController extends Controller {
     //检测权限
     //动态配置用户表
     // C('DB_PREFIX', $system);
-    $rule  = strtolower(MODULE_NAME.'/'.CONTROLLER_NAME.'/'.ACTION_NAME);
-    if ( !$this->checkRule($rule,array('in','1,2')) ){
+    $rule  = $this->getRule();
+
+    if ( !$this->checkRule($rule,array('in','1,2,3,4')) ){
+        echo $rule;
         $this->error('无访问权限!'.$rule);
     }
   }
+
+  /**
+   * 确认使用的rule
+   * @return string rule auth检测用，地址 
+   */
+  private function getRule(){
+    if(strtolower(CONTROLLER_NAME) == 'view'){
+        $system   = I('system');
+        $mod_name = I('modname');
+        return  strtolower(MODULE_NAME.'/'.$system.'/'.$mod_name);
+    }elseif(strtolower(CONTROLLER_NAME) == 'api'){
+        $mod_name = I('modname');
+        return  strtolower(MODULE_NAME.'/'.$mod_name.'/'.ACTION_NAME);
+    }
+
+    return strtolower(MODULE_NAME.'/'.CONTROLLER_NAME.'/'.ACTION_NAME);
+  } 
 
   /**
    * 权限检测

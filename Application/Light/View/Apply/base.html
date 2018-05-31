@@ -429,7 +429,7 @@
                                         <a href="javascript:;" id="apply-agree" class="weui-btn weui-btn_primary" style="width: 40%">同意</a>
                                         <a href="javascript:;" id="apply-refuse" class="weui-btn weui-btn_warn" style="width: 40%;">退审</a>
                                         <!-- <a href="javascript:;" class="weui-btn weui-btn_default">转审</a> -->
-                                        <input type="hidden" name="aid" id="aid" value="{$aid}">
+                                        
                                         <input type="hidden" name="apply_user" id="apply_user" value="{$applyerID}">
                                     </div>
                                     <div class="button-sp-area" style="margin-bottom: 20px;display: flex;flex-direction: row;width: 100%;justify-content: space-around;align-items: baseline;">
@@ -440,7 +440,7 @@
                         </eq>
                     </eq>
                 </block>
-
+                <input type="hidden" name="aid" id="aid" value="{$aid}">
                 <div class="weui-gallery" id="gallery">
                     <span class="weui-gallery__img" id="galleryImg"></span>
                     <!-- <div class="weui-gallery__opr">
@@ -449,7 +449,6 @@
                          </a>
                     </div> -->
                 </div>
-
                 <block name="operation">
                     <if condition="(($apply.stat eq 0)) AND (($isApplyer eq 1) OR ($isApplyUser eq 1) OR ($isPasser eq 1) OR ($isCopyto eq 1))">
                         </div>

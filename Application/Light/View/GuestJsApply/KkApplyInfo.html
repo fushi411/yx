@@ -16,28 +16,25 @@
                         <div class="weui-media-box__bd">
                             <div style="display: flex;flex-direction: row;align-items: center;margin-bottom: 1em;">
                                 <img class="weui-media-box__thumb" src="{$avatar}" alt="" style="border-radius: 5px;width: 2.5em;height: 2.5em;margin-right: 1em;">
-                                <h4 class="weui-media-box__title" style="font-weight: 800;font-size:20px;">{$applyer}的{$title|str_replace="表",'',###}</h4>
-                                <eq name="stat" value="1">
+                                <h4 class="weui-media-box__title" style="font-weight: 800;font-size:20px;">{$applyer}的{$title}</h4>
+                                <gt name="stat" value="0">
+                                <eq name="apply.stat" value="2">
                                     <span class="label label-success" style="margin-left: 1em;padding-top: 0.3em;padding-bottom: 0.2em">已通过</span>
                                 </eq>
-                                <eq name="stat" value="2">
-                                    <eq name="apply.stat" value="2">
-                                        <span class="label label-success" style="margin-left: 1em;padding-top: 0.3em;padding-bottom: 0.2em">已通过</span>
-                                    </eq>
-                                    <eq name="apply.stat" value="1">
-                                        <span class="label label-danger" style="margin-left: 1em;padding-top: 0.3em;padding-bottom: 0.2em">已退审</span>
-                                    </eq>
-                                    <eq name="apply.stat" value="0">
-                                        <span class="label label-primary" style="margin-left: 1em;padding-top: 0.3em;padding-bottom: 0.2em">审批中</span>
-                                    </eq>
+                                <eq name="apply.stat" value="1">
+                                    <span class="label label-danger" style="margin-left: 1em;padding-top: 0.3em;padding-bottom: 0.2em">已退审</span>
                                 </eq>
+                                <eq name="apply.stat" value="0">
+                                        <span class="label label-primary" style="margin-left: 1em;padding-top: 0.3em;padding-bottom: 0.2em">审批中</span>
+                                </eq>
+                                </gt>
                                 <eq name="stat" value="0">
                                     <span class="label label-default" style="margin-left: 1em;padding-top: 0.3em;padding-bottom: 0.2em">已撤销</span>
                                 </eq>
                             </div>
                             <volist name="content" id="content">
                             <p class="weui-media-box__desc">{$content.name}
-                                <span style="color:{$content.color};">{$content.value}</span>
+                                <span style="color: black;">{$content.value}</span>
                             </p>
                             </volist>
                             <!-- <div style="display: flex;flex-direction: row;flex-wrap: nowrap;align-items: flex-start;">
