@@ -175,7 +175,7 @@ class WorkFlowFuncController extends Controller {
      */
 	public function KkCgfkApplyEnd($aid)
     {
-		$res = M('kk_cgfksq')->where(array('stat'=>3, 'id'=>$aid))->setField('stat', 1);
+		$res = M('kk_cgfksq')->where(array('stat'=>3, 'id'=>$aid))->setField('stat', 2);
 		// 生成一条付款记录信息
 		$this->makeUnpayRecord('kk',$aid);
         $resArr = $res?array("status"=>"success"):array("status"=>"failure");
@@ -188,7 +188,7 @@ class WorkFlowFuncController extends Controller {
      */
 	public function YxhbCgfkApplyEnd($aid)
     {
-		$res = M('yxhb_cgfksq')->where(array('stat'=>3, 'id'=>$aid))->setField('stat', 1);
+		$res = M('yxhb_cgfksq')->where(array('stat'=>3, 'id'=>$aid))->setField('stat', 2);
 		// 生成一条付款记录信息
 		$this->makeUnpayRecord('yxhb',$aid);
         $resArr = $res?array("status"=>"success"):array("status"=>"failure");
@@ -215,11 +215,11 @@ class WorkFlowFuncController extends Controller {
 			'dh'      => $dh,
 			'sj_date' => $today,
 			'nmoney'  => -$data['fkje'],
-			'nbank'   => 1,
+			'nbank'   => '',
 			'jl_date' => date('Y-m-d h:i:m',time()),
 			'npeople' => '系统',
 			'ntext'   => $data['zy'],
-			'nfkfs'   => 2,
+			'nfkfs'   => $data['fkfs'],
 			'nfylx'   => '',
 			'njbr'    => $data['rdy'],
 			'shy'     => '',

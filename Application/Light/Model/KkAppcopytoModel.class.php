@@ -121,6 +121,10 @@ class KkAppcopytoModel extends Model {
         $cpdata['aid'] = $aid;
         if($type==2){
             $cpdata['fixed_copyto_id'] = $cpid;
+        }else{
+            $model = D('Msgdata');
+            $message = $model->GetMessage($mod_name);
+            $cpdata['fixed_copyto_id'] = $message['kk']['fiexd_copy_id'];
         }
         $cpdata['copyto_id'] = $cpid;
         $cpdata['from_id'] = session('wxid');

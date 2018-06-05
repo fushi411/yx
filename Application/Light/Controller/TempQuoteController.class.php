@@ -594,7 +594,7 @@ class TempQuoteController extends BaseController
         $system = I('system');
         if(!$system)$system='yxhb';
         // 临时 关闭五W额度
-        if($money==1) $this ->ajaxReturn(array('code' => 404,'msg' => '五万额度暂时无法提交'));
+        // if($money==1) $this ->ajaxReturn(array('code' => 404,'msg' => '五万额度暂时无法提交'));
 
         // 参数检验
          if($user_id=='' || $reason=='' || $money=='') $this ->ajaxReturn(array('code' => 404,'msg' => '请刷新页面，重新提交'));

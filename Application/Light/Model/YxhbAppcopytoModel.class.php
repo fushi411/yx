@@ -26,7 +26,7 @@ class YxhbAppcopytoModel extends Model {
         $wxid = session('wxid');
         $boss = D('yxhb_boss');
         $cp = $this->field('fixed_copyto_id,copyto_id,from_id,readed_id')->where(array('aid'=>$aid, 'mod_name'=>$mod_name, 'stat'=>1,'type'=>$type))->select();
-
+        
         foreach ($cp as $v) {
           $idArr = explode(',', $v['copyto_id']);
           if ($v['fixed_copyto_id']) {
@@ -117,6 +117,10 @@ class YxhbAppcopytoModel extends Model {
         $cpdata['aid'] = $aid;
         if($type==2){
             $cpdata['fixed_copyto_id'] = $cpid;
+        }else{
+            $model = D('Msgdata');
+            $message = $model->GetMessage($mod_name);
+            $cpdata['fixed_copyto_id'] = $message['yxhb']['fiexd_copy_id'];
         }
         $cpdata['copyto_id'] = $cpid;
         $cpdata['from_id'] = session('wxid');

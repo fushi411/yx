@@ -340,7 +340,8 @@ rows="6"></textarea>
                 copyto_id:$("#copyto_id").val(),
                 system:"{$system}",
                 modname:'TempCreditLineApply',
-                action:'submit'
+                action:'submit',
+                __hash__: hash
             },
             dataType: 'json',
             success: function (res) {

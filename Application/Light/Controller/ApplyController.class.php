@@ -327,41 +327,17 @@ class ApplyController extends BaseController {
         // $func = ucfirst($system).$mod_name.'End';
         // $funcRes = $wfClass->$func($id, $system);
         header("Content-type:text/html;charset=utf-8");
-        // $system = 'yxhb';
-        // $mod_name = 'CgfkApply';
-        $aid = 321;
-        $today = date('Y-m-d',time());
-        $count = M('yxhb_feecg')->where("date_format(jl_date, '%Y-%m-%d' )='$today' and dh like 'CY%'")->count();
-		$time  = str_replace('-','',$today);
-        $id    = "CY{$time}";
-        if($count < 9)    $dh = $id.'00'.($count+1);
-        elseif($count < 99)   $dh = $id.'0'.($count+1);
-		else $dh = $id.($count+1);
-		
-		$data = D('YxhbCgfkApply','Logic')->record($aid);
-		$feeData = array(
-			'dh'      => $dh,
-			'sj_date' => $today,
-			'nmoney'  => -$data['fkje'],
-			'nbank'   => 1,
-			'jl_date' => date('Y-m-d h:i:m',time()),
-			'npeople' => '系统',
-			'ntext'   => $data['zy'],
-			'nfkfs'   => 2,
-			'nfylx'   => '',
-			'njbr'    => $data['rdy'],
-			'shy'     => '',
-			'nbm'     => 1,
-			'sqdh'    => $data['dh'],
-			'sqlx'    => 0,
-			'att_name' => ''
-		);
-		$clientname = M('yxhb_gys')->field('g_name')->where(array('id' => $data['gys']))->find();
-		$dtgData = array(
-			'dh'  => $dh,
-			'gid' => $data['gys'],
-			'ang' => $clientname['g_name']
-        );
+        $system = 'kk';
+        $copyto_id = 'HuangShiQi,wk';
+        $result = 663;
+        //评论内容
+
+        // $copyto_id = trim($copyto_id,',');
+        // if (!empty($copyto_id)) {
+        //     $fix = explode(",", $copyto_id);
+        //     // 发送抄送消息
+        //     D('KkAppcopyto')->copyTo($copyto_id,'CgfkApply', $result);
+        // }
 
         // $seek = A('View');
         // $mod = 'TempCreditLineApply';

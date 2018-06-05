@@ -52,11 +52,20 @@ class MsgdataModel extends Model {
         
         $result['kk']   =  array(
             'process' => U('Light/Process/ApplyProcess',array('modname'=>'CgfkApply','system' => 'kk')),
-            'info'    => U('Light/Apply/applyInfo',array('modname'=>'CgfkApply','system'=>'kk'))
+            'info'    => U('Light/Apply/applyInfo',array('modname'=>'CgfkApply','system'=>'kk')),
+            'fiexd_copy_id' => 'HeYuanShen,LvHongSheng',
+            'copydata' => array(
+                array('name' => '何渊深','url' => 'http://p.qlogo.cn/bizmail/ftVl6voFONER5G11Fo1KCLdmnWy3cJKmjBToMnIpCXiaN4lzcdPFDqQ/0'),
+                array('name' => '吕红胜','url' => 'http://p.qlogo.cn/bizmail/5FmUowOFcibSEawmsrSg3tXHjHXJEFNza3tSq4VN4sLjaFsaAEfsLwA/0') 
+            )
         );
         $result['yxhb'] = array(
             'process' => U('Light/Process/ApplyProcess',array('modname'=>'CgfkApply','system' => 'yxhb')),
-            'info'    => U('Light/Apply/applyInfo',array('modname'=>'CgfkApply','system'=>'yxhb'))
+            'info'    => U('Light/Apply/applyInfo',array('modname'=>'CgfkApply','system'=>'yxhb')),
+            'fiexd_copy_id' => 'HeYuanShen',
+            'copydata' => array(
+                array('name' => '何渊深','url' => 'http://p.qlogo.cn/bizmail/ftVl6voFONER5G11Fo1KCLdmnWy3cJKmjBToMnIpCXiaN4lzcdPFDqQ/0')
+            )
         );   
         return $result;      
     }

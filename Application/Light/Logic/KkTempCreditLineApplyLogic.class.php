@@ -33,18 +33,64 @@ class KkTempCreditLineApplyLogic extends Model {
         $info = $this->getInfo($res['clientid'],$res['date'],$res['clientname']);
         $info['flag'] =true;
         $result = array();
-        $result['content']['date'] = $res['date'];
         $clientname = M('kk_guest2')->field('g_khjc')->where(array('id' => $res['clientid']))->find();
-        $result['content']['clientname'] = $clientname['g_khjc'];
+         //计算应收额度
+         if($info['tmpline']-$info['ye']+$res['ed'] <20000) $info['flag'] =false;
+        $result['content'][] = array('name'=>'执行时间：',
+                                     'value'=>$res['date'],
+                                     'type'=>'string',
+                                     'color' => 'black'
+                                    );
+        $result['content'][] = array('name'=>'客户名称：',
+                                     'value'=>$clientname['g_khjc'],
+                                     'type'=>'string',
+                                     'color' => 'black'
+                                    ); 
+        $color = $info['flag']?'#f12e2e':'black';
+        $result['content'][] = array('name'=>'应收余额：',
+                                     'value'=>"&yen;".number_format(-($info['tmpline']-$info['ye']+$res['ed']),2,'.',',')."元",
+                                     'type'=>'string',
+                                     'color' =>$color
+                                    ); 
+        $result['content'][] = array('name'=>'信用额度：',
+                                     'value'=>$info['line'],
+                                     'type'=>'string',
+                                     'color' => 'black'
+                                    ); 
+        $result['content'][] = array('name'=>'发货余额：',
+                                     'value'=>"&yen;".number_format($res['ye'],2,'.',',')."元",
+                                     'type'=>'string',
+                                     'color' => 'black'
+                                    ); 
+        $result['content'][] = array('name'=>'已有临额：',
+                                     'value'=>"&yen;".number_format($res['ed'],2,'.',',')."元",
+                                     'type'=>'string',
+                                     'color' => 'black'
+                                    ); 
+        $twoColor = $info['two']==0?'#f12e2e':'black';
+        $fiveColor = $info['five']==0?'#f12e2e':'black';
+        $tenColor = $info['ten']==0?'#f12e2e':'black';
+        $sycs = "<input class='weui-input color' type='text' style='color:{$twoColor}' name='custodian' readonly value='临额二万元 - 剩余{$info['two']}次提交'>
+                <input class='weui-input color' type='text' style='color:{$fiveColor}' name='custodian' readonly value='临额五万元 - 剩余{$info['five']}次提交'>
+                <input class='weui-input color' type='text' style='color:{$tenColor}' name='custodian' readonly value='临额十万元 - 剩余{$info['ten']}次提交'>";
+        $result['content'][] = array('name'=>'剩余次数：',
+                                     'value'=>$sycs,
+                                     'type'=>'string',
+                                     'color' => 'black'
+                                    );    
+        $result['content'][] = array('name'=>'申请额度：',
+                                     'value'=>"&yen;".number_format($res['line'],2,'.',',')."元",
+                                     'type'=>'string',
+                                     'color' => 'black'
+                                    );   
+        $result['content'][] = array('name'=>'申请理由：',
+                                     'value'=>$res['notice'],
+                                     'type'=>'string',
+                                     'color' => 'black'
+                                    );   
+
         //计算应收额度
-        if($info['tmpline']-$info['ye']+$res['ed'] <20000) $info['flag'] =false;
-        $info['ye'] = "&yen;".number_format(-($info['tmpline']-$info['ye']+$res['ed']),2,'.',',')."元";
-        $result['content']['ye'] = "&yen;".number_format($res['ye'],2,'.',',')."元";
-        $result['content']['ed'] = "&yen;".number_format($res['ed'],2,'.',',')."元";
-        $result['content']['line'] = "&yen;".number_format($res['line'],2,'.',',')."元";
-        $result['content']['yxq'] = $res['yxq'];
-        $result['content']['notice'] = $res['notice'];
-        $result['content']['info'] = $info;
+      
         $result['imgsrc'] = '';
         $result['applyerID'] = $res['salesid'];
         $result['applyerName'] = $res['sales'];
@@ -157,5 +203,126 @@ class KkTempCreditLineApplyLogic extends Model {
         );
         return $result;
     }
+
+    /**
+     * 合同客户获取
+     * @param string $data  拼音缩写
+     * @return array $res   合同用户结果
+     */
+    public function getCustomerList(){
+        $today = date('Y-m-d',time());
+        $data = I('math');
+        $like = $data?"where g_helpword like '%{$data}%' or g_name like '%{$data}%'":'';
+        $sql = "select id,g_name as text,g_khjc as jc from (select a.id as id,g_name,g_helpword,g_khjc FROM kk_guest2 as a,kk_ht as b where a.id=b.ht_khmc and ht_stday<='{$today}' and ht_enday>='{$today}' and ht_stat=2 and reid=0 group by ht_khmc UNION select id,g_name,g_helpword,g_khjc FROM kk_guest2 where id=any(select a.reid as id FROM kk_guest2 as a,kk_ht as b where a.id=b.ht_khmc and reid!= 0 and ht_stday<='{$today}' and ht_enday>='{$today}' and ht_stat=2  group by ht_khmc)) as t {$like} order by g_name ASC";
+        $res = M()->query($sql);
+        return $res;
+    } 
+
+    /**
+     * 获取客户用户 各项余额
+     * @param int $client_id 客户id
+     * @return array $res 各项余额  
+     */
+    public function  getCustomerInfo(){
+        $model = D('Customer');
+        $res = $model->getCustomerInfo();
+        return $res;
+    } 
+
+    // 临时额度增加
+    public function submit(){
+        $user_id = I('post.user_id');
+        $reason = I('post.text');
+        $money = I('post.money');
+        $copyto_id = I('post.copyto_id');
+        $system = 'kk';
+        $today = date('Y-m-d',time());
+        // 临时 关闭五W额度
+        // if($money==1) return array('code' => 404,'msg' => '五万额度暂时无法提交');
+
+        // 参数检验
+        if($user_id=='' || $reason=='' || $money=='')  return array('code' => 404,'msg' => '请刷新页面，重新提交');
+        
+        // 字数校验
+        if(strlen($reason)<5 ||strlen($reason)>200)  return array('code' => 404,'msg' => '申请理由不能少于5个字，且不能多于200字');
+        // 次数校验
+        $model = D('Customer');
+        $timeArr = array(5,3,1);
+        $times = $model->getQuoteTimes($user_id,$system);
+        if($timeArr[$money] <= count($times[$money])) return array('code' => 404,'msg' => '申请次数已达本月上限');
+       
+        $yxqArr = array('2天','5天','7天');
+        $lineArr = array(20000,50000,100000);
+
+         // 有效期校验
+         $res     = M($system.'_tempcreditlineconfig')
+                    ->field('date,dtime,stat,yxq')
+                    ->where(array('clientid' => $user_id ,'stat' => array('neq',0),'line' => $lineArr[$money]))
+                    ->order('date desc')
+                    ->find();
+        
+        //  为过审的
+        if($res['stat'] == 2) return array('code' => 404,'msg' => '已有一条同等额度申请在审批');
+        // 过审的情况 有效期判断
+        $day = str_replace('天','',$res['yxq']);
+        if(strtotime($res['dtime'].' +'.$day.' day')>time()) return array('code' => 404,'msg' => '已有同等额度在有效期内');
+
+        $stat =  $money == 0? 1:2;
+        $clientname = $model->getClientname($user_id,$system);
+        $sales = session('name');
+        $salesid = session($system.'_id');
+
+        $dtime=$model->getDatetimeMk(time());
+
+        $yxq =$yxqArr[$money];
+        $line = $lineArr[$money];
+        $ye = I('ye');
+        $ed = $model->getTempCredit($user_id,$system);
+
+        $saveData = array(
+             'date'         => $today ,
+             'clientname'   => $clientname,
+             'clientid'     => $user_id,
+             'line'         => $line,
+             'sales'        => $sales,
+             'salesid'      => $salesid,
+             'dtime'        => $dtime,
+             'stat'         => $stat,
+             'notice'       => $reason,
+             'ye'           => $ye,
+             'ed'           => $ed,
+             'yxq'          => $yxq
+         );
+
+        // 表单重复提交
+        if(M($system.'_tempcreditlineconfig')->autoCheckToken($_POST)) return array('code' => 404,'msg' => '网络延迟，请勿点击提交按钮！');
+        $result = M($system.'_tempcreditlineconfig')->add($saveData);
+        if(!$result) return array('code' => 404,'msg' => '提交失败，请重新尝试！');
+        // 抄送
+        $copyto_id = trim($copyto_id,',');
+        if (!empty($copyto_id)) {
+            $fix = explode(",", $copyto_id);
+            // 发送抄送消息
+            D($system.'Appcopyto')->copyTo($copyto_id,'TempCreditLineApply', $result);
+        }
+
+
+        if($stat == 2)
+        {
+            $wf = A('WorkFlow');
+            $res = $wf->setWorkFlowSV('TempCreditLineApply', $result, $salesid, $system);
+        }else{ // -- 推送
+            $mod_name = 'TempCreditLineApply';          
+            $res = M($system.'_appflowtable')->field('condition')->where(array('pro_mod'=>$mod_name.'_push'))->find();
+            if(!empty($res)){
+                $pushArr = json_decode($res['condition'],true);
+                // -- 2W额度推送人  
+                $push_id = $pushArr['two'];
+                D($system.'Appcopyto')->copyTo($push_id, $mod_name, $result,2);
+            }
+        };
+        return array('code' => 200,'msg' => '提交成功' , 'aid' =>$result);
+    }
+
     
 }

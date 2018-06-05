@@ -306,7 +306,8 @@
                     copyto_id:$("#copyto_id").val(),
                     system:"{$system}",
                     modname:'CreditLineApply',
-                    action:'submit'
+                    action:'submit',
+                    __hash__: hash
                 },
                 dataType: 'json',
                 success: function (res) {

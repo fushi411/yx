@@ -115,13 +115,27 @@ rows="6"></textarea>
                         </div>
                     </div>
                 </div>
+
+            <div id="dialogs">
+                <!--BEGIN dialog2-->
+                <div class="js_dialog" id="iosDialog2" style="display: none;">
+                    <div class="weui-mask"></div>
+                    <div class="weui-dialog">
+                        <div class="weui-dialog__bd">客户提货余额超过2万，可以不用增加临时额度！</div>
+                        <div class="weui-dialog__ft">
+                            <a href="javascript:;" class="weui-dialog__btn weui-dialog__btn_primary">知道了</a>
+                        </div>
+                    </div>
+                </div>
+                <!--END dialog2-->
+            </div>
 </block>
 <block name="js">
     <script>
     var user_name = $('#user_name'),
         user_id = 0, 
         exist = $('#exist'),
-        line = $('#line'),
+        lineshow = $('#line'),
         ye = $('#ye'),
         ysye = $('#ysye'),
         two = $('#two'),
@@ -131,12 +145,20 @@ rows="6"></textarea>
         fiveTime = 0,
         tenTime = 0,
         money = $('#money'),
+        $iosDialog2 = $('#iosDialog2'),
         app_pro = $('#app_pro');
 
 
     var appflow = {$appflow};
+
+    // diog提示
+    $('#dialogs').on('click', '.weui-dialog__btn', function () {
+        $(this).parents('.js_dialog').fadeOut(200);
+    });
+
     // 2w额度显示推送
     $('#app_pro .wk-select__user').eq(0).toggle();
+
     // 选择临时额度
     money.change(function () {
         if (user_id == 0) {
@@ -204,10 +226,11 @@ rows="6"></textarea>
         $("#user_name").on("select2:selecting", function (e) {
             $('.select2-selection__choice__remove').click();
             var selectArr = e.params.args.data;
+            getTempInfo(selectArr.id,selectArr.text);
+
             selectArr.text = selectArr.jc;
-                
             $('.select2-selection__choice').text(selectArr.text);
-            getTempInfo(selectArr.id);
+            
             user_id = selectArr.id;
 
             money.val('-1');
@@ -221,10 +244,10 @@ rows="6"></textarea>
     });
 
     // 获取客户用户 各项余额
-    function getTempInfo(user_id) {
+    function getTempInfo(user_id,clientname) {
         toastfadeIn(200,'数据加载中');
         $.ajax({
-            url: "{:U('Light/Api/TempCreditLineApplyApi')}"+"&system=yxhb&modname=TempCreditLineApply&action=getCustomerInfo",
+            url: "{:U('Light/Api/TempCreditLineApplyApi')}"+"&system=kk&modname=TempCreditLineApply&action=getCustomerInfo",
             dataType: 'json',
             data: {
                 user_id: user_id
@@ -234,17 +257,23 @@ rows="6"></textarea>
                 if (res.code != 200) {
                     tooltip('请重新刷新页面！')
                 } else {
-                    var data = res.data, info = data.info, classNmae = '';
-
-                    exist.html("&yen;"+data.exist);
-                    line.html("&yen;"+data.line);
-                    ye.html("&yen;"+data.ye);
-                    ysye.html("&yen;"+data.ysye);
-                    $('.show_number').hide();
-
-                    if (data.ysflag) classNmae = 'redColor';
+                    var data = res.data, info = data.info;
+                    tmp = data.line;
                     
-                    ysye.removeClass('redColor').addClass(classNmae);
+
+                    getkk(data.line,data.name,clientname);
+
+                    // exist.val(data.exist);
+                    // ye.val(data.ye);
+                    // ysye.val(data.ysye);
+                    
+                    // if (data.ysflag) classNmae = 'redColor';
+                    
+                    // ysye.removeClass('redColor').addClass(classNmae);
+
+                    // if (data.fhye >= 10000) {
+                    //     $iosDialog2.fadeIn(200);
+                    // }
 
                     twoTime = info[0].length;
                     fiveTime = info[1].length;
@@ -275,11 +304,55 @@ rows="6"></textarea>
                     
                     two.val('临额二万元 - 剩余'+(5-twoTime)+'次提交');
                     five.val('临额五万元 - 剩余'+(3-fiveTime)+'次提交');
-                    ten.val('临额十万元 - 剩余'+(1-tenTime)+'次提交'); 
-                    toast.fadeOut(200);
+                    ten.val('临额十万元 - 剩余'+(1-tenTime)+'次提交');
+                    
                 }
             }
         })
+    }
+    function getkk(line,authCode,user_name){
+        $.ajax({
+            type:'POST',
+            url: "http://www.fjyuanxin.com/sngl/include/getClientCreditApi.php",
+            dataType: 'json',
+            data: {
+                name:user_name,
+                auth:authCode
+            },
+            success: function (res) {
+                var  classNmae = '';
+                var tmpNum = res['tmp'] == ''? 0 : parseFloat(res['tmp']);// 临时额度
+                var yeNum  = res['ye']  == ''? 0 : parseFloat(res['ye']);// 客户余额   发货的=余额+临时
+                $('#khye').val(yeNum);
+                if (-(line-yeNum+tmpNum)<20000) classNmae = 'redColor';
+
+                ysye.removeClass('redColor').addClass(classNmae);
+                
+                if ((tmpNum+yeNum) >= 20000) {
+                    $iosDialog2.fadeIn(200);
+                }
+                // console.log(res); 
+                lineshow.html("&yen;"+formatMoney(tmp,2));
+                exist.html("&yen;"+formatMoney(tmpNum,2));
+                ye.html("&yen;"+formatMoney(tmpNum+yeNum,2));
+                ysye.html("&yen;"+formatMoney(-(line+tmpNum-yeNum),2));
+                $('.show_number').hide();
+                toast.fadeOut(200);
+            }
+        });
+    }
+
+    // 金钱格式转换
+    function formatMoney(number, places, symbol, thousand, decimal) {
+        number = number || 0;
+        places = !isNaN(places = Math.abs(places)) ? places : 2;
+        symbol = symbol !== undefined ? symbol : "$";
+        thousand = thousand || ",";
+        decimal = decimal || ".";
+        var negative = number < 0 ? "-" : "",
+            i = parseInt(number = Math.abs(+number || 0).toFixed(places), 10) + "",
+            j = (j = i.length) > 3 ? j % 3 : 0;
+        return  negative + (j ? i.substr(0, j) + thousand : "") + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + thousand) + (places ? decimal + Math.abs(number - i).toFixed(places).slice(2) : "");
     }
     // 选择重置
     function moneyHtml(){
@@ -340,7 +413,8 @@ rows="6"></textarea>
                 copyto_id:$("#copyto_id").val(),
                 system:"{$system}",
                 modname:'TempCreditLineApply',
-                action:'submit'
+                action:'submit',
+                __hash__: hash
             },
             dataType: 'json',
             success: function (res) {

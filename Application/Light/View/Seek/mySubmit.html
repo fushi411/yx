@@ -56,8 +56,8 @@
                                             <h5>{$copy.date}</h5>
                                         </div>
                                     </div>
-                                    <p class="weui-media-box__desc" style="margin-bottom: 0px;">申请金额：{$copy.approve}</p>
-                                    <p class="weui-media-box__desc" style="margin-bottom: 0px;">申请理由：{$copy.notice}</p>
+                                    <p class="weui-media-box__desc " style="margin-bottom: 0px;">  <span>申请金额：</span>  <span class="" >{$copy.approve}</span></p>
+                                    <p class="weui-media-box__desc  " style="margin-bottom: 0px;">  <span>申请理由：</span><span class="" >{$copy.notice}</span> </p>
                                 </div> 
                                 </a>
                                 </volist> 
@@ -154,8 +154,8 @@
                 html+= '<span class="label label-success" style="margin-left: 1em;padding-top: 0.3em;padding-bottom: 0.2em">已通过</span>';
             }
             html+='</div><div class="weui-flex__item" style="text-align: right;"><h5>'+data[i]['date']+'</h5></div> </div>'+
-                    '<p class="weui-media-box__desc" style="margin-bottom: 0px;">申请金额：'+data[i]['approve']+'</p>'+
-                    '<p class="weui-media-box__desc" style="margin-bottom: 0px;">申请理由：'+data[i]['notice']+'</p>'+
+                    '<p class="weui-media-box__desc " style="margin-bottom: 0px;"><span>申请金额：</span><span class="" >'+data[i]['approve']+'</span></p>'+
+                    '<p class="weui-media-box__desc " style="margin-bottom: 0px;"><span>申请理由：</span><span class="" >'+data[i]['notice']+'</span></p>'+
                     '</div> </a>';
         }
         $('#approve').append(html);

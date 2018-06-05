@@ -32,7 +32,14 @@
             align-items: center;
             margin-right: 6px;
         }
-
+        .no-select__user{
+            height: 60px;
+            width: 52px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-right: 6px;
+        }
         .wk-comment__user {
             height: 60px;
             width: 52px;
@@ -72,6 +79,9 @@
         }
         .greyColor{
             color: #757575;
+        }
+        .select2-container--default .select2-selection--multiple .select2-selection__rendered{
+            padding: 0;
         }
     </style>
 </head>
@@ -186,15 +196,22 @@
                                 <div class="weui-uploader">
                                     <div class="weui-uploader__bd">
                                         <ul class="weui-uploader__files" id="selectUser" style="margin-bottom: 0px;">
-
+                                            <volist name="fixed.copydata" id="vo">
+                                                <li class='weui-uploader__file no-select__user' style='min-height:80px;margin-bottom: 0;'>
+                                                    <if condition="$vo.url eq ''">
+                                                        <img src="Public/assets/i/defaul.png" class='weui-selet__user' style='margin-bottom: 0px;margin-right: 6px;margin-top:10px;'>
+                                                        <else/>
+                                                        <img src="{$vo.url}" class='weui-selet__user' style='margin-bottom: 0px;margin-right: 6px;margin-top:10px;'>
+                                                    </if>
+                                                    <span style='margin-right: 6px;font-size: 14px;'> {$vo.name}</span>
+                                                    </li>
+                                            </volist>
                                         </ul>
                                         <div class="weui-uploader__input-box" style="width: 2.5em;height: 2.5em;margin-right: 0px;margin-bottom: 0px;margin-top:10px;">
                                             <input id="uploaderInput" class="weui-uploader__input open_model" type="button" name="copyto" readonly /> <!--data-toggle="modal" data-target="#myModal" -->
-                                            <if condition="$prevId eq '' or $prevId eq null">
-                                                <input type="hidden" name="copyto_id" id="copyto_id">
-                                                <else/>
-                                                <input type="hidden" name="copyto_id" id="copyto_id" value=",{$weixinUserId}">
-                                            </if>
+                                            
+                                            <input type="hidden" name="copyto_id" id="copyto_id" value="{$fixed['fiexd_copy_id']}">
+                                            
                                             
                                         </div>
                                     </div>
@@ -206,8 +223,8 @@
 
             <!-- 推送 -->
             <block name="pushto">
-                    <div class="weui-cells__title">推送
-                            <a href="{:U('Light/Process/PushProcess',array('modname'=>'CreditLineApply'))}">（查看可视化流程）</a>
+                    <div class="weui-cells__title">推送名单
+                            <a href="{:U('Light/Process/PushProcess',array('system' => $system,'modname'=>$modname))}">（查看可视化名单）</a>
                     </div>
                     <div >
                         <div class="weui-cells" style="margin-top:0px;">
@@ -312,20 +329,19 @@
 <script src="https://cdn.bootcss.com/select2/4.0.3/js/select2.min.js"></script>
 <script src="https://cdn.bootcss.com/select2/4.0.3/js/i18n/zh-CN.js"></script>
 <script src="https://res.wx.qq.com/open/libs/weuijs/1.0.0/weui.min.js"></script>
-<block name="js">
 
-</block>
 </body>
 <script>
 
     var $tooltips = $('.js_tooltips'),
-        toast     = $('#loadingToast');
+        toast     = $('#loadingToast'),
+        hash      = $("meta[name='__hash__']").attr('content');
     // 类型选择
     $('#edType').change(function(){
         window.location.href=$(this).val();
     });
     // 数据提交与加载提示
-    function toastfadeIn(time,text = '数据提交中'){
+    function toastfadeIn(time,text){
         $('#toast__content').text(text);
         toast.fadeIn(time);
     }
@@ -481,4 +497,7 @@
         $("#iosDialog").fadeOut(100);
     }
 </script>
+<block name="js">
+
+</block>
 </html>

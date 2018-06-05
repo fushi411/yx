@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0">
+    <title><block name='title'></block></title>
+    <link href="//cdn.bootcss.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet">
+    <!-- 引入 WeUI -->
+    <link rel="stylesheet" href="https://res.wx.qq.com/open/libs/weui/1.1.2/weui.min.css" />
+    <link rel="stylesheet" href="__PUBLIC__/assets/css/weMain.css?version=201708232" />
+    <style type="text/css">
+        .weui-cells:after {
+            border-bottom: 0px solid #fff;
+        }
+
+        .weui-cell {
+            padding: 0px 15px;
+        }
+
+        .weui-selet__user {
+            width: 2.5em;
+            height: 2.5em;
+            margin-bottom: 5px;
+            margin-right: 16px;
+            border-radius: 5px;
+        }
+
+        .wk-select__user {
+            height: 60px;
+            width: 52px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-right: 6px;
+        }
+
+        .wk-comment__user {
+            height: 60px;
+            width: 52px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-right: 12px;
+        }
+
+        a:hover {
+            text-decoration: none;
+        }
+
+        label {
+            font-weight: 400;
+            margin-bottom: 0px;
+        }
+
+        .select2-results__option {
+            font-size: 16px;
+        }
+
+        .select2-search__field {
+            line-height: normal;
+        }
+
+        .titleTab {
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container" id="container">
+        <div class="page js_show">
+            <div class="page__bd">
+                <!-- 流程 -->
+                <block name="content">
+
+                </block>
+                <!-- 流程 END -->
+                
+                <!-- 推送 -->
+                <h3 class="titleTab">推送规则</h3>
+                <!-- <div class="weui-cells__title">各个中心主管及以上职位的申请抄送</div> -->
+                <div class="weui-cells" style="margin-top:0px;">
+                    <div class="weui-cell">
+                        <div class="weui-cell__bd">
+                            <div class="weui-uploader">
+                                <div class="weui-uploader__bd" style="height: 85px;">
+                                     <div  style="color: #f12e2e;margin-top: 10px;">1.若申请人或推送人同属推送名单，将不进行推送.</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- 推送 END -->
+                <block name="btn">
+                    <div class="weui-btn-area">
+                        <a class="weui-btn weui-btn_primary" href="{:U('Light/Process/pushAll')}" >查看总推送名单</a>
+                    </div>
+                </block>
+            </div>
+        </div>
+    </div>
+</body>
+<!-- <script src="__PUBLIC__/assets/js/exif.js"></script> -->
+<script src="//cdn.bootcss.com/jquery/1.11.1/jquery.min.js"></script>
+<script src="//cdn.bootcss.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+<script src="http://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
+<block name="js">
+
+</block>
+</html>

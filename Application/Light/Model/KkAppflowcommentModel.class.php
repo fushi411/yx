@@ -42,6 +42,9 @@ class KkAppflowcommentModel extends Model {
               } else {
                   $v['del_able'] = 1;
               }
+              if(strpos($v['app_word'],'@所有人')){
+                $commentUser = " ";
+              }
               $comment_list[] = array('id'=>$v['id'], 'pid'=>$v['per_id'], 'avatar'=>$avatar, 'name'=>$v['per_name'], 'time'=>$v['time'], 'word'=>$commentUser.$v['app_word'], 'del_able'=>$v['del_able'],'wxid'=>$cwxUID);
         }
 

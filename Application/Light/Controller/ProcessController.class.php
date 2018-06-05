@@ -119,10 +119,13 @@ class ProcessController extends Controller
     }
 
      /**
-     * 推送可视化页面
+     * 推送可视化页面 独立
+     * @param string $system 系统
+     * @param string $modname 模块
      */
-    public function PushProcess(){
+    public function pushAll(){
         // 进入指定的位置所需参数
+        $system = I('system'); 
         $pro_mod = I('modname'); 
         
         $where   = array(
@@ -131,19 +134,51 @@ class ProcessController extends Controller
         );
         $yxhbArr = M('yxhb_appflowtable')->where($where)->field('pro_name,pro_mod,condition')->select();
         $kkArr   = M('kk_appflowtable')->where($where)->field('pro_name,pro_mod,condition')->select();
-        $yxhbPush = $this->recombinant($yxhbArr,'yxhb');
-        $kkPush = $this->recombinant($kkArr,'kk');
-        $this->assign('yxhb',$yxhbPush);
-        $this->assign('kk',$kkPush);
-        $this->display('Process/PushProcess');
+        $push     = array_merge($this->pushData($yxhbArr,'yxhb'),$this->pushData($kkArr,'kk'));
+        $this->assign('push',$push);
+        $this->display('Process/pushAll');
     }
+
+    /**
+     * 推送可视化页面  总页面数据重构
+     * @param array $data  推送数组
+     * @param string $sy 系统 
+     * @return array $result 重构数组
+     */
+    private function pushData($data,$sy){
+        $system = array('kk' => '建材','yxhb' => '环保');
+        $result = array();
+        foreach($data as $k=>$v){
+            $res = array(
+                'pro_name' => $system[$sy].$v['pro_name'],
+                'pro_mod'  => str_replace('_push','',$v['pro_mod']),
+                'system'   => $sy
+            );
+            $result[] = $res;
+        }
+        return $result;
+    }
+
+    public function PushProcess(){
+        // 进入指定的位置所需参数
+        $system = I('system'); 
+        $pro_mod = I('modname'); 
+        $sy = array('kk' => '建材','yxhb' => '环保');
+        $arr = M($system.'_appflowtable')->where(array('stat' => 1 , 'pro_mod' => $pro_mod.'_push'))->field('pro_name,pro_mod,condition')->select();
+        $push = $this->recombinant($arr,$system);
+        $this->assign('condition',$push);
+        $this->assign('pro_name',$sy[$system].$push[0]['pro_name']);
+        $this->display('Process/push');
+    }
+
+
 
     /**
      * 推送信息重构
      * @param array $condition condition 数据
      * @return array  $result 重构后的数组
      */
-    private function recombinant($condition,$system){
+    private function recombinant($condition,$system,$mod,$sy){
         // 数据检验
         if(!is_array($condition)) return false;
         foreach($condition as $k => $v){
@@ -157,6 +192,7 @@ class ProcessController extends Controller
                 default:
                             $func = 'getApplyPush';
             }
+            if($sy == $system && $mod == $v['pro_mod']) $condition[$k]['display']   = 'black';
             $condition[$k]['condition'] = $this->$func($v,$system);
         }
         return $condition;

@@ -33,8 +33,8 @@ class YxhbCgfkApplyLogic extends Model {
         $result = array();
         $clientname = M('yxhb_gys')->field('g_name')->where(array('id' => $res['gys']))->find();
 
-        $ysye = $this->getDateSupplyPaymentApi($res['gys'],$res['zd_date']);
-        $color = $ysye > 0? '#f12e2e':'#0de20b';
+
+        $color = $res['yfye'] > 0? '#f12e2e':'black';
         $result['content'][] = array('name'=>'申请日期：',
                                      'value'=>$res['zd_date'],
                                      'type'=>'date',
@@ -51,7 +51,7 @@ class YxhbCgfkApplyLogic extends Model {
         //                              'color' => 'black'
         //                             );
         $result['content'][] = array('name'=>'应付余额：',
-                                     'value'=> "&yen;".number_format($ysye,2,'.',',')."元",
+                                     'value'=> "&yen;".number_format($res['yfye'],2,'.',',')."元",
                                      'type'=>'number',
                                      'color' => $color
                                     );
@@ -60,11 +60,24 @@ class YxhbCgfkApplyLogic extends Model {
                                      'type'=>'number',
                                      'color' => 'black;font-weight: 600;'
                                     );
-        // $result['content'][] = array('name'=>'申请人员：',
-        //                              'value'=>$res['rdy'],
-        //                              'type'=>'string',
-        //                              'color' => 'black'
-        //                             );
+        $result['content'][] = array('name'=>'大写金额：',
+                                     'value'=>cny($res['fkje']),
+                                     'type'=>'string',
+                                     'color' => 'black'
+                                    );
+        $fkfs = '暂无';
+        if($res['fkfs'] == 4 ){
+            $fkfs = '现金';
+        }elseif($res['fkfs'] == 2 ){
+            $fkfs = '公司账户';
+        }elseif ($res['fkfs'] == 3 ) {
+            $fkfs = '承兑汇票';
+        }
+        $result['content'][] = array('name'=>'付款方式：',
+                                     'value'=>$fkfs,
+                                     'type'=>'string',
+                                     'color' => 'black'
+                                    );    
         $result['content'][] = array('name'=>'申请理由：',
                                      'value'=>$res['zy'],
                                      'type'=>'text',
@@ -97,7 +110,7 @@ class YxhbCgfkApplyLogic extends Model {
         $res = $this->record($id);
         $result = array();
         $clientname = M('yxhb_gys')->field('g_name')->where(array('id' => $res['gys']))->find();
-        $ysye = $this->getDateSupplyPaymentApi($res['gys'],$res['zd_date']);
+        
         $result[] = array('name'=>'申请日期：',
                                      'value'=>$res['zd_date'],
                                      'type'=>'date'
@@ -111,7 +124,7 @@ class YxhbCgfkApplyLogic extends Model {
         //                              'type'=>'string'
         //                             );        
         $result[] = array('name'=>'应付余额：',
-                                     'value'=> number_format($ysye,2,'.',',')."元",
+                                     'value'=> number_format($res['yfye'],2,'.',',')."元",
                                      'type'=>'number'
                                     );
         $result[] = array('name'=>'申请额度：',
@@ -127,26 +140,6 @@ class YxhbCgfkApplyLogic extends Model {
                                      'type'=>'text'
                                     );
         return $result;
-    }
-
-    /**
-     * 获取目标时间的应付余额
-     * @param  int  $id 用户ID
-     * @param  date $date 指定时间段
-     * @return string $res 
-     */
-
-    public function getDateSupplyPaymentApi($id,$date=''){
-        
-        $auth = data_auth_sign($id);
-        // 计算应收额度
-        $post_data = array(
-            'auth' => $auth,
-            'id'   => $id,
-            'date' => $date
-        );
-        $res = send_post('http://www.fjyuanxin.com/yxhb/include/getSupplyPaymentApi.php', $post_data);
-        return $res['ye'];
     }
 
     /**
@@ -187,7 +180,7 @@ class YxhbCgfkApplyLogic extends Model {
                 from 
                     yxhb_gys as a,yxhb_cght as b 
                 where 
-                    a.id=b.ht_gys and b.ht_stat=2 and a.g_helpword like '%{$word}%' 
+                    a.id=b.ht_gys and b.ht_stat=2 and (a.g_helpword like '%{$word}%' or a.g_name like '%{$word}%')
                 group by 
                     a.id 
                 order by 
@@ -220,6 +213,10 @@ class YxhbCgfkApplyLogic extends Model {
         $today = date('Y-m-d',time());
         $user  = session('name');
         $val   = $this->cgfkValidata();
+        $ysye  = I('post.ysye');
+        $bank  = I('post.type');
+        $gyszh = I('post.gyszh');
+        $copyto_id = I('post.copyto_id');
         if(!$val['bool']) return $val;
         list($user_id, $notice,$money,$system) = $val['data'];
         // 重复提交
@@ -231,7 +228,7 @@ class YxhbCgfkApplyLogic extends Model {
             'gys'     => $user_id,
             'zy'      => $notice,
             'clmc'    => '',
-            'fkfs'    => '',
+            'fkfs'    => $bank,
             'rdy'     => $user,
             'bm'      => 1,
             'stat'    => 3,
@@ -240,10 +237,11 @@ class YxhbCgfkApplyLogic extends Model {
             'htbh'    => '无',
             'cwbz'    => '',
             'jjyy'    => '',
-            'gyszh'   => 0,
+            'gyszh'   => $gyszh,
             'date'    => date('Y-m-d H:i:s',time()),
             'fylx'    => 1,
-            'htlx'    => '汽运'
+            'htlx'    => '汽运',
+            'yfye'    =>  $ysye
         ); 
 
         $result = M('yxhb_cgfksq')->add($addData);
@@ -295,5 +293,24 @@ class YxhbCgfkApplyLogic extends Model {
         );
         $res = send_post('http://www.fjyuanxin.com/yxhb/include/getSupplyPaymentApi.php', $post_data);
         return $res;
+    }
+
+    /**
+     * 获取银行账号信息
+     */
+    public function bankInfo(){
+        $gys   = I('post.user_id'); 
+        $type  = I('post.type');
+        $where = array(
+            'bank_stat' => 1,
+            'bank_gys'  => $gys,
+            'bank_lx'   => $type
+        );
+        $data  = M('yxhb_bankgys')->field('bank_gys,bank_zhmc,bank_account,bank_khh,bank_lx,id')->where($where)->select();
+        foreach($data as $k => $v){
+            $account = $v['bank_account'];
+            $data[$k]['bank_account'] = substr($account,0,4).'****'.substr($account,-4);
+        }
+        return $data;
     }
 }

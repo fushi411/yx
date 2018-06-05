@@ -97,6 +97,44 @@
             <div class="weui-cell__bd greyColor" id="show_cap">自动填写
             </div>
         </div>
+        <div class="weui-cell weui-cell_select weui-cell_select-after">
+            <div class="weui-cell__hd">
+                <label class="weui-label">付款方式&nbsp;&nbsp;
+                        <span style="color:red;">*</span>
+                </label>
+            </div>
+            <div class="weui-cell__bd">
+                <select class="weui-select greyColor" name="type" id="type">
+                    <option selected="" value="4">现金</option>
+                    <option selected="" value="2">公户</option>
+                    <option selected="" value="3">汇票</option>
+                    <option value='-1' disabled selected style='display:none;'>请选择付款方式</option>
+                </select>
+            </div>
+        </div>
+        <div class="weui-cell weui-cell_select weui-cell_select-after bank">
+                <div class="weui-cell__hd">
+                    <label class="weui-label">银行账号&nbsp;&nbsp;
+                            <span style="color:red;">*</span>
+                    </label>
+                </div>
+                <div class="weui-cell__bd">
+                    <select class="weui-select greyColor" name="type" id='accout'>
+                        <option value='-1' disabled selected style='display:none;'>请选择银行账号</option>
+                    </select>
+                </div>
+            </div> 
+        <div class="weui-cell  bank">
+            <div class="weui-cell__hd">
+                <label class="weui-label">账户信息&nbsp;&nbsp;
+                </label>
+            </div>
+            <div class="weui-cell__hd"  id='bank_info' >
+                    <input class="weui-input color" type="text" name="custodian" id="two" readonly  value="账户名称：福建金鑫源节能建材有限公司" />
+                    <input class="weui-input color" type="text" name="custodian" id="five" readonly  value="开户银行：农业银行罗源支行" />
+            </div>
+        </div> 
+
     </div>
 
     <div class="weui-cells weui-cells_form">
@@ -128,8 +166,14 @@ rows="3"></textarea>
         ysye     = $('#ysye'),
         submit   = $('#submit'),
         notice   = $('#reason'),
+        bank     = $('.bank'),
+        show     = $('#bank_info'),
+        accout   = $('#accout'),
+        gyszh    = 0,
         user_id  = '',
         ysyeVal  = 0;
+
+        bank.toggle();
 
     var init_data = {
         'input':money,
@@ -207,6 +251,9 @@ rows="3"></textarea>
             user_id = '';
             $('.show_number').show();
             ysye.html('');
+            $('#type').val(-1).addClass('greyColor');
+            bank.fadeOut(200);
+            gyszh    = 0
         });   
 
         // 获取应收余额
@@ -252,11 +299,69 @@ rows="3"></textarea>
         }
 
 
+        // 类型选择
+        $('#type').change(function(){
+            type = $(this).val();
+            if(!user_id) return tooltip('请选择供货单位');
+
+            if(type == 3) {
+                gyszh    = 0
+                return bank.fadeOut(200);
+            }
+            $.ajax({
+                type:'POST',
+                url: "{:U('Light/Api/CgfkApplyApi')}", //&system=yxhb&modname=CgfkApply&action=getCustomerList
+                dataType: 'json',
+                data: {
+                    type:type,
+                    user_id: user_id,
+                    system:"{$system}",
+                    modname:'CgfkApply',
+                    action:'bankInfo'
+                },
+                dataType: 'json',
+                success: function (res) {
+                    if(res.length == 0){
+                        bank.fadeOut(200);
+                        tooltip('无此银行信息，请先添加');
+                    } else{
+                        bank.fadeIn(200);
+                        bank_info = res;
+                        show.html('<input class="weui-input color" type="text" name="custodian" readonly   placeholder="自动填写" />');
+                        makeOption();
+                    }
+                }
+            });
+
+        });
+
+        function makeOption(){
+            var optionStr = '';
+            for(i=0;i<bank_info.length;i++){
+                optionStr += '<option selected="" index='+bank_info[i]['id']+' value="'+i+'">'+bank_info[i]['bank_account']+'</option>'; 
+            }
+            optionStr += '<option value="-1" disabled selected style="display:none;">请选择银行账号</option>';
+            accout.html(optionStr);
+        }
+
+        accout.change(function(){
+            var index = $(this).val();
+            makeOption();
+            var html = '<input class="weui-input color" style="font-size:14px;" type="text" name="custodian"  readonly  value="账户名称：'+bank_info[index]['bank_zhmc']+'" />'+
+                        '<input class="weui-input color"  style="font-size:14px;" type="text" name="custodian" readonly  value="开户银行：'+bank_info[index]['bank_khh']+'" />'+
+                        '<input class="weui-input color"  style="font-size:14px;" type="text" name="custodian" readonly  value="银行账号：'+bank_info[index]['bank_account']+'" />';
+            show.html(html);
+        })
+
         submit.click(function(){
             // 公司检测
             if(!user_id) return tooltip('请选择供货单位');
             // 付款金额
             if(money.val()<= 0) return tooltip('付款金额不能小于0');
+            // 付款方式
+            if($('#type').val() == -1 || $('#type').val() == null) return tooltip('请选择付款方式');
+            // 账号检测
+            if(gyszh == 0 && ($('#type').val() == 2 || $('#type').val() == 4)) return tooltip('请选择银行账号');
             // 备注检测
             var notice = $('#reason').val();
             if(notice.length<5) return tooltip('备注不能少于5个字');
@@ -270,10 +375,12 @@ rows="3"></textarea>
                     text: notice,
                     money: money.val(),
                     ysye:ysyeVal,
+                    type:$('#type').val(),
                     copyto_id:$("#copyto_id").val(),
                     system:"{$system}",
                     modname:'CgfkApply',
-                    action:'submit'
+                    action:'submit',
+                    __hash__: hash
                 },
                 dataType: 'json',
                 success: function (res) {
@@ -287,7 +394,9 @@ rows="3"></textarea>
             });
         });
     });
-
+    $('#type').change(function(){
+        $(this).removeClass('greyColor');
+    });
     function AmountLtoU(num) {
          ///<summery>小写金额转化大写金额</summery>
          ///<param name=num type=number>金额</param>

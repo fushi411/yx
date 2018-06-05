@@ -1,0 +1,27 @@
+
+<extend name="Process:pushBase"/>
+
+<block name='title'>推送总名单</block>
+<block name='content'>
+    
+        <h3 class="titleTab">推送总名单</h3>
+        <div class="weui-panel">
+            <div class="weui-panel__bd">
+                <div class="weui-media-box weui-media-box_small-appmsg">
+                    <div class="weui-cells">
+                        <volist name="push" id='val'>
+                            <a class="weui-cell weui-cell_access" style="padding: 10px 15px;" href="{:U('Light/Process/PushProcess',array('system' => $val['system'],'modname'=>$val['pro_mod']))}">
+                                <div class="weui-cell__bd weui-cell_primary">
+                                    <p style="margin: 0;">{$val.pro_name}名单</p>
+                                </div>
+                                <span class="weui-cell__ft"></span>
+                            </a>
+                        </volist>
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+
+</block>
+<block name="btn"></block>

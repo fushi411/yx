@@ -32,19 +32,60 @@ class YxhbTempCreditLineApplyLogic extends Model {
         $res = $this->record($id);
         $info = $this->getInfo($res['clientid'],$res['date']);
         $result = array();
-        $result['content']['flag']  = false;
-        $result['content']['date'] = $res['date'];
         $clientname = M('yxhb_guest2')->field('g_khjc')->where(array('id' => $res['clientid']))->find();
-        $result['content']['clientname'] = $clientname['g_khjc'];
-       
-        if($info['flag']) $result['content']['flag'] = true;
-        
-        $result['content']['ye'] = "&yen;".number_format($res['ye'],2,'.',',')."元"; 
-        $result['content']['ed'] = "&yen;".number_format($res['ed'],2,'.',',')."元";
-        $result['content']['line'] = "&yen;".number_format($res['line'],2,'.',',')."元";
-        $result['content']['yxq'] = $res['yxq'];
-        $result['content']['notice'] = $res['notice'];
-        $result['content']['info'] = $info;
+        $result['content'][] = array('name'=>'执行时间：',
+                                     'value'=>$res['date'],
+                                     'type'=>'string',
+                                     'color' => 'black'
+                                    );
+        $result['content'][] = array('name'=>'客户名称：',
+                                     'value'=>$clientname['g_khjc'],
+                                     'type'=>'string',
+                                     'color' => 'black'
+                                    ); 
+        $color = $info['flag']?'black':'#f12e2e';
+        $result['content'][] = array('name'=>'应收余额：',
+                                     'value'=>$info['ye'],
+                                     'type'=>'string',
+                                     'color' =>$color
+                                    ); 
+        $result['content'][] = array('name'=>'信用额度：',
+                                     'value'=>$info['line'],
+                                     'type'=>'string',
+                                     'color' => 'black'
+                                    ); 
+        $result['content'][] = array('name'=>'发货余额：',
+                                     'value'=>"&yen;".number_format($res['ye'],2,'.',',')."元",
+                                     'type'=>'string',
+                                     'color' => 'black'
+                                    ); 
+        $result['content'][] = array('name'=>'已有临额：',
+                                     'value'=>"&yen;".number_format($res['ed'],2,'.',',')."元",
+                                     'type'=>'string',
+                                     'color' => 'black'
+                                    ); 
+        $twoColor = $info['two']==0?'#f12e2e':'black';
+        $fiveColor = $info['five']==0?'#f12e2e':'black';
+        $tenColor = $info['ten']==0?'#f12e2e':'black';
+        $sycs = "<input class='weui-input color' type='text' style='color:{$twoColor}' name='custodian' readonly value='临额二万元 - 剩余{$info['two']}次提交'>
+                <input class='weui-input color' type='text' style='color:{$fiveColor}' name='custodian' readonly value='临额五万元 - 剩余{$info['five']}次提交'>
+                <input class='weui-input color' type='text' style='color:{$tenColor}' name='custodian' readonly value='临额十万元 - 剩余{$info['ten']}次提交'>";
+        $result['content'][] = array('name'=>'剩余次数：',
+                                     'value'=>$sycs,
+                                     'type'=>'string',
+                                     'color' => 'black'
+                                    );    
+        $result['content'][] = array('name'=>'申请额度：',
+                                     'value'=>"&yen;".number_format($res['line'],2,'.',',')."元",
+                                     'type'=>'string',
+                                     'color' => 'black'
+                                    );   
+        $result['content'][] = array('name'=>'申请理由：',
+                                     'value'=>$res['notice'],
+                                     'type'=>'string',
+                                     'color' => 'black'
+                                    );   
+
         $result['imgsrc'] = '';
         $result['applyerID'] = $res['salesid'];
         $result['applyerName'] = $res['sales'];
@@ -185,7 +226,7 @@ class YxhbTempCreditLineApplyLogic extends Model {
         $system = 'yxhb';
         $today = date('Y-m-d',time());
         // 临时 关闭五W额度
-        if($money==1) return array('code' => 404,'msg' => '五万额度暂时无法提交');
+        // if($money==1) return array('code' => 404,'msg' => '五万额度暂时无法提交');
 
         // 参数检验
         if($user_id=='' || $reason=='' || $money=='')  return array('code' => 404,'msg' => '请刷新页面，重新提交');
