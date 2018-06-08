@@ -160,6 +160,8 @@ class SeekController extends BaseController
 
             $res = D(ucfirst($system).$v['mod_name'], 'Logic')->sealNeedContent($v['aid']);
             $appStatus =D($system.'Appflowproc')->getWorkFlowStatus($v['mod_name'], $v['aid']);
+            $statRes   = $this->transStat($v['mod_name'],$res['stat']);
+            $stat      = $statRes ? $statRes: $res['stat'];
             $arr = array(
                 'system'    => $system,
                 'systemName'=> $systemName[$system],
@@ -168,7 +170,9 @@ class SeekController extends BaseController
                 'aid'       => $v['aid'],
                 'date'      => date('m/d',strtotime($res['date'])),
                 'applyer'   => $res['sales'],
-                'stat'      => $res['stat'],
+                'titlename' => $res['title'],
+                'name'      => $res['name'],
+                'stat'      => $stat,
                 'approve'   => $res['approve'],
                 'notice'    => $res['notice'],
                 'apply'     => $appStatus
@@ -203,7 +207,9 @@ class SeekController extends BaseController
         // 数据重构
         foreach($sub as $k => $v){
             $res       = D(ucfirst($tab[$v[0]]['system']).$tab[$v[0]]['mod_name'], 'Logic')->sealNeedContent($v['aid']);
-            $appStatus =D($tab[$v[0]]['system'].'Appflowproc')->getWorkFlowStatus($tab[$v[0]]['mod_name'], $v['aid']);
+            $appStatus = D($tab[$v[0]]['system'].'Appflowproc')->getWorkFlowStatus($tab[$v[0]]['mod_name'], $v['aid']);
+            $statRes   = $this->transStat($tab[$v[0]]['mod_name'],$v['stat']);
+            $stat      = $statRes ? $statRes: $v['stat'];
             $arr = array(
                 'system'    => $tab[$v[0]]['system'],
                 'systemName'=> $tab[$v[0]]['title'],
@@ -212,7 +218,9 @@ class SeekController extends BaseController
                 'aid'       => $v['aid'],
                 'date'      => date('m/d',strtotime($v['date'])),
                 'applyer'   => $v['applyer'],
-                'stat'      => $v['stat'],
+                'stat'      => $stat,
+                'titlename' => $res['title'],
+                'name'      => $res['name'],
                 'approve'   => $v['approve'],
                 'notice'    => $v['notice'],
                 'apply'     => $appStatus
@@ -249,26 +257,27 @@ class SeekController extends BaseController
             $stat = 'stat!=2';
             // sql语句构造
             $submit_sql .= $this->SubmitSqlMake($searchText,$table_info,$stat);
-           
         }else{
-            $stat = 'stat=2';
+
+            $name = session('name');
             foreach($table_info as $k =>$v){
-                $id = session($v['system'].'_id');
                 if($k != 0) $submit_sql .= ' UNION all ';
-                $submit_sql .=  " select {$v['copy_field']},{$k} from {$v['table_name']} where salesid='{$id}' and {$stat}";
+                $submit_sql .=  " select {$v['copy_field']},{$k} from {$v['table_name']} where {$v['submit']['name']}='{$name}' and stat={$v['submit']['stat']}";
             }
         }
-        
         $submit_sql .=')a ORDER BY date desc';
         
         if(empty($limit)){
             $submit_sql .= ' LIMIT '.(($page-1)*20).',20';
         }
+       
         $sub = M()->query($submit_sql);
         // 数据重构
         foreach($sub as $k => $v){
             $res       = D(ucfirst($table_info[$v[0]]['system']).$table_info[$v[0]]['mod_name'], 'Logic')->sealNeedContent($v['aid']);
             $appStatus =D($table_info[$v[0]]['system'].'Appflowproc')->getWorkFlowStatus($table_info[$v[0]]['mod_name'], $v['aid']);
+            $statRes = $this->transStat($table_info[$v[0]]['mod_name'],$v['stat']);
+            $stat = $statRes ? $statRes: $v['stat'];
             $arr = array(
                 'system'    => $table_info[$v[0]]['system'],
                 'systemName'=> $table_info[$v[0]]['title'],
@@ -277,7 +286,9 @@ class SeekController extends BaseController
                 'aid'       => $v['aid'],
                 'date'      => date('m/d',strtotime($v['date'])),
                 'applyer'   => $v['applyer'],
-                'stat'      => $v['stat'],
+                'stat'      => $stat,
+                'titlename' => $res['title'],
+                'name'      => $res['name'],
                 'approve'   => $v['approve'],
                 'notice'    => $v['notice'],
                 'apply'     => $appStatus
@@ -299,8 +310,9 @@ class SeekController extends BaseController
         // 都查 只查期中一个
         // sql语句构造
         $submit_sql = ''; # 删除
+        $name = session('name');
         foreach($table as $k =>$v){
-            $id = session($v['system'].'_id');
+            
             if($k != 0) $submit_sql .= ' UNION all ';
 
             $del = '';
@@ -319,7 +331,7 @@ class SeekController extends BaseController
                     if(!$res && $v['system'] != 'kk')  $del = ' and 1=-1 '; # 排除建材系统 模块不在搜索方位
                 }
             }
-            $submit_sql .=  " select {$v['copy_field']},{$k} from {$v['table_name']} where salesid='{$id}' and {$stat} {$del}";
+            $submit_sql .=  " select {$v['copy_field']},{$k} from {$v['table_name']} where {$v['submit']['name']}='{$name}' and stat!={$v['submit']['stat']} {$del}";
         }
 
         return $submit_sql;
@@ -424,6 +436,8 @@ class SeekController extends BaseController
 
             $res = D(ucfirst($system).$v['mod_name'], 'Logic')->sealNeedContent($v['aid']);
             $appStatus =D($system.'Appflowproc')->getWorkFlowStatus($v['mod_name'], $v['aid']);
+            $statRes = $this->transStat($v['mod_name'],$res['stat']);
+            $stat = $statRes ? $statRes: $res['stat'];
             $arr = array(
                 'system'    => $system,
                 'systemName'=> $systemName[$system],
@@ -432,7 +446,9 @@ class SeekController extends BaseController
                 'aid'       => $v['aid'],
                 'date'      => date('m/d',strtotime($res['date'])),
                 'applyer'   => $res['sales'],
-                'stat'      => $res['stat'],
+                'stat'      => $stat,
+                'titlename' => $res['title'],
+                'name'      => $res['name'],
                 'approve'   => $res['approve'],
                 'notice'    => $res['notice'],
                 'apply'     => $appStatus
@@ -488,6 +504,8 @@ class SeekController extends BaseController
 
             $res = D(ucfirst($system).$v['mod_name'], 'Logic')->sealNeedContent($v['aid']);
             $appStatus =D($system.'Appflowproc')->getWorkFlowStatus($v['mod_name'], $v['aid']);
+            $statRes = $this->transStat($v['mod_name'],$res['stat']);
+            $stat = $statRes ? $statRes: $res['stat'];
             $arr = array(
                 'system'    => $system,
                 'systemName'=> $systemName[$system],
@@ -496,7 +514,9 @@ class SeekController extends BaseController
                 'aid'       => $v['aid'],
                 'date'      => date('m/d',strtotime($res['date'])),
                 'applyer'   => $res['sales'],
-                'stat'      => $res['stat'],
+                'stat'      => $stat,
+                'titlename' => $res['title'],
+                'name'      => $res['name'],
                 'approve'   => $res['approve'],
                 'notice'    => $res['notice'],
                 'apply'     => $appStatus
@@ -505,6 +525,23 @@ class SeekController extends BaseController
         }
         
         return $result;
+    }
+
+
+    /**
+     * 对特殊模块状态值进行处理
+     * @param string $modname 模块名
+     * @param string $stat    当前状态
+     * @return int $stat 
+     */
+    public function transStat($modname,$stat){
+        if($stat == 0) return 0;
+        $statArr = array(
+            'CgfkApply' => array('4' =>2 ,'3' => 2 ,'2' => 1)
+        );
+
+        if(!$statArr[$modname]) return 0;
+        return $statArr[$modname][$stat];
     }
     /**
      * 对抄送数组进行处理
@@ -523,6 +560,8 @@ class SeekController extends BaseController
 
             $res = D(ucfirst($system).$v['mod_name'], 'Logic')->sealNeedContent($v['aid']);
             $appStatus =D($system.'Appflowproc')->getWorkFlowStatus($v['mod_name'], $v['aid']);
+            $statRes = $this->transStat($v['mod_name'],$res['stat']);
+            $stat = $statRes ? $statRes: $res['stat'];
             $arr = array(
                 'system'    => $system,
                 'systemName'=> $systemName[$system],
@@ -532,7 +571,9 @@ class SeekController extends BaseController
                 'date'      => date('m/d',strtotime($res['date'])),
                 'myDate'    => $res['date'],
                 'applyer'   => $res['sales'],
-                'stat'      => $res['stat'],
+                'titlename' => $res['title'],
+                'name'      => $res['name'],
+                'stat'      => $stat,
                 'approve'   => $res['approve'],
                 'notice'    => $res['notice'],
                 'apply'     => $appStatus
@@ -581,10 +622,65 @@ class SeekController extends BaseController
      */
     public function getAppTable(){
         $appArr = array(
-            array( 'title' => '环保临时额度' , 'search' => '临时额度','system' => 'yxhb' ,'mod_name' =>'TempCreditLineApply','table_name' =>'yxhb_tempcreditlineconfig','id'=>'id' ,'copy_field' =>'yxhb_tempcreditlineconfig.id as aid,yxhb_tempcreditlineconfig.sales as applyer,yxhb_tempcreditlineconfig.date,yxhb_tempcreditlineconfig.line as approve,yxhb_tempcreditlineconfig.notice,yxhb_tempcreditlineconfig.stat'),
-            array( 'title' => '环保信用额度' , 'search' => '信用额度','system' => 'yxhb' ,'mod_name' =>'CreditLineApply'    ,'table_name' =>'yxhb_creditlineconfig'    ,'id'=>'aid','copy_field' =>'yxhb_creditlineconfig.aid,yxhb_creditlineconfig.sales as applyer,yxhb_creditlineconfig.date,yxhb_creditlineconfig.line as approve,yxhb_creditlineconfig.notice,yxhb_creditlineconfig.stat'),
-            array( 'title' => '建材临时额度' , 'search' => '临时额度','system' => 'kk'   ,'mod_name' =>'TempCreditLineApply','table_name' =>'kk_tempcreditlineconfig'  ,'id'=>'id' ,'copy_field' =>'kk_tempcreditlineconfig.id as aid,kk_tempcreditlineconfig.sales as applyer,kk_tempcreditlineconfig.date,kk_tempcreditlineconfig.line as approve,kk_tempcreditlineconfig.notice,kk_tempcreditlineconfig.stat'),
-            array( 'title' => '建材信用额度' , 'search' => '信用额度','system' => 'kk'   ,'mod_name' =>'CreditLineApply'    ,'table_name' =>'kk_creditlineconfig'      ,'id'=>'aid','copy_field' =>'kk_creditlineconfig.aid,kk_creditlineconfig.sales as applyer,kk_creditlineconfig.date,kk_creditlineconfig.line as approve,kk_creditlineconfig.notice,kk_creditlineconfig.stat'),
+            array(
+                 'title'     => '环保临时额度' , 
+                'search'     => '临时额度','system' => 'yxhb' ,
+                'mod_name'   => 'TempCreditLineApply',
+                'table_name' => 'yxhb_tempcreditlineconfig',
+                'id'         => 'id' ,
+                'submit'     => array('name' => 'sales','stat' => 2),
+                'copy_field' => 'yxhb_tempcreditlineconfig.id as aid,yxhb_tempcreditlineconfig.sales as applyer,yxhb_tempcreditlineconfig.date,yxhb_tempcreditlineconfig.line as approve,yxhb_tempcreditlineconfig.notice,yxhb_tempcreditlineconfig.stat'
+            ),
+            array( 
+                'title'      => '环保信用额度' , 
+                'search'     => '信用额度',
+                'system'     => 'yxhb' ,
+                'mod_name'   => 'CreditLineApply'    ,
+                'table_name' => 'yxhb_creditlineconfig'    ,
+                'id'         => 'aid',
+                'submit'     => array('name' => 'sales','stat' => 2),
+                'copy_field' => 'yxhb_creditlineconfig.aid,yxhb_creditlineconfig.sales as applyer,yxhb_creditlineconfig.date,yxhb_creditlineconfig.line as approve,yxhb_creditlineconfig.notice,yxhb_creditlineconfig.stat'
+            ),
+            array( 
+                'title'      => '环保采购付款' , 
+                'search'     => '采购付款',
+                'system'     => 'yxhb' ,
+                'mod_name'   => 'CgfkApply'          ,
+                'table_name' => 'yxhb_cgfksq'              ,
+                'id'         => 'id',
+                'submit'     => array('name' => 'rdy','stat' => 3),
+                'copy_field' => 'yxhb_cgfksq.id,yxhb_cgfksq.rdy as applyer,yxhb_cgfksq.zd_date,yxhb_cgfksq.fkje as approve,yxhb_cgfksq.zy,yxhb_cgfksq.stat'
+            ),
+            array( 
+                'title'      => '建材临时额度' , 
+                'search'     => '临时额度',
+                'system'     => 'kk'   ,
+                'mod_name'   => 'TempCreditLineApply',
+                'table_name' => 'kk_tempcreditlineconfig'  ,
+                'id'         => 'id' ,
+                'submit'     => array('name' => 'sales','stat' => 2),
+                'copy_field' => 'kk_tempcreditlineconfig.id as aid,kk_tempcreditlineconfig.sales as applyer,kk_tempcreditlineconfig.date,kk_tempcreditlineconfig.line as approve,kk_tempcreditlineconfig.notice,kk_tempcreditlineconfig.stat'
+            ),
+            array( 
+                'title'      => '建材信用额度' , 
+                'search'     => '信用额度',
+                'system'     => 'kk'   ,
+                'mod_name'   => 'CreditLineApply'    ,
+                'table_name' => 'kk_creditlineconfig'      ,
+                'id'         => 'aid',
+                'submit'     => array('name' => 'sales','stat' => 2),
+                'copy_field' => 'kk_creditlineconfig.aid,kk_creditlineconfig.sales as applyer,kk_creditlineconfig.date,kk_creditlineconfig.line as approve,kk_creditlineconfig.notice,kk_creditlineconfig.stat'
+            ),
+            array( 
+                'title'      => '建材采购付款' , 
+                'search'     => '采购付款',
+                'system'     => 'kk'   ,
+                'mod_name'   => 'CgfkApply'          ,
+                'table_name' => 'kk_cgfksq'                ,
+                'id'         => 'id' ,
+                'submit'     => array('name' => 'rdy','stat' => 3),
+                'copy_field' => 'kk_cgfksq.id as aid,kk_cgfksq.rdy as applyer,kk_cgfksq.zd_date,kk_cgfksq.fkje as approve,kk_cgfksq.zy,kk_cgfksq.stat'
+            ),
         );
         return $appArr;
     }

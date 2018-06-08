@@ -276,33 +276,34 @@
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only copy_to_close">Close</span></button>
                         <h4 class="modal-title" id="myModalLabel">选择人员</h4>
                     </div>
+                    
                     <div class="modal-body" id="select_content" style="padding-top: 0px;padding-bottom: 0px;">
                         <div class="page js_show" style="position: relative;">
                             <div class="page__bd">
-                                <!-- <div class="weui-search-bar" id="searchBar">
+                                <div class="weui-search-bar" id="searchBar">
                                     <form class="weui-search-bar__form">
                                         <div class="weui-search-bar__box">
                                             <i class="weui-icon-search"></i>
-                                            <input type="search" class="weui-search-bar__input" id="searchInput" placeholder="搜索" required/>
+                                            <input type="search" class="weui-search-bar__input" id="searchInput" placeholder="请输入姓名或拼音缩写搜索" required="">
                                             <a href="javascript:" class="weui-icon-clear" id="searchClear"></a>
                                         </div>
                                         <label class="weui-search-bar__label" id="searchText">
                                             <i class="weui-icon-search"></i>
-                                            <span>搜索</span>
+                                            <span>请输入姓名或拼音缩写搜索</span>
                                         </label>
                                     </form>
-                                    <a href="javascript:" class="weui-search-bar__cancel-btn" id="searchCancel">取消</a>
-                                </div> -->
+                                    <a href="javascript:" class="weui-search-bar__cancel-btn" id="searchCancel">搜索</a>
+                                </div>
                                 <div class="weui-cells searchbar-result" id="searchResult" style="margin-top: 0px;">
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                        <button type="button" class="btn btn-default copy_to_close" data-dismiss="modal" >关闭</button>
                         <button type="button" class="btn btn-success" id="pre-level" data-pid="">上一级</button>
                     </div>
                 </div>
@@ -496,6 +497,92 @@
         $li_dom.remove();
         $("#iosDialog").fadeOut(100);
     }
+    // 抄送搜索
+  $(function(){
+        var $searchBar = $('#searchBar'),
+            $searchResult = $('#searchResult'),
+            $searchText = $('#searchText'),
+            $searchInput = $('#searchInput'),
+            $searchClear = $('#searchClear'),
+            $searchCancel = $('#searchCancel');
+
+        function hideSearchResult(){
+            // $searchResult.hide();
+            $searchInput.val('');
+        }
+        function cancelSearch(){
+            hideSearchResult();
+            $searchBar.removeClass('weui-search-bar_focusing');
+            $searchText.show();
+        }
+
+        $searchText.on('click', function(){
+            $searchBar.addClass('weui-search-bar_focusing');
+            $searchInput.focus();
+        });
+        $searchInput
+            .on('blur', function () {
+                if(!this.value.length) cancelSearch();
+            })
+            .on('input', function(){
+                if(this.value.length) {
+                    $searchResult.show();
+                    searchCopyUser();
+                } else {
+                    modelIni()
+                }
+            })
+        ;
+        $searchClear.on('click', function(){
+            hideSearchResult();
+            $searchInput.focus();
+        });
+        $searchCancel.on('click', function(){
+            searchCopyUser();
+        });
+        $searchInput.on('keypress',function(e) {  
+            var keycode = e.keyCode;  
+            var searchName = $(this).val();
+            if(keycode=='13') {  
+            e.preventDefault();    
+
+            searchCopyUser();
+            }         
+        });
+        function searchCopyUser(){
+            word = $searchInput.val();
+            if(!word.length) return modelIni();
+            $('#searchResult').empty();
+            $('#searchResult').append(loading);
+            $.post("{:U('Light/Apply/getDeptHtml')}",
+                {
+                    "type": 1,
+                    'search':word
+                }, function (data) {
+                    $('#searchResult').empty();
+                    // console.log(data);
+                    if(data == '') {
+                        console.log(1);
+                        $('#searchResult').append(noresult);
+                    } else {
+                        console.log(2);
+                        $('#searchResult').append(data);
+                        // console.log(data.pid);
+                        $("#pre-level").attr("data-pid", 17);
+                    }
+                }
+            );
+        }
+
+        function modelIni(){
+            var id = 1;
+            $searchInput.val(null);
+            $("#pre-level").attr("data-pid", 0);
+            getDepartment(id);
+        }
+    });
+
+
 </script>
 <block name="js">
 

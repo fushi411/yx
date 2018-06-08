@@ -69,9 +69,9 @@ class YxhbCgfkApplyLogic extends Model {
         if($res['fkfs'] == 4 ){
             $fkfs = '现金';
         }elseif($res['fkfs'] == 2 ){
-            $fkfs = '公司账户';
+            $fkfs = '公户';
         }elseif ($res['fkfs'] == 3 ) {
-            $fkfs = '承兑汇票';
+            $fkfs = '汇票';
         }
         $result['content'][] = array('name'=>'付款方式：',
                                      'value'=>$fkfs,
@@ -158,12 +158,15 @@ class YxhbCgfkApplyLogic extends Model {
      * @return array    所需内容      
      */
     public function sealNeedContent($id){
-        $res = $this->record($id);
+        $res    = $this->record($id);
+        $name   = M('yxhb_gys')->field('g_name')->where(array('id' => $res['gys']))->find();
         $result = array(
             'sales'   => $res['rdy'],
             'approve' => number_format($res['fkje'],2,'.',',')."元",
             'notice'  => $res['zy'],
             'date'    => $res['zd_date'],
+            'title'   => '供货单位',
+            'name'    => $name['g_name'], 
             'stat'    => $res['stat']
         );
         return $result;

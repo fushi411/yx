@@ -49,12 +49,12 @@ class KkCgfkApplyLogic extends Model {
         //                              'type'=>'string',
         //                              'color' => 'black'
         //                             );
-        $result['content'][] = array('name'=>'应付额度：',
+        $result['content'][] = array('name'=>'应付余额：',
                                      'value'=> "&yen;".number_format($res['yfye'],2,'.',',')."元",
                                      'type'=>'number',
                                      'color' => $color
                                     );
-        $result['content'][] = array('name'=>'申请额度：',
+        $result['content'][] = array('name'=>'付款金额：',
                                      'value'=>"&yen;".number_format($res['fkje'],2,'.',',')."元",
                                      'type'=>'number',
                                      'color' => 'black;font-weight: 600;'
@@ -68,9 +68,9 @@ class KkCgfkApplyLogic extends Model {
         if($res['fkfs'] == 4 ){
             $fkfs = '现金';
         }elseif($res['fkfs'] == 2 ){
-            $fkfs = '公司账户';
+            $fkfs = '公户';
         }elseif ($res['fkfs'] == 3 ) {
-            $fkfs = '承兑汇票';
+            $fkfs = '汇票';
         }
         $result['content'][] = array('name'=>'付款方式：',
                                      'value'=>$fkfs,
@@ -158,11 +158,14 @@ class KkCgfkApplyLogic extends Model {
      */
     public function sealNeedContent($id){
         $res = $this->record($id);
+        $name   = M('kk_gys')->field('g_name')->where(array('id' => $res['gys']))->find();
         $result = array(
             'sales'   => $res['rdy'],
             'approve' => number_format($res['fkje'],2,'.',',')."元",
             'notice'  => $res['zy'],
             'date'    => $res['zd_date'],
+            'title'   => '供货单位',
+            'name'    => $name['g_name'], 
             'stat'    => $res['stat']
         );
         return $result;
@@ -243,7 +246,7 @@ class KkCgfkApplyLogic extends Model {
             'htlx'    => '汽运',
             'yfye'    =>  $ysye
         ); 
-
+        
         $result = M('kk_cgfksq')->add($addData);
         if(!$result) return array('code' => 404,'msg' =>'提交失败，请重新尝试！');
         // 抄送

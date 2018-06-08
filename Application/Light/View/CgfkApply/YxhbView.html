@@ -350,6 +350,7 @@ rows="3"></textarea>
         accout.change(function(){
             var index = $(this).val();
             makeOption();
+            gyszh = bank_info[index]['id'];
             var html = '<input class="weui-input color" style="font-size:14px;" type="text" name="custodian"  readonly  value="账户名称：'+bank_info[index]['bank_zhmc']+'" />'+
                         '<input class="weui-input color"  style="font-size:14px;" type="text" name="custodian" readonly  value="开户银行：'+bank_info[index]['bank_khh']+'" />'+
                         '<input class="weui-input color"  style="font-size:14px;" type="text" name="custodian" readonly  value="银行账号：'+bank_info[index]['bank_account']+'" />';
@@ -357,6 +358,9 @@ rows="3"></textarea>
         })
 
         submit.click(function(){
+
+            // console.log(gyszh);
+            // return tooltip('测试中...稍等2分钟');
             // 公司检测
             if(!user_id) return tooltip('请选择供货单位');
             // 付款金额

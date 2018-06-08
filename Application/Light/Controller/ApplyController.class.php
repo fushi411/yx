@@ -97,18 +97,23 @@ class ApplyController extends BaseController {
     // 获取当前目录
     public function getDeptHtml()
     {
-        $id = I('post.id');
-        $Dept = D('department');
-        $DeptInfo = $Dept->getWXDeptInfo();
-        $childDeptInfo = $Dept->getChildDept($DeptInfo, $id);
-        // 无子部门返回成员信息
-        if (empty($childDeptInfo)) {
-            $userInfo = $Dept->getWXDeptUserInfo($id);
-            $childDeptHtml = $Dept->genDeptUserHtml($userInfo);
-        } else {
-            $childDeptHtml = $Dept->genDeptHtml($childDeptInfo);
+        $type = I('post.type');
+        if(!empty($type)){
+            $this->searchDeptHtml();
+        }else{
+            $id = I('post.id');
+            $Dept = D('department');
+            $DeptInfo = $Dept->getWXDeptInfo();
+            $childDeptInfo = $Dept->getChildDept($DeptInfo, $id);
+            // 无子部门返回成员信息
+            if (empty($childDeptInfo)) {
+                $userInfo = $Dept->getWXDeptUserInfo($id);
+                $childDeptHtml = $Dept->genDeptUserHtml($userInfo);
+            } else {
+                $childDeptHtml = $Dept->genDeptHtml($childDeptInfo);
+            }
+            $this->ajaxReturn($childDeptHtml);
         }
-        $this->ajaxReturn($childDeptHtml);
     }
 
     // 获取上级目录
@@ -123,6 +128,77 @@ class ApplyController extends BaseController {
         $this->ajaxReturn(array("pid"=>$DeptInfo['parentid'], "html"=>$childDeptHtml));
     }
 
+    // 抄送搜索
+    public function searchDeptHtml(){
+        $word = I('post.search');
+        $where = array(
+            'stat'     => 1,
+            '_complex' => array(
+                '_logic' => 'or',
+                'jc'     => array('like',"%{$word}%"),
+                'name'   => array('like',"%{$word}%")
+            )
+        );
+
+        $id = 1;
+        if(!cookie('copyFlag')){
+            $flagData = M('wx_info')->where(array('stat' => 1))->field('time')->find();
+            // 检查过期情况
+            $expire   = time()-$flagData['time'];
+            if($expire-86400*30>0){ // 过期 之前的用户失效
+                M('wx_info')->where(array('stat' => 1))->setField('stat',0);
+                $userInfo = $this->getAllUser($id); 
+                $userList = array();
+                foreach( $userInfo as $val ){
+                    // 简称获取
+                    $length = strlen($val['id']);
+                    $flag   = 1;
+                    $jc    = '';
+                    for($i=0;$i<$length;$i++){
+                        $asc = ord($val['id'][$i]);
+                        if($asc>64 && $asc<91 ){
+                            $jc.=$val['id'][$i];
+                            $flag = 0;
+                        }
+                    }
+                    if($flag){
+                        $jc = $val['id'];
+                    }
+                    // 数据插入
+                    $userList[] = array(
+                        'wxid'   => $val['id'],
+                        'name'   => $val['name'],
+                        'avatar' => $val['avatar'],
+                        'stat'   => 1,
+                        'time'   => time(),
+                        'jc'     => $jc
+                    );
+                }
+                M('wx_info')->addAll($userList);
+                cookie('copyFlag',1);
+            }
+        }
+        $userInfoList  = M('wx_info')->where($where)->field('wxid as id,name,avatar')->select();
+        $Dept          = D('department');
+        $childDeptHtml = $Dept->genDeptUserHtml($userInfoList);
+        $this->ajaxReturn($childDeptHtml);
+    }
+
+    // 查询所有的用户信息
+    public function getAllUser($id){
+        $result = array();
+        $Dept = D('department');
+        $DeptInfo = $Dept->getWXDeptInfo();
+        $childDeptInfo = $Dept->getChildDept($DeptInfo, $id);
+        if (empty($childDeptInfo)) {
+            $result = array_merge($result,$Dept->getWXDeptUserInfo($id));
+        } else {
+            foreach($childDeptInfo as $val){
+                $result = array_merge($result,$this->getAllUser($val['id']));
+            }
+        }
+        return $result;
+    }
 
     // 获取搜索通讯录用户
     public function getSearchUser()
@@ -315,36 +391,8 @@ class ApplyController extends BaseController {
 
     public function forTest()
     {
-        // $wf = new WorkFlowController();
-       
-        // $aid = 1;
-        // $pid = 10;
-        // $res = $wf->setWorkFlowSV('forTest', $aid, $pid, $system);
-        // dump($res);
-        
-        // $id = 589;
-        // $wfClass = new WorkFlowFuncController();
-        // $func = ucfirst($system).$mod_name.'End';
-        // $funcRes = $wfClass->$func($id, $system);
+
         header("Content-type:text/html;charset=utf-8");
-        $system = 'kk';
-        $copyto_id = 'HuangShiQi,wk';
-        $result = 663;
-        //评论内容
-
-        // $copyto_id = trim($copyto_id,',');
-        // if (!empty($copyto_id)) {
-        //     $fix = explode(",", $copyto_id);
-        //     // 发送抄送消息
-        //     D('KkAppcopyto')->copyTo($copyto_id,'CgfkApply', $result);
-        // }
-
-        // $seek = A('View');
-        // $mod = 'TempCreditLineApply';
-        // $appflow = GetAppFlow('yxhb',$mod);
-        // echo 1;
-        // dump(json_encode($appflow));
-       // dump($seek->appflowJson($appflow,$mod));
     }
 // ---END---
 }

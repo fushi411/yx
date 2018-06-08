@@ -194,11 +194,14 @@ class KkTempCreditLineApplyLogic extends Model {
      */
     public function sealNeedContent($id){
         $res = $this->record($id);
+        $clientname = M('kk_guest2')->field('g_khjc')->where(array('id' => $res['clientid']))->find();
         $result = array(
             'sales'   => $res['sales'],
             'approve' => number_format($res['line'],2,'.',',')."元",
             'notice'  => $res['notice'],
             'date'    => $res['date'],
+            'title'   => '客户名称',
+            'name'    => $clientname['g_khjc'], 
             'stat'    => $res['stat']
         );
         return $result;

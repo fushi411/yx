@@ -54,6 +54,7 @@
                         <h5>{$copy.date}</h5>
                     </div>
                 </div>
+                <p class="weui-media-box__desc  " style="margin-bottom: 0px;">  <span>{$copy.titlename}：</span>  <span class="" >{$copy.name}</span></p>
                 <p class="weui-media-box__desc  " style="margin-bottom: 0px;">  <span>申请金额：</span>  <span class="" >{$copy.approve}</span></p>
                 <p class="weui-media-box__desc  " style="margin-bottom: 0px;">  <span>申请理由：</span><span class="" >{$copy.notice}</span> </p>
             </div> 
@@ -168,6 +169,7 @@
                 html+= '<span class="label label-success" style="margin-left: 1em;padding-top: 0.3em;padding-bottom: 0.2em">已通过</span>';
             }
             html+='</div><div class="weui-flex__item" style="text-align: right;"><h5>'+data[i]['date']+'</h5></div> </div>'+
+                    '<p class="weui-media-box__desc " style="margin-bottom: 0px;"><span>'+data[i]['titlename']+'：</span><span  >'+data[i]['name']+'</span></p>'+
                     '<p class="weui-media-box__desc " style="margin-bottom: 0px;"><span>申请金额：</span><span  >'+data[i]['approve']+'</span></p>'+
                     '<p class="weui-media-box__desc " style="margin-bottom: 0px;"><span>申请理由：</span><span  >'+data[i]['notice']+'</span></p>'+
                     '</div> </a>';
