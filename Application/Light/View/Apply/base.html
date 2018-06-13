@@ -64,7 +64,7 @@
     <div class="container" id="container">
         <div class="page tabbar js_show" >
             <div class="page__bd" style="height: 100%;">
-                <if condition="($apply.stat eq 1) AND (($isApplyer eq 1) OR ($isApplyUser eq 1) OR ($isPasser eq 1) OR ($isCopyto eq 1))">
+                <if condition="(($apply.stat eq 0)) AND (($isApplyer eq 1) OR ($isApplyUser eq 1) OR ($isPasser eq 1) OR ($isCopyto eq 1))">
                         <div class="weui-tab">
                             <div class="weui-tab__panel">
                     </if>
@@ -365,6 +365,9 @@
                                                                 <span style="color:grey;">（2小时内）</span>删除</span>
                                                         </eq>
                                                     </eq>
+                                                    <neq name="clist.pid" value="9999">
+                                                        <span style="color:red;" realname="{$clist.name}" wxid="{$clist.wxid}" avatar="{$clist.avatar}" data-toggle="modal" data-target="#myModal2" class="reply">回复</span>
+                                                    </neq>
                                                 </p>
                                             </div>
                                         </span>
@@ -633,7 +636,12 @@
                 <div class="weui-mask"></div>
                 <div class="weui-dialog">
                     <div class="weui-dialog__hd">
-                        <strong class="weui-dialog__title">是否发送催审消息</strong>
+                        <strong class="weui-dialog__title" style="color: #f12e2e" id="urge_cue"></strong>
+                    </div>
+                    <div class="weui-dialog__hd">
+                            <strong class="weui-dialog__title">
+                                <textarea class="weui-textarea" name="reason"  id="urge_reason" placeholder="请输入催审理由(必填)" rows="2"></textarea>
+                            </strong>
                     </div>
                     <div class="weui-dialog__ft">
                         <a href="javascript:;" onclick="dialog_urge_close()" class="weui-dialog__btn weui-dialog__btn_default">取消</a>
@@ -772,6 +780,9 @@
     }
     // Confirm dialog
     function dialog_urge_confirm() {
+        $reason = $('#urge_reason').val();
+        console.log($reason.length);
+        if($reason.length <=0) return $('#urge_cue').text('请输入催审理由');
         $("#iosDialog_urge").fadeOut(100);
         var aid = $('#comment_content').attr('data-aid');
         var $dtoast = $('#doingToast');
@@ -782,11 +793,13 @@
             {
                 "aid": aid,
                 "mod_name": "{$mod_name}",
-                "system": "{$system}"
+                "system": "{$system}",
+                "reason":$reason
             }, function (data) {
                 // console.log(data);
                 if (data == 'success') {
-
+                    $("#alert_content").text('催审成功');
+                    $("#iosDialog_alert").fadeIn(200);
                 } else if (data == 'sended') {
                     $("#alert_content").text('24小时内只能催审1次！');
                     $("#iosDialog_alert").fadeIn(200);
@@ -797,6 +810,33 @@
             }
         );
     }
+    // 回复信息
+    $('.reply').click(function(){
+        $("#comment_to_id").val('');
+        $("#selectCommentUser").empty();
+        $("#comment_at").fadeIn(200);
+
+        var id = $(this).attr('wxid');
+        var name = $(this).attr('realname');
+        var img = $(this).attr('avatar');
+        // 重复点击
+        var ids = $("#comment_to_id").val() + ",";
+        var old_ids_arr = ids.split(",");
+        if($.inArray(id,old_ids_arr)!=-1){
+            return false;
+        }
+        var ids = $("#comment_to_id").val() + "," + id;
+        var comment_content = $("#comment_content").val();
+        var new_comment_content = "";
+        // new_comment_content = comment_content+'@'+name;
+        // $("#comment_content").val(new_comment_content);
+        var tmpl = '<li class="weui-uploader__file wk-comment__user" id="#id#" style="margin-bottom:12px;height:90px;"><img src="#url#" class="weui-selet__user" style="margin-bottom: 0px;margin-right: 6px;" /><span style="margin-right: 6px;font-size: 14px;">#name#</span><span class="weui-badge" style="position: relative;top: -5.8em;right: -1.4em;">X</span></li>';
+        // console.log(id);
+        tmpl = tmpl.replace('#id#', id);
+        tmpl = tmpl.replace('#name#', name);
+        $("#selectCommentUser").append($(tmpl.replace('#url#', img)));
+        $("#comment_to_id").val(ids);
+    });
     // Close comment record del dialog
     function dialog_comment_record_del_close() {
         $("#iosDialog_comment_record_del").fadeOut(100);
@@ -1017,6 +1057,7 @@
                 alert("非申请人不可催审！");
                 return false;
             }
+            $('#urge_cue').text('');
             $("#iosDialog_urge").fadeIn(200);
         });
         // 删除按钮

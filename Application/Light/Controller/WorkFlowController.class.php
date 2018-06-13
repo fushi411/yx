@@ -325,13 +325,14 @@ class WorkFlowController extends BaseController {
         return $description;
     }
 
-    public function sendApplyCardMsg($flowName, $id, $pid, $applyerid, $system, $type='', $subTitle='')
+    public function sendApplyCardMsg($flowName, $id, $pid, $applyerid, $system, $type='', $subTitle='',$reason='')
     {
         $systemName = array('kk'=>'建材', 'yxhb'=>'环保');
       // 微信发送
         $flowTable = M($system.'_appflowtable');
         $mod_cname = $flowTable->getFieldByProMod($flowName, 'pro_name');
-        $title = $mod_cname;
+        $mod_cname = str_replace('表','',$mod_cname);
+        $title = $systemName[$system].$mod_cname.$subTitle;
         $url = "http://www.fjyuanxin.com/WE/index.php?m=Light&c=Apply&a=applyInfo&system=".$system."&aid=".$id."&modname=".$flowName;
         //crontab(CLI模式)无法正确生产URL
         // if (PHP_SAPI=='cli') {
@@ -341,34 +342,36 @@ class WorkFlowController extends BaseController {
         $proName = $boss->getusername($pid);
 
         $subName = '';
-        if($subTitle == '（催审）'){
+        if($subTitle == '(催审)'){
           $subName = $boss->getusername($applyerid);
           $applyerName='('.$subName.'提交)';
         } else {
           $applyerName = $boss->getusername($applyerid);
         }
-
+        $boss = D($system.'_boss')->getWXFromID($applyerid);
         switch ($type) {
           case 'pass':
-            $description = $applyerName."您好,您在".$systemName[$system]."ERP系统中有一个<".$title.">已审批通过";
-            $receviers = "wk|".$applyerwxid;
+            $description = "您有一个流程已审批通过".$applyerName;
+            $receviers = "wk|HuangShiQi|".$boss;
             break;
           case 'refuse':
-            $description = $applyerName."您好,您在".$systemName[$system]."ERP系统中有一个<".$title.">被拒绝";
-            $receviers = "wk|".$applyerwxid;
+            $description = "您有一个流程被拒绝".$applyerName;
+            $receviers = "wk|HuangShiQi|".$boss;
             break;
           case 'other':
-            $description = $applyerName."您好,您在".$systemName[$system]."ERP系统中有一个<".$title.">需要处理";
-            $receviers = "wk|".$applyerwxid;
+            $description = "您有一个流程需要处理".$applyerName;
+            $receviers = "wk|HuangShiQi|".$boss;
             break;          
           default:
-            $description = "您好,您在".$systemName[$system]."ERP系统中有一个<".$title.">需要审批";
-            $receviers = "wk|".$applyerwxid;
+            $description = "您有一个流程需要审批".$applyerName;
+            $receviers = "wk|HuangShiQi|".$boss;
             break;
         }
-
+        if(!empty($reason)){
+          $description .= "\n催审理由：".$reason;
+        }
         $agentid = 15;
-        $info = $this->WeChat->sendCardMessage($receviers,$title,$proName.$description.$applyerName,$url,$agentid,$flowName,$system);
+        $info = $this->WeChat->sendCardMessage($receviers,$title,$description,$url,$agentid,$flowName,$system);
         return $info;
     }
 
@@ -431,20 +434,22 @@ class WorkFlowController extends BaseController {
       $aid = I('post.aid');
       $mod_name = I('post.mod_name');
       $system = I('post.system');
+      $reason = I('post.reason');
       $res = M($system.'_appflowproc')->field('per_id,urge,per_name')->where(array('aid'=>$aid, 'mod_name'=>$mod_name, 'app_stat'=>0))->find();
       if (!empty($res)) {
         $timestamp = time();
         if ($timestamp-$res['urge']>24*3600) {
-          $this->sendApplyCardMsg($mod_name, $aid, $res['per_id'], $res['per_id'], $system, '', '（催审）');
+          $this->sendApplyCardMsg($mod_name, $aid, $res['per_id'], $res['per_id'], $system, '', '（催审）',$reason);
           M($system.'_appflowproc')->where(array('aid'=>$aid, 'mod_name'=>$mod_name, 'app_stat'=>0))->setField('urge', $timestamp);
           // 自动评论
           $data['aid'] = $aid;
-          $ctoid = $res['per_id'];
-          // $data['comment_to_id'] = $res['per_id'];
+          $boss = D($system.'_boss')->getWXFromID($res['per_id']);
+          // $ctoid = $res['per_id'];
+          $data['comment_to_id'] = $boss;
           $data['mod_name'] = $mod_name;
           $data['per_id'] = session($system.'_id');
           $data['per_name'] = session('name');
-          $data['app_word'] = $data['per_name']."向".$res['per_name']."发起了催审!";
+          $data['app_word'] = $data['per_name']."发起了催审! 催审理由：".$reason;
           $data['app_stat'] = 1;
           $data['time'] = date('Y-m-d H:i:s');
           $commentRes = M($system.'_appflowcomment')->add($data);

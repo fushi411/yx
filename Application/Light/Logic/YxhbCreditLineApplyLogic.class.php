@@ -268,7 +268,6 @@ class YxhbCreditLineApplyLogic extends Model {
         // 抄送
         $copyto_id = trim($copyto_id,',');
         if (!empty($copyto_id)) {
-            $fix = explode(",", $copyto_id);
             // 发送抄送消息
             D('YxhbAppcopyto')->copyTo($copyto_id,'CreditLineApply', $aid);
         }

@@ -145,9 +145,9 @@
             }else if(data[i]['stat'] == 2){
                 if(data[i]['apply']['stat']==2){
                     html+='<span class="label label-success" style="margin-left: 1em;padding-top: 0.3em;padding-bottom: 0.2em">已通过</span>';
-                }else if(data[i]['apply']['stat']==2){
+                }else if(data[i]['apply']['stat']==1){
                     html+='<span class="label label-danger" style="margin-left: 1em;padding-top: 0.3em;padding-bottom: 0.2em">已退审</span>';
-                }else if(data[i]['apply']['stat']==2){
+                }else if(data[i]['apply']['stat']==0){
                     html+='<span class="label label-primary" style="margin-left: 1em;padding-top: 0.3em;padding-bottom: 0.2em">审批中</span>';
                 }
             }else if(data[i]['stat'] == 1){

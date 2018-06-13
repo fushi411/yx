@@ -391,8 +391,22 @@ class ApplyController extends BaseController {
 
     public function forTest()
     {
-
         header("Content-type:text/html;charset=utf-8");
+        $system = 'kk';
+        $apply_id=668;
+        $mod_name = 'CgfkApply';
+        $authArr = array();
+        $process = D($system.'Appflowproc');
+        $procArr = $process->contentProc($mod_name, $apply_id, $authArr);
+        dump($procArr);
+        $this->assign('process', $procArr['process']);      //审批流程
+        $this->assign('isApplyer', $procArr['isApplyer']);
+        $this->assign('isPasser', $procArr['isPasser']);
+        $this->assign('isRefuse', $procArr['isRefuse']);
+        $this->assign('isFlowBegin', $procArr['isFlowBegin']);
+        $appStatus = $process->getWorkFlowStatus($mod_name, $apply_id);
+        $this->assign('apply', $appStatus);
+       
     }
 // ---END---
 }

@@ -108,4 +108,24 @@ class MsgdataModel extends Model {
         return $result;      
     }
 
+    // 配比通知
+    public function RatioApply(){
+        $result = array();
+        $result['url'] = array(
+            array('name' => '配比通知(水泥)','url' => U('Light/View/View',array('modname'=>'SnRatioApply','system' => 'kk')),'modname' => 'kkRatioApply'),
+            array('name' => '配比通知(矿粉)','url' => U('Light/View/View',array('modname'=>'KfRatioApply','system' => 'kk')),'modname' => 'kkRatioApply'), 
+            array('name' => '配比通知(钢渣粉)','url' => U('Light/View/View',array('modname'=>'GzyRatioApply','system' => 'kk')),'modname' => 'kkGzfRatioApply'), 
+        );
+
+        // $result['kk']   =  array(
+        //     'process' => U('Light/Process/ApplyProcess',array('modname'=>'TempCreditLineApply','system' => 'kk')),
+        //     'info'    => U('Light/Apply/applyInfo',array('modname'=>'TempCreditLineApply','system'=>'kk'))
+        // );
+        // $result['yxhb'] = array(
+        //     'process' => U('Light/Process/ApplyProcess',array('modname'=>'TempCreditLineApply','system' => 'yxhb')),
+        //     'info'    => U('Light/Apply/applyInfo',array('modname'=>'TempCreditLineApply','system'=>'yxhb'))
+        // );   
+        return $result;      
+    }
+
 }

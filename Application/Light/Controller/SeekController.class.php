@@ -194,7 +194,7 @@ class SeekController extends BaseController
             $res = M($v['system'].'_appflowproc a')
                     ->join("{$v['table_name']}  on a.aid={$v['table_name']}.{$v['id']}")
                     ->field($v['copy_field'])
-                    ->where(array('a.app_stat' => 0,"{$v['table_name']}.stat" => 2,'a.mod_name' => $v['mod_name'] , 'a.per_id' => $id))
+                    ->where(array('a.app_stat' => 0,"{$v['table_name']}.stat" => $v['submit']['stat'],'a.mod_name' => $v['mod_name'] , 'a.per_id' => $id))
                     ->select();    
             if(!empty($res)){
                 foreach($res as $key => $val){
@@ -611,7 +611,7 @@ class SeekController extends BaseController
             $res = M($v['system'].'_appflowproc a')
                     ->join("{$v['table_name']} b on a.aid=b.{$v['id']}")
                     ->field('1')
-                    ->where(array('a.app_stat' => 0,'b.stat' => 2,'a.mod_name' => $v['mod_name'] , 'a.per_id' => $id))
+                    ->where(array('a.app_stat' => 0,'b.stat' => $v['submit']['stat'],'a.mod_name' => $v['mod_name'] , 'a.per_id' => $id))
                     ->select();
             $count += count($res);
         }
@@ -621,68 +621,8 @@ class SeekController extends BaseController
      * 查询表 -> 用于查询未审批的
      */
     public function getAppTable(){
-        $appArr = array(
-            array(
-                 'title'     => '环保临时额度' , 
-                'search'     => '临时额度','system' => 'yxhb' ,
-                'mod_name'   => 'TempCreditLineApply',
-                'table_name' => 'yxhb_tempcreditlineconfig',
-                'id'         => 'id' ,
-                'submit'     => array('name' => 'sales','stat' => 2),
-                'copy_field' => 'yxhb_tempcreditlineconfig.id as aid,yxhb_tempcreditlineconfig.sales as applyer,yxhb_tempcreditlineconfig.date,yxhb_tempcreditlineconfig.line as approve,yxhb_tempcreditlineconfig.notice,yxhb_tempcreditlineconfig.stat'
-            ),
-            array( 
-                'title'      => '环保信用额度' , 
-                'search'     => '信用额度',
-                'system'     => 'yxhb' ,
-                'mod_name'   => 'CreditLineApply'    ,
-                'table_name' => 'yxhb_creditlineconfig'    ,
-                'id'         => 'aid',
-                'submit'     => array('name' => 'sales','stat' => 2),
-                'copy_field' => 'yxhb_creditlineconfig.aid,yxhb_creditlineconfig.sales as applyer,yxhb_creditlineconfig.date,yxhb_creditlineconfig.line as approve,yxhb_creditlineconfig.notice,yxhb_creditlineconfig.stat'
-            ),
-            array( 
-                'title'      => '环保采购付款' , 
-                'search'     => '采购付款',
-                'system'     => 'yxhb' ,
-                'mod_name'   => 'CgfkApply'          ,
-                'table_name' => 'yxhb_cgfksq'              ,
-                'id'         => 'id',
-                'submit'     => array('name' => 'rdy','stat' => 3),
-                'copy_field' => 'yxhb_cgfksq.id,yxhb_cgfksq.rdy as applyer,yxhb_cgfksq.zd_date,yxhb_cgfksq.fkje as approve,yxhb_cgfksq.zy,yxhb_cgfksq.stat'
-            ),
-            array( 
-                'title'      => '建材临时额度' , 
-                'search'     => '临时额度',
-                'system'     => 'kk'   ,
-                'mod_name'   => 'TempCreditLineApply',
-                'table_name' => 'kk_tempcreditlineconfig'  ,
-                'id'         => 'id' ,
-                'submit'     => array('name' => 'sales','stat' => 2),
-                'copy_field' => 'kk_tempcreditlineconfig.id as aid,kk_tempcreditlineconfig.sales as applyer,kk_tempcreditlineconfig.date,kk_tempcreditlineconfig.line as approve,kk_tempcreditlineconfig.notice,kk_tempcreditlineconfig.stat'
-            ),
-            array( 
-                'title'      => '建材信用额度' , 
-                'search'     => '信用额度',
-                'system'     => 'kk'   ,
-                'mod_name'   => 'CreditLineApply'    ,
-                'table_name' => 'kk_creditlineconfig'      ,
-                'id'         => 'aid',
-                'submit'     => array('name' => 'sales','stat' => 2),
-                'copy_field' => 'kk_creditlineconfig.aid,kk_creditlineconfig.sales as applyer,kk_creditlineconfig.date,kk_creditlineconfig.line as approve,kk_creditlineconfig.notice,kk_creditlineconfig.stat'
-            ),
-            array( 
-                'title'      => '建材采购付款' , 
-                'search'     => '采购付款',
-                'system'     => 'kk'   ,
-                'mod_name'   => 'CgfkApply'          ,
-                'table_name' => 'kk_cgfksq'                ,
-                'id'         => 'id' ,
-                'submit'     => array('name' => 'rdy','stat' => 3),
-                'copy_field' => 'kk_cgfksq.id as aid,kk_cgfksq.rdy as applyer,kk_cgfksq.zd_date,kk_cgfksq.fkje as approve,kk_cgfksq.zy,kk_cgfksq.stat'
-            ),
-        );
-        return $appArr;
+        $seek =  D('Seek');
+        return $seek->getAppTable();
     }
 
     /**

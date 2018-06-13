@@ -100,7 +100,6 @@ class KkAppflowprocModel extends Model {
         $map['mod_name'] = $mod_name;
         $map['aid'] = $aid;
         $map['app_stat'] = array('neq', 1);
-        $data['app_stat'] = array('exp', 'app_stat+996');
         $data['approve_time'] = date('Y-m-d H:i:s');
         return $this->where($map)->save($data);
     }

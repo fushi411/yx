@@ -4,7 +4,7 @@ namespace Light\Controller;
 class WorkFlowOpTvController extends BaseController {
 
     public function WorkFlowSubmit(){
-    	$wf     = new WorkFlowController();
+    	$wf         = new WorkFlowController();
     	$mod_name   = I('post.mod_name');
     	$system     = I('post.system');
     	$DB_name    = D(ucfirst($system).$mod_name, 'Logic')->getTableName();			
@@ -84,7 +84,6 @@ class WorkFlowOpTvController extends BaseController {
 			// 发送抄送消息
 			D($system.'Appcopyto')->copyTo($copyto_id, $mod_name, $id);
 		}
-
 
 
 		// 调用审批后处理方法
