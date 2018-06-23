@@ -223,7 +223,7 @@ class YxhbCgfkApplyLogic extends Model {
         if(!$val['bool']) return $val;
         list($user_id, $notice,$money,$system) = $val['data'];
         // 重复提交
-        if(M('yxhb_cgfksq')->autoCheckToken($_POST)) return array('code' => 404,'msg' => '网络延迟，请勿点击提交按钮！');
+        if(!M('yxhb_cgfksq')->autoCheckToken($_POST)) return array('code' => 404,'msg' => '网络延迟，请勿点击提交按钮！');
         $addData = array(
             'dh'      => $this->getDhId(),
             'zd_date' => $today,

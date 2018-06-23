@@ -77,6 +77,12 @@
             width: 80px;
             text-align: center;
         }
+        .font-width{
+            display: inline-block;
+            width: 68px;
+            text-align: right;
+            
+        }
         .greyColor{
             color: #757575;
         }
@@ -84,13 +90,18 @@
             padding: 0;
         }
         .other_page{
-            position: absolute;
+            position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
             background: #fff;
             z-index: 999;
+        }
+        .searchCenter{
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
     </style>
 </head>
@@ -163,7 +174,7 @@
             <!-- 审批流程 -->
             <block name="Process">
                     <div class="weui-cells__title">审批流程
-                            <a href="{$info[$system]['process']}">（查看可视化流程）</a>
+                            <a href="{$fixed['process']}">（查看可视化流程）</a>
                     </div>
                     <div id="allproc">
                         <div class="weui-cells" style="margin-top:0px;">
@@ -241,16 +252,16 @@
                             <div class="weui-cell">
                                 <div class="weui-cell__bd">
                                     <div class="weui-uploader">
-                                        <div class="weui-uploader__bd" style="min-height: 85px;">
+                                        <div class="weui-uploader__bd" style="min-height: 70px;">
                                             <ul class="weui-uploader__files" id="app_pro" style="margin-bottom: 0px;">
                                                 <volist name="push" id="vo">
-                                                    <li class='weui-uploader__file wk-select__user' style='min-height:80px;margin-bottom: 0;'>
+                                                    <li class='weui-uploader__file wk-select__user' style='min-height:70px;width: 45px; margin-bottom: 0;margin-right: 0;'>
                                                     <if condition="$vo.avatar eq ''">
-                                                        <img src="Public/assets/i/defaul.png" class='weui-selet__user' style='margin-bottom: 0px;margin-right: 6px;margin-top:10px;'>
+                                                        <img src="Public/assets/i/defaul.png" class='weui-selet__user' style='margin-right: 6px;margin-top:10px;width: 2em; height: 2em;'>
                                                         <else/>
-                                                        <img src="{$vo.avatar}" class='weui-selet__user' style='margin-bottom: 0px;margin-right: 6px;margin-top:10px;'>
+                                                        <img src="{$vo.avatar}" class='weui-selet__user' style='margin-right: 6px;margin-top:10px; width: 2em; height: 2em;'>
                                                     </if>
-                                                    <span style='margin-right: 6px;font-size: 14px;'> {$vo.name}</span>
+                                                    <span style='margin-right: 6px;font-size: 12px;'> {$vo.name}</span>
                                                     </li>
                                                 </volist>
                                             </ul>
@@ -297,10 +308,10 @@
                                     <form class="weui-search-bar__form">
                                         <div class="weui-search-bar__box">
                                             <i class="weui-icon-search"></i>
-                                            <input type="search" class="weui-search-bar__input" id="searchInput" placeholder="请输入姓名或拼音缩写搜索" required="">
+                                            <input type="search" class="weui-search-bar__input " id="searchInput" placeholder="请输入姓名或拼音缩写搜索" required="">
                                             <a href="javascript:" class="weui-icon-clear" id="searchClear"></a>
                                         </div>
-                                        <label class="weui-search-bar__label" id="searchText">
+                                        <label class="weui-search-bar__label searchCenter" id="searchText">
                                             <i class="weui-icon-search"></i>
                                             <span>请输入姓名或拼音缩写搜索</span>
                                         </label>
@@ -333,14 +344,14 @@
                 </div>
             </div>
         </div>
-        <!-- END dialog -->   
+        <!-- END dialog -->  
+        <block name="other"></block> 
 <script src="//cdn.bootcss.com/jquery/1.11.1/jquery.min.js"></script>
 <script src="//cdn.bootcss.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
 <script src="http://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
 <script src="https://cdn.bootcss.com/select2/4.0.3/js/select2.min.js"></script>
 <script src="https://cdn.bootcss.com/select2/4.0.3/js/i18n/zh-CN.js"></script>
-<script src="https://res.wx.qq.com/open/libs/weuijs/1.0.0/weui.min.js"></script>
-
+<script src="https://res.wx.qq.com/open/libs/weuijs/1.1.3/weui.min.js"></script>
 </body>
 <script>
 
@@ -383,8 +394,7 @@
                     DateValue(result);
                     
                 },
-                id: 'showDatePicker',
-                className: 'ma_expect_date_picker'
+                id: 'showDatePicker'
             });
         }
     });

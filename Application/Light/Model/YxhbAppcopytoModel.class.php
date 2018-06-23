@@ -120,7 +120,7 @@ class YxhbAppcopytoModel extends Model {
         }else{
             $model = D('Msgdata');
             $message = $model->GetMessage($mod_name);
-            $cpdata['fixed_copyto_id'] = $message['yxhb']['fiexd_copy_id'];
+            $cpdata['fixed_copyto_id'] = $message['yxhb'.$mod_name]['fiexd_copy_id'];
         }
         $cpdata['copyto_id'] = $cpid;
         $cpdata['from_id'] = session('wxid');

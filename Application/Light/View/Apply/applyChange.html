@@ -38,6 +38,16 @@
         color: #fff;
         text-decoration: none;
     }
+    label {
+        font-weight: 400;
+        margin-bottom: 0px;
+    }
+    .searchCenter{
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
     </style>
 </head>
 
@@ -46,7 +56,7 @@
     <div class="container" id="container">
         <div class="page js_show" style="background-color: white;">
             <div class="page__bd" style="height: 100%;">
-                <form action="{:U('Light/Apply/saveApplyChange')}" method="post">
+                <form action="{:U('Light/Apply/saveApplyChange')}" method="post" id="form">
                     <div class="weui-panel" style="margin-top: 0px;">
                         <div class="weui-panel__hd" style="font-size: 16px;background-color: #f8f8f8;color:black;padding-top: 10px;">转审内容</div>
                         <div class="weui-panel__bd">
@@ -141,7 +151,7 @@
                                         <input type="search" class="weui-search-bar__input" id="searchInput" placeholder="请输入姓名或拼音缩写搜索" required/>
                                         <a href="javascript:" class="weui-icon-clear" id="searchClear"></a>
                                     </div>
-                                    <label class="weui-search-bar__label" id="searchText">
+                                    <label class="weui-search-bar__label searchCenter" id="searchText">
                                         <i class="weui-icon-search"></i>
                                         <span>请输入姓名或拼音缩写搜索</span>
                                     </label>
@@ -277,7 +287,7 @@ $(function() {
         if ($toast.css('display') != 'none') return;
         $toast.fadeIn(100);
 
-        $("form").submit();
+        $("#form").submit();
     });
  // 抄送搜索框
  var $searchBar = $('#searchBar'),

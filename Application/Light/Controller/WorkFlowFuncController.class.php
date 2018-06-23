@@ -239,6 +239,17 @@ class WorkFlowFuncController extends Controller {
 		M($system.'_feecg') -> add($feeData);
 		M($system.'_dtg')   -> add($dtgData);
 	}
-
+	/**
+     * 配比通知矿粉签收通过后调用函数
+     * @param  [integre] $aid [临时额度记录ID]
+     * @return [array]      [状态]
+     */
+	public function  YxhbKfRatioApplyEnd($aid)
+    {
+		$res = M('yxhb_assay')->where(array('state'=>2, 'id'=>$aid))->setField('state', 1);
+		// 生成一条付款记录信息
+        $resArr = $res?array("status"=>"success"):array("status"=>"failure");
+        return $resArr;
+	}
 // -----END------
 }

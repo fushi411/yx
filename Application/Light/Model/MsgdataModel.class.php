@@ -50,7 +50,7 @@ class MsgdataModel extends Model {
             array('name' => '建材原材料采购付款','url' => U('Light/View/View',array('modname'=>'CgfkApply','system' => 'kk')),'modname' => 'kkCgfkApply'), 
         );
         
-        $result['kk']   =  array(
+        $result['kkCgfkApply']   =  array(
             'process' => U('Light/Process/ApplyProcess',array('modname'=>'CgfkApply','system' => 'kk')),
             'info'    => U('Light/Apply/applyInfo',array('modname'=>'CgfkApply','system'=>'kk')),
             'fiexd_copy_id' => 'HeYuanShen,LvHongSheng',
@@ -59,7 +59,7 @@ class MsgdataModel extends Model {
                 array('name' => '吕红胜','url' => 'http://p.qlogo.cn/bizmail/5FmUowOFcibSEawmsrSg3tXHjHXJEFNza3tSq4VN4sLjaFsaAEfsLwA/0') 
             )
         );
-        $result['yxhb'] = array(
+        $result['yxhbCgfkApply'] = array(
             'process' => U('Light/Process/ApplyProcess',array('modname'=>'CgfkApply','system' => 'yxhb')),
             'info'    => U('Light/Apply/applyInfo',array('modname'=>'CgfkApply','system'=>'yxhb')),
             'fiexd_copy_id' => 'HeYuanShen',
@@ -78,11 +78,11 @@ class MsgdataModel extends Model {
             array('name' => '建材信用额度','url' => U('Light/View/View',array('modname'=>'CreditLineApply','system' => 'kk')),'modname' => 'kkCreditLineApply'), 
         );
 
-        $result['kk']   =  array(
+        $result['kkCreditLineApply']   =  array(
             'process' => U('Light/Process/ApplyProcess',array('modname'=>'CreditLineApply','system' => 'kk')),
             'info'    => U('Light/Apply/applyInfo',array('modname'=>'CreditLineApply','system'=>'kk'))
         );
-        $result['yxhb'] = array(
+        $result['yxhbCreditLineApply'] = array(
             'process' => U('Light/Process/ApplyProcess',array('modname'=>'CreditLineApply','system' => 'yxhb')),
             'info'    => U('Light/Apply/applyInfo',array('modname'=>'CreditLineApply','system'=>'yxhb'))
         );   
@@ -97,11 +97,11 @@ class MsgdataModel extends Model {
             array('name' => '建材临时额度','url' => U('Light/View/View',array('modname'=>'TempCreditLineApply','system' => 'kk')),'modname' => 'kkTempCreditLineApply'), 
         );
 
-        $result['kk']   =  array(
+        $result['kkTempCreditLineApply']   =  array(
             'process' => U('Light/Process/ApplyProcess',array('modname'=>'TempCreditLineApply','system' => 'kk')),
             'info'    => U('Light/Apply/applyInfo',array('modname'=>'TempCreditLineApply','system'=>'kk'))
         );
-        $result['yxhb'] = array(
+        $result['yxhbTempCreditLineApply'] = array(
             'process' => U('Light/Process/ApplyProcess',array('modname'=>'TempCreditLineApply','system' => 'yxhb')),
             'info'    => U('Light/Apply/applyInfo',array('modname'=>'TempCreditLineApply','system'=>'yxhb'))
         );   
@@ -109,22 +109,22 @@ class MsgdataModel extends Model {
     }
 
     // 配比通知
-    public function RatioApply(){
+    public function KfRatioApply(){
         $result = array();
         $result['url'] = array(
-            array('name' => '配比通知(水泥)','url' => U('Light/View/View',array('modname'=>'SnRatioApply','system' => 'kk')),'modname' => 'kkRatioApply'),
-            array('name' => '配比通知(矿粉)','url' => U('Light/View/View',array('modname'=>'KfRatioApply','system' => 'kk')),'modname' => 'kkRatioApply'), 
-            array('name' => '配比通知(钢渣粉)','url' => U('Light/View/View',array('modname'=>'GzyRatioApply','system' => 'kk')),'modname' => 'kkGzfRatioApply'), 
+            array('name' => '配比通知(矿粉)','url' => U('Light/View/View',array('modname'=>'KfRatioApply','system' => 'yxhb')),'modname' => 'yxhbKfRatioApply'),
+            // array('name' => '配比通知(水泥)','url' => U('Light/View/View',array('modname'=>'SnRatioApply','system' => 'kk')),'modname' => 'kkRatioApply'),
+            // array('name' => '配比通知(钢渣粉)','url' => U('Light/View/View',array('modname'=>'GzyRatioApply','system' => 'kk')),'modname' => 'kkGzfRatioApply'), 
         );
 
         // $result['kk']   =  array(
         //     'process' => U('Light/Process/ApplyProcess',array('modname'=>'TempCreditLineApply','system' => 'kk')),
         //     'info'    => U('Light/Apply/applyInfo',array('modname'=>'TempCreditLineApply','system'=>'kk'))
         // );
-        // $result['yxhb'] = array(
-        //     'process' => U('Light/Process/ApplyProcess',array('modname'=>'TempCreditLineApply','system' => 'yxhb')),
-        //     'info'    => U('Light/Apply/applyInfo',array('modname'=>'TempCreditLineApply','system'=>'yxhb'))
-        // );   
+        $result['yxhbKfRatioApply'] = array(
+            'process' => U('Light/Process/ApplyProcess',array('modname'=>'KfRatioApply','system' => 'yxhb')),
+            'info'    => U('Light/Apply/applyInfo',array('modname'=>'KfRatioApply','system'=>'yxhb'))
+        );   
         return $result;      
     }
 

@@ -391,7 +391,7 @@ rows="3"></textarea>
                 success: function (res) {
                     toast.fadeOut(200);
                     if (res.code == 200) {
-                        window.location.href = "{$info[$system]['info']}"+"&aid="+res.aid;
+                        window.location.href = "{$fixed['info']}"+"&aid="+res.aid;
                     } else {
                         tooltip(res.msg);
                     }

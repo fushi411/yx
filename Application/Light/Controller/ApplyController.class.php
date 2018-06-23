@@ -374,7 +374,6 @@ class ApplyController extends BaseController {
 
     public function delRecord()
     {
-
         $id = I('post.id');
         $mod_name = I('post.mod_name');
         $system = I('post.system');
@@ -392,21 +391,32 @@ class ApplyController extends BaseController {
     public function forTest()
     {
         header("Content-type:text/html;charset=utf-8");
-        $system = 'kk';
-        $apply_id=668;
-        $mod_name = 'CgfkApply';
-        $authArr = array();
-        $process = D($system.'Appflowproc');
-        $procArr = $process->contentProc($mod_name, $apply_id, $authArr);
-        dump($procArr);
-        $this->assign('process', $procArr['process']);      //审批流程
-        $this->assign('isApplyer', $procArr['isApplyer']);
-        $this->assign('isPasser', $procArr['isPasser']);
-        $this->assign('isRefuse', $procArr['isRefuse']);
-        $this->assign('isFlowBegin', $procArr['isFlowBegin']);
-        $appStatus = $process->getWorkFlowStatus($mod_name, $apply_id);
-        $this->assign('apply', $appStatus);
-       
+        $system = 'yxhb';
+        $aid=649;
+        $mod_name = 'TempCreditLineApply';
+
+        $comment_list = array();
+        $res =  M('yxhb_appflowcomment')->field('id,app_word,time,per_name,per_id,comment_to_id,sum(1) as count')->where(array('aid'=>$aid, 'mod_name'=>$mod_name, 'app_stat'=>1,'per_id' =>9999))->group('comment_to_id')->order('time desc')->select();
+        $pushArr = array();
+        if(!empty($res)){
+            foreach($res as $v){
+                $count = $v['count'];
+                $tmp = explode('发起了',$v['app_word']);
+                $str = $tmp[0]."发起了第{$count}次".$tmp[1];
+                $tmpArr = array(
+                    'id' => 0,
+                    'app_word' => str_replace("自动催审","自动催审<br />",$str),
+                    "time" => $v['time'],
+                    "per_name" =>  "系统定时任务",
+                    "per_id" =>  "9999",
+                    "comment_to_id" => $v['comment_to_id']
+                );
+                $pushArr[] = $tmpArr;
+            }
+        }
+  
     }
+
+
 // ---END---
 }

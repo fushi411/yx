@@ -57,6 +57,16 @@
             word-break: break-all;  
             margin-top: 5px;
         }  
+
+        label {
+            font-weight: 400;
+            margin-bottom: 0px;
+        }
+        .searchCenter{
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
     </style>
 </head>
 
@@ -64,18 +74,19 @@
     <div class="container" id="container">
         <div class="page tabbar js_show" >
             <div class="page__bd" style="height: 100%;">
+                    <if condition="$stat neq 0">
                 <if condition="(($apply.stat eq 0)) AND (($isApplyer eq 1) OR ($isApplyUser eq 1) OR ($isPasser eq 1) OR ($isCopyto eq 1))">
                         <div class="weui-tab">
                             <div class="weui-tab__panel">
                     </if>
-                
+                    </if>
                     <div class="weui-panel weui-panel_access">
                         <!-- <div class="weui-panel__hd">审批信息</div> -->
                         <div class="weui-panel__bd">
                             <div class="weui-media-box weui-media-box_small-appmsg">
                                 <div class="weui-cells">
                                     <span class="weui-media-box weui-media-box_appmsg">
-                                        <div class="weui-media-box__bd">
+                                        <div class="weui-media-box__bd" id="apply_status">
                                             <block name='show_title'>
                                                 <div style="display: flex;flex-direction: row;align-items: center;margin-bottom: 1em;">
                                                     <img class="weui-media-box__thumb" src="{$avatar}" alt="" style="border-radius: 5px;width: 2.5em;height: 2.5em;margin-right: 1em;">
@@ -102,7 +113,7 @@
                                             <block name="content_body">
                                                 <volist name="content" id="val">
                                                     <p class="weui-media-box__desc weui-flex">
-                                                        <span  >{$val.name}</span>
+                                                        <span class="font-width" >{$val.name}</span>
                                                         <span class="weui-flex__item" style="color:{$val.color} ">{$val.value}</span>
                                                     </p>
                                                 </volist>
@@ -120,7 +131,7 @@
                             </volist>
                         </p>
                     </if>                   
-                
+                <block name="work_flow">
                     <div class="weui-panel" style="margin-top: 0px;">
                         <div class="weui-panel__hd" style="font-size: 16px;background-color: #f8f8f8;color:black;padding-top: 10px;">审批流程
                             <a href="{:U('Light/Process/ApplyProcess',array('modname'=>$mod_name,'system'=>$system))}">（查看可视化流程）</a> 
@@ -141,7 +152,7 @@
                                                         <else/>
                                                         <li class='weui-uploader__file wk-select__user' id='{$vo.id}' style='height:90px;margin-left:8px'>
                                                             <if condition="$vo.avatar eq ''">
-                                                                <img src='__PUBLIC__/assets/i/defaulthead.png' class='weui-selet__user' style='margin-bottom: 0px;margin-right: 6px;margin-top:10px;'>
+                                                                <img src='Public/assets/i/defaul.png' class='weui-selet__user' style='margin-bottom: 0px;margin-right: 6px;margin-top:10px;'>
                                                                 <else/>
                                                                 <img src={$vo.avatar} class='weui-selet__user' style='margin-bottom: 0px;margin-right: 6px;margin-top:10px;'>
                                                             </if>
@@ -158,7 +169,7 @@
                             </div>
                         </div>
                     </div>
-                
+                </block>
 
                 <block name="process_record">
                     <div class="weui-panel" style="margin-top: 0px;">
@@ -234,7 +245,7 @@
                                                                         <span style="margin-right: 6px;font-size: 14px;">[手动]</span>
                                                                     </if>
                                                                     <if condition="$acp.url eq ''">
-                                                                        <img src="__PUBLIC__/i/defaulthead.png" class="weui-selet__user" style="margin-bottom: 0px;margin-right: 6px;" />
+                                                                        <img src="__PUBLIC__/i/defaul.png" class="weui-selet__user" style="margin-bottom: 0px;margin-right: 6px;" />
                                                                         <else/>
                                                                         <img src="{$acp.url}" class="weui-selet__user" style="margin-bottom: 0px;margin-right: 6px;" />
                                                                     </if>
@@ -282,30 +293,30 @@
                                                         <ul class="weui-uploader__files" style="margin-bottom: 0px;" >
                                                             <if condition="empty($already_cpPush)">
                                                                     <volist name="push" id="vo">
-                                                                        <li class='weui-uploader__file wk-select__user' style='min-height:80px;margin-bottom: 0;'>
+                                                                        <li class='weui-uploader__file wk-select__user' style='min-height:70px;width: 45px;margin-right: 0;margin-bottom: 0;'>
                                                                         <if condition="$vo.avatar eq ''">
-                                                                            <img src="Public/assets/i/defaul.png" class='weui-selet__user' style='margin-bottom: 0px;margin-right: 6px;margin-top:10px;'>
+                                                                            <img src="Public/assets/i/defaul.png" class='weui-selet__user' style='margin-right: 6px;margin-top:10px;width: 2em; height: 2em;'>
                                                                             <else/>
-                                                                            <img src="{$vo.avatar}" class='weui-selet__user' style='margin-bottom: 0px;margin-right: 6px;margin-top:10px;'>
+                                                                            <img src="{$vo.avatar}" class='weui-selet__user' style='margin-right: 6px;margin-top:10px;width: 2em; height: 2em;'>
                                                                         </if>
-                                                                        <span style='margin-right: 6px;font-size: 14px;'> {$vo.name}</span>
+                                                                        <span style='margin-right: 6px;font-size: 12px;'> {$vo.name}</span>
                                                                         </li>
                                                                     </volist>
                                                                     <else/>
                                                                     <volist name="already_cpPush" id="acp">
-                                                                        <li class="weui-uploader__file wk-select__css" id="{$acp.id}" style='min-height:80px;margin-bottom: 0;height: 0;'>
+                                                                        <li class="weui-uploader__file wk-select__css" id="{$acp.id}" style='min-height:70px;width: 45px;margin-right: 0;margin-bottom: 0;'>
                                                                             
                                                                             <if condition="$acp.url eq ''">
-                                                                                <img src="__PUBLIC__/i/defaul.png" class="weui-selet__user" style="margin-bottom: 0px;margin-right: 6px;" />
+                                                                                <img src="__PUBLIC__/i/defaul.png" class="weui-selet__user" style="margin-right: 6px;margin-top:10px;width: 2em; height: 2em;" />
                                                                                 <else/>
-                                                                                <img src="{$acp.url}" class="weui-selet__user" style="margin-bottom: 0px;margin-right: 6px;" />
+                                                                                <img src="{$acp.url}" class="weui-selet__user" style="margin-right: 6px;margin-top:10px;width: 2em; height: 2em;" />
                                                                             </if>
-                                                                            <span style="margin-right: 6px;font-size: 14px;">{$acp.name}</span>
+                                                                            <span style="margin-right: 6px;font-size: 12px;">{$acp.name}</span>
                                                                             
                                                                             <if condition="in_array($acp['id'],$readedArrPush)">
-                                                                                <span style="margin-right: 6px;font-size: 14px;color: green;">[已读]</span>
+                                                                                <span style="margin-right: 6px;font-size: 12px;color: green;">[已读]</span>
                                                                                 <else/>
-                                                                                <span style="margin-right: 6px;font-size: 14px;color: red;">[未读]</span>
+                                                                                <span style="margin-right: 6px;font-size: 12px;color: red;">[未读]</span>
                                                                             </if>  
                                                                         </li>
                                                                     </volist>
@@ -379,104 +390,106 @@
                     </div>
                 </block>
                 
-                
-                <block name="apply">
-                    <eq name="isApplyer" value="1">
-                        <eq name="apply.stat" value="0">
-                            <div class="weui-panel" style="margin-top: 0px;">
-                                <div class="weui-panel__hd" style="font-size: 16px;background-color: #f8f8f8;color:black;padding-top: 10px;">审批意见</div>
-                                <div class="weui-panel__bd">
-                                    <div class="weui-cell">
-                                        <div class="weui-cell__bd">
-                                            <textarea class="weui-textarea" placeholder="请输入审批意见（必填）;
+                <if condition="$stat neq 0">
+                    <block name="apply">
+                        <eq name="isApplyer" value="1">
+                            <eq name="apply.stat" value="0">
+                                <div class="weui-panel" style="margin-top: 0px;">
+                                    <div class="weui-panel__hd" style="font-size: 16px;background-color: #f8f8f8;color:black;padding-top: 10px;">审批意见</div>
+                                    <div class="weui-panel__bd">
+                                        <div class="weui-cell">
+                                            <div class="weui-cell__bd">
+                                                <textarea class="weui-textarea" placeholder="请输入审批意见（必填）;
 审核意见可@指定人;
 无指定默认@所有人（含抄送）;" rows="3" id="comment" style="font-size: 1.2em"></textarea>
-                                            <div class="weui-textarea-counter">
-                                                <!-- 指定@ -->
-                                                <div class="weui-tabbar" style="position: initial;">
-                                                    <a href="#" class="weui-tabbar__item" style="text-decoration: none;">
-                                                        <p class="weui-tabbar__label" style="font-size: 15px;color:black;" id="btn-sp">
-                                                            <span class="glyphicon" aria-hidden="true" style="margin-right: 5px;"></span>@ 指定人</p>
-                                                    </a>
-                                                </div>
-                                                <div class="page js_show" id="approve_at" style="position: relative;display: none;">
-                                                    <div class="page__bd">
-                                                        <div class="weui-cells" id="" style="margin-top: 5px;margin-bottom: 5px;">
-                                                            <div class="weui-uploader">
-                                                                <div class="weui-uploader__bd" style="margin-right: 0px;margin-bottom: 0px;padding-top: 12px;">
-                                                                    <ul class="weui-uploader__files" id="selectapprovetUser" style="margin-bottom: 0px;">
-                                                                    </ul>
-                                                                    <input type="hidden" name="approve_to_id" id="approve_to_id">
+                                                <div class="weui-textarea-counter">
+                                                    <!-- 指定@ -->
+                                                    <div class="weui-tabbar" style="position: initial;">
+                                                        <a href="#" class="weui-tabbar__item" style="text-decoration: none;">
+                                                            <p class="weui-tabbar__label" style="font-size: 15px;color:black;" id="btn-sp">
+                                                                <span class="glyphicon" aria-hidden="true" style="margin-right: 5px;"></span>@ 指定人</p>
+                                                        </a>
+                                                    </div>
+                                                    <div class="page js_show" id="approve_at" style="position: relative;display: none;">
+                                                        <div class="page__bd">
+                                                            <div class="weui-cells" id="" style="margin-top: 5px;margin-bottom: 5px;">
+                                                                <div class="weui-uploader">
+                                                                    <div class="weui-uploader__bd" style="margin-right: 0px;margin-bottom: 0px;padding-top: 12px;">
+                                                                        <ul class="weui-uploader__files" id="selectapprovetUser" style="margin-bottom: 0px;">
+                                                                        </ul>
+                                                                        <input type="hidden" name="approve_to_id" id="approve_to_id">
+                                                                    </div>
                                                                 </div>
                                                             </div>
-                                                        </div>
-                        
-                                                        <div class="weui-cells searchbar-result" id="approveSearchResult" style="margin-top: 0px;">
+                            
+                                                            <div class="weui-cells searchbar-result" id="approveSearchResult" style="margin-top: 0px;">
+                                                            </div>
                                                         </div>
                                                     </div>
+                                                    <!-- end   指定@ -->
                                                 </div>
-                                                <!-- end   指定@ -->
                                             </div>
+                                            
                                         </div>
-                                        
-                                    </div>
-                                    <div class="button-sp-area" id="apply-area" style="margin-bottom: 20px;display: flex;flex-direction: row;width: 100%;justify-content: space-around;align-items: baseline;">
-                                        <a href="javascript:;" id="apply-agree" class="weui-btn weui-btn_primary" style="width: 40%">同意</a>
-                                        <a href="javascript:;" id="apply-refuse" class="weui-btn weui-btn_warn" style="width: 40%;">退审</a>
-                                        <!-- <a href="javascript:;" class="weui-btn weui-btn_default">转审</a> -->
-                                        
-                                        <input type="hidden" name="apply_user" id="apply_user" value="{$applyerID}">
-                                    </div>
-                                    <div class="button-sp-area" style="margin-bottom: 20px;display: flex;flex-direction: row;width: 100%;justify-content: space-around;align-items: baseline;">
-                                        <button id="apply-change" class="weui-btn weui-btn_primary" style="width: 90%">转审</button>
+                                        <div class="button-sp-area" id="apply-area" style="margin-bottom: 20px;display: flex;flex-direction: row;width: 100%;justify-content: space-around;align-items: baseline;">
+                                            <a href="javascript:;" id="apply-agree" class="weui-btn weui-btn_primary" style="width: 40%">同意</a>
+                                            <a href="javascript:;" id="apply-refuse" class="weui-btn weui-btn_warn" style="width: 40%;">退审</a>
+                                            <!-- <a href="javascript:;" class="weui-btn weui-btn_default">转审</a> -->
+                                            
+                                            <input type="hidden" name="apply_user" id="apply_user" value="{$applyerID}">
+                                        </div>
+                                        <div class="button-sp-area" style="margin-bottom: 20px;display: flex;flex-direction: row;width: 100%;justify-content: space-around;align-items: baseline;">
+                                            <button id="apply-change" class="weui-btn weui-btn_primary" style="width: 90%">转审</button>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
+                            </eq>
                         </eq>
-                    </eq>
-                </block>
-                <input type="hidden" name="aid" id="aid" value="{$aid}">
-                <div class="weui-gallery" id="gallery">
-                    <span class="weui-gallery__img" id="galleryImg"></span>
-                    <!-- <div class="weui-gallery__opr">
-                        <a href="javascript:" class="weui-gallery__del">
-                            <i class="weui-icon-delete weui-icon_gallery-delete"></i>
-                         </a>
-                    </div> -->
-                </div>
+                    </block>
+                    <input type="hidden" name="aid" id="aid" value="{$aid}">
+                    <div class="weui-gallery" id="gallery">
+                        <span class="weui-gallery__img" id="galleryImg"></span>
+                        <!-- <div class="weui-gallery__opr">
+                            <a href="javascript:" class="weui-gallery__del">
+                                <i class="weui-icon-delete weui-icon_gallery-delete"></i>
+                            </a>
+                        </div> -->
+                    </div>
+                </if>
+                <if condition="$stat neq 0">
                 <block name="operation">
-                    <if condition="(($apply.stat eq 0)) AND (($isApplyer eq 1) OR ($isApplyUser eq 1) OR ($isPasser eq 1) OR ($isCopyto eq 1))">
-                        </div>
-                        <div class="weui-tabbar" style="padding-top: 8px;/*position: fixed;*/">
-                            <a href="#" class="weui-tabbar__item" style="text-decoration: none;">
-                                <!--  <span style="display: inline-block;position: relative;">
-                        <span class="glyphicon glyphicon-align-left" aria-hidden="true"></span>
-                        <span class="weui-badge" style="position: absolute;top: -2px;right: -13px;">8</span>
-                    </span> -->
-                                <p class="weui-tabbar__label" style="font-size: 15px;color:black;" data-toggle="modal" data-target="#myModal2">
-                                    <span class="glyphicon glyphicon-align-left" aria-hidden="true" style="margin-right: 5px;"></span>评论</p>
-                            </a>
-                            <!-- <a href="javascript:;" class="weui-tabbar__item">
-                    <span class="glyphicon glyphicon-align-left" aria-hidden="true"></span>
-                    <p class="weui-tabbar__label">通讯录</p>
-                </a> -->
-                            <a href="javascript:;" class="weui-tabbar__item" id="btn-delete">
-                                <!-- <span style="display: inline-block;position: relative;">
-                        <span class="glyphicon glyphicon-align-left" aria-hidden="true"></span>
-                        <span class="weui-badge weui-badge_dot" style="position: absolute;top: 0;right: -6px;"></span>
-                    </span> -->
-                                <p class="weui-tabbar__label" style="font-size: 15px;color:black;" data-toggle="modal" data-target="#iosDialog_delete">
-                                    <span class="glyphicon glyphicon-share-alt" aria-hidden="true" style="margin-right: 5px;"></span>撤销</p>
-                            </a>
-                            <a href="javascript:;" class="weui-tabbar__item" id="btn-urge">
-                                <p class="weui-tabbar__label" style="font-size: 15px;color:black;">
-                                    <span class="glyphicon glyphicon-hourglass" aria-hidden="true" style="margin-right: 5px;"></span>催审</p>
-                            </a>
-                        </div>
-                        </div>
-                    </if>
+                            <if condition="(($apply.stat eq 0)) AND (($isApplyer eq 1) OR ($isApplyUser eq 1) OR ($isPasser eq 1) OR ($isCopyto eq 1))">
+                                </div>
+                                <div class="weui-tabbar" style="padding-top: 8px;/*position: fixed;*/">
+                                    <a href="#" class="weui-tabbar__item" style="text-decoration: none;">
+                                        <!--  <span style="display: inline-block;position: relative;">
+                                <span class="glyphicon glyphicon-align-left" aria-hidden="true"></span>
+                                <span class="weui-badge" style="position: absolute;top: -2px;right: -13px;">8</span>
+                            </span> -->
+                                        <p class="weui-tabbar__label" style="font-size: 15px;color:black;" data-toggle="modal" data-target="#myModal2">
+                                            <span class="glyphicon glyphicon-align-left" aria-hidden="true" style="margin-right: 5px;"></span>评论</p>
+                                    </a>
+                                    <!-- <a href="javascript:;" class="weui-tabbar__item">
+                            <span class="glyphicon glyphicon-align-left" aria-hidden="true"></span>
+                            <p class="weui-tabbar__label">通讯录</p>
+                        </a> -->
+                                    <a href="javascript:;" class="weui-tabbar__item" id="btn-delete">
+                                        <!-- <span style="display: inline-block;position: relative;">
+                                <span class="glyphicon glyphicon-align-left" aria-hidden="true"></span>
+                                <span class="weui-badge weui-badge_dot" style="position: absolute;top: 0;right: -6px;"></span>
+                            </span> -->
+                                        <p class="weui-tabbar__label" style="font-size: 15px;color:black;" data-toggle="modal" data-target="#iosDialog_delete">
+                                            <span class="glyphicon glyphicon-share-alt" aria-hidden="true" style="margin-right: 5px;"></span>撤销</p>
+                                    </a>
+                                    <a href="javascript:;" class="weui-tabbar__item" id="btn-urge">
+                                        <p class="weui-tabbar__label" style="font-size: 15px;color:black;">
+                                            <span class="glyphicon glyphicon-hourglass" aria-hidden="true" style="margin-right: 5px;"></span>催审</p>
+                                    </a>
+                                </div>
+                                </div>
+                            </if>
                 </block>
-
+            </if>
             </div>
         </div>
         <!--BEGIN toast-->
@@ -525,7 +538,7 @@
                                         <input type="search" class="weui-search-bar__input" id="searchInput" placeholder="请输入姓名或拼音缩写搜索" required/>
                                         <a href="javascript:" class="weui-icon-clear" id="searchClear"></a>
                                     </div>
-                                    <label class="weui-search-bar__label" id="searchText">
+                                    <label class="weui-search-bar__label searchCenter" id="searchText">
                                         <i class="weui-icon-search"></i>
                                         <span>请输入姓名或拼音缩写搜索</span>
                                     </label>
@@ -1309,12 +1322,17 @@
             //$approveSearchInput = $('#approveSearchInput'),
            // $approveSearchClear = $('#approveSearchClear'),
             $approveSearchCancel = $('#approveSearchCancel');
-
-        
-        
-        
+            
+        if($('#apply_status .label').eq(0).text() == '已撤销'){
+            //$('#doing').text('该申请已撤销！');
+            $("#alert_content").text('该申请已撤销');
+            $("#iosDialog_alert").fadeIn(200);
+        }         
         
     });
+   
 </script>
+<block name="js">
 
+</block>
 </html>

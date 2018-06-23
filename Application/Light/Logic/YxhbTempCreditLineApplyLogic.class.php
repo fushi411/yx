@@ -290,7 +290,7 @@ class YxhbTempCreditLineApplyLogic extends Model {
          );
 
         // 表单重复提交
-        if(M($system.'_tempcreditlineconfig')->autoCheckToken($_POST)) return array('code' => 404,'msg' => '网络延迟，请勿点击提交按钮！');
+        if(!M($system.'_tempcreditlineconfig')->autoCheckToken($_POST)) return array('code' => 404,'msg' => '网络延迟，请勿点击提交按钮！');
         $result = M($system.'_tempcreditlineconfig')->add($saveData);
         if(!$result) return array('code' => 404,'msg' => '提交失败，请重新尝试！');
         // 抄送

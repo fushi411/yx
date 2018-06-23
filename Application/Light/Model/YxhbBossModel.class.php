@@ -165,7 +165,7 @@ class YxhbBossModel extends Model {
             $wxInfo = $this->getWXInfo($wxid);
             $avatar = $wxInfo['avatar'];
             if (empty($avatar)) {
-                $avatar = "Public/assets/i/defaulthead.png";
+                $avatar = "Public/assets/i/defaul.png";
             }
             $data['avatar'] = $avatar;
             $this->where(array('id'=>$id))->save($data);

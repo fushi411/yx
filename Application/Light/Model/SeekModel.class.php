@@ -40,7 +40,7 @@ class SeekModel extends Model {
                 'table_name' => 'yxhb_cgfksq'              ,
                 'id'         => 'id',
                 'submit'     => array('name' => 'rdy','stat' => 3),
-                'copy_field' => 'yxhb_cgfksq.id,yxhb_cgfksq.rdy as applyer,yxhb_cgfksq.zd_date,yxhb_cgfksq.fkje as approve,yxhb_cgfksq.zy,yxhb_cgfksq.stat'
+                'copy_field' => 'yxhb_cgfksq.id as aid,yxhb_cgfksq.rdy as applyer,yxhb_cgfksq.zd_date as date,yxhb_cgfksq.fkje as approve,yxhb_cgfksq.zy as notice,yxhb_cgfksq.stat'
             ),
             array( 
                 'title'      => '建材临时额度' , 
@@ -70,7 +70,7 @@ class SeekModel extends Model {
                 'table_name' => 'kk_cgfksq'                ,
                 'id'         => 'id' ,
                 'submit'     => array('name' => 'rdy','stat' => 3),
-                'copy_field' => 'kk_cgfksq.id as aid,kk_cgfksq.rdy as applyer,kk_cgfksq.zd_date,kk_cgfksq.fkje as approve,kk_cgfksq.zy,kk_cgfksq.stat'
+                'copy_field' => 'kk_cgfksq.id as aid,kk_cgfksq.rdy as applyer,kk_cgfksq.zd_date,kk_cgfksq.fkje as approve,kk_cgfksq.zy  as notice,kk_cgfksq.stat'
             ),
         );
         return $appArr;

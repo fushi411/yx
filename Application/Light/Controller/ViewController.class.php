@@ -30,11 +30,12 @@ class ViewController extends BaseController
         $this -> assign('system', $system);
         $this -> assign('modname', $mod_name);
         $this -> assign('push',$push['data']);
+        
         $appflow = $this->appflowJson($appflow,$mod_name);
         $this -> assign('appflow',$appflow);
         $this -> assign('info',$this->PageArr);
 
-        $this -> assign('fixed',$this->PageArr[$system]);
+        $this -> assign('fixed',$this->PageArr[$system.$mod_name]);
 
         $this -> assign('today',$this->today);
 

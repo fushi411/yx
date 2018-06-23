@@ -25,7 +25,7 @@ class YxhbAppflowcommentModel extends Model {
             $str = $tmp[0]."发起了第{$count}次".$tmp[1];
             $res = array(array(
                 'id' => 0,
-                'app_word' => $str,
+                'app_word' => str_replace("自动催审","自动催审<br />",$str),
                 "time" => $res[0]['time'],
                 "per_name" =>  "系统定时任务",
                 "per_id" =>  "9999",
@@ -57,7 +57,7 @@ class YxhbAppflowcommentModel extends Model {
               } else {
                   $v['del_able'] = 1;
               }
-              if(strpos($v['app_word'],'@所有人')){
+              if(strpos($v['app_word'],'@所有人') || $v['per_id'] == 9999){
                 $commentUser = " ";
               }
               $comment_list[] = array('id'=>$v['id'], 'pid'=>$v['per_id'], 'avatar'=>$avatar, 'name'=>$v['per_name'], 'time'=>$v['time'], 'word'=>$commentUser.$v['app_word'], 'del_able'=>$v['del_able'],'wxid'=>$cwxUID);
