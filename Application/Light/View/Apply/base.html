@@ -185,6 +185,7 @@
                                                     </h4>
                                             </span>
                                         <else/>
+                                        
                                         <volist name="process" id="proc">
                                             <span class="weui-media-box weui-media-box_appmsg" style="    align-items: flex-start;padding-top: 10px;">
                                                 <div class="weui-media-box__hd" style="width: 2.5em;height: 2.5em;">
@@ -207,7 +208,18 @@
                                                         {$proc.app_word}
                                                     </p>
                                                     <p class="weui-media-box__desc" style="display: block;overflow: visible; word-break:break-all; word-wrap:break-word;font-size: 15px;margin-bottom: 0px;">
-                                                        {$proc.approve_time|substr=2,14}
+                                                        <span>{$proc.approve_time|substr=2,14}</span> 
+                                                        <neq name="proc.app_stat" value="0">
+                                                            <eq name="Think.session.name" value="$proc.per_name">
+                                                                <eq name="proc.able_del" value="1">
+                                                                    <span style="color:red; cursor: pointer;" class="proc_del" data-id="{$proc.aid}" data-mod="{$proc.mod_name}">
+                                                                    <span style="color:grey; ">（5分钟内）</span>撤回</span>  
+                                                                    <else/>
+                                                                    <span style="color:grey; ">(超5分钟不可撤回)</span>
+                                                                </eq>
+                                                            </eq>
+                                                        </neq>
+                                                        
                                                     </p>
                                                 </div>
                                             </span>
@@ -441,6 +453,19 @@
                                         <div class="button-sp-area" style="margin-bottom: 20px;display: flex;flex-direction: row;width: 100%;justify-content: space-around;align-items: baseline;">
                                             <button id="apply-change" class="weui-btn weui-btn_primary" style="width: 90%">转审</button>
                                         </div>
+                                        <div class="weui-cells__title">注意事项</div>
+                                        <!-- <div class="weui-cells__title">各个中心主管及以上职位的申请抄送</div> -->
+                                        <div class="weui-cells" style="margin-top:0px;">
+                                            <div class="weui-cell">
+                                                <div class="weui-cell__bd">
+                                                    <div class="weui-uploader">
+                                                        <div class="weui-uploader__bd" style="min-height: 50px;">
+                                                             <div  style="color: #f12e2e;">点击同意后5分钟内可撤回</div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </eq>
@@ -478,7 +503,7 @@
                                 <span class="glyphicon glyphicon-align-left" aria-hidden="true"></span>
                                 <span class="weui-badge weui-badge_dot" style="position: absolute;top: 0;right: -6px;"></span>
                             </span> -->
-                                        <p class="weui-tabbar__label" style="font-size: 15px;color:black;" data-toggle="modal" data-target="#iosDialog_delete">
+                                        <p class="weui-tabbar__label" style="font-size: 15px;color:black;"  id="show_iosDialog_delete">
                                             <span class="glyphicon glyphicon-share-alt" aria-hidden="true" style="margin-right: 5px;"></span>撤销</p>
                                     </a>
                                     <a href="javascript:;" class="weui-tabbar__item" id="btn-urge">
@@ -707,6 +732,18 @@
                     </div>
                 </div>
             </div>
+            <div class="js_dialog" id="iosDialog_proc_del" style="display: none;">
+                    <div class="weui-mask"></div>
+                    <div class="weui-dialog">
+                        <div class="weui-dialog__hd">
+                            <strong class="weui-dialog__title">是否撤回该审批</strong>
+                        </div>
+                        <div class="weui-dialog__ft">
+                            <a href="javascript:;" onclick="dialog_proc_del_close()" class="weui-dialog__btn weui-dialog__btn_default">取消</a>
+                            <a href="javascript:;" onclick="dialog_proc_del_confirm()" class="weui-dialog__btn weui-dialog__btn_primary">确认</a>
+                        </div>
+                    </div>
+                </div>
         </div>
         <!--END dialog-->
     </div>
@@ -812,13 +849,13 @@
                 // console.log(data);
                 if (data == 'success') {
                     $("#alert_content").text('催审成功');
-                    $("#iosDialog_alert").fadeIn(200);
                 } else if (data == 'sended') {
                     $("#alert_content").text('24小时内只能催审1次！');
-                    $("#iosDialog_alert").fadeIn(200);
                 } else {
-                    alert('催审错误！');
+                    // alert('催审错误！');
+                    $("#alert_content").text('催审错误！');
                 }
+                $("#iosDialog_alert").fadeIn(200);
                 $dtoast.fadeOut(1000);
             }
         );
@@ -872,13 +909,14 @@
                     $('#doing').text('删除成功');
                     $li_dom_comment_record.parent().parent().parent().css('display', 'none');
                 } else {
-                    alert('删除错误！');
+                    $('#doing').text('删除错误！');
                 }
                 $dtoast.fadeOut(1000);
             }
         );
     }
     // Close dialog
+ 
     function dialog_delete_close() {
         $("#iosDialog_delete").fadeOut(100);
     }
@@ -899,8 +937,10 @@
                  //console.log(data);
                 if (data == 'success') {
                     $('#doing').text('撤销成功');
+                    
                 } else {
-                    alert('撤销错误！');
+                    // alert('撤销错误！');
+                    $('#doing').text('撤销错误！');
                 }
                 $dtoast.fadeOut(1000);
                 // window.location = "{:U('Light/Apply/seekApply')}";
@@ -908,6 +948,46 @@
             }
         );
     }
+
+    // 审批撤回
+    $('.proc_del').on('click',function(){
+        $('#iosDialog_proc_del').fadeIn(100);
+    })
+    function dialog_proc_del_close(){
+        $('#iosDialog_proc_del').fadeOut(100);
+    }
+
+    function dialog_proc_del_confirm(){
+        $("#iosDialog_proc_del").fadeOut(100);
+        var id = {$aid};
+        var $dtoast = $('#doingToast');
+        if ($dtoast.css('display') != 'none') return;
+        $('#doing').text('撤销中...');
+        $dtoast.fadeIn(100);
+        $.post("{:U('Light/Apply/delProc')}",
+            {
+                "id": id,
+                mod_name: "{$mod_name}",
+                system: "{$system}"
+            }, function (data) {
+                 //console.log(data);
+                if (data.code == 200) {
+                    $('#doing').text('撤销成功');
+                    location.reload();
+                } else {
+                    $("#alert_content").text(data.msg);
+                    $("#iosDialog_alert").fadeIn(200);
+                }
+               
+                // window.location = "{:U('Light/Apply/seekApply')}";
+                
+            }
+        );
+    }
+
+
+
+
     // Alert close
     function dialog_alert_close() {
         $("#iosDialog_alert").fadeOut(100);
@@ -1067,7 +1147,9 @@
         // 催审按钮
         $("#btn-urge").on("click", function () {
             if ({$applyerID} != {$uid}) {
-                alert("非申请人不可催审！");
+                // alert("非申请人不可催审！");
+                $("#alert_content").text('非申请人不可催审！');
+                $("#iosDialog_alert").fadeIn(200);
                 return false;
             }
             $('#urge_cue').text('');
@@ -1076,7 +1158,9 @@
         // 删除按钮
         $("#btn-delete").on("click", function () {
             if ({$applyerID} != {$uid}) {
-                alert("非申请人不可撤销！");
+                $("#alert_content").text('非申请人不可撤销！');
+                $("#iosDialog_alert").fadeIn(200);
+                //alert("非申请人不可撤销！");
                 return false;
             }
             $("#iosDialog_delete").fadeIn(200);
@@ -1297,7 +1381,7 @@
                     system: "{$system}",
                     mod_name:"{$mod_name}"
                 }, function (data) {
-                    console.log();
+                    
                     if (data == '') { 
                         $dom.append(noresult);
                     } else{
@@ -1315,6 +1399,8 @@
             $("#approve_at").toggle(200);
             getCommentResult($approveSearchResult);
         });
+
+        
          // 评论搜索框 --审批
          var //$approveSearchBar = $('#approveSearchBar'),
             $approveSearchResult = $('#approveSearchResult'),

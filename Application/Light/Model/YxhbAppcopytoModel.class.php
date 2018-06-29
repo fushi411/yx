@@ -99,15 +99,17 @@ class YxhbAppcopytoModel extends Model {
         }else{
             $logic = D('Yxhb'.$mod_name,'Logic');
             // 提交人同为推送人
-            $applyerArr  = $logic->record($aid);
-            $applyerID   = D('YxhbBoss')->getWXFromID($applyerArr['salesid']); // -- 申请人id
+            $applyerArr  = $logic->recordContent($aid);
+            $applyerID   = D('YxhbBoss')->getWXFromID($applyerArr['applyerID']); // -- 申请人id
             // -- 去除是提交人的推送的人
             $recevierArr = explode('|',$recevier);
             $recevierArr = array_merge(array_diff($recevierArr, array($applyerID)));
             $recevier     = implode('|',$recevierArr);
             $cpid = implode(',',$recevierArr);
             $title = str_replace('表','',$mod_cname);
-            $template = "【审批后推送信息】\n申请单位：环保\n申请类型：{$title}";
+
+            $qsArr = array('KfRatioApply');
+            $template =  in_array($mod_name,$qsArr)?"【签收后推送信息】\n申请单位：环保\n申请类型：{$title}":"【审批后推送信息】\n申请单位：环保\n申请类型：{$title}";
               
             $descriptionData = $logic->getDescription($aid);
             $description = $this->ReDescription($descriptionData);

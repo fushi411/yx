@@ -132,7 +132,8 @@ class DepartmentModel extends Model {
     {
         $html = '';
         foreach ($DeptUserArr as $key => $value) {
-            $html .= '<a class="weui-cell weui-cell_access select-user" href="javascript:;" data-id="'.$value['id'].'" data-type="user" data-img="'.$value['avatar'].'" data-name="'.$value['name'].'" style="text-decoration:none;"><div class="weui-cell__hd"><img src="'.$value['avatar'].'" alt="" style="width:20px;margin-right:5px;display:block"></div><div class="weui-cell__bd"><p style="margin-bottom: 0px;">'.$value['name'].'</p></div><div class="weui-cell__ft"></div></a>';
+            $avatar =$value['avatar']?$value['avatar']:'Public/assets/i/defaul.png';
+            $html .= '<a class="weui-cell weui-cell_access select-user" href="javascript:;" data-id="'.$value['id'].'" data-type="user" data-img="'.$avatar.'" data-name="'.$value['name'].'" style="text-decoration:none;"><div class="weui-cell__hd"><img src="'.$avatar.'" alt="" style="width:20px;margin-right:5px;display:block"></div><div class="weui-cell__bd"><p style="margin-bottom: 0px;">'.$value['name'].'</p></div><div class="weui-cell__ft"></div></a>';
         }
         return $html;
     }

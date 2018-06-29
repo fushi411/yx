@@ -112,7 +112,7 @@ class MsgdataModel extends Model {
     public function KfRatioApply(){
         $result = array();
         $result['url'] = array(
-            array('name' => '配比通知(矿粉)','url' => U('Light/View/View',array('modname'=>'KfRatioApply','system' => 'yxhb')),'modname' => 'yxhbKfRatioApply'),
+            array('name' => '矿粉配比通知','url' => U('Light/View/View',array('modname'=>'KfRatioApply','system' => 'yxhb')),'modname' => 'yxhbKfRatioApply'),
             // array('name' => '配比通知(水泥)','url' => U('Light/View/View',array('modname'=>'SnRatioApply','system' => 'kk')),'modname' => 'kkRatioApply'),
             // array('name' => '配比通知(钢渣粉)','url' => U('Light/View/View',array('modname'=>'GzyRatioApply','system' => 'kk')),'modname' => 'kkGzfRatioApply'), 
         );

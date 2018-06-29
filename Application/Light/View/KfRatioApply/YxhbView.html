@@ -18,6 +18,7 @@
                     <option value="F75">F75</option>
                     <option value="F85">F85</option>
                     <option value="S95">S95</option>
+                    <option value="试验品种">试验品种</option>
                 </select>
             </div>
         </div>
@@ -65,7 +66,7 @@
                 </label>
             </div>
             <div class="weui-cell__bd">
-                <input class="weui-select greyColor" type="text" id="select_ycl" readonly value="点击配置原料" />
+                <input class="weui-select " type="text" readonly id="select_ycl" style="color: #337ab7;" value="点击配置原料" />
             </div>
         </div>
         <div class="weui-cell ">
@@ -74,8 +75,13 @@
                     <span class="font-width">配比详情</span>&nbsp;&nbsp;
                 </label>
             </div>
-            <div class="weui-cell__hd" id="ycl_content">
-                <input class="weui-input" type="text" name="custodian" id='detail' readonly placeholder="自动填写" />
+            <div class="weui-cell__hd" >
+                <div id="ycl_content">
+
+                </div>
+                <div id="param_div">
+                    <span class=" greyColor"  >自动填写</span>
+                </div>
             </div>
         </div>
 
@@ -84,13 +90,14 @@
         <div class="weui-cell">
             <div class="weui-cell__hd">
                 <label class="weui-label">相关说明&nbsp;&nbsp;
-                    <span style="color:red;">*</span>
                 </label>
             </div>
         </div>
         <div class="weui-cell">
             <div class="weui-cell__bd" id="cnt">
-                <textarea class="weui-textarea" name="reason" id="reason" placeholder="请输入相关说明;" rows="3"></textarea>
+                <textarea class="weui-textarea" name="reason" id="reason" placeholder="请输入相关说明；
+配比通知不可修改；
+可在PC端记录页面删除；" rows="3"></textarea>
                 <div class="weui-textarea-counter">
                     <span id="reason_char">0</span>/200</div>
             </div>
@@ -110,7 +117,7 @@
                             </label>
                         </div>
                         <div class="weui-cell__bd">
-                            <input class="weui-select peibi scale" type="number" index="宝钢水渣" maxlength="15" name="custodian" id="scale1" placeholder="请输入配比">
+                            <input class="weui-select peibi scale" type="number" index="宝钢水渣" maxlength="15" name="custodian" id="scale1" placeholder="80-97%">
                         </div>
                     </div>
                     <div class="weui-cell weui-cell_select weui-cell_select-after ">
@@ -121,7 +128,7 @@
                             </label>
                         </div>
                         <div class="weui-cell__bd">
-                            <input class="weui-select peibi scale" type="number" index="石灰石" maxlength="15" name="custodian" id="scale2" placeholder="请输入配比">
+                            <input class="weui-select peibi scale" type="number" index="石灰石" maxlength="15" name="custodian" id="scale2" placeholder="0-5%">
                         </div>
                     </div>
                     <div class="weui-cell weui-cell_select weui-cell_select-after ">
@@ -132,7 +139,7 @@
                             </label>
                         </div>
                         <div class="weui-cell__bd">
-                            <input class="weui-select peibi scale" type="number" index="电厂炉渣" maxlength="15" name="custodian" id="scale3" placeholder="请输入配比">
+                            <input class="weui-select peibi scale" type="number" index="电厂炉渣" maxlength="15" name="custodian" id="scale3" placeholder="0-20%">
                         </div>
                     </div>
                     <div class="weui-cell weui-cell_select weui-cell_select-after ">
@@ -143,7 +150,7 @@
                             </label>
                         </div>
                         <div class="weui-cell__bd">
-                            <input class="weui-select peibi scale" type="number" index="矿热炉渣" maxlength="15" name="custodian" id="scale4" placeholder="请输入配比">
+                            <input class="weui-select peibi scale" type="number" index="矿热炉渣" maxlength="15" name="custodian" id="scale4" placeholder="0-15%">
                         </div>
                     </div>
                     <div class="weui-cell">
@@ -165,7 +172,7 @@
                             </label>
                         </div>
                         <div class="weui-cell__bd">
-                            <input class="weui-select peibi scale" type="number" index="激发剂" maxlength="15" name="custodian" id="scale5" placeholder="请输入配比">
+                            <input class="weui-select peibi scale" type="number" index="激发剂" maxlength="15" name="custodian" id="scale5" placeholder="0-0.2%">
                         </div>
                     </div>
                 </div>
@@ -179,7 +186,7 @@
                             </label>
                         </div>
                         <div class="weui-cell__bd">
-                            <input class="weui-select peibi out_scale" type="number" index="脱硫灰" maxlength="15" name="custodian" id="out_scale" placeholder="请输入配比">
+                            <input class="weui-select peibi out_scale" type="number" index="脱硫灰" maxlength="15" name="custodian" id="out_scale" placeholder="0-10%">
                         </div>
                     </div>
                 </div>
@@ -471,6 +478,7 @@
         var label = "生产时间&nbsp;&nbsp;<span style='color:red;'>*</span>",
             datePicker = $('#showDatePicker'),
             the_date = datePicker.val(),
+            this_time = new Date(the_date),
             H = new Date().getHours() + 1,
             scale = $('.scale'),
             scale1 = $('#scale1'),
@@ -483,10 +491,59 @@
             peibi_value = 0,
             H = H > 9 ? H : '0' + H;
         var arr_week = new Array("星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六");
-        now = the_date + ' ' + H + ':00';
+        now = this_time.getFullYear()+'-'+((this_time.getMonth()+1)>9?(this_time.getMonth()+1):'0'+(this_time.getMonth()+1))+'-'+this_time.getDate()+ ' ' + H + ':00';
+        
+
+         var tailover = '',
+            bibiao   = '',
+            moisture = '';
+    $('#type').change(function(){
+        var type_val=$(this).val();
+        $.ajax({
+                type:'POST',
+                url: "{:U('Light/Seek/seekApi')}",
+                dataType: 'json',
+                data: {
+                    type: 'config_api',
+                    product:type_val
+                },
+                success: function (res) {
+                    if(res.code == 200){
+                        tailover  = res.data[0].value,
+                        bibiao   = res.data[1].value,
+                        moisture = res.data[2].value,
+                        html     = '';
+                        var  tailover1_val= !res.data[0].value?'无':'≤ '+res.data[0].value+' % (45μm)';
+
+                         var val = res.data[1].value.split('|');
+                        var  bibiao1_val= !res.data[1].value?'无':val[0]+' - '+val[1];
+
+                        var  moisture1_val= !res.data[2].value?'无':'≤ '+res.data[2].value+' %';
+
+                        html = ' <div style="padding: 3px 0 0 0;border-bottom: 1px solid #e5e5e5; "><strong >指标</strong>'+
+                            '<a href="'+"{:U('Light/Seek/config')}"+'&product='+type_val+'">(点击配置指标)</a>'+
+                            '</div>'+
+                            '<div style="padding: 3px 0 0 10px;"><span class="" >筛余</span>：'+tailover1_val+'</div>'+
+                            '<div style="padding: 3px 0 0 10px;"><span class="" >比表</span>：'+bibiao1_val+' </div>'+
+                            '<div style="padding: 3px 0 0 10px;"><span class="" >水份</span>：'+moisture1_val+'</div>';
+                       $('#param_div').html(html);
+                    }  
+                }
+            });
+        
+       
+    });
+
+
+
+
+       
+
 
         // 确定按钮
         $('#ratio-agree').click(function () {
+
+            if(!getfazhi()) return;
             if (peibi_value != 100) return tooltip('总配置值须为100%，请检查后输入');
             var scale_1 = scale1.val(),
                 scale_2 = scale2.val(),
@@ -520,15 +577,35 @@
                 html += '<div style="padding: 3px 0 0 0;border-bottom: 1px solid #e5e5e5; "><strong>磨外</strong></div>';
                 html += '<div style="padding: 3px 0 0 10px;"><span class="" >' + out_scale_array[i].value + '</span>：' + out_scale_array[i].name + '%</div>';
             }
-            html +=
-                '<div style="padding: 3px 0 0 0;border-bottom: 1px solid #e5e5e5; "><strong >参数</strong></div>' +
-                '<div style="padding: 3px 0 0 10px;"><span class="" >筛余</span>：≤ 5.00% (45μm)</div>' +
-                '<div style="padding: 3px 0 0 10px;"><span class="" >比表</span>：430 - 480 </div>' +
-                '<div style="padding: 3px 0 0 10px;"><span class="" >水份</span>：≤ 1.00%</div>';
+            
             $('#ycl_content').html(html);
         }
+        var F85 = [
+            ['宝钢水渣',80,97,1],
+            ['石灰石'  ,0,5,1],
+            ['电厂炉渣',0,20,1],
+            ['矿热炉渣',0,15,1],
+            ['激发剂'  ,0,0.2,1],
+            ['脱硫灰'  ,0,10,1]
+        ];
+   
         // 总配比值计算
         $('#other_page').on('change', '.peibi', function () {
+            // 提示
+            if($('#type').val() == 'F85'){
+                var idx = $(this).attr('index'),
+                    value = $(this).val();
+                F85.forEach(function(item,key){
+                    if(item[0] == idx){
+                        if(value<item[1] || value >item[2]){
+                            F85[key][3] = 0;
+                            return tooltip(idx+'的阀值为'+item[1]+'-'+item[2]+'%'); 
+                        } else{
+                            F85[key][3] = 1;
+                        }
+                    }
+                });
+            }
             var count = 0;
             for (var i = 0; i < 5; i++) {
                 if ($('.peibi').eq(i).attr('index') == '脱硫灰' || $('.peibi').eq(i).attr('index') == '激发剂') continue;
@@ -546,9 +623,11 @@
 
         // 原材料配置弹出
         $('#select_ycl').click(function () {
+            
             if ($('#type').val() == -1 || $('#type').val() == null) return tooltip('请选择生产品种');
             if ($('#scx').val() == -1 || $('#scx').val() == null) return tooltip('请选择生产线');
             if ($('#kh').val() == -1 || $('#kh').val() == null) return tooltip('请选择生产库号');
+            if (!tailover || !bibiao || !moisture ) return tooltip('指标无,请先配置指标');
             $('#other_page').fadeIn(200);
         })
 
@@ -601,6 +680,17 @@
                 }
             });
         }
+        
+        function getfazhi(){
+            var fazhi=1;
+            F85.forEach(function(item){
+                if(!item[3] && $('#type').val()=='F85') {
+                    fazhi=0;
+                    return tooltip(item[0]+'的阀值为'+item[1]+'-'+item[2]+'%');
+                }
+            });
+            return fazhi;
+        }
         // 日历填充
         function pickerValue(dateArr) {
             var val = dateArr[0] + ' ';
@@ -611,10 +701,11 @@
             $('#showDatePicker').val(val);
         }
         $('#submit').click(function () {
-
+            if(!getfazhi()) return;
             if ($('#type').val() == -1 || $('#type').val() == null) return tooltip('请选择生产品种');
             if ($('#scx').val() == -1 || $('#scx').val() == null) return tooltip('请选择生产线');
             if ($('#kh').val() == -1 || $('#kh').val() == null) return tooltip('请选择生产库号');
+            if (!tailover || !bibiao || !moisture ) return tooltip('指标无,请先配置指标');
             if (peibi_value != 100) return tooltip('总配置值须为100%，请检查后输入');
             // 留言判断
             var reason = $('#reason').val(),

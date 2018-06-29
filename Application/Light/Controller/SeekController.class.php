@@ -50,7 +50,15 @@ class SeekController extends BaseController
             case 'copyRead':
                 $data = $this->copyReadApi();
                 $code = 200; 
-                break;         
+                break;   
+            case 'config_api':
+                $data = $this->config_api(I('post.product'));
+                $code = 200; 
+                break;     
+            case 'config_submit':
+                $data = $this->config_submit();
+                $code = 200; 
+                break;     
         }
         $this->ajaxReturn(array('code' => $code , 'data' => $data));
     }
@@ -61,9 +69,9 @@ class SeekController extends BaseController
     public function copyReadApi(){
         $wx_id = session('wxid'); 
         $copySql = "SELECT * from (
-                    SELECT  `aid`,`readed_id`,`mod_name`,`time`,1 FROM `yxhb_appcopyto` WHERE FIND_IN_SET('{$wx_id}',`copyto_id`) AND  !FIND_IN_SET('{$wx_id}',`readed_id`) and type=1 AND `stat` <> 0
+                    SELECT  `aid`,`readed_id`,`mod_name`,`time`,1 FROM `yxhb_appcopyto` WHERE FIND_IN_SET('{$wx_id}',`copyto_id`) AND  !FIND_IN_SET('{$wx_id}',`readed_id`) and type=1 AND `stat` <> 0 and `mod_name` <> 'KfRatioApply'
                 UNION ALL
-                    SELECT  `aid`,`readed_id`,`mod_name`,`time`,2 FROM `kk_appcopyto` WHERE FIND_IN_SET('{$wx_id}',`copyto_id`) AND !FIND_IN_SET('{$wx_id}',`readed_id`) and type=1 AND `stat` <> 0
+                    SELECT  `aid`,`readed_id`,`mod_name`,`time`,2 FROM `kk_appcopyto` WHERE FIND_IN_SET('{$wx_id}',`copyto_id`) AND !FIND_IN_SET('{$wx_id}',`readed_id`) and type=1 AND `stat` <> 0 and `mod_name` <> 'KfRatioApply'
                 ) a GROUP BY aid order by time desc";
                 
         $copy = M()->query($copySql);   
@@ -82,9 +90,9 @@ class SeekController extends BaseController
     public function pushReadApi(){
         $wx_id = session('wxid'); 
         $pushSql = "SELECT * from (
-                    SELECT  `aid`,`readed_id`,`mod_name`,`time`,1 FROM `yxhb_appcopyto` WHERE FIND_IN_SET('{$wx_id}',`copyto_id`) AND !FIND_IN_SET('{$wx_id}',`readed_id`) and type=2 AND `stat` <> 0
+                    SELECT  `aid`,`readed_id`,`mod_name`,`time`,1 FROM `yxhb_appcopyto` WHERE FIND_IN_SET('{$wx_id}',`copyto_id`) AND !FIND_IN_SET('{$wx_id}',`readed_id`) and type=2 AND `stat` <> 0 and `mod_name` <> 'KfRatioApply'
                 UNION ALL
-                    SELECT  `aid`,`readed_id`,`mod_name`,`time`,2 FROM `kk_appcopyto` WHERE FIND_IN_SET('{$wx_id}',`copyto_id`) AND !FIND_IN_SET('{$wx_id}',`readed_id`) and type=2 AND `stat` <> 0
+                    SELECT  `aid`,`readed_id`,`mod_name`,`time`,2 FROM `kk_appcopyto` WHERE FIND_IN_SET('{$wx_id}',`copyto_id`) AND !FIND_IN_SET('{$wx_id}',`readed_id`) and type=2 AND `stat` <> 0 and `mod_name` <> 'KfRatioApply'
                 ) a GROUP BY aid order by time desc";
                 
         $push = M()->query($pushSql);   
@@ -368,9 +376,9 @@ class SeekController extends BaseController
         // 环保未读 yxhb 
 
         $copySql = "SELECT * from (
-                     SELECT  `aid`,`readed_id`,`mod_name`,`time`,1 FROM `yxhb_appcopyto` WHERE FIND_IN_SET('{$wx_id}',`copyto_id`) AND !FIND_IN_SET('{$wx_id}',`readed_id`) and type=1 AND `stat` <> 0
+                     SELECT  `aid`,`readed_id`,`mod_name`,`time`,1 FROM `yxhb_appcopyto` WHERE FIND_IN_SET('{$wx_id}',`copyto_id`) AND !FIND_IN_SET('{$wx_id}',`readed_id`) and type=1 AND `stat` <> 0 and `mod_name` <> 'KfRatioApply'
                     UNION ALL
-                     SELECT  `aid`,`readed_id`,`mod_name`,`time`,2 FROM `kk_appcopyto` WHERE FIND_IN_SET('{$wx_id}',`copyto_id`) AND !FIND_IN_SET('{$wx_id}',`readed_id`) and type=1 AND `stat` <> 0
+                     SELECT  `aid`,`readed_id`,`mod_name`,`time`,2 FROM `kk_appcopyto` WHERE FIND_IN_SET('{$wx_id}',`copyto_id`) AND !FIND_IN_SET('{$wx_id}',`readed_id`) and type=1 AND `stat` <> 0 and `mod_name` <> 'KfRatioApply'
                     ) a GROUP BY aid order by time desc";
                     
         $copy = M()->query($copySql);          
@@ -394,9 +402,9 @@ class SeekController extends BaseController
         // 环保未读 yxhb 
 
         $copySql = "SELECT * from (
-                     SELECT  `aid`,`readed_id`,`mod_name`,`time`,1 FROM `yxhb_appcopyto` WHERE FIND_IN_SET('{$wx_id}',`copyto_id`) AND !FIND_IN_SET('{$wx_id}',`readed_id`) and type=2 AND `stat` <> 0
+                     SELECT  `aid`,`readed_id`,`mod_name`,`time`,1 FROM `yxhb_appcopyto` WHERE FIND_IN_SET('{$wx_id}',`copyto_id`) AND !FIND_IN_SET('{$wx_id}',`readed_id`) and type=2 AND `stat` <> 0 and `mod_name` <> 'KfRatioApply'
                     UNION ALL
-                     SELECT  `aid`,`readed_id`,`mod_name`,`time`,2 FROM `kk_appcopyto` WHERE FIND_IN_SET('{$wx_id}',`copyto_id`) AND !FIND_IN_SET('{$wx_id}',`readed_id`) and type=2 AND `stat` <> 0
+                     SELECT  `aid`,`readed_id`,`mod_name`,`time`,2 FROM `kk_appcopyto` WHERE FIND_IN_SET('{$wx_id}',`copyto_id`) AND !FIND_IN_SET('{$wx_id}',`readed_id`) and type=2 AND `stat` <> 0 and `mod_name` <> 'KfRatioApply'
                     ) a GROUP BY aid order by time desc";
                     
         $copy = M()->query($copySql);          
@@ -421,9 +429,9 @@ class SeekController extends BaseController
         $wx_id = session('wxid'); 
         $result = array();
         $copySql = "SELECT * from (
-            select *,1 from kk_appcopyto where FIND_IN_SET('{$wx_id}',`copyto_id`) and FIND_IN_SET('{$wx_id}',`readed_id`) and type=2  {$searchArr['yxhb']} and stat!=0 
+            select *,1 from kk_appcopyto where FIND_IN_SET('{$wx_id}',`copyto_id`) and FIND_IN_SET('{$wx_id}',`readed_id`) and type=2  {$searchArr['yxhb']} and stat!=0 and `mod_name` <> 'KfRatioApply'
             UNION ALL
-            select *,2 from yxhb_appcopyto where FIND_IN_SET('{$wx_id}',`copyto_id`) and FIND_IN_SET('{$wx_id}',`readed_id`) and type=2 {$searchArr['kk']} and stat!=0 ) a 
+            select *,2 from yxhb_appcopyto where FIND_IN_SET('{$wx_id}',`copyto_id`) and FIND_IN_SET('{$wx_id}',`readed_id`) and type=2 {$searchArr['kk']} and stat!=0 and  `mod_name` <> 'KfRatioApply' ) a 
             GROUP BY aid order by time desc limit ".(($page-1)*20).",20"; 
         
         $copy = M()->query($copySql);   
@@ -465,9 +473,9 @@ class SeekController extends BaseController
         $wx_id = session('wxid'); 
         //抄送未读  yxhb - kk
         $copeSql = "SELECT count(1) as count from (
-            select * from kk_appcopyto where FIND_IN_SET('{$wx_id}',`copyto_id`) and !FIND_IN_SET('{$wx_id}',`readed_id`) and type=2 and stat!=0 GROUP BY aid
+            select * from kk_appcopyto where FIND_IN_SET('{$wx_id}',`copyto_id`) and !FIND_IN_SET('{$wx_id}',`readed_id`) and type=2 and stat<>0 and `mod_name` <> 'KfRatioApply' GROUP BY aid
             union ALL
-            select * from yxhb_appcopyto where FIND_IN_SET('{$wx_id}',`copyto_id`) and !FIND_IN_SET('{$wx_id}',`readed_id`) and type=2  and stat!=0 GROUP BY aid)a ";
+            select * from yxhb_appcopyto where FIND_IN_SET('{$wx_id}',`copyto_id`) and !FIND_IN_SET('{$wx_id}',`readed_id`) and type=2  and stat<>0 and `mod_name` <> 'KfRatioApply' GROUP BY aid)a ";
         $copyRes = M()->query($copeSql);
         $copy_count =$copyRes[0]['count'];
         return $copy_count?$copy_count:0;
@@ -489,9 +497,9 @@ class SeekController extends BaseController
         $wx_id = session('wxid'); 
         $result = array();
         $copySql = "SELECT * from (
-            select *,1 from kk_appcopyto where FIND_IN_SET('{$wx_id}',`copyto_id`) and FIND_IN_SET('{$wx_id}',`readed_id`) and type=1 {$searchArr['yxhb']} and stat!=0 
+            select *,1 from kk_appcopyto where FIND_IN_SET('{$wx_id}',`copyto_id`) and FIND_IN_SET('{$wx_id}',`readed_id`) and type=1 {$searchArr['yxhb']} and stat!=0 and `mod_name` <> 'KfRatioApply'
             UNION ALL
-            select *,2 from yxhb_appcopyto where FIND_IN_SET('{$wx_id}',`copyto_id`) and FIND_IN_SET('{$wx_id}',`readed_id`) and type=1 {$searchArr['kk']} and stat!=0 ) a 
+            select *,2 from yxhb_appcopyto where FIND_IN_SET('{$wx_id}',`copyto_id`) and FIND_IN_SET('{$wx_id}',`readed_id`) and type=1  {$searchArr['kk']} and stat!=0 and `mod_name` <> 'KfRatioApply') a 
             GROUP BY aid order by time desc limit ".(($page-1)*20).",20"; 
         
         $copy = M()->query($copySql);   
@@ -751,4 +759,62 @@ class SeekController extends BaseController
     
         return array_merge($nstr,$estr,$cstr);  
     }  
+
+    /**
+     * 指标配置页面
+     */
+    public function  config(){
+        $pro = I('get.product');
+        $sql  = "SELECT DISTINCT product from ratio_config where stat=1 ORDER BY id";
+        $type = M()->query($sql);
+        
+        $this->assign('product',$pro);
+        $this->assign('ratioType',$type);
+        $this->assign('title','指标配置');
+        $this->display('Seek/config');
+    } 
+
+    /**
+     * 配置数据查询 
+     * @param string
+     */
+    public function config_api($type){
+        $sql  = "SELECT * from ratio_config where stat=1 and product='{$type}' ORDER BY id";
+        $type = M()->query($sql);
+        return $type;
+    }
+
+    /***
+     * 配置修改
+     */
+    public function config_submit(){
+        $type = I('post.product');
+        $data = I('post.data');
+        // 参数检验
+        $ini  = $this->config_api($type);
+        // 修改查看
+        $name   = session('name');
+        $change = array(); 
+        if($data[0] != $ini[0]['value'])  $change[] = array('筛余',$ini[0]['value'],$data[0]);
+        if($data[1] != $ini[1]['value'])  $change[] = array('比表',$ini[1]['value'],$data[1]);
+        if($data[2] != $ini[2]['value'])  $change[] = array('水份',$ini[2]['value'],$data[2]);
+
+        // 重复提交
+        if(!M('ratio_config')->autoCheckToken($_POST)) return array('code' => 404);
+        // 修改
+        foreach($change as $v){
+            M('ratio_config')->where(array('product' => $type, 'name' => $v[0],'stat' => 1))->setField('value', $v[2]);
+        }
+      
+        // 历史记录
+        $history = array(
+            'name' => $name,
+            'time' => date('Y-m-d H:i',time()),
+            'word' => json_encode($change)
+        );
+        $res = M('ratio_history')->add($history);
+        
+        return $res?array('code' => 200):array('code' => 404);
+
+    }
 }

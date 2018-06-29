@@ -203,6 +203,18 @@ class WorkFlowController extends BaseController {
       $res = $resetM -> reset($flowName,$aid);
       return $res;
     }
+
+    /**
+     * 审批撤回
+     * @param string $flowName 模块名
+     * @param string $aid      aid
+     * @param string $system   系统
+     */
+    public function  workFlowPrcReset($flowName,$aid,$system){
+      $resetM = D(ucfirst($system).'Appflowproc');
+      $res = $resetM -> procReset($flowName,$aid);
+      return $res;
+    }
     /*流程是否已经开始
     @ flowName 工作流名称
     @ aid 实际工作流程对应ID

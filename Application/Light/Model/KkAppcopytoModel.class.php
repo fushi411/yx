@@ -100,8 +100,8 @@ class KkAppcopytoModel extends Model {
         }else{
               // 提交人同为推送人
               $logic       = D('Kk'.$mod_name,'Logic');
-              $applyerArr  = $logic->record($aid);
-              $applyerID   = D('KkBoss')->getWXFromID($applyerArr['salesid']); // -- 申请人id
+              $applyerArr  = $logic->recordContent($aid);
+              $applyerID   = D('KkBoss')->getWXFromID($applyerArr['applyerID']); // -- 申请人id
               // -- 去除是提交人的推送的人
               $recevierArr = explode('|',$recevier);
               $recevierArr = array_merge(array_diff($recevierArr, array($applyerID)));

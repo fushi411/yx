@@ -36,6 +36,11 @@ class YxhbAppflowprocModel extends Model {
             $wxid = $boss->getWXFromID($val['per_id']);
             array_push($authArr, $wxid);
             $val['avatar'] = $boss->getAvatar($val['per_id']);
+            // 审批撤销时间限制
+            $val['able_del'] = 0;
+            $now = time();
+            $proc_time = strtotime($val['approve_time']);
+            if($proc_time < $now && $proc_time+300 >$now) $val['able_del'] = 1;
             $resApply[] = $val;
             // 是否被拒绝
             if ($val['app_stat']==1) {
@@ -141,5 +146,26 @@ class YxhbAppflowprocModel extends Model {
     {
         $res = $this -> where(array('mod_name'=>$mod_name,'aid'=>$aid)) -> setInc('app_stat', 3);
         return $res;
+    }
+    /**
+     * 审批撤回
+     */
+    public function procReset($mod_name,$aid){
+        $res = $this -> where(array('mod_name'=>$mod_name,'aid'=>$aid,'app_stat' => 0)) -> select();
+        $count = count($res);
+        if($count <= 0) return array('code' => 404, 'msg' => '流程已结束，无法撤回');
+        // $name = session('name');
+        $name = '张依炎';
+        // 查看下一级是否已经审批
+        $sql = "SELECT id,app_stat,per_name FROM  yxhb_appflowproc WHERE  mod_name = '{$mod_name}' AND aid = {$aid}
+                AND app_stage = (
+                    SELECT  app_stage  FROM yxhb_appflowproc WHERE  mod_name = '{$mod_name}' AND aid = {$aid}   
+                    AND per_name = '{$name}'  ) + 1";
+        $res = M()->query($sql);
+        if($res[0]['app_stat'] != 0)  return array('code' => 404, 'msg' => '下一流程人已批复,无法撤回');
+        // 撤销-> 下一步置3，本人置0
+        M('yxhb_appflowproc')->where(array('id' => $res[0]['id']))->setInc('app_stat', 3);
+        M('yxhb_appflowproc')->where(array('mod_name' => $mod_name,'aid' => $aid, 'per_name' => $name))->setField('app_stat', 0);
+        return array('code' => 200, 'msg' => '撤回成功');
     }
 }

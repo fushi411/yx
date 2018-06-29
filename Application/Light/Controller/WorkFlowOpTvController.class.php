@@ -292,8 +292,9 @@ class WorkFlowOpTvController extends BaseController {
 			$description = "您有一个流程已被签收";
 		}
 		$boss = D('YxhbBoss')->getIDFromName($res['name']);
-        $description .= "\n签收单位：{$systemName[$system]}\n申请类型：{$title}";
-        $receviers = "wk|HuangShiQi|".$boss;
+		$boss = D('YxhbBoss')->getWXFromID($boss);
+        $description .= "\n申请单位：{$systemName[$system]}\n申请类型：{$title}";
+		$receviers = "wk|HuangShiQi|".$boss;
         foreach( $descriptionData as $val ){
             if($val['name'] == '生产时间：') 
             {

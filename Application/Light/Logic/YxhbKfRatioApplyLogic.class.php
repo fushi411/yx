@@ -49,7 +49,7 @@ class YxhbKfRatioApplyLogic extends Model {
                                      'color' => 'black'
                                     );
         $result['content'][] = array('name'=>'入库号：',
-                                     'value'=>round($res['tailover'],0).'#',
+                                     'value'=>round($res['enterid'],0).'#',
                                      'type'=>'number',
                                      'color' => 'black'
                                     );
@@ -81,19 +81,24 @@ class YxhbKfRatioApplyLogic extends Model {
     public function makeDeatilHtml($data){
         $html = "<input class='weui-input' type='text' style='color: black; font-weight: 700;border-bottom: 1px solid #e5e5e5; '  readonly value='磨内'>";
         if(!empty($data['scale1']) ) {
-            $html .= "<input class='weui-input' type='text' style='color: black;'  readonly value='{$data['scale1']}：{$data['proportion1']}%'>";
+            $proportion1 = ceil($data['proportion1']) == $data['proportion1']?ceil($data['proportion1']): $data['proportion1'];
+            $html .= "<input class='weui-input' type='text' style='color: black;'  readonly value='{$data['scale1']}：{$proportion1}%'>";
         }
         if(!empty($data['scale2']) ) {
-            $html .= "<input class='weui-input' type='text' style='color: black;'  readonly value='{$data['scale2']}：{$data['proportion2']}%'>";
+            $proportion2 = ceil($data['proportion2']) == $data['proportion2']?ceil($data['proportion2']): $data['proportion2'];
+            $html .= "<input class='weui-input' type='text' style='color: black;'  readonly value='{$data['scale2']}：{$proportion2}%'>";
         }
         if(!empty($data['scale3'])) {
-            $html .= "<input class='weui-input' type='text' style='color: black;'  readonly value='{$data['scale3']}：{$data['proportion3']}%'>";
+            $proportion3 = ceil($data['proportion3']) == $data['proportion3']?ceil($data['proportion3']): $data['proportion3'];
+            $html .= "<input class='weui-input' type='text' style='color: black;'  readonly value='{$data['scale3']}：{$proportion3}%'>";
         }
         if(!empty($data['scale4']) ) {
-            $html .= "<input class='weui-input' type='text' style='color: black;'  readonly value='{$data['scale4']}：{$data['proportion4']}%'>";
+            $proportion4 = ceil($data['proportion4']) == $data['proportion4']?ceil($data['proportion4']): $data['proportion4'];
+            $html .= "<input class='weui-input' type='text' style='color: black;'  readonly value='{$data['scale4']}：{$proportion4}%'>";
         }
         if(!empty($data['scale5']) ) {
-            $html .= "<input class='weui-input' type='text' style='color: black;'  readonly value='{$data['scale5']}：{$data['proportion5']}%'>";
+            $proportion5 = ceil($data['proportion5']) == $data['proportion5']?ceil($data['proportion5']): $data['proportion5'];
+            $html .= "<input class='weui-input' type='text' style='color: black;'  readonly value='{$data['scale5']}：{$proportion5}%'>";
         }
 
         $out_scale = json_decode($data['out_scale']);
@@ -101,10 +106,13 @@ class YxhbKfRatioApplyLogic extends Model {
             $html .= "<input class='weui-input' type='text' style='color: black; font-weight: 700;border-bottom: 1px solid #e5e5e5; '  readonly value='磨外'>";
             $html .= "<input class='weui-input' type='text' style='color: black;'  readonly value='{$out_scale[0]->value}：{$out_scale[0]->name}%'>";
         }
-        $html .= "<input class='weui-input' type='text' style='color: black; font-weight: 700;border-bottom: 1px solid #e5e5e5; '  readonly value='参数'>";
-        $html .= "<input class='weui-input' type='text' style='color: black;'  readonly value='筛余：≤ {$data['tailover']}% (45μm)'>
+        $html .= "<input class='weui-input' type='text' style='color: black; font-weight: 700;border-bottom: 1px solid #e5e5e5; '  readonly value='指标'>";
+
+        $tailover = ceil($data['tailover']) == $data['tailover']?ceil($data['tailover']): $data['tailover'];
+        $moisture = ceil($data['moisture']) == $data['moisture']?ceil($data['moisture']): $data['moisture'];
+        $html .= "<input class='weui-input' type='text' style='color: black;'  readonly value='筛余：≤ {$tailover}% (45μm)'>
                   <input class='weui-input' type='text' style='color: black;'  readonly value='比表：{$data['bibiao']} - {$data['bbsx']}'>
-                  <input class='weui-input' type='text' style='color: black;'  readonly value='水份：≤ {$data['moisture']}%'> ";
+                  <input class='weui-input' type='text' style='color: black;'  readonly value='水份：≤ {$moisture}%'> ";
         return $html;
     } 
 
@@ -117,7 +125,7 @@ class YxhbKfRatioApplyLogic extends Model {
     public function delRecord($id)
     {
         $map = array('id' => $id);
-        return $this->field(true)->where($map)->setField('stat',0);
+        return $this->field(true)->where($map)->setField('state',0);
     }
 
          /**
@@ -143,7 +151,7 @@ class YxhbKfRatioApplyLogic extends Model {
                                      'type'=>'string'
                                     );        
         $result[] = array('name'=>'入库号：',
-                                     'value'=>round($res['tailover'],0).'#',
+                                     'value'=>round($res['enterid'],0).'#',
                                      'type'=>'number'
                                     );                          
         $result[] = array('name'=>'相关说明：',
@@ -180,7 +188,7 @@ class YxhbKfRatioApplyLogic extends Model {
             'approve' => number_format($res['fkje'],2,'.',',')."元",
             'notice'  => $res['zy'],
             'date'    => $res['zd_date'],
-            'stat'    => $res['stat']
+            'stat'    => $res['state']
         );
         return $result;
     }
@@ -210,10 +218,13 @@ class YxhbKfRatioApplyLogic extends Model {
             $num = $val['name']?$val['name']:0;
             $count += $val['name'];
         }
-
+        $seek   = A('Seek');
+        $config = $seek->config_api($type);
+        $bibiaoArr = explode('|',$config[1]['value']);
+     
         if($count != 100)   return array('code' => 404,'msg' => '总配置值须为100%，请检查后输入');
         $insert = array(
-            'bbsx'    => 480,
+            'bbsx'    => $bibiaoArr[1],
             'scx'     => $scx,  
             'date'    => Date('Y-m-d',strtotime($datetime)),
             'hour'    => Date('H',strtotime($datetime)),
@@ -223,11 +234,11 @@ class YxhbKfRatioApplyLogic extends Model {
             'scale3'  => $scale[2]['name']?$scale[2]['value']:0 , 'proportion3' => $scale[2]['name']?$scale[2]['name']:0 ,
             'scale4'  => $scale[3]['name']?$scale[3]['value']:0 , 'proportion4' => $scale[3]['name']?$scale[3]['name']:0 ,
             'scale5'  => $scale[4]['name']?$scale[4]['value']:0 , 'proportion5' => $scale[4]['name']?$scale[4]['name']:0 ,
-            'tailover'=> 5,
+            'tailover'=> $config[0]['value'],
             'scale'   => json_encode($scale),
             'out_scale' => json_encode($out_scale),
-            'bibiao'  => 430,
-            'moisture'=> 1,
+            'bibiao'  => $bibiaoArr[0],
+            'moisture'=> $config[2]['value'],
             'enterid' => $kh,
             'state'    => 2,
             'scfz'    => Date('i',strtotime($datetime)),

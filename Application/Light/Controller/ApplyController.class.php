@@ -383,7 +383,19 @@ class ApplyController extends BaseController {
             $wf->workFlowSVReset($mod_name,$id,$system);
             $this->ajaxReturn('success');
         } else {
-            
+            $this->ajaxReturn('failure');
+        }
+    }
+    // 审核撤回
+    public function delProc(){
+        $id = I('post.id');
+        $mod_name = I('post.mod_name');
+        $system = I('post.system');
+        if ($id) {
+            $wf=new WorkFlowController();
+            $res = $wf->workFlowPrcReset($mod_name,$id,$system);
+            $this->ajaxReturn($res);
+        } else {
             $this->ajaxReturn('failure');
         }
     }
@@ -394,27 +406,14 @@ class ApplyController extends BaseController {
         $system = 'yxhb';
         $aid=649;
         $mod_name = 'TempCreditLineApply';
-
-        $comment_list = array();
-        $res =  M('yxhb_appflowcomment')->field('id,app_word,time,per_name,per_id,comment_to_id,sum(1) as count')->where(array('aid'=>$aid, 'mod_name'=>$mod_name, 'app_stat'=>1,'per_id' =>9999))->group('comment_to_id')->order('time desc')->select();
-        $pushArr = array();
-        if(!empty($res)){
-            foreach($res as $v){
-                $count = $v['count'];
-                $tmp = explode('发起了',$v['app_word']);
-                $str = $tmp[0]."发起了第{$count}次".$tmp[1];
-                $tmpArr = array(
-                    'id' => 0,
-                    'app_word' => str_replace("自动催审","自动催审<br />",$str),
-                    "time" => $v['time'],
-                    "per_name" =>  "系统定时任务",
-                    "per_id" =>  "9999",
-                    "comment_to_id" => $v['comment_to_id']
-                );
-                $pushArr[] = $tmpArr;
-            }
-        }
-  
+        $type   = 'F85';
+        $seek   = A('Seek');
+        $config = $seek->config_api($type);
+        dump($config[0]['value']);
+        $bibiaoArr = explode('|',$config[1]['value']);
+        dump($bibiaoArr[0]);
+        dump($bibiaoArr[1]);
+        dump($config[2]['value']);
     }
 
 
