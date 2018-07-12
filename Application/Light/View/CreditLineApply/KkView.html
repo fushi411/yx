@@ -277,7 +277,7 @@
                 tooltip('请输入申请额度');
                 return;
             }
-            if ($('#money').val() <= 0) {
+            if ($('#money').val() < 0) {
                 tooltip('申请额度不能小于0');
                 return;
             }

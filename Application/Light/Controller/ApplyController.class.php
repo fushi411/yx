@@ -371,7 +371,7 @@ class ApplyController extends BaseController {
             $this->success('提交成功',U('Light/Apply/applyInfo',array('modname'=>$mod_name,'aid'=>$aid,'system'=>$system)));
         }
     }
-
+    // 撤销申请
     public function delRecord()
     {
         $id = I('post.id');
@@ -379,13 +379,71 @@ class ApplyController extends BaseController {
         $system = I('post.system');
         if ($id) {
             $res = D(ucfirst($system).$mod_name, 'Logic')->delRecord($id);
+            $this->delRecordCue();
             $wf=new WorkFlowController();
             $wf->workFlowSVReset($mod_name,$id,$system);
+            
             $this->ajaxReturn('success');
         } else {
             $this->ajaxReturn('failure');
         }
     }
+
+    // 撤销通知
+    public function delRecordCue(){
+        $system      =  I('post.system');
+        $id          =  I('post.id');
+        $mod_name    =  I('post.mod_name');
+        $reason      =  I('post.reason');
+
+        $receviers   = 'HuangShiQi,wk,';
+        $res = D(ucfirst($system).$mod_name, 'Logic')->recordContent($id);
+        $apply_user = $res['applyerName'];
+        
+        $resArr =  M($system.'_appflowproc a')
+                ->join($system.'_boss b on b.id=a.per_id')
+                ->field('b.wxid')
+                ->where(array('a.aid' => $id ,'a.mod_name' => $mod_name))
+                ->select();               
+        
+        foreach($resArr as $val){
+            $receviers .= $val['wxid'].',';
+        }
+
+        // - 抄送人员
+        $resArr = M($system.'_appcopyto')->field('copyto_id')->where(array('aid' => $id,'mod_name' =>$mod_name,'type' => 1))->find();
+        
+        $receviers .= $resArr['copyto_id'] ;
+        $recevier = str_replace(',', '|',  $receviers);
+        
+        // 数据重构  -- 去除重复的人员
+        $tmpRecevierArr = explode('|',$recevier);  
+        $tmpRecevierArr = array_filter($tmpRecevierArr); // ---- 去除空值
+        $tmpRecevierArr = array_unique($tmpRecevierArr); // -- 去除重复
+        $temrecevier = implode('|',$tmpRecevierArr);
+
+        $systemName = array('kk'=>'建材', 'yxhb'=>'环保');
+        $flowTable   = M($system.'_appflowtable');
+        $mod_cname   = $flowTable->getFieldByProMod($mod_name, 'pro_name');
+
+        $title       = '【已撤销推送】';
+        $description = $systemName[$system].$mod_cname."({$apply_user}提交)\n撤销理由：".$reason;
+        $url         = "http://www.fjyuanxin.com/WE/index.php?m=Light&c=Apply&a=applyInfo&system=".$system."&aid=".$id."&modname=".$mod_name;
+        $WeChat      = new \Org\Util\WeChat;
+        $WeChat->sendCardMessage($temrecevier,$title,$description,$url,15,$mod_name,$system);
+
+        // $ctoid = $res['per_id'];
+        $data['aid']           = $id;
+        $data['comment_to_id'] = $receviers;
+        $data['mod_name']      = $mod_name;
+        $data['per_id']        = 8888;
+        $data['per_name']      = '系统撤销提醒';
+        $data['app_word']      = "此流程已被".session('name')."撤销<br/>撤销理由：".$reason;
+        $data['app_stat']      = 1;
+        $data['time']          = date('Y-m-d H:i:s');
+        $commentRes            = M($system.'_appflowcomment')->add($data);
+    }
+
     // 审核撤回
     public function delProc(){
         $id = I('post.id');
@@ -403,17 +461,18 @@ class ApplyController extends BaseController {
     public function forTest()
     {
         header("Content-type:text/html;charset=utf-8");
-        $system = 'yxhb';
-        $aid=649;
-        $mod_name = 'TempCreditLineApply';
-        $type   = 'F85';
-        $seek   = A('Seek');
-        $config = $seek->config_api($type);
-        dump($config[0]['value']);
-        $bibiaoArr = explode('|',$config[1]['value']);
-        dump($bibiaoArr[0]);
-        dump($bibiaoArr[1]);
-        dump($config[2]['value']);
+      
+        $authArr = array('wk','shh', 'csl', 'ChenBiSong','HuangShiQi');
+        $mod_name = 'SnRatioApply';
+        $apply_id =  337;
+        $system = 'kk';
+        $sql = '';
+        $mod_array = D('Msgdata')->QsArray();
+        foreach($mod_array as $val){
+            $sql .= " and `mod_name` <> '{$val['pro_mod']}'";
+        }
+
+        dump( $sql);
     }
 
 

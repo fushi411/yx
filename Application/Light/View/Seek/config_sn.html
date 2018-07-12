@@ -1,0 +1,334 @@
+<extend name="Apply:applyBase" />
+<block name="system"></block>
+<block name="disable_date"></block>
+<block name="able_date"></block>
+<block name="Process"></block>
+<block name="copyto"></block>
+<block name="pushto"></block>
+
+<!-- 配置主体 -->
+<block name="content_body">
+    <h3 class="titleTab" style="text-align: center;">指标配置</h3>
+    <div class="weui-cells weui-cells_form">
+            <div class="weui-cell weui-cell_select weui-cell_select-after">
+                    <div class="weui-cell__hd">
+                        <label class="weui-label">品种类别&nbsp;&nbsp;
+                            
+                        </label>
+                    </div>
+                    <div class="weui-cell__bd">
+                        <select class="weui-select" name="type" id='type'>
+                            
+                            <volist name="ratioType" id="item">
+                                <eq name="item.product" value="$product">
+                                    <option value="{$item.product}" selected >{$item.product}</option>
+                                    <else/>
+                                    <option value="{$item.product}">{$item.product}</option>
+                                </eq>
+                                   
+                            </volist>
+                        </select>
+                    </div>
+                </div>
+    </div>
+
+    <div class="weui-cells__title">点击对应指标修改</div>
+    <div class="weui-cells weui-cells_form">
+        <div class="weui-cell weui-cell_select weui-cell_select-after weui-cell_access show_div">
+            <div class="weui-cell__hd">
+                <label class="weui-label ">细度方式&nbsp;&nbsp;
+                </label>
+            </div>
+            <div class="weui-cell__bd">
+                <input class="weui-select" type="text" readonly  id="xdfs_1" value="≤ 5 % (45μm)" />
+            </div>
+        </div>
+
+        <div class="weui-cell  weui-cell_vcode  data_div" style="padding: 0">
+            <div class="weui-cell__hd">
+                <label class="weui-label">
+                </label>
+            </div>
+            <div class="weui-cell__bd weui-cells_checkbox weui-flex ">
+                <label class="weui-cell weui-check__label weui-flex__item" style="padding: 0" for="xdfs_2">
+                    <div class="weui-cell__hd">
+                        <input type="checkbox" class="weui-check" value="45μm筛余" name="checkbox" id="xdfs_2" checked="checked">
+                        <i class="weui-icon-checked"></i>
+                    </div>
+                    <div class="weui-cell__bd">
+                        <p style="margin: 0">45μm</p>
+                    </div>
+                </label>
+                <label class="weui-cell weui-check__label weui-flex__item" style="padding: 10px 0"  for="xdfs_3">
+                    <div class="weui-cell__hd">
+                        <input type="checkbox" class="weui-check" value="80μm筛余" name="checkbox" id="xdfs_3" >
+                        <i class="weui-icon-checked"></i>
+                    </div>
+                    <div class="weui-cell__bd">
+                        <p  style="margin: 0">80μm</p>
+                    </div>
+                </label>
+            </div>
+            <div class="weui-cell__ft">
+                <button class="weui-vcode-btn">确定</button>
+            </div>
+        </div>
+
+
+
+        <div class="weui-cell weui-cell_select weui-cell_select-after weui-cell_access  show_div">
+            <div class="weui-cell__hd">
+                <label class="weui-label ">细度&nbsp;&nbsp;
+                </label>
+            </div>
+            <div class="weui-cell__bd ">
+                <input class="weui-select" type="text" readonly id="xd_1" value="430 - 480" />
+            </div>
+        </div>
+        <div class="weui-cell weui-cell_vcode data_div">
+            <div class="weui-cell__hd">
+                <label class="weui-label ">
+                </label>
+            </div>
+            <div class="weui-cell__bd">
+                <input class="weui-input" type="number"  id="xd_2" value="5" placeholder="请输入" />
+            </div>
+            <div class="weui-cell__ft">
+                <button class="weui-vcode-btn">确定</button>
+            </div>
+        </div>
+        
+        <div class="weui-cell weui-cell_select weui-cell_select-after weui-cell_access  show_div">
+            <div class="weui-cell__hd">
+                <label class="weui-label ">SO3&nbsp;&nbsp;
+                </label>
+            </div>
+            <div class="weui-cell__bd">
+                <input class="weui-select" type="text" readonly id="so3_1" value="≤ 1 %" />
+            </div>
+        </div>
+        <div class="weui-cell weui-cell_vcode data_div">
+            <div class="weui-cell__hd">
+                <label class="weui-label">
+                </label>
+            </div>
+            <div class="weui-cell__bd weui-flex">
+                <input class="weui-input weui-flex__item" type="number" id="so3_2" value="430" placeholder="请输入" />
+                <span class="weui-flex__item " >&nbsp;&nbsp;&nbsp;&nbsp;- </span>
+                <input class="weui-input weui-flex__item" type="number" id="so3_3" value="480" placeholder="请输入" />
+            </div>
+            <div class="weui-cell__ft">
+                <button class="weui-vcode-btn">确定</button>
+            </div>
+        </div>
+
+        <div class="weui-cell weui-cell_select weui-cell_select-after weui-cell_access  show_div">
+            <div class="weui-cell__hd">
+                <label class="weui-label ">比表&nbsp;&nbsp;
+                </label>
+            </div>
+            <div class="weui-cell__bd">
+                <input class="weui-select" type="text" readonly id="bibiao_1" value="≤ 1 %" />
+            </div>
+        </div>
+        <div class="weui-cell weui-cell_vcode data_div">
+            <div class="weui-cell__hd">
+                <label class="weui-label ">
+                </label>
+            </div>
+            <div class="weui-cell__bd">
+                <input class="weui-input" type="number" id="bibiao_2" value="1" placeholder="请输入" />
+            </div>
+            <div class="weui-cell__ft">
+                <button class="weui-vcode-btn">确定</button>
+            </div>
+        </div>
+    </div>
+</block>
+<block name="submit">
+        <div class="weui-btn-area">
+            <input type="hidden" name="file_names" id="file_names">
+            <a class="weui-btn weui-btn_primary" href="javascript:" id="submit">提交</a>
+        </div>
+        <div class="weui-cells__title">注意事项</div>
+        <!-- <div class="weui-cells__title">各个中心主管及以上职位的申请抄送</div> -->
+        <div class="weui-cells" style="margin-top:0px;">
+            <div class="weui-cell">
+                <div class="weui-cell__bd">
+                    <div class="weui-uploader">
+                        <div class="weui-uploader__bd" style="height: 85px;">
+                             <div  style="color: #f12e2e;">请确认指标配置准确无误<br/>该指标数据关联产品合格率<br/>及不达标报警信息发送</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </block>
+<!-- JS -->
+<block name="js">
+        
+    <script>
+        var xdfs = '',
+            xd   = '',
+            so3 = '',
+            bibiao = '',
+            ini_xdfs = '',
+            ini_xd   = '',
+            ini_bibiao = '',
+            ini_so3 = '';
+        $('.data_div').hide();
+        $('.show_div').click(function(){
+            var index = $(this).index('.show_div'),
+                elm   = $('.data_div').eq(index);
+            elm.css('display') == 'none'?elm.fadeIn(200):elm.fadeOut(200);
+        });
+        // 点击确定
+        $('.weui-vcode-btn').click(function(){
+           var index = $(this).index('.weui-vcode-btn');
+
+           if(index == 0){
+            Xdfs() // 细度方式
+           }else if(index == 1){
+            Xd(); // 细度
+           }else if(index == 2){
+            So(); // 比表
+           }else if(index == 3){
+            Bibiao(); // so3
+           }
+        });
+        // 细度方式选择
+        $('.weui-check__label').on('click',function(){
+            $("input:checkbox").prop("checked","");
+            $(this).find(".weui-check").prop("checked","checked");
+        });
+
+        // 筛余确定按钮
+        function  Xdfs(){
+            
+            var value = $("input[name='checkbox']:checkbox:checked").val();
+            xdfs = value;
+            $('#xdfs_1').val(value);
+            $('.data_div').eq(0).fadeOut(200);
+        }
+
+        function  Xd(){
+            var value = $('#xd_2').val();
+
+            if(!value || value < 0) return tooltip('请认真填写细度指标');
+            if(value<10||value>20) return tooltip('细度数据超出10到20范围!请核对后重新填写!');
+            xd = value;
+            $('#xd_1').val('≤ '+value+' %');
+            $('.data_div').eq(1).fadeOut(200);
+        }
+        
+
+        function  So(){
+            var value_1 = $('#so3_2').val(),value_2 = $('#so3_3').val();
+
+            if(!value_1 || value_1 < 0 || !value_2 || value_2 < 0) return tooltip('请认真填写三氧化硫指标');
+            if ((value_2 > 3.5 || value_1 < 2.5) && $('#type').val() == 'P.O42.5') return tooltip('三氧化硫数据超出2.5-3.5范围!请核对后重新填写!');
+            if ((value_2 > 3.5 || value_1 < 2) && $('#type').val() == 'P.S.A32.5') return tooltip('三氧化硫数据超出2-3.5范围!请核对后重新填写!');
+            so3 = value_1+'|'+value_2;
+            
+            $('#so3_1').val(value_1+' ± '+value_2+' %');
+            $('.data_div').eq(2).fadeOut(200);
+        }
+
+        function  Bibiao(){
+            var value = $('#bibiao_2').val();
+
+            if(!value || value < 0) return tooltip('请认真填写水份指标');
+            if((value<350 || value>400) && $('#type').val() == 'P.S.A32.5') return tooltip('比表数据超出350到400范围!请核对后重新填写!');
+            if((value<300 || value>350) && $('#type').val() == 'P.S.A32.5') return tooltip('比表数据超出300到350范围!请核对后重新填写!');
+            bibiao = value;
+            $('#bibiao_1').val('≥ '+value+' m2/kg');
+            $('.data_div').eq(3).fadeOut(200);
+        }
+
+        // 类型选择
+        $('#type').change(function(){
+            getData();
+        });
+        
+        // 数据接口
+        getData();
+        function getData(){
+            toast.fadeIn(200);
+            $.ajax({
+                type:'POST',
+                url: "{:U('Light/Seek/seekApi')}",
+                dataType: 'json',
+                data: {
+                    type: 'config_api',
+                    product:$('#type').val(),
+                    mod:'SnRatioApply'
+                },
+                success: function (res) {
+                    if(res.code == 200){
+                        xdfs       = res.data[0].value,
+                        xd         = res.data[1].value,
+                        so3        = res.data[2].value,
+                        bibiao     = res.data[3].value,
+                        ini_xdfs   = res.data[0].value,
+                        ini_xd     = res.data[1].value,
+                        ini_bibiao = res.data[2].value,
+                        ini_so3    = res.data[3].value;
+  
+                       var  xdfs_val= !res.data[0].value?'无':res.data[0].value;
+                       $('#xdfs_1').val(xdfs_val);
+                        
+                       var xd_val = !res.data[1].value?'无':'≤ '+res.data[1].value+" %";
+                       $('#xd_1').val(xd_val);
+                       $('#xd_2').val('');
+                       
+                       var val = res.data[2].value.split('|');
+                       var  so3_val= !res.data[2].value?'无':val[0]+' ± '+val[1]+" %";
+                       $('#so3_1').val(so3_val);
+                       $('#so3_2').val('');
+                       $('#so3_3').val('');
+
+                       var  bibiao_val= !res.data[3].value?'无':'≥ '+res.data[3].value+' m2/kg ';
+                       $('#bibiao_1').val(bibiao_val);
+                       $('#bibiao_2').val('');
+                      
+                    }
+                    toast.fadeOut(200);
+                }
+            });
+        }
+        // 修改提交
+        $('#submit').click(function () {
+            
+            // 无修改不提交
+            if(xdfs == ini_xdfs && xd == ini_xd && so3 == ini_so3 && bibiao == ini_bibiao) return;
+            // 提示
+            if(!xd || xd < 0) return  tooltip('请认真填写细度指标');
+            if(!so3 )                  return  tooltip('请认真填写三氧化硫指标');
+            if(!bibiao || bibiao < 0) return  tooltip('请认真填写比表指标');
+            
+            toast.fadeIn(200);
+            $.ajax({
+                type: 'POST',
+                url: "{:U('Light/Seek/seekApi')}",
+                dataType: 'json',
+                data: {
+                    data:[xdfs,xd,so3,bibiao],
+                    type: 'config_sn_submit',
+                    mod:'SnRatioApply',
+                    product:$('#type').val(),
+                    __hash__: hash
+                },
+                dataType: 'json',
+                success: function (res) {
+                    toast.fadeOut(200);
+                    
+                    if(res.code==200){
+                       if( res.data.code == 404 ) return;
+                       $('#toast').fadeIn(200);
+                        setTimeout(function(){$('#toast').fadeOut(1500)},2000);  
+                    }
+                }
+            });
+        });
+    </script>
+</block>

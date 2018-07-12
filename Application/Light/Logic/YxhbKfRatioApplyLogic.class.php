@@ -128,7 +128,18 @@ class YxhbKfRatioApplyLogic extends Model {
         return $this->field(true)->where($map)->setField('state',0);
     }
 
-         /**
+    /**
+     * 拒收
+     * @param  integer $id 记录ID
+     * @return integer     影响行数
+     */
+    public function refuseRecord($id)
+    {
+        $map = array('id' => $id);
+        return $this->field(true)->where($map)->setField('state',3);
+    }
+    
+     /**
      * 记录内容
      * @param  integer $id 记录ID
      * @return array       记录数组
@@ -183,12 +194,13 @@ class YxhbKfRatioApplyLogic extends Model {
      */
     public function sealNeedContent($id){
         $res = $this->record($id);
+        $hour = $res['hour']>9?$res['hour']:'0'.$res['hour'];
+        $scfz = $res['scfz']>9?$res['scfz']:'0'.$res['scfz'];
+
         $result = array(
-            'sales'   => $res['rdy'],
-            'approve' => number_format($res['fkje'],2,'.',',')."元",
-            'notice'  => $res['zy'],
-            'date'    => $res['zd_date'],
-            'stat'    => $res['state']
+            array('生产时间',$res['date'].' '.$hour.':'.$scfz),
+            array('生产品种',$res['variety']),
+            array('相关说明',$res['bz']?$res['bz']:'无')
         );
         return $result;
     }
@@ -219,7 +231,7 @@ class YxhbKfRatioApplyLogic extends Model {
             $count += $val['name'];
         }
         $seek   = A('Seek');
-        $config = $seek->config_api($type);
+        $config = $seek->config_api($type,'KfRatioApply');
         $bibiaoArr = explode('|',$config[1]['value']);
      
         if($count != 100)   return array('code' => 404,'msg' => '总配置值须为100%，请检查后输入');

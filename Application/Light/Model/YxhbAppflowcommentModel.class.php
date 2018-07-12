@@ -26,18 +26,20 @@ class YxhbAppflowcommentModel extends Model {
                 $tmp = explode('发起了',$v['app_word']);
                 $str = $tmp[0]."发起了第{$count}次".$tmp[1];
                 $tmpArr = array(
-                    'id' => 0,
-                    'app_word' => str_replace("自动催审","自动催审<br />",$str),
-                    "time" => $v['time'],
-                    "per_name" =>  "系统定时任务",
-                    "per_id" =>  "9999",
-                    "comment_to_id" => $v['comment_to_id']
+                    'id'            =>  0,
+                    'app_word'      =>  str_replace("自动催审","自动催审<br />",$str),
+                    "time"          =>  $v['time'],
+                    "per_name"      =>  "系统定时任务",
+                    "per_id"        =>  "9999",
+                    "comment_to_id" =>  $v['comment_to_id']
                 );
                 $pushArr[] = $tmpArr;
             }
         }
-        $cl = $this->field('id,app_word,time,per_name,per_id,comment_to_id')->where(array('aid'=>$aid, 'mod_name'=>$mod_name, 'app_stat'=>1,'per_id' =>array('neq',9999)))->order('time desc')->select();
+        $delArr = $this->field('id,app_word,time,per_name,per_id,comment_to_id')->where(array('aid'=>$aid, 'mod_name'=>$mod_name, 'app_stat'=>1,'per_id' =>8888))->order('time desc')->select();
+        $cl = $this->field('id,pro_id,app_word,time,per_name,per_id,comment_to_id')->where(array('aid'=>$aid, 'mod_name'=>$mod_name, 'app_stat'=>1,'per_id' =>array('not in',array(9999,8888))))->order('time desc')->select();
         $cl = array_merge($pushArr,$cl);
+        $cl = array_merge($delArr,$cl);
         $boss = D('yxhb_boss');
         foreach ($cl as $v) {
               $cwxUID = $boss->getWXFromID($v['per_id']);
@@ -61,7 +63,7 @@ class YxhbAppflowcommentModel extends Model {
               } else {
                   $v['del_able'] = 1;
               }
-              if(strpos($v['app_word'],'@所有人') || $v['per_id'] == 9999){
+              if(strpos($v['app_word'],'@所有人') || $v['per_id'] == 9999 || $v['per_id'] == 8888){
                 $commentUser = " ";
               }
               $comment_list[] = array('id'=>$v['id'], 'pid'=>$v['per_id'], 'avatar'=>$avatar, 'name'=>$v['per_name'], 'time'=>$v['time'], 'word'=>$commentUser.$v['app_word'], 'del_able'=>$v['del_able'],'wxid'=>$cwxUID);

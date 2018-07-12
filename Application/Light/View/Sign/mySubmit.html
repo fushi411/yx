@@ -1,0 +1,131 @@
+<extend name="Sign:base" />
+   
+<block name='content'>
+        <div class="page__bd">
+                <!--<a href="javascript:;" class="weui-btn weui-btn_primary">点击展现searchBar</a>-->
+                <div class="weui-search-bar" id="searchBar">
+                    <form class="weui-search-bar__form">
+                        <div class="weui-search-bar__box">
+                            <i class="weui-icon-search"></i>
+                            <input type="search" class="weui-search-bar__input" id="searchInput" placeholder="搜索系统、模块名" required="">
+                            <a href="javascript:" class="weui-icon-clear" id="searchClear"></a>
+                        </div>
+                        <label class="weui-search-bar__label searchCenter" id="searchText">
+                            <i class="weui-icon-search"></i>
+                            <span>搜索系统、模块名</span>
+                        </label>
+                    </form>
+                    <a href="javascript:" class="weui-search-bar__cancel-btn" id="searchCancel">搜索</a>
+                </div>
+            </div>
+                    <div class="weui-panel__hd" style="color: red;font-size: 18px;font-weight: 800;background-color: #f8f8f8;padding-top: 8px;padding-bottom: 4px;">待签收</div>
+                    <div class="weui-panel__bd" id="sign">
+
+                    </div>
+                </div>
+
+                <div class="weui-panel weui-panel_access" style="margin-top:0px;">
+                    <div class="weui-panel__hd" style="color: green;font-size: 18px;font-weight: 800;background-color: #f8f8f8;padding-top: 8px;padding-bottom: 4px;">已签收</div>
+                    <div class="weui-panel__bd" id="approve">
+                        
+                    </div>
+</block>
+
+
+<block name="js">
+    <script>
+        var page = 1;
+        var toast = $('#loadingToast'),
+            no_more = $('.no-more'),
+            load_more = $('.load-more');
+        load_more.click(function(){
+                getData();
+            })
+        $(function(){
+            toast.fadeIn(200);
+            // 请求数据
+            getData();
+
+        })
+    function searchGetDate(){
+        page = 1;
+        toast.fadeIn(200);
+        $('#approve').empty();
+        getData();
+    }
+
+    
+// 未签收接口请求
+    geUnSigntData();
+function geUnSigntData(){
+        $.ajax({
+            type:'POST',
+            url: "{:U('Light/Sign/Api')}",
+            data: {
+                action: 'mySubmit'
+            },
+            dataType: 'json',
+            success: function (res) {
+                makeHtml(res,$('#sign'));
+                toast.fadeOut(200);
+            }
+        });
+    }
+
+
+// 接口请求
+    function getData(){
+        $.ajax({
+            type:'POST',
+            url: "{:U('Light/Sign/Api')}",
+            data: {
+                action: 'mySubmited',
+                page_num:page,
+                search:$('#searchInput').val()
+            },
+            dataType: 'json',
+            success: function (res) {
+                var data = res;
+                if(data.length <20){
+                    no_more.show();
+                    load_more.hide();
+                }else{
+                    page++;
+                    load_more.show();
+                    no_more.hide();
+                }
+                makeHtml(data,$('#approve'));
+                toast.fadeOut(200);
+            }
+        });
+    }
+// html 生成
+    function  makeHtml(data,dom){
+        var html = '';
+        for(i = 0 ; i<data.length;i++){
+            html +="<a href='"+"{:U('Light/Apply/applyInfo')}"+'&system='+data[i]['system']+'&aid='+data[i]['aid']+'&modname='+data[i]['mod_name']+"' class='weui-cell weui-cell_access weui-cell_link' style='text-decoration: none;'>"+
+            '<div class="weui-media-box weui-media-box_text" style="width: 100%;padding-left: 0px;padding-right: 0px;">'+
+            '<div class="weui-flex" style="align-items: center;">'+
+            '<div class="weui-flex__item">'+
+            '<h4 class="weui-media-box__title" >'+data[i]['applyer']+'的'+data[i]['title']+'</h4>'+
+            '</div>'+
+            '<div class="weui-flex__item">';
+            if(data[i]['stat'] == 0){
+                html+= '<span class="label label-default" style="margin-left: 1em;padding-top: 0.3em;padding-bottom: 0.2em">已撤销</span>'
+            }else if(data[i]['stat'] == 2){
+                html+='<span class="label label-primary" style="margin-left: 1em;padding-top: 0.3em;padding-bottom: 0.2em">签收中</span>';
+            }else if(data[i]['stat'] == 1){
+                html+= '<span class="label label-success" style="margin-left: 1em;padding-top: 0.3em;padding-bottom: 0.2em">已签收</span>';
+            }else if(data[i]['stat'] == 3){
+                html+= '<span class="label label-danger" style="margin-left: 1em;padding-top: 0.3em;padding-bottom: 0.2em">已拒签</span>';
+            }
+            html += '</div><div class="weui-flex__item" style="text-align: right;"><h5>'+data[i]['date']+'</h5></div> </div>';
+            for(x = 0 ;x < data[i].content.length;x++){
+                html +='<p class="weui-media-box__desc " style="margin-bottom: 0px;"><span>'+data[i].content[x][0]+'：</span><span  >'+data[i].content[x][1]+'</span></p>';
+            }
+            html += '</div> </a>';
+        }
+        dom.append(html);
+    }  
+    </script>
+</block>

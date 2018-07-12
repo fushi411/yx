@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0">
+    <title>{$title}</title>
+    <link href="//cdn.bootcss.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet">
+   <!-- 引入 WeUI -->
+    <link rel="stylesheet" href="https://res.wx.qq.com/open/libs/weui/1.1.2/weui.min.css" />
+    <link rel="stylesheet" href="__PUBLIC__/assets/css/weMain.css?version=201710093" />
+    <link href="__PUBLIC__/assets/css/wc_select2.min.css?version=20170819" rel="stylesheet" />
+</head>
+<style>
+    .no-more{
+        display: none;
+        text-align: center;
+        line-height: 30px;
+        color: #cecece;
+        font-size: 12px;
+        background: #f0f0f0;
+    }
+    .load-more{
+        display: none;
+        text-align: center;
+        line-height: 30px;
+        color: #6ea3f3;
+        font-size: 12px;
+        border-radius: 5px;
+        width: 98%;
+        margin: 0 auto;
+        border-top:1px solid rgb(243, 237, 237);
+    }
+    .load-more:active {
+    background: #97d4ff;
+    color: #fff;
+    }
+    #btn-all{
+        display: none;
+        right: 10px;
+        bottom: 10px;
+        position: fixed;
+        text-align: center;
+        z-index: 99;
+    }
+    label {
+        font-weight: 400;
+        margin-bottom: 0px;
+    }
+    .searchCenter{
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }   
+    </style>
+<body>
+    <div class="container" id="container">
+		<div class="page js_show">
+		    <div class="page__bd" style="height: 100%;">
+		        <div class="weui-tab">
+                    <block name="title">
+                            <div class="weui-navbar">
+                                <volist name="titleArr" id='vo'>
+                                        <div class="weui-navbar__item {$vo.on}" url-data="{$vo.url}">
+                                            {$vo.title}
+                                            <gt name="vo.unRead" value="0"><span class="weui-badge" style="margin-left: -2px;margin-bottom: 2px;width: 17.6px;line-height: 17.6px;padding: 0">{$vo.unRead}</span></gt>
+                                        </div>
+                                </volist>
+                            </div>
+                    </block>
+                            
+                    <div class="weui-tab__panel">
+                            <div class="weui-panel weui-panel_access">
+                                
+		            <block name="content">
+
+
+                    </block>
+                        
+                        <div class="no-more" >信息已经到底...</div>
+                        <div class="load-more" >点我加载更多...</div>
+                    </div>
+                </div>
+		        </div>
+		    </div>
+		</div>
+    </div>
+    <!--BEGIN toast-->
+    <div id="loadingToast" style=" display: none;">
+        <div class="weui-mask_transparent"></div>
+        <div class="weui-toast">
+            <i class="weui-loading weui-icon_toast"></i>
+            <p class="weui-toast__content">数据加载中</p>
+        </div>
+    </div>
+    <!--end toast-->
+    <!-- 一键全读 -->
+    <div class="js_dialog" id="iosDialog" style="display: none;">
+        <div class="weui-mask"></div>
+        <div class="weui-dialog">
+            <div class="weui-dialog__hd">
+                <strong class="weui-dialog__title">确认将未读信息变成已读信息</strong>
+            </div>
+            <div class="weui-dialog__ft">
+                <a href="javascript:;" onclick="dialog_close()" class="weui-dialog__btn weui-dialog__btn_default">取消</a>
+                <a href="javascript:;" onclick="dialog_confirm()" class="weui-dialog__btn weui-dialog__btn_primary">确认</a>
+            </div>
+        </div>
+    </div>
+    <!-- 一键全读 end-->
+    
+</body>
+<script src="//cdn.bootcss.com/jquery/1.11.1/jquery.min.js"></script>
+<script src="http://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
+<block name="js">
+
+</block>
+<script>
+$(function(){
+        $('.weui-navbar__item').on('click', function () {
+            $(this).addClass('weui-bar__item_on').siblings('.weui-bar__item_on').removeClass('weui-bar__item_on');
+            url = $(this).attr('url-data');
+            window.location.href =  url;
+        });
+        $('#btn-all').on('click',function(){
+            $('#iosDialog').show();
+        })
+    });
+
+  function  dialog_close(){
+      $('#iosDialog').hide();
+  }
+  
+  $(function(){
+        var $searchBar = $('#searchBar'),
+            $searchResult = $('#searchResult'),
+            $searchText = $('#searchText'),
+            $searchInput = $('#searchInput'),
+            $searchClear = $('#searchClear'),
+            $searchCancel = $('#searchCancel');
+
+        function hideSearchResult(){
+            $searchResult.hide();
+            $searchInput.val('');
+        }
+        function cancelSearch(){
+            hideSearchResult();
+            $searchBar.removeClass('weui-search-bar_focusing');
+            $searchText.show();
+        }
+
+        $searchText.on('click', function(){
+            $searchBar.addClass('weui-search-bar_focusing');
+            $searchInput.focus();
+        });
+        $searchInput
+            .on('blur', function () {
+                if(!this.value.length) cancelSearch();
+            })
+            .on('input', function(){
+                if(this.value.length) {
+                    $searchResult.show();
+                } else {
+                    $searchResult.hide();
+                    searchGetDate();
+                }
+            })
+        ;
+        $searchClear.on('click', function(){
+            hideSearchResult();
+            $searchInput.focus();
+        });
+        $searchCancel.on('click', function(){
+            searchGetDate();
+        });
+        $searchInput.on('keypress',function(e) {  
+            var keycode = e.keyCode;  
+            var searchName = $(this).val();  
+            if(keycode=='13') {  
+            e.preventDefault();    
+                searchGetDate();
+            }         
+        });
+    });
+</script>
+
+</html>

@@ -147,7 +147,7 @@ class KkAppflowprocModel extends Model {
 
     public function reset($mod_name,$aid)
     {
-        $res = $this -> where(array('mod_name'=>$mod_name,'aid'=>$aid)) -> setInc('app_stat', 3);
+        $res = $this -> where(array('mod_name'=>$mod_name,'aid'=>$aid,'app_stat' => 3)) -> setInc('app_stat', 3);
         return $res;
     }
 

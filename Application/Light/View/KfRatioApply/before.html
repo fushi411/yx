@@ -1,328 +1,260 @@
-<extend name="Apply:applyBase" />
+<!DOCTYPE html>
+<html lang="en">
 
-<!-- 去除不可选择日期 -->
-<block name="disable_date"></block>
-<!-- 去除不可选择日期 end-->
-<block name="content_body">
-    <input type="hidden" id="ratio" value="ratio">
-    <div class="weui-cells weui-cells_form">
-        <div class="weui-cell weui-cell_select weui-cell_select-after">
-            <div class="weui-cell__hd">
-                <label class="weui-label">生产品种&nbsp;&nbsp;
-                    <span style="color:red;">*</span>
-                </label>
-            </div>
-            <div class="weui-cell__bd">
-                <select class="weui-select greyColor" name="type" id='type'>
-                    <option value='-1' disabled selected style='display:none;'>请选择生产品种</option>
-                    <option value="F75">F75</option>
-                    <option value="F85">F85</option>
-                    <option value="S95">S95</option>
-                </select>
-            </div>
-        </div>
-        <div class="weui-cell weui-cell_select weui-cell_select-after">
-            <div class="weui-cell__hd">
-                <label class="weui-label">
-                    <span class="font-width">生产线</span>&nbsp;&nbsp;
-                    <span style="color:red;">*</span>
-                </label>
-            </div>
-            <div class="weui-cell__bd">
-                <select class="weui-select greyColor" name="type" id='scx'>
-                    <option value='-1' disabled selected style='display:none;'>请选择生产线</option>
-                    <option value="A#生产线">A#生产线</option>
-                    <option value="B#生产线">B#生产线</option>
-                </select>
-            </div>
-        </div>
-        <div class="weui-cell weui-cell_select weui-cell_select-after">
-            <div class="weui-cell__hd">
-                <label class="weui-label">
-                    <span class="font-width">入库库号</span>&nbsp;&nbsp;
-                    <span style="color:red;">*</span>
-                </label>
-            </div>
-            <div class="weui-cell__bd">
-                <select class="weui-select greyColor" name="type" id='kh'>
-                    <option value='-1' disabled selected style='display:none;'>请选择入库号</option>
-                    <option value=1>1#</option>
-                    <option value=2>2#</option>
-                    <option value=3>3#</option>
-                    <option value=4>4#</option>
-                    <option value=5>5#</option>
-                    <option value=6>6#</option>
-                </select>
-            </div>
-        </div>
-    </div>
-
-    <div class="weui-cells weui-cells_form">
-        <div class="weui-cell weui-cell_select weui-cell_select-after">
-            <div class="weui-cell__hd">
-                <label class="weui-label">原料选择&nbsp;&nbsp;
-                    <span style="color:red;">*</span>
-                </label>
-            </div>
-            <div class="weui-cell__bd">
-                <input class="weui-select greyColor" type="text" id="select_ycl" readonly value="点击配置原料" />
-            </div>
-        </div>
-        <div class="weui-cell weui-cell_select weui-cell_select-after "></div>
-        <div id="ycl_content">
-
-        </div>
-    </div>
-    <div class="weui-cells weui-cells_form">
-        <div class="weui-cell">
-            <div class="weui-cell__hd">
-                <label class="weui-label">
-                    <span class="font-width" >配比合计</span>&nbsp;&nbsp;
-                    
-                </label>
-            </div>
-            <div class="weui-cell__bd">
-                    <input class="weui-input" type="text" name="custodian"  id='peibi' readonly placeholder="自动填写" />
-            </div>
-        </div>
-        <div class="weui-cell weui-cell_select weui-cell_select-after">
-                <div class="weui-cell__hd">
-                    <label class="weui-label"> <span class="font-width" >配比简介</span>&nbsp;&nbsp;
-                    </label>
-                </div>
-                <div class="weui-cell__hd">
-                    <div style="padding: 3px 0;"><span class="" >筛余</span>：≤ 5.00% (45μm)</div>
-                    <div style="padding: 3px 0;"><span class="" >比表</span>：430 - 480 </div>
-                    <div style="padding: 3px 0;"><span class="" >水份</span>：≤ 1.00%</div>
-                </div>
-            </div>  
-    </div>
-    <div class="weui-cells weui-cells_form">
-        <div class="weui-cell">
-            <div class="weui-cell__hd">
-                <label class="weui-label">申请理由&nbsp;&nbsp;
-                    <span style="color:red;">*</span>
-                </label>
-            </div>
-        </div>
-        <div class="weui-cell">
-            <div class="weui-cell__bd" id="cnt">
-                <textarea class="weui-textarea" name="reason" id="reason" placeholder="申请理由至少5个字(必填);" rows="3"></textarea>
-                <div class="weui-textarea-counter">
-                    <span id="reason_char">0</span>/200</div>
-            </div>
-        </div>
-    </div>
-    <div class="other_page" id="other_page" style="display: none;">
-        <div class="container">
-            <div class="page js_show">
-                <h3 class="titleTab" style="text-align: center">配比原料选择</h3>
-                <div class="weui-cells__title">磨内</div>
-                <div class="weui-cells weui-cells_form">
-                    <div class="weui-cell weui-cell_switch">
-                        <div class="weui-cell__bd">宝钢水渣</div>
-                        <div class="weui-cell__ft">
-                            <label for="scale1" class="weui-switch-cp">
-                                <input id="scale1" value="宝钢水渣" class="weui-switch-cp__input scale" type="checkbox" >
-                                <div class="weui-switch-cp__box"></div>
-                            </label>
-                        </div>
-                    </div>
-                    <div class="weui-cell weui-cell_switch">
-                        <div class="weui-cell__bd">石灰石</div>
-                        <div class="weui-cell__ft">
-                            <label for="scale2" class="weui-switch-cp">
-                                <input id="scale2" value="石灰石" class="weui-switch-cp__input scale" type="checkbox" >
-                                <div class="weui-switch-cp__box"></div>
-                            </label>
-                        </div>
-                    </div>
-                    <div class="weui-cell weui-cell_switch">
-                        <div class="weui-cell__bd">宝钢矿热炉渣</div>
-                        <div class="weui-cell__ft">
-                            <label for="scale3" class="weui-switch-cp">
-                                <input id="scale3" value="矿热炉渣" class="weui-switch-cp__input scale"  type="checkbox" >
-                                <div class="weui-switch-cp__box"></div>
-                            </label>
-                        </div>
-                    </div>
-                    <div class="weui-cell weui-cell_switch">
-                        <div class="weui-cell__bd">电厂炉渣</div>
-                        <div class="weui-cell__ft">
-                            <label for="scale4" class="weui-switch-cp">
-                                <input id="scale4"  value="电厂炉渣" class="weui-switch-cp__input scale" type="checkbox">
-                                <div class="weui-switch-cp__box"></div>
-                            </label>
-                        </div>
-                    </div>
-                </div>
-                <div class="weui-cells__title">磨尾</div>
-                <div class="weui-cells weui-cells_form">
-                    <div class="weui-cell weui-cell_switch">
-                        <div class="weui-cell__bd">脱硫灰</div>
-                        <div class="weui-cell__ft">
-                            <label for="scale4" class="weui-switch-cp">
-                                <input id="scale4"  value="脱硫灰" class="weui-switch-cp__input scale" type="checkbox">
-                                <div class="weui-switch-cp__box"></div>
-                            </label>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="button-sp-area" style="margin-bottom: 20px;display: flex;flex-direction: row;width: 100%;justify-content: space-around;align-items: baseline;">
-                    <a href="javascript:;" id="ratio-refuse" class="weui-btn weui-btn_warn" style="width: 40%;">取消</a>
-                    <a href="javascript:;" id="ratio-agree" class="weui-btn weui-btn_primary" style="width: 40%">确定</a>
-                </div>
-            </div>
-        </div>
-    </div>
-</block>
-<block name="js">
-    <script>
-        var label = "生产时间&nbsp;&nbsp;<span style='color:red;'>*</span>",
-            datePicker = $('#showDatePicker'),
-            the_date = datePicker.val(),
-            H = new Date().getHours() + 1,
-            scale = $('.scale'),
-            scale1 = $('#scale1'),
-            scale2 = $('#scale2'),
-            scale3 = $('#scale3'),
-            scale4 = $('#scale4'),
-            scale5 = $('#scale5'),
-            scale_array = [],
-            H = H > 9 ? H : '0' + H;
-        var arr_week = new Array("星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六");
-        now = the_date + ' ' + H + ':00';
-
-        // 确定按钮
-        $('#ratio-agree').click(function () {
-            var scale_1 = scale1.is(':checked'),
-                scale_2 = scale2.is(':checked'),
-                scale_3 = scale3.is(':checked'),
-                scale_4 = scale4.is(':checked'),
-                scale_5 = scale5.is(':checked');
-        
-            if (!scale_1 && !scale_2  && !scale_3  && !scale_4  && !scale_5) return tooltip('请选择至少一种物料');
-            scale_array = [];
-            scale_array[0] = { 'name': scale_1?scale.eq(0).val():null, 'value': 0 + 'scale' };
-            scale_array[1] = { 'name': scale_2?scale.eq(1).val():null, 'value': 0 + 'scale' };
-            scale_array[2] = { 'name': scale_3?scale.eq(2).val():null, 'value': 0 + 'scale' };
-            scale_array[3] = { 'name': scale_4?scale.eq(3).val():null, 'value': 0 + 'scale' };
-            scale_array[4] = { 'name': scale_5?scale.eq(4).val():null, 'value': 0 + 'scale' };
-
-            show_wl();
-            $('#peibi').val('');
-            $('#other_page').fadeOut(200);
-        });
-
-        // 物料
-        function show_wl() {
-            
-            $('#ycl_content').empty();
-            var html = '';
-            for (i = 0; i < scale_array.length; i++) {
-                if (scale_array[i].name == null) continue;
-                html += '<div class="weui-cell weui-cell_select weui-cell_select-after ">' +
-                    '<div class="weui-cell__hd">' +
-                    '<label class="weui-label"><span class="font-width">' + scale_array[i].name + '</span>&nbsp;&nbsp;' +
-                    '<span style="color:red;">*</span>' +
-                    '</label>' +
-                    '</div>' +
-                    '<div class="weui-cell__bd">' +
-                    '<input class="weui-select peibi" type="number" index='+scale_array[i].name+' maxlength="15" name="custodian" id="' + scale_array[i].value + '" placeholder="请输入配比" />' +
-                    '</div>' +
-                    '</div>';
-            }
-            $('#ycl_content').html(html);
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>截图测试</title>
+    <style>
+        * {
+            margin: 0;
+            color: #3a3a3a;
         }
-        $('#ycl_content').on('change','.peibi',function(){
-            var count = 0;
-            for(var i=0;i<5;i++ ){
-                if($('.peibi').eq(i).attr('index') == '脱硫灰') continue;
-                num = $('.peibi').eq(i).val()?$('.peibi').eq(i).val():0;
-                count += parseFloat(num);
-            }
-            $('#peibi').val(count+'%');
-        })
 
-        // 取消按钮
-        $('#ratio-refuse').click(function () {
-            $('#other_page').fadeOut(200);
-        });
+        #content {
+            padding: 10px;
+        }
 
-        // 原材料配置弹出
-        $('#select_ycl').click(function () {
-            $('#other_page').fadeIn(200);
-        })
+        .test {
+            width: 322px;
+            height: 496px;
+            text-align: center;
+            border: 1px solid #c0c0c0;
+            background: #fff;
+            margin-top: 1px;
+            margin-left: 1px;
 
-        // 日期插件
-        datePicker.val(now);
-        $('.weui-label').eq(1).html(label);
+        }
 
-        $('.greyColor').change(function () {
-            $(this).removeClass('greyColor');
-        })
+        canvas {
+            margin-top: -459px;
+            margin-right: 5px;
+            margin-left: 500px;
+        }
 
-        function ratioTime() {
-            // 日期选择
-            var hours = [],
-                minites = [{ label: '00', value: '00' }, { label: '30', value: 30 }],
-                symbol = [];
+        .down {
+            float: left;
+            margin: 0px 10px;
+        }
 
-            for (var i = 0; i < 24; i++) {
-                var hours_item = {};
-                hours_item.label = ('' + i).length === 1 ? '0' + i : '' + i;
-                hours_item.value = i;
-                hours.push(hours_item);
-            }
+        .header {
+            border-bottom: 1px solid #c0c0c0;
+            text-align: center;
+            padding-top: 10px;
+        }
 
-            for (var i = 0; i < 4; i++) {
-                $date = new Date();
-                $date = $date.setDate($date.getDate() - 1 + i);
-                $date = new Date($date);
+        .header>div {
+            width: 164px;
+            margin: 0 auto;
+        }
 
-                var Y = $date.getFullYear(),
-                    M = $date.getMonth() + 1,
-                    D = $date.getDate();
+        .header img {
+            width: 29px;
+            float: left;
+            margin-right: -10px;
+        }
 
-                M = M > 9 ? M : '0' + M;
-                D = D > 9 ? D : '0' + D;
+        .header p {
+            padding-bottom: 12px;
+            padding-top: 7px;
+        }
 
-                var symbol_item = {};
-                symbol_item.label = Y + '-' + M + '-' + D + ' ' + arr_week[$date.getDay()];
-                if (i == 1) {
-                    symbol_item.label = '今天';
-                }
-                symbol_item.value = Y + '-' + M + '-' + D;
-                symbol.push(symbol_item);
-            }
+        .main {
+            text-align: center;
+        }
 
-            weui.picker(symbol, hours, minites, {
-                defaultValue: [the_date, $date.getHours() + 1, 0],
-                onConfirm: function (result) {
-                    pickerValue(result);
+        .main p:first-child {
+            font-size: 20px;
+            color: #969696;
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+
+        .main p:last-child {
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+
+        .main :last-child .id {
+            color: #e67d2c;
+            display: inline-block;
+            margin-right: 4px;
+
+        }
+
+        .footer {
+            background: #D7D7D7;
+            text-align: center;
+            height: 100px;
+            padding-bottom: 10px;
+        }
+
+        .footer>div>div {
+            float: left;
+        }
+
+        .footer>div>div.pic {
+            width: 70px;
+            height: 70px;
+            border-radius: 10px;
+            margin: 10px;
+            margin-right: 0;
+            margin-left: 0;
+            background: #fff;
+        }
+
+        .footer>div {
+            padding: 10px 22px;
+        }
+
+        .footer>div>div ul {
+            list-style: none;
+            padding-left: 22px;
+        }
+
+        .footer>div>div ul li {
+            margin-top: 5px;
+            text-align: left;
+        }
+
+        .footer>div>div ul li span {
+            display: inline-block;
+            margin-left: 15px;
+        }
+
+        .copy {
+            clear: both;
+            margin-top: 19px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="content">
+        <div class="test">
+            <div class="header">
+                <div>
+
+                    <p>****麻将</p>
+                </div>
+            </div>
+            <div class="main">
+                <p>长按二维码下载游戏</p>
+
+                <p>绑定推广员ID
+                    <span class="id">824996</span>马上领礼包！</p>
+            </div>
+            <div class="footer">
+                <div>
+                    <div class="pic">
+                        <img src="">
+                    </div>
+                    <div>
+                        <ul>
+                            <li>昵&nbsp;&nbsp; 称：
+                                <span>天府雀神</span>
+                            </li>
+                            <li>推广ID：
+                                <span>824996</span>
+                            </li>
+                            <li>微信号：
+                                <span>wyscmi007</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="test">
+            <div class="header">
+                <div>
+
+                    <p>****麻将</p>
+                </div>
+            </div>
+            <div class="main">
+                <p>长按二维码下载游戏</p>
+
+                <p>绑定推广员ID
+                    <span class="id">824996</span>马上领礼包！</p>
+            </div>
+            <div class="footer">
+                <div>
+                    <div class="pic">
+                        <img src="">
+                    </div>
+                    <div>
+                        <ul>
+                            <li>昵&nbsp;&nbsp; 称：
+                                <span>天府雀神</span>
+                            </li>
+                            <li>推广ID：
+                                <span>824996</span>
+                            </li>
+                            <li>微信号：
+                                <span>wyscmi007</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="copy">
+        <button onclick="copy()">截图</button>
+        <a class="down" href="" download="downImg">下载</a>
+
+    </div>
+
+</body>
+<script src="//cdn.bootcss.com/jquery/1.11.1/jquery.min.js"></script>
+<script src="https://cdn.bootcss.com/html2canvas/0.5.0-beta4/html2canvas.js"></script>
+<script>
+    $.ajax({
+                type: 'POST',
+                url: "http://www.fjyuanxin.com/yxhb/include/getSupplyPaymentApi.php",
+                dataType: 'json',
+                data: {
+                    'auth' : "{$auth}",
+                    'id'  : "{$id}",
+                },
+                dataType: 'json',
+                success: function (res) {
+                    toast.fadeOut(200);
+                    if (res.code == 200) {
+                        window.location.href = "{$fixed['info']}" + "&aid=" + res.aid;
+                    } else {
+                        tooltip(res.msg);
+                    }
                 }
             });
-        }
-        // 日历填充
-        function pickerValue(dateArr) {
-            var val = dateArr[0] + ' ';
+    
 
-            val += dateArr[1] > 9 ? dateArr[1] : '0' + dateArr[1];
-            val += ':';
-            val += dateArr[2];
-            $('#showDatePicker').val(val);
-        }
-        $('#submit').click(function () {
+    var pic;
+    var canvas2 = document.createElement("canvas");
+    let _canvas = document.querySelector('.test');
+    var w = parseInt(window.getComputedStyle(_canvas).width);
+    var h = parseInt(window.getComputedStyle(_canvas).height);
+    //将canvas画布放大若干倍，然后盛放在较小的容器内，就显得不模糊了
+    canvas2.width = w * 2;
+    canvas2.height = h * 2;
+    canvas2.style.width = w + "px";
+    canvas2.style.height = h + "px";
+    //可以按照自己的需求，对context的参数修改,translate指的是偏移量   
+    var context = canvas2.getContext("2d");
+    context.scale(2, 2);
+    html2canvas(document.querySelector('.test'), { canvas: canvas2 }).then(function (canvas) {
+        pic = canvas;
+        //canvas转换成url，然后利用a标签的download属性，直接下载，绕过上传服务器再下载
+        document.querySelector(".down").setAttribute('href', canvas.toDataURL());
+    });
+    //点击的时候把图片复制到下面那个div下
+    function copy() {
+        document.querySelector(".copy").appendChild(pic);
+    }
+</script>
 
-            if($('#type').val() == -1 || $('#type').val() == null) return tooltip('请选择生产品种');
-
-            // 留言判断
-            var reason = $('#reason').val();
-            if (reason.length < 5) return tooltip('申请理由不得少于5个字！');
-            if (reason.length > 200) return  tooltip('申请理由不得超过200个字！');
-                
-            
-        });
-    </script>
-</block>
+</html>

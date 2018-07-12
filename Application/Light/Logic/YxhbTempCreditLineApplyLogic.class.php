@@ -43,7 +43,7 @@ class YxhbTempCreditLineApplyLogic extends Model {
                                      'type'=>'string',
                                      'color' => 'black'
                                     ); 
-        $color = $info['flag']?'black':'#f12e2e';
+        $color = $info['flag']?'#f12e2e':'black';
         $result['content'][] = array('name'=>'应收余额：',
                                      'value'=>$info['ye'],
                                      'type'=>'string',

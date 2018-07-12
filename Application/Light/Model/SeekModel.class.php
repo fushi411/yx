@@ -14,8 +14,9 @@ class SeekModel extends Model {
     public function getAppTable(){
         $appArr = array(
             array(
-                 'title'     => '环保临时额度' , 
-                'search'     => '临时额度','system' => 'yxhb' ,
+                'title'      => '环保临时额度' , 
+                'search'     => '临时额度',
+                'system'     => 'yxhb' ,
                 'mod_name'   => 'TempCreditLineApply',
                 'table_name' => 'yxhb_tempcreditlineconfig',
                 'id'         => 'id' ,
@@ -75,4 +76,6 @@ class SeekModel extends Model {
         );
         return $appArr;
     }
+
+    
 }

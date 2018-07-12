@@ -251,5 +251,18 @@ class WorkFlowFuncController extends Controller {
         $resArr = $res?array("status"=>"success"):array("status"=>"failure");
         return $resArr;
 	}
+
+	/**
+     * 配比通知水泥签收通过后调用函数
+     * @param  [integre] $aid [临时额度记录ID]
+     * @return [array]      [状态]
+     */
+	public function  KkSnRatioApplyEnd($aid)
+    {
+		$res = M('kk_zlddtz')->where(array('STAT'=>2, 'id'=>$aid))->setField('STAT', 1);
+		// 生成一条付款记录信息
+        $resArr = $res?array("status"=>"success"):array("status"=>"failure");
+        return $resArr;
+	}
 // -----END------
 }

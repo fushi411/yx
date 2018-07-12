@@ -41,7 +41,15 @@ class MsgdataModel extends Model {
             }
         }
     }
-
+    /**
+     * 签收模式排除
+     */
+    public function QsArray(){
+        $yxhb_mod  = M('yxhb_appflowtable')->field('pro_mod')->where(array('stage_name' => '签收'))->select();
+        $kk_mod    = M('kk_appflowtable')->field('pro_mod')->where(array('stage_name' => '签收'))->select();
+        return array_merge($yxhb_mod,$kk_mod);
+    }
+    
     // 采购付款
     public function CgfkApply(){
         $result = array();
@@ -109,11 +117,11 @@ class MsgdataModel extends Model {
     }
 
     // 配比通知
-    public function KfRatioApply(){
+    public function RatioApply(){
         $result = array();
         $result['url'] = array(
             array('name' => '矿粉配比通知','url' => U('Light/View/View',array('modname'=>'KfRatioApply','system' => 'yxhb')),'modname' => 'yxhbKfRatioApply'),
-            // array('name' => '配比通知(水泥)','url' => U('Light/View/View',array('modname'=>'SnRatioApply','system' => 'kk')),'modname' => 'kkRatioApply'),
+            array('name' => '水泥配比通知','url' => U('Light/View/View',array('modname'=>'SnRatioApply','system' => 'kk')),'modname' => 'kkSnRatioApply'),
             // array('name' => '配比通知(钢渣粉)','url' => U('Light/View/View',array('modname'=>'GzyRatioApply','system' => 'kk')),'modname' => 'kkGzfRatioApply'), 
         );
 
@@ -121,11 +129,23 @@ class MsgdataModel extends Model {
         //     'process' => U('Light/Process/ApplyProcess',array('modname'=>'TempCreditLineApply','system' => 'kk')),
         //     'info'    => U('Light/Apply/applyInfo',array('modname'=>'TempCreditLineApply','system'=>'kk'))
         // );
+        $result['kkSnRatioApply'] = array(
+            'process' => U('Light/Process/ApplyProcess',array('modname'=>'SnRatioApply','system' => 'kk')),
+            'info'    => U('Light/Apply/applyInfo',array('modname'=>'SnRatioApply','system'=>'kk'))
+        ); 
         $result['yxhbKfRatioApply'] = array(
             'process' => U('Light/Process/ApplyProcess',array('modname'=>'KfRatioApply','system' => 'yxhb')),
             'info'    => U('Light/Apply/applyInfo',array('modname'=>'KfRatioApply','system'=>'yxhb'))
         );   
-        return $result;      
+        return $result;  
+    }
+    // 矿粉配比通知
+    public function KfRatioApply(){
+        return $this->RatioApply();
+    }
+    // 水泥配比通知
+    public function SnRatioApply(){
+        return $this->RatioApply();
     }
 
 }

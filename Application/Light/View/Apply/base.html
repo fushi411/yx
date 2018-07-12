@@ -389,7 +389,9 @@
                                                         </eq>
                                                     </eq>
                                                     <neq name="clist.pid" value="9999">
-                                                        <span style="color:red;" realname="{$clist.name}" wxid="{$clist.wxid}" avatar="{$clist.avatar}" data-toggle="modal" data-target="#myModal2" class="reply">回复</span>
+                                                        <neq name="clist.pid" value="8888">
+                                                            <span style="color:red;" realname="{$clist.name}" wxid="{$clist.wxid}" avatar="{$clist.avatar}" data-toggle="modal" data-target="#myModal2" class="reply">回复</span>
+                                                        </neq>
                                                     </neq>
                                                 </p>
                                             </div>
@@ -656,12 +658,18 @@
                     </div>
                 </div>
             </div>
+        <if condition="(($apply.stat eq 0)) AND (($isApplyer eq 1) OR ($isApplyUser eq 1) OR ($isPasser eq 1) OR ($isCopyto eq 1))">
             <!-- 撤销记录 -->
             <div class="js_dialog" id="iosDialog_delete" style="display: none;">
                 <div class="weui-mask"></div>
                 <div class="weui-dialog">
                     <div class="weui-dialog__hd">
-                        <strong class="weui-dialog__title">是否撤销申请记录</strong>
+                        <strong class="weui-dialog__title" style="color: #f12e2e" id="delete_cue"></strong>
+                    </div>
+                    <div class="weui-dialog__hd">
+                        <strong class="weui-dialog__title">
+                            <textarea class="weui-textarea" name="reason"  id="delete_reason" placeholder="请输入撤销理由至少5个字" rows="2"></textarea>
+                        </strong>
                     </div>
                     <div class="weui-dialog__ft">
                         <a href="javascript:;" onclick="dialog_delete_close()" class="weui-dialog__btn weui-dialog__btn_default">取消</a>
@@ -678,7 +686,7 @@
                     </div>
                     <div class="weui-dialog__hd">
                             <strong class="weui-dialog__title">
-                                <textarea class="weui-textarea" name="reason"  id="urge_reason" placeholder="请输入催审理由(必填)" rows="2"></textarea>
+                                <textarea class="weui-textarea" name="reason"  id="urge_reason" placeholder="请输入催审理由至少5个字" rows="2"></textarea>
                             </strong>
                     </div>
                     <div class="weui-dialog__ft">
@@ -687,6 +695,7 @@
                     </div>
                 </div>
             </div>
+        </if>
             <div class="js_dialog" id="iosDialog_alert" style="display: none;">
                 <div class="weui-mask"></div>
                 <div class="weui-dialog">
@@ -752,6 +761,7 @@
 <script src="//cdn.bootcss.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
 <script src="http://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
 <!-- <script src="__PUBLIC__/assets/js/vconsole.min.js"></script> -->
+
 <script>
     // Global var
     var $li_dom = '';
@@ -827,12 +837,12 @@
     // Close dialog
     function dialog_urge_close() {
         $("#iosDialog_urge").fadeOut(100);
+        $('#urge_cue').text('');
     }
     // Confirm dialog
     function dialog_urge_confirm() {
-        $reason = $('#urge_reason').val();
-        console.log($reason.length);
-        if($reason.length <=0) return $('#urge_cue').text('请输入催审理由');
+        var $reason = $('#urge_reason').val();
+        if($reason.length <=5) return $('#urge_cue').text('催审理由至少5个字');
         $("#iosDialog_urge").fadeOut(100);
         var aid = $('#comment_content').attr('data-aid');
         var $dtoast = $('#doingToast');
@@ -919,9 +929,12 @@
  
     function dialog_delete_close() {
         $("#iosDialog_delete").fadeOut(100);
+        $('#delete_cue').text('');
     }
     // Confirm dialog
     function dialog_delete_confirm() {
+        var $reason = $('#delete_reason').val();
+        if($reason.length <=5) return $('#delete_cue').text('撤销理由至少5个字');
         $("#iosDialog_delete").fadeOut(100);
         var id = {$aid};
         var $dtoast = $('#doingToast');
@@ -930,9 +943,10 @@
         $dtoast.fadeIn(100);
         $.post("{:U('Light/Apply/delRecord')}",
             {
-                "id": id,
-                mod_name: "{$mod_name}",
-                system: "{$system}"
+                "id"      : id,
+                'mod_name': "{$mod_name}",
+                'system'  : "{$system}",
+                "reason"  : $reason
             }, function (data) {
                  //console.log(data);
                 if (data == 'success') {

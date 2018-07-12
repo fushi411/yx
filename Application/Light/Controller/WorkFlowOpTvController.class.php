@@ -23,7 +23,7 @@ class WorkFlowOpTvController extends BaseController {
 		}
 
 		// 审批信息 -- 有审批意见发送
-		if(!empty($word)){
+		if(!empty($word) && $option == 2){
 			$approve_id = trim($approve_id,','); 
 			if(!empty($approve_id)){ // --指定接收人
 				$recevier = 'wk|HuangShiQi|'.str_replace(',', '|', $approve_id);
@@ -50,7 +50,7 @@ class WorkFlowOpTvController extends BaseController {
 		
 				// - 抄送人员
 				$resArr = M($system.'_appcopyto')->field('copyto_id')->where(array('aid' => $id,'mod_name' =>$mod_name,'type' => 1))->find();
-				$receviers .= $reArr['copyto_id'] ;
+				$receviers .= $resArr['copyto_id'] ;
 				$recevier = str_replace(',', '|',  $receviers);
 				
 				// 数据重构  -- 去除重复的人员
@@ -69,14 +69,17 @@ class WorkFlowOpTvController extends BaseController {
             $WeChat->sendCardMessage($temrecevier,$title,$description,$url,15,$mod_name,$system);
 		}
 
-    	// if (isWorkFlowUnique($mod_name,$id,$pid,$option,$word)) { --进入下一步流程
-			$wfStatus = $wf->nextWorkFlowTH($mod_name,$id,$pid,$option,$word,$apply_user,$system);
-    	// }
 		if($option==1){
 			$optionType = '审批拒绝';
+			$refuse_word = $word?$word:'无';
+			$this->refuseMsg($system,$id,$mod_name,$refuse_word);
 		}else{
 			$optionType = '审批通过';
 		}
+    	// if (isWorkFlowUnique($mod_name,$id,$pid,$option,$word)) { --进入下一步流程
+			$wfStatus = $wf->nextWorkFlowTH($mod_name,$id,$pid,$option,$word,$apply_user,$system);
+    	// }
+		
 		
 		// 抄送消息
 		$copyto_id = trim($copyto_id,',');
@@ -114,6 +117,52 @@ class WorkFlowOpTvController extends BaseController {
 		$arr[] = array("optiontype"=>$optionType, "wfStatus"=>$wfStatus);
 		//echo $optionType;
 		$this -> ajaxReturn($arr);
+	}
+
+	/**
+	 * 退审推送
+	 */
+	public function refuseMsg($system,$id,$mod_name,$word){
+		
+        $receviers   = 'HuangShiQi,wk,';
+        // 申请人不推送
+
+        $res = D(ucfirst($system).$mod_name, 'Logic')->recordContent($id);
+        $apply_user = $res['applyerName'];
+       
+        // 流程人
+        $resArr =  M($system.'_appflowproc a')
+                ->join($system.'_boss b on b.id=a.per_id')
+                ->field('b.wxid')
+                ->where(array('a.aid' => $id ,'a.mod_name' => $mod_name))
+                ->select();               
+        
+        foreach($resArr as $val){
+            $receviers .= $val['wxid'].',';
+        }
+
+        // - 抄送人员
+        $resArr = M($system.'_appcopyto')->field('copyto_id')->where(array('aid' => $id,'mod_name' =>$mod_name,'type' => 1))->find();
+        
+        $receviers .= $resArr['copyto_id'] ;
+        $recevier = str_replace(',', '|',  $receviers);
+        
+        // 数据重构  -- 去除重复的人员
+        $tmpRecevierArr = explode('|',$recevier);  
+        $tmpRecevierArr = array_filter($tmpRecevierArr); // ---- 去除空值
+        $tmpRecevierArr = array_unique($tmpRecevierArr); // -- 去除重复
+        $temrecevier = implode('|',$tmpRecevierArr);
+       
+        $systemName = array('kk'=>'建材', 'yxhb'=>'环保');
+        $flowTable   = M($system.'_appflowtable');
+        $mod_cname   = $flowTable->getFieldByProMod($mod_name, 'pro_name');
+
+        $title       = '【已退审推送】';
+        $description = $systemName[$system].$mod_cname."({$apply_user}提交)\n退审意见：".$word;
+        $url         = "http://www.fjyuanxin.com/WE/index.php?m=Light&c=Apply&a=applyInfo&system=".$system."&aid=".$id."&modname=".$mod_name;
+        $WeChat      = new \Org\Util\WeChat;
+
+        $WeChat->sendCardMessage($temrecevier,$title,$description,$url,15,$mod_name,$system);
 	}
 
 	/*审批请求是否唯一
@@ -172,7 +221,7 @@ class WorkFlowOpTvController extends BaseController {
 		
 				// - 抄送人员
 				$resArr = M($system.'_appcopyto')->field('copyto_id')->where(array('aid' => $id,'mod_name' =>$mod_name,'type' => 1))->find();
-				$receviers .= $reArr['copyto_id'] ;
+				$receviers .= $resArr['copyto_id'] ;
 				$recevier = str_replace(',', '|',  $receviers);
 				
 				// 数据重构  -- 去除重复的人员
@@ -201,20 +250,22 @@ class WorkFlowOpTvController extends BaseController {
 			'app_stat' => $option,
 			'app_word' => $word
 		);
-		M('yxhb_appflowproc')->where(array('aid' => $id , 'mod_name' =>$mod_name, 'per_name' =>session('name')))->save($save);
+		M($system.'_appflowproc')->where(array('aid' => $id , 'mod_name' =>$mod_name, 'per_name' =>session('name')))->save($save);
 
 		if($option==1){
 			$optionType = '签收拒绝';
 			// 一人拒签  全部拒签
 			M('yxhb_assay')->where(array('id' => $id ))->setField('state', 3);
-			$this->sendMsg('yxhb',$id,'KfRatioApply',$option);
+			$logic = D(ucfirst($system).$mod_name, 'Logic');
+        	$logic->refuseRecord($id);
+			$this->sendMsg($system,$id,$mod_name,$option);
 		}else{
 			$optionType = '签收通过';
 		}
 
 		// 调用审批后处理方法
 		// 同理可处理开始审批、过程中、拒绝后调用方法
-		$qs = M('yxhb_appflowproc')->where(array('aid' => $id , 'mod_name' =>$mod_name,'app_stat' => 0))->select();
+		$qs = M($system.'_appflowproc')->where(array('aid' => $id , 'mod_name' =>$mod_name,'app_stat' => 0))->select();
 		if(count($qs) == 0){
 			$wfClass = new WorkFlowFuncController();
 	        $func = ucfirst($system).$mod_name.'End';
@@ -235,7 +286,7 @@ class WorkFlowOpTvController extends BaseController {
 				}
 				D($system.'Appcopyto')->copyTo($push_id, $mod_name, $id,2);
 			}
-			$this->sendMsg('yxhb',$id,'KfRatioApply',$option);
+			$this->sendMsg($system,$id,$mod_name,$option);
 		}
 		// 操作信息发送
 		
@@ -245,34 +296,10 @@ class WorkFlowOpTvController extends BaseController {
 	}
 
 	/**
-     * 通知信息发送
+     * 签收通知信息发送
      * @
      */
-    public function sendMessage($apply_id,$boss){
-        $system = 'yxhb';
-        $mod_name = 'KfRatioApply';
-        $logic = D(ucfirst($system).$mod_name, 'Logic');
-        $res   = $logic->record($apply_id);
-        $systemName = array('kk'=>'建材', 'yxhb'=>'环保');
-        // 微信发送
-        $WeChat = new \Org\Util\WeChat;
-        
-        $descriptionData = $logic->getDescription($apply_id);
-     
-        $title = '环保(矿粉)配比通知(签收)';
-        $url = "http://www.fjyuanxin.com/WE/index.php?m=Light&c=Apply&a=applyInfo&system=".$system."&aid=".$apply_id."&modname=".$mod_name;
-      
-        
-        $description = "您有一个流程被拒收";
-
-        $receviers = "wk|HuangShiQi|".$boss;
-        foreach( $descriptionData as $val ){
-            $description .= "\n{$val['name']}{$val['value']}";
-        }
-        $agentid = 15;
-        $WeChat = new \Org\Util\WeChat;
-        $info = $WeChat->sendCardMessage($receviers,$title,$description,$url,$agentid,$mod_name,$system);
-    }
+   
 
 	public function sendMsg($system,$apply_id,$mod_name,$option){
         $logic = D(ucfirst($system).$mod_name, 'Logic');
@@ -283,16 +310,18 @@ class WorkFlowOpTvController extends BaseController {
         
         $descriptionData = $logic->getDescription($apply_id);
      
-        $title = '(矿粉)配比通知';
-        $url = "http://www.fjyuanxin.com/WE/index.php?m=Light&c=Apply&a=applyInfo&system=".$system."&aid=".$apply_id."&modname=".$mod_name;
+		
+		$allArr = D($system.'Appflowtable')->getAllProc($mod_name);
+		$title  = $allArr['title'];
+        $url    = "http://www.fjyuanxin.com/WE/index.php?m=Light&c=Apply&a=applyInfo&system=".$system."&aid=".$apply_id."&modname=".$mod_name;
 		
         if($option == 1 ){
 			$description = "您有一个流程已被拒收";
 		}else{
 			$description = "您有一个流程已被签收";
 		}
-		$boss = D('YxhbBoss')->getIDFromName($res['name']);
-		$boss = D('YxhbBoss')->getWXFromID($boss);
+		$boss = D(ucfirst($system).'Boss')->getIDFromName($res['name']);
+		$boss = D(ucfirst($system).'Boss')->getWXFromID($boss);
         $description .= "\n申请单位：{$systemName[$system]}\n申请类型：{$title}";
 		$receviers = "wk|HuangShiQi|".$boss;
         foreach( $descriptionData as $val ){

@@ -109,7 +109,8 @@ class KkAppcopytoModel extends Model {
               $cpid = implode(',',$recevierArr);
 
               $title    = str_replace('表','',$mod_cname);
-              $template = "【审批后推送信息】\n申请单位：建材\n申请类型：{$title}";
+              $qsArr = array('SnRatioApply');
+              $template =  in_array($mod_name,$qsArr)?"【签收后推送信息】\n申请单位：建材\n申请类型：{$title}":"【审批后推送信息】\n申请单位：建材\n申请类型：{$title}";
               
               $descriptionData = $logic->getDescription($aid);
               $description     = $this->ReDescription($descriptionData);
