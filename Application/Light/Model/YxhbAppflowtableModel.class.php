@@ -16,19 +16,31 @@ class YxhbAppflowtableModel extends Model {
     public function getAllProc($modname)
     {
         $proInfo = array();
+        $temp    = array();
         $res = $this->field('pro_name,pro_id,per_name,per_id,stage_id,point')->where(array('pro_mod'=>$modname, 'stat'=>1))->order('stage_id asc')->select();
         $boss = D('yxhb_boss');
-        foreach ($res as $key => $value) {
-            $procIDList = $value['per_id'].",";
-            $procNameList = $value['per_name'].",";
-            $wxid = $boss->getWXFromID($value['per_id']);
-            $avatar = $boss->getAvatar($value['per_id']);
-            $procWXIDList = $wxid['wxid'].",";
-            $proInfo[] = array('id'=>$value['per_id'],
-                               'realname'=>$value['per_name'],
-                               'wxid'=>$wxid,
-                               'avatar'=>$avatar
-                              );
+        
+        foreach($res as $key => $value){
+            $k = $value['stage_id']-1;
+            $temp[$k][] = $value;
+        }
+        foreach ($temp as $key => $value) {
+            foreach($value as $k => $val){
+                
+                $procIDList = $val['per_id'].",";
+                $procNameList = $val['per_name'].",";
+                $wxid = $boss->getWXFromID($val['per_id']);
+                $avatar = $boss->getAvatar($val['per_id']);
+                $procWXIDList = $wxid['wxid'].",";
+                $sign = count($value) < 2?'':1;
+                $proInfo[] = array('id'=>$val['per_id'],
+                                   'realname'=>$val['per_name'],
+                                   'wxid'=>$wxid,
+                                   'avatar'=>$avatar,
+                                   'sign'  => $sign
+                                  );
+                
+            }
         }
         $firstProc = $proInfo[0];
         return array('first'=>$firstProc,

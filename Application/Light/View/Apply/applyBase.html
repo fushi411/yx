@@ -183,23 +183,27 @@
                                     <div class="weui-uploader">
                                         <div class="weui-uploader__bd" style="height: 85px;">
                                             <ul class="weui-uploader__files" id="app_pro" style="margin-bottom: 0px;">
-                                                <volist name="appflow" id="vo">
-                                                    <neq name="i" value="1">                                                   
-                                                        <li class='weui-uploader__file wk-select__user' style='height:90px;margin-left:8px'>
-                                                        <else/>
-                                                        <li class='weui-uploader__file wk-select__user' style='height:90px;'>
-                                                    </neq>
-                                                    <if condition="$vo.avatar eq ''">
-                                                        <img src="Public/assets/i/defaul.png" class='weui-selet__user' style='margin-bottom: 0px;margin-right: 6px;margin-top:10px;'>
-                                                        <else/>
-                                                        <img src="{$vo.avatar}" class='weui-selet__user' style='margin-bottom: 0px;margin-right: 6px;margin-top:10px;'>
-                                                    </if>
-                                                    <span style='margin-right: 6px;font-size: 14px;'> {$vo.name}</span>
-                                                    <if condition="count($appflow) gt $i">
-                                                        <span class="glyphicon glyphicon-arrow-right" style="position: relative;top: -2.8em;right: -1.8em;"></span>
-                                                    </if>
-                                                    </li>
-                                                </volist>
+                                                    <volist name="appflow" id="vo">
+                                                            <neq name="i" value="1">                                                   
+                                                                <li class='weui-uploader__file wk-select__user' style='height:90px;margin-left:8px'>
+                                                                <else/>
+                                                                <li class='weui-uploader__file wk-select__user' style='height:90px;'>
+                                                            </neq>
+                                                            <if condition="$vo.avatar eq ''">
+                                                                <img src="Public/assets/i/defaul.png" class='weui-selet__user' style='margin-bottom: 0px;margin-right: 6px;margin-top:10px;'>
+                                                                <else/>
+                                                                <img src="{$vo.avatar}" class='weui-selet__user' style='margin-bottom: 0px;margin-right: 6px;margin-top:10px;'>
+                                                            </if>
+                                                            <span style='margin-right: 6px;font-size: 14px;'> {$vo.name}</span>
+                                                            <if condition="count($appflow) gt $i">
+                                                                    <if condition="$vo.sign eq 1">
+                                                                            <span style="border-radius: 3px;position: relative;top: -2.5em;right: -1.8em;width: 6px;height: 6px;background-color: #333333"></span>
+                                                                        <else/>
+                                                                            <span class="glyphicon glyphicon-arrow-right" style="position: relative;top: -2.8em;right: -1.8em;"></span>
+                                                                    </if>
+                                                            </if>
+                                                            </li>
+                                                        </volist>
                                             </ul>
                                         </div>
                                     </div>

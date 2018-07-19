@@ -31,8 +31,11 @@ class KkCgfkApplyLogic extends Model {
     {
         $res = $this->record($id);
         $result = array();
-        $clientname = M('kk_gys')->field('g_name')->where(array('id' => $res['gys']))->find();
-
+        if($res['fylx'] == 1){
+            $clientname = M('kk_gys')->field('g_name')->where(array('id' => $res['gys']))->find();
+        }elseif($res['fylx'] == 2){
+            $clientname = M('kk_wl')->field('g_name')->where(array('id' => $res['gys']))->find();
+        }
         $color = $res['yfye'] > 0? '#f12e2e':'black';
         $result['content'][] = array('name'=>'申请日期：',
                                      'value'=>$res['zd_date'],
@@ -49,11 +52,14 @@ class KkCgfkApplyLogic extends Model {
         //                              'type'=>'string',
         //                              'color' => 'black'
         //                             );
-        $result['content'][] = array('name'=>'应付余额：',
+        if($res['fylx'] == 1){
+            $result['content'][] = array('name'=>'应付余额：',
                                      'value'=> "&yen;".number_format($res['yfye'],2,'.',',')."元",
                                      'type'=>'number',
                                      'color' => $color
                                     );
+        }
+
         $result['content'][] = array('name'=>'付款金额：',
                                      'value'=>"&yen;".number_format($res['fkje'],2,'.',',')."元",
                                      'type'=>'number',
@@ -108,8 +114,11 @@ class KkCgfkApplyLogic extends Model {
     public function getDescription($id){
         $res = $this->record($id);
         $result = array();
-        $clientname = M('kk_gys')->field('g_name')->where(array('id' => $res['gys']))->find();
-     
+        if($res['fylx'] == 1){
+            $clientname = M('kk_gys')->field('g_name')->where(array('id' => $res['gys']))->find();
+        }elseif($res['fylx'] == 2){
+            $clientname = M('kk_wl')->field('g_name')->where(array('id' => $res['gys']))->find();
+        }
         $result[] = array('name'=>'申请日期：',
                                      'value'=>$res['zd_date'],
                                      'type'=>'date'
@@ -121,11 +130,14 @@ class KkCgfkApplyLogic extends Model {
         // $result[] = array('name'=>'申请单号：',
         //                              'value'=>$res['dh'],
         //                              'type'=>'string'
-        //                             );        
-        $result[] = array('name'=>'应付余额：',
+        //                             );   
+        if($res['fylx'] == 1){
+            $result[] = array('name'=>'应付余额：',
                                      'value'=> number_format($res['yfye'],2,'.',',')."元",
                                      'type'=>'number'
                                     );
+        }
+
         $result[] = array('name'=>'申请额度：',
                                      'value'=>number_format($res['fkje'],2,'.',',')."元",
                                      'type'=>'number'
@@ -158,14 +170,21 @@ class KkCgfkApplyLogic extends Model {
      */
     public function sealNeedContent($id){
         $res = $this->record($id);
-        $name   = M('kk_gys')->field('g_name')->where(array('id' => $res['gys']))->find();
+        if($res['fylx'] == 1){
+            $name = M('kk_gys')->field('g_name')->where(array('id' => $res['gys']))->find();
+            $modname = 'CgfkApply';
+        }elseif($res['fylx'] == 2){
+            $name = M('kk_wl')->field('g_name')->where(array('id' => $res['gys']))->find();
+            $modname = 'WlCgfkApply';
+        }
         $result = array(
             'sales'   => $res['rdy'],
             'approve' => number_format($res['fkje'],2,'.',',')."元",
             'notice'  => $res['zy'],
             'date'    => $res['zd_date'],
-            'title'   => '供货单位',
+            'title'   => $res['fylx'] == 1?'供货单位':'汽运公司',
             'name'    => $name['g_name'], 
+            'modname' => $modname,
             'stat'    => $res['stat']
         );
         return $result;
@@ -190,7 +209,27 @@ class KkCgfkApplyLogic extends Model {
         return $res;
     }
 
+    /**
+     * 获取采购付款 供应商信息
+     */
+    public function getWlCustomerList(){
 
+        $word = I('math');
+        $sql = "SELECT
+                    a.id AS id,
+                    g_name AS text
+                FROM
+                    kk_wl AS a,
+                    kk_cght AS b
+                WHERE
+                    a.id = b.ht_wl AND b.ht_stat=2 AND g_ch = '' and (a.g_helpword like '%{$word}%' or a.g_name like '%{$word}%')
+                GROUP BY
+                    a.id
+                ORDER BY
+                    g_name ASC";
+        $res = M()->query($sql);
+        return $res;
+    }
 
     /**
      * 单号获取
@@ -209,8 +248,11 @@ class KkCgfkApplyLogic extends Model {
         return $id.$count;
     }
 
+
+
+
     /**
-     * 采购付款提交 
+     * 原材料采购付款提交 
      */
     public function submit(){
         $today = date('Y-m-d',time());
@@ -223,6 +265,7 @@ class KkCgfkApplyLogic extends Model {
         if(!$val['bool']) return $val;
         list($user_id, $notice,$money,$system) = $val['data'];
         // 重复提交
+     
         if(!M('kk_cgfksq')->autoCheckToken($_POST)) return array('code' => 404,'msg' => '网络延迟，请勿点击提交按钮！');
         $addData = array(
             'dh'      => $this->getDhId(),
@@ -263,6 +306,64 @@ class KkCgfkApplyLogic extends Model {
         return array('code' => 200,'msg' => '提交成功' , 'aid' =>$result);
 
     }
+
+    /**
+     * 物流采购付款提交 
+     */
+    public function wlsubmit(){
+        $today = date('Y-m-d',time());
+        $user  = session('name');
+        $val   = $this->cgfkValidata();
+        $ysye  = I('post.ysye');
+        $bank  = I('post.type');
+        $gyszh = I('post.gyszh');
+        $htbh  = I('post.htbh');
+        $copyto_id = I('post.copyto_id');
+        if(!$val['bool']) return $val;
+        list($user_id, $notice,$money,$system) = $val['data'];
+        // 重复提交
+        if(!M('yxhb_cgfksq')->autoCheckToken($_POST)) return array('code' => 404,'msg' => '网络延迟，请勿点击提交按钮！');
+        $addData = array(
+            'dh'      => $this->getDhId(),
+            'zd_date' => $today,
+            'fkje'    => $money,
+            'gys'     => $user_id,
+            'zy'      => $notice,
+            'clmc'    => '',
+            'fkfs'    => $bank,
+            'rdy'     => $user,
+            'bm'      => 1,
+            'stat'    => 3,
+            'sqr'     => $user,
+            'clgg'    => '无',
+            'htbh'    => $htbh,
+            'cwbz'    => '',
+            'jjyy'    => '',
+            'gyszh'   => $gyszh,
+            'date'    => date('Y-m-d H:i:s',time()),
+            'fylx'    => 2,
+            'htlx'    => '汽运',
+            'yfye'    =>  0
+        ); 
+
+        $result = M('yxhb_cgfksq')->add($addData);
+        if(!$result) return array('code' => 404,'msg' =>'提交失败，请重新尝试！');
+        // 抄送
+        $copyto_id = trim($copyto_id,',');
+        if (!empty($copyto_id)) {
+            // 发送抄送消息
+            D('YxhbAppcopyto')->copyTo($copyto_id,'CgfkApply', $result);
+        }
+        
+        $wf = A('WorkFlow');
+        $salesid = session('yxhb_id');
+        $res = $wf->setWorkFlowSV('CgfkApply', $result, $salesid, 'yxhb');
+
+        return array('code' => 200,'msg' => '提交成功' , 'aid' =>$result);
+
+    }
+
+
 
     /**
      * 采购付款提交信息校验
@@ -313,6 +414,15 @@ class KkCgfkApplyLogic extends Model {
             $account = $v['bank_account'];
             $data[$k]['bank_account'] = substr($account,0,4).'****'.substr($account,-4);
         }
+        return $data;
+    }
+
+        /**
+     * 合同信息获取
+     */
+    public function getHtbh(){
+        $sql = "select ht_gys,ht_clmc,ht_clgg,ht_dh,ht_wl from kk_cght where ht_stat='2' group by ht_gys,ht_clmc,ht_clgg,ht_dh";
+        $data = M()->query($sql);
         return $data;
     }
 }

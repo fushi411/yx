@@ -1,5 +1,5 @@
-<extend name="Sign:base" />
-   
+<extend name="Seek:base" />
+
 <block name='content'>
         <div class="page__bd">
                 <!--<a href="javascript:;" class="weui-btn weui-btn_primary">点击展现searchBar</a>-->
@@ -18,22 +18,24 @@
                     <a href="javascript:" class="weui-search-bar__cancel-btn" id="searchCancel">搜索</a>
                 </div>
             </div>
-                    <div class="weui-panel__hd" style="color: red;font-size: 18px;font-weight: 800;background-color: #f8f8f8;padding-top: 8px;padding-bottom: 4px;">待签收</div>
-                    <div class="weui-panel__bd" id="sign">
-
-                    </div>
-                </div>
-
-                <div class="weui-panel weui-panel_access" style="margin-top:0px;">
-                    <div class="weui-panel__hd" style="color: green;font-size: 18px;font-weight: 800;background-color: #f8f8f8;padding-top: 8px;padding-bottom: 4px;">已签收</div>
-                    <div class="weui-panel__bd" id="approve">
-                        
-                    </div>
+        <div id='unread_content'>
+        
+        </div> 
+        <div id='show_data_content'>
+           
+        </div> 
+    <!-- 全部按钮 -->
+    <div id="btn-all">
+        <a href="javascript:;" class="weui-btn weui-btn_mini weui-btn_primary">全部已读</a>
+    </div>
+    <!-- 全读按钮 end -->     
 </block>
-
 
 <block name="js">
     <script>
+        if(parseInt("{$titleArr.2.unRead}") >0){
+            $('#btn-all').show();
+        }
         var page = 1;
         var toast = $('#loadingToast'),
             no_more = $('.no-more'),
@@ -42,64 +44,68 @@
                 getData();
             })
         $(function(){
+            
             toast.fadeIn(200);
+
             // 请求数据
             getData();
 
         })
-    function searchGetDate(){
-        page = 1;
-        toast.fadeIn(200);
-        $('#approve').empty();
-        getData();
-    }
-
-    function geUnReadData(){
+    function dialog_confirm(){
         $.ajax({
             type:'POST',
             url: "{:U('Light/Sign/Api')}",
+            dataType: 'json',
             data: {
-                action: 'mySubmit'
+                action: 'pushRead',
             },
             dataType: 'json',
             success: function (res) {
-                makeHtml(res,$('#sign'));
-                toast.fadeOut(200);
+                if(res.code == 200){
+                    window.location.reload();
+                }
             }
         });
     }
-    
+    function searchGetDate(){
+        page = 1;
+        toast.fadeIn(200);
+        $('#show_data_content').empty();
+        getData();
+       
+    }
+
 // 未签收接口请求
-    geUnSigntData();
+geUnSigntData();
 function geUnSigntData(){
         $.ajax({
             type:'POST',
             url: "{:U('Light/Sign/Api')}",
             data: {
-                action: 'mySubmit'
+                action: 'unReadPush'
             },
             dataType: 'json',
             success: function (res) {
-                makeHtml(res,$('#sign'));
+                makeHtml(res,$('#unread_content'),1);
                 toast.fadeOut(200);
             }
         });
     }
-
 
 // 接口请求
     function getData(){
         $.ajax({
             type:'POST',
             url: "{:U('Light/Sign/Api')}",
+            dataType: 'json',
             data: {
-                action: 'mySubmited',
+                action: 'pushToApi',
                 page_num:page,
                 search:$('#searchInput').val()
             },
-            dataType: 'json',
             success: function (res) {
                 var data = res;
+               
                 if(data.length <20){
                     no_more.show();
                     load_more.hide();
@@ -108,13 +114,13 @@ function geUnSigntData(){
                     load_more.show();
                     no_more.hide();
                 }
-                makeHtml(data,$('#approve'));
+                makeHtml(data,$('#show_data_content'),0); 
                 toast.fadeOut(200);
             }
         });
     }
 // html 生成
-    function  makeHtml(data,dom){
+    function  makeHtml(data,dom,type){
         var html = '';
         for(i = 0 ; i<data.length;i++){
             html +="<a href='"+"{:U('Light/Apply/applyInfo')}"+'&system='+data[i]['system']+'&aid='+data[i]['aid']+'&modname='+data[i]['mod_name']+"' class='weui-cell weui-cell_access weui-cell_link' style='text-decoration: none;'>"+
@@ -133,7 +139,13 @@ function geUnSigntData(){
             }else if(data[i]['stat'] == 3){
                 html+= '<span class="label label-danger" style="margin-left: 1em;padding-top: 0.3em;padding-bottom: 0.2em">已拒签</span>';
             }
-            html += '</div><div class="weui-flex__item" style="text-align: right;"><h5>'+data[i]['date']+'</h5></div> </div>';
+            html += '</div>';
+            if(type == 1){
+                html +='<div class="weui-flex__item">'+
+                    '<span class="weui-badge weui-badge_dot" style="margin-left: 5px;margin-right: 5px;margin-bottom: 8px;"></span>'+
+                '</div>';
+            }
+            html +='<div class="weui-flex__item" style="text-align: right;"><h5>'+data[i]['date']+'</h5></div> </div>';
             for(x = 0 ;x < data[i].content.length;x++){
                 html +='<p class="weui-media-box__desc " style="margin-bottom: 0px;"><span>'+data[i].content[x][0]+'：</span><span  >'+data[i].content[x][1]+'</span></p>';
             }
@@ -141,5 +153,6 @@ function geUnSigntData(){
         }
         dom.append(html);
     }  
+
     </script>
 </block>

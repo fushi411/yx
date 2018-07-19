@@ -16,12 +16,12 @@ class MsgdataModel extends Model {
      * @param  string $mod_name 模块信息
      * @return array  $result   
      */
-    public function GetMessage($mod_name){
+    public function GetMessage($mod_name,$viewtype=''){
         // 工厂模式 -> 模块名决定使用函数
         $obj = new MsgdataModel();
         $func = $mod_name;
         $result = method_exists($obj,$func) ? $this->$func():array();
-        $this->activeOn($result);
+        $this->activeOn($result,$viewtype);
         return $result;
     }
 
@@ -29,11 +29,11 @@ class MsgdataModel extends Model {
      * 对于页面显示当前页的处理
      * @param array 需要处理的输出
      */
-    public function activeOn(&$array){
+    public function activeOn(&$array,$viewtype){
         if(empty($array)) return ;
         $system = I('system');
         $mod_name = I('modname');
-        $str = $system.$mod_name;
+        $str = $viewtype.$system.$mod_name;
         foreach($array['url'] as $k => $v){
             if(strcasecmp($v['modname'],$str) == 0) {
                 $array['url'][$k]['on'] = 1;
@@ -56,25 +56,132 @@ class MsgdataModel extends Model {
         $result['url'] = array(
             array('name' => '环保原材料采购付款','url' => U('Light/View/View',array('modname'=>'CgfkApply','system' => 'yxhb')),'modname' => 'yxhbCgfkApply'),
             array('name' => '建材原材料采购付款','url' => U('Light/View/View',array('modname'=>'CgfkApply','system' => 'kk')),'modname' => 'kkCgfkApply'), 
+            array('name' => '环保物流采购付款','url' => U('Light/View/View',array('modname'=>'WlCgfkApply','system' => 'yxhb')),'modname' => 'yxhbWlCgfkApply'),
+            array('name' => '建材物流采购付款','url' => U('Light/View/View',array('modname'=>'WlCgfkApply','system' => 'kk')),'modname' => 'kkWlCgfkApply'), 
+            array('name' => '环保配件采购付款','url' => U('Light/View/View',array('modname'=>'PjCgfkApply','system' => 'yxhb')),'modname' => 'yxhbPjCgfkApply'),
+            array('name' => '建材配件采购付款','url' => U('Light/View/View',array('modname'=>'PjCgfkApply','system' => 'kk')),'modname' => 'kkPjCgfkApply'), 
         );
         
         $result['kkCgfkApply']   =  array(
             'process' => U('Light/Process/ApplyProcess',array('modname'=>'CgfkApply','system' => 'kk')),
             'info'    => U('Light/Apply/applyInfo',array('modname'=>'CgfkApply','system'=>'kk')),
-            'fiexd_copy_id' => 'HeYuanShen,LvHongSheng',
-            'copydata' => array(
-                array('name' => '何渊深','url' => 'http://p.qlogo.cn/bizmail/ftVl6voFONER5G11Fo1KCLdmnWy3cJKmjBToMnIpCXiaN4lzcdPFDqQ/0'),
-                array('name' => '吕红胜','url' => 'http://p.qlogo.cn/bizmail/5FmUowOFcibSEawmsrSg3tXHjHXJEFNza3tSq4VN4sLjaFsaAEfsLwA/0') 
-            )
+           
         );
         $result['yxhbCgfkApply'] = array(
             'process' => U('Light/Process/ApplyProcess',array('modname'=>'CgfkApply','system' => 'yxhb')),
             'info'    => U('Light/Apply/applyInfo',array('modname'=>'CgfkApply','system'=>'yxhb')),
-            'fiexd_copy_id' => 'HeYuanShen',
-            'copydata' => array(
-                array('name' => '何渊深','url' => 'http://p.qlogo.cn/bizmail/ftVl6voFONER5G11Fo1KCLdmnWy3cJKmjBToMnIpCXiaN4lzcdPFDqQ/0')
-            )
+            
         );   
+        $result['yxhbWlCgfkApply'] = array(
+            'process' => U('Light/Process/ApplyProcess',array('modname'=>'WlCgfkApply','system' => 'yxhb')),
+            'info'    => U('Light/Apply/applyInfo',array('modname'=>'WlCgfkApply','system'=>'yxhb')),
+           
+        );   
+        $result['wlkkWlCgfkApply'] = array(
+            'process' => U('Light/Process/ApplyProcess',array('modname'=>'WlCgfkApply','system' => 'kk')),
+            'info'    => U('Light/Apply/applyInfo',array('modname'=>'WlCgfkApply','system'=>'kk')),
+            
+        );  
+        $result['yxhbPjCgfkApply'] = array(
+            'process' => U('Light/Process/ApplyProcess',array('modname'=>'PjCgfkApply','system' => 'yxhb')),
+            'info'    => U('Light/Apply/applyInfo',array('modname'=>'PjCgfkApply','system'=>'yxhb')),
+           
+        );   
+        $result['kkPjCgfkApply'] = array(
+            'process' => U('Light/Process/ApplyProcess',array('modname'=>'PjCgfkApply','system' => 'kk')),
+            'info'    => U('Light/Apply/applyInfo',array('modname'=>'PjCgfkApply','system'=>'kk')),
+            
+        );  
+        return $result;      
+    }
+
+    // 物流采购付款
+    public function WlCgfkApply(){
+        $result = array();
+        $result['url'] = array(
+            array('name' => '环保原材料采购付款','url' => U('Light/View/View',array('modname'=>'CgfkApply','system' => 'yxhb')),'modname' => 'yxhbCgfkApply'),
+            array('name' => '建材原材料采购付款','url' => U('Light/View/View',array('modname'=>'CgfkApply','system' => 'kk')),'modname' => 'kkCgfkApply'), 
+            array('name' => '环保物流采购付款','url' => U('Light/View/View',array('modname'=>'WlCgfkApply','system' => 'yxhb')),'modname' => 'yxhbWlCgfkApply'),
+            array('name' => '建材物流采购付款','url' => U('Light/View/View',array('modname'=>'WlCgfkApply','system' => 'kk')),'modname' => 'kkWlCgfkApply'), 
+            array('name' => '环保配件采购付款','url' => U('Light/View/View',array('modname'=>'PjCgfkApply','system' => 'yxhb')),'modname' => 'yxhbPjCgfkApply'),
+            array('name' => '建材配件采购付款','url' => U('Light/View/View',array('modname'=>'PjCgfkApply','system' => 'kk')),'modname' => 'kkPjCgfkApply'), 
+        );
+        
+        $result['kkCgfkApply']   =  array(
+            'process' => U('Light/Process/ApplyProcess',array('modname'=>'CgfkApply','system' => 'kk')),
+            'info'    => U('Light/Apply/applyInfo',array('modname'=>'CgfkApply','system'=>'kk')),
+           
+        );
+        $result['yxhbCgfkApply'] = array(
+            'process' => U('Light/Process/ApplyProcess',array('modname'=>'CgfkApply','system' => 'yxhb')),
+            'info'    => U('Light/Apply/applyInfo',array('modname'=>'CgfkApply','system'=>'yxhb')),
+            
+        );   
+        $result['yxhbWlCgfkApply'] = array(
+            'process' => U('Light/Process/ApplyProcess',array('modname'=>'WlCgfkApply','system' => 'yxhb')),
+            'info'    => U('Light/Apply/applyInfo',array('modname'=>'WlCgfkApply','system'=>'yxhb')),
+           
+        );   
+        $result['wlkkWlCgfkApply'] = array(
+            'process' => U('Light/Process/ApplyProcess',array('modname'=>'WlCgfkApply','system' => 'kk')),
+            'info'    => U('Light/Apply/applyInfo',array('modname'=>'WlCgfkApply','system'=>'kk')),
+            
+        );  
+        $result['yxhbPjCgfkApply'] = array(
+            'process' => U('Light/Process/ApplyProcess',array('modname'=>'PjCgfkApply','system' => 'yxhb')),
+            'info'    => U('Light/Apply/applyInfo',array('modname'=>'PjCgfkApply','system'=>'yxhb')),
+           
+        );   
+        $result['kkPjCgfkApply'] = array(
+            'process' => U('Light/Process/ApplyProcess',array('modname'=>'PjCgfkApply','system' => 'kk')),
+            'info'    => U('Light/Apply/applyInfo',array('modname'=>'PjCgfkApply','system'=>'kk')),
+            
+        );  
+        return $result;   
+    }
+
+     // 采购付款
+     public function PjCgfkApply(){
+        $result = array();
+        $result['url'] = array(
+            array('name' => '环保原材料采购付款','url' => U('Light/View/View',array('modname'=>'CgfkApply','system' => 'yxhb')),'modname' => 'yxhbCgfkApply'),
+            array('name' => '建材原材料采购付款','url' => U('Light/View/View',array('modname'=>'CgfkApply','system' => 'kk')),'modname' => 'kkCgfkApply'), 
+            array('name' => '环保物流采购付款','url' => U('Light/View/View',array('modname'=>'WlCgfkApply','system' => 'yxhb')),'modname' => 'yxhbWlCgfkApply'),
+            array('name' => '建材物流采购付款','url' => U('Light/View/View',array('modname'=>'WlCgfkApply','system' => 'kk')),'modname' => 'kkWlCgfkApply'), 
+            array('name' => '环保配件采购付款','url' => U('Light/View/View',array('modname'=>'PjCgfkApply','system' => 'yxhb')),'modname' => 'yxhbPjCgfkApply'),
+            array('name' => '建材配件采购付款','url' => U('Light/View/View',array('modname'=>'PjCgfkApply','system' => 'kk')),'modname' => 'kkPjCgfkApply'), 
+        );
+        
+        $result['kkCgfkApply']   =  array(
+            'process' => U('Light/Process/ApplyProcess',array('modname'=>'CgfkApply','system' => 'kk')),
+            'info'    => U('Light/Apply/applyInfo',array('modname'=>'CgfkApply','system'=>'kk')),
+           
+        );
+        $result['yxhbCgfkApply'] = array(
+            'process' => U('Light/Process/ApplyProcess',array('modname'=>'CgfkApply','system' => 'yxhb')),
+            'info'    => U('Light/Apply/applyInfo',array('modname'=>'CgfkApply','system'=>'yxhb')),
+            
+        );   
+        $result['yxhbWlCgfkApply'] = array(
+            'process' => U('Light/Process/ApplyProcess',array('modname'=>'WlCgfkApply','system' => 'yxhb')),
+            'info'    => U('Light/Apply/applyInfo',array('modname'=>'WlCgfkApply','system'=>'yxhb')),
+           
+        );   
+        $result['wlkkWlCgfkApply'] = array(
+            'process' => U('Light/Process/ApplyProcess',array('modname'=>'WlCgfkApply','system' => 'kk')),
+            'info'    => U('Light/Apply/applyInfo',array('modname'=>'WlCgfkApply','system'=>'kk')),
+            
+        );  
+        $result['yxhbPjCgfkApply'] = array(
+            'process' => U('Light/Process/ApplyProcess',array('modname'=>'PjCgfkApply','system' => 'yxhb')),
+            'info'    => U('Light/Apply/applyInfo',array('modname'=>'PjCgfkApply','system'=>'yxhb')),
+           
+        );   
+        $result['kkPjCgfkApply'] = array(
+            'process' => U('Light/Process/ApplyProcess',array('modname'=>'PjCgfkApply','system' => 'kk')),
+            'info'    => U('Light/Apply/applyInfo',array('modname'=>'PjCgfkApply','system'=>'kk')),
+            
+        );  
         return $result;      
     }
 

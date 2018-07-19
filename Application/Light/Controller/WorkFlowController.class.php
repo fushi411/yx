@@ -169,11 +169,11 @@ class WorkFlowController extends BaseController {
           if(!empty($per_id)&&$per_id!=0){
             //防止记录重复插入
             $sameProcNum = $appflowproc->getSameProcNum($flowName, $id, $stageID);
-            if(!$sameProcNum){
+            // if(!$sameProcNum){
               $is_done = $appflowproc->addProc($values, $id, $per_name, $per_id, $stageID);
               $done++;
               $msgInfo = $this->sendApplyMsg($flowName, $id, $per_id, $pid, $system);
-            }            
+            // }            
           }
         }
 

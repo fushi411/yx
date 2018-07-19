@@ -68,11 +68,7 @@ class YxhbCreditLineApplyLogic extends Model {
                                      'type'=>'number',
                                      'color' => 'black'
                                     );
-        $result['content'][] = array('name'=>'申请人员：',
-                                     'value'=>$res['sales'],
-                                     'type'=>'string',
-                                     'color' => 'black'
-                                    );
+
         $result['content'][] = array('name'=>'申请理由：',
                                      'value'=>$res['notice'],
                                      'type'=>'text',
@@ -187,6 +183,7 @@ class YxhbCreditLineApplyLogic extends Model {
             'date'    => $res['date'],
             'title'   => '客户名称',
             'name'    => $clientname['g_khjc'], 
+            'modname' => 'CreditLineApply',
             'stat'    => $res['stat']
         );
         return $result;

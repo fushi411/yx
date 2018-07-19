@@ -7,9 +7,9 @@ use Think\Model;
  * @author 
  */
 
-class YxhbCgfkApplyLogic extends Model {
+class KkWlCgfkApplyLogic extends Model {
     // 实际表名
-    protected $trueTableName = 'yxhb_cgfksq';
+    protected $trueTableName = 'kk_cgfksq';
 
     /**
      * 记录内容
@@ -32,13 +32,10 @@ class YxhbCgfkApplyLogic extends Model {
         $res = $this->record($id);
         $result = array();
         if($res['fylx'] == 1){
-            $clientname = M('yxhb_gys')->field('g_name')->where(array('id' => $res['gys']))->find();
+            $clientname = M('kk_gys')->field('g_name')->where(array('id' => $res['gys']))->find();
         }elseif($res['fylx'] == 2){
-            $clientname = M('yxhb_wl')->field('g_name')->where(array('id' => $res['gys']))->find();
+            $clientname = M('kk_wl')->field('g_name')->where(array('id' => $res['gys']))->find();
         }
-        
-
-
         $color = $res['yfye'] > 0? '#f12e2e':'black';
         $result['content'][] = array('name'=>'申请日期：',
                                      'value'=>$res['zd_date'],
@@ -55,13 +52,14 @@ class YxhbCgfkApplyLogic extends Model {
         //                              'type'=>'string',
         //                              'color' => 'black'
         //                             );
-        if($res['fylx'] == 1){
-            $result['content'][] = array('name'=>'应付余额：',
-            'value'=> "&yen;".number_format($res['yfye'],2,'.',',')."元",
-            'type'=>'number',
-            'color' => $color
-           );
-        }
+        // if($res['fylx'] == 1){
+        //     $result['content'][] = array('name'=>'应付余额：',
+        //                              'value'=> "&yen;".number_format($res['yfye'],2,'.',',')."元",
+        //                              'type'=>'number',
+        //                              'color' => $color
+        //                             );
+        // }
+
         $result['content'][] = array('name'=>'付款金额：',
                                      'value'=>"&yen;".number_format($res['fkje'],2,'.',',')."元",
                                      'type'=>'number',
@@ -84,14 +82,14 @@ class YxhbCgfkApplyLogic extends Model {
                                      'value'=>$fkfs,
                                      'type'=>'string',
                                      'color' => 'black'
-                                    );    
+                                    );                                    
         $result['content'][] = array('name'=>'申请理由：',
                                      'value'=>$res['zy'],
                                      'type'=>'text',
                                      'color' => 'black'
                                     );
         $result['imgsrc'] = '';
-        $result['applyerID'] = D('YxhbBoss')->getIDFromName($res['rdy']);
+        $result['applyerID'] =  D('KkBoss')->getIDFromName($res['rdy']);
         $result['applyerName'] = $res['rdy'];
         $result['stat'] = $res['stat'];
         return $result;
@@ -117,10 +115,9 @@ class YxhbCgfkApplyLogic extends Model {
         $res = $this->record($id);
         $result = array();
         if($res['fylx'] == 1){
-            $clientname = M('yxhb_gys')->field('g_name')->where(array('id' => $res['gys']))->find();
-            
+            $clientname = M('kk_gys')->field('g_name')->where(array('id' => $res['gys']))->find();
         }elseif($res['fylx'] == 2){
-            $clientname = M('yxhb_wl')->field('g_name')->where(array('id' => $res['gys']))->find();
+            $clientname = M('kk_wl')->field('g_name')->where(array('id' => $res['gys']))->find();
         }
         $result[] = array('name'=>'申请日期：',
                                      'value'=>$res['zd_date'],
@@ -133,7 +130,7 @@ class YxhbCgfkApplyLogic extends Model {
         // $result[] = array('name'=>'申请单号：',
         //                              'value'=>$res['dh'],
         //                              'type'=>'string'
-        //                             );    
+        //                             );   
         if($res['fylx'] == 1){
             $result[] = array('name'=>'应付余额：',
                                      'value'=> number_format($res['yfye'],2,'.',',')."元",
@@ -172,13 +169,11 @@ class YxhbCgfkApplyLogic extends Model {
      * @return array    所需内容      
      */
     public function sealNeedContent($id){
-        $res    = $this->record($id);
+        $res = $this->record($id);
         if($res['fylx'] == 1){
-            $name = M('yxhb_gys')->field('g_name')->where(array('id' => $res['gys']))->find();
-            $modname = 'CgfkApply';
+            $name = M('kk_gys')->field('g_name')->where(array('id' => $res['gys']))->find();
         }elseif($res['fylx'] == 2){
-            $name = M('yxhb_wl')->field('g_name')->where(array('id' => $res['gys']))->find();
-            $modname = 'WlCgfkApply';
+            $name = M('kk_wl')->field('g_name')->where(array('id' => $res['gys']))->find();
         }
         $result = array(
             'sales'   => $res['rdy'],
@@ -187,7 +182,6 @@ class YxhbCgfkApplyLogic extends Model {
             'date'    => $res['zd_date'],
             'title'   => $res['fylx'] == 1?'供货单位':'汽运公司',
             'name'    => $name['g_name'], 
-            'modname' => $modname,
             'stat'    => $res['stat']
         );
         return $result;
@@ -197,12 +191,11 @@ class YxhbCgfkApplyLogic extends Model {
      * 获取采购付款 供应商信息
      */
     public function getCustomerList(){
-
         $word = I('math');
         $sql = "select 
                     a.id as id,g_name as text 
                 from 
-                    yxhb_gys as a,yxhb_cght as b 
+                    kk_gys as a,kk_cght as b 
                 where 
                     a.id=b.ht_gys and b.ht_stat=2 and (a.g_helpword like '%{$word}%' or a.g_name like '%{$word}%')
                 group by 
@@ -223,8 +216,8 @@ class YxhbCgfkApplyLogic extends Model {
                     a.id AS id,
                     g_name AS text
                 FROM
-                    yxhb_wl AS a,
-                    yxhb_cght AS b
+                    kk_wl AS a,
+                    kk_cght AS b
                 WHERE
                     a.id = b.ht_wl AND b.ht_stat=2 AND g_ch = '' and (a.g_helpword like '%{$word}%' or a.g_name like '%{$word}%')
                 GROUP BY
@@ -242,7 +235,7 @@ class YxhbCgfkApplyLogic extends Model {
      */
     public function getDhId(){
         $today = date('Y-m-d',time());
-        $sql   = "select * from yxhb_cgfksq where date_format(date, '%Y-%m-%d' )='{$today}' and dh like 'CS%'";
+        $sql   = "select * from kk_cgfksq where date_format(date, '%Y-%m-%d' )='{$today}' and dh like 'CS%'";
         $res   = M()->query($sql);
         $count = count($res);
         $time  = str_replace('-','',$today);
@@ -252,60 +245,7 @@ class YxhbCgfkApplyLogic extends Model {
         return $id.$count;
     }
 
-    /**
-     * 原材料采购付款提交 
-     */
-    public function submit(){
-        $today = date('Y-m-d',time());
-        $user  = session('name');
-        $val   = $this->cgfkValidata();
-        $ysye  = I('post.ysye');
-        $bank  = I('post.type');
-        $gyszh = I('post.gyszh');
-        $copyto_id = I('post.copyto_id');
-        if(!$val['bool']) return $val;
-        list($user_id, $notice,$money,$system) = $val['data'];
-        // 重复提交
-        if(!M('yxhb_cgfksq')->autoCheckToken($_POST)) return array('code' => 404,'msg' => '网络延迟，请勿点击提交按钮！');
-        $addData = array(
-            'dh'      => $this->getDhId(),
-            'zd_date' => $today,
-            'fkje'    => $money,
-            'gys'     => $user_id,
-            'zy'      => $notice,
-            'clmc'    => '',
-            'fkfs'    => $bank,
-            'rdy'     => $user,
-            'bm'      => 1,
-            'stat'    => 3,
-            'sqr'     => $user,
-            'clgg'    => '无',
-            'htbh'    => '无',
-            'cwbz'    => '',
-            'jjyy'    => '',
-            'gyszh'   => $gyszh,
-            'date'    => date('Y-m-d H:i:s',time()),
-            'fylx'    => 1,
-            'htlx'    => '汽运',
-            'yfye'    =>  $ysye
-        ); 
 
-        $result = M('yxhb_cgfksq')->add($addData);
-        if(!$result) return array('code' => 404,'msg' =>'提交失败，请重新尝试！');
-        // 抄送
-        $copyto_id = trim($copyto_id,',');
-        if (!empty($copyto_id)) {
-            // 发送抄送消息
-            D('YxhbAppcopyto')->copyTo($copyto_id,'CgfkApply', $result);
-        }
-        
-        $wf = A('WorkFlow');
-        $salesid = session('yxhb_id');
-        $res = $wf->setWorkFlowSV('CgfkApply', $result, $salesid, 'yxhb');
-
-        return array('code' => 200,'msg' => '提交成功' , 'aid' =>$result);
-
-    }
 
     /**
      * 物流采购付款提交 
@@ -352,16 +292,19 @@ class YxhbCgfkApplyLogic extends Model {
         $copyto_id = trim($copyto_id,',');
         if (!empty($copyto_id)) {
             // 发送抄送消息
-            D('YxhbAppcopyto')->copyTo($copyto_id,'CgfkApply', $result);
+            D('YxhbAppcopyto')->copyTo($copyto_id,'WlCgfkApply', $result);
         }
         
         $wf = A('WorkFlow');
         $salesid = session('yxhb_id');
-        $res = $wf->setWorkFlowSV('CgfkApply', $result, $salesid, 'yxhb');
+        $res = $wf->setWorkFlowSV('WlCgfkApply', $result, $salesid, 'yxhb');
 
         return array('code' => 200,'msg' => '提交成功' , 'aid' =>$result);
 
     }
+
+
+
     /**
      * 采购付款提交信息校验
      */
@@ -391,11 +334,11 @@ class YxhbCgfkApplyLogic extends Model {
             'auth' => $auth,
             'id'   => $id
         );
-        $res = send_post('http://www.fjyuanxin.com/yxhb/include/getSupplyPaymentApi.php', $post_data);
+        $res = send_post('http://www.fjyuanxin.com/sngl/include/getSupplyPaymentApi.php', $post_data);
         return $res;
     }
 
-    /**
+        /**
      * 获取银行账号信息
      */
     public function bankInfo(){
@@ -406,7 +349,7 @@ class YxhbCgfkApplyLogic extends Model {
             'bank_gys'  => $gys,
             'bank_lx'   => $type
         );
-        $data  = M('yxhb_bankgys')->field('bank_gys,bank_zhmc,bank_account,bank_khh,bank_lx,id')->where($where)->select();
+        $data  = M('kk_bankgys')->field('bank_gys,bank_zhmc,bank_account,bank_khh,bank_lx,id')->where($where)->select();
         foreach($data as $k => $v){
             $account = $v['bank_account'];
             $data[$k]['bank_account'] = substr($account,0,4).'****'.substr($account,-4);
@@ -414,13 +357,12 @@ class YxhbCgfkApplyLogic extends Model {
         return $data;
     }
 
-    /**
+        /**
      * 合同信息获取
      */
     public function getHtbh(){
-        $sql = "select ht_gys,ht_clmc,ht_clgg,ht_dh,ht_wl from yxhb_cght where ht_stat='2' group by ht_gys,ht_clmc,ht_clgg,ht_dh";
+        $sql = "select ht_gys,ht_clmc,ht_clgg,ht_dh,ht_wl from kk_cght where ht_stat='2' group by ht_gys,ht_clmc,ht_clgg,ht_dh";
         $data = M()->query($sql);
         return $data;
     }
-
 }

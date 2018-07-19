@@ -7,7 +7,7 @@ use Think\Model;
  * @author 
  */
 
-class YxhbCgfkApplyLogic extends Model {
+class YxhbWlCgfkApplyLogic extends Model {
     // 实际表名
     protected $trueTableName = 'yxhb_cgfksq';
 
@@ -55,13 +55,13 @@ class YxhbCgfkApplyLogic extends Model {
         //                              'type'=>'string',
         //                              'color' => 'black'
         //                             );
-        if($res['fylx'] == 1){
-            $result['content'][] = array('name'=>'应付余额：',
-            'value'=> "&yen;".number_format($res['yfye'],2,'.',',')."元",
-            'type'=>'number',
-            'color' => $color
-           );
-        }
+        // if($res['fylx'] == 1){
+        //     $result['content'][] = array('name'=>'应付余额：',
+        //     'value'=> "&yen;".number_format($res['yfye'],2,'.',',')."元",
+        //     'type'=>'number',
+        //     'color' => $color
+        //    );
+        // }
         $result['content'][] = array('name'=>'付款金额：',
                                      'value'=>"&yen;".number_format($res['fkje'],2,'.',',')."元",
                                      'type'=>'number',
@@ -175,10 +175,8 @@ class YxhbCgfkApplyLogic extends Model {
         $res    = $this->record($id);
         if($res['fylx'] == 1){
             $name = M('yxhb_gys')->field('g_name')->where(array('id' => $res['gys']))->find();
-            $modname = 'CgfkApply';
         }elseif($res['fylx'] == 2){
             $name = M('yxhb_wl')->field('g_name')->where(array('id' => $res['gys']))->find();
-            $modname = 'WlCgfkApply';
         }
         $result = array(
             'sales'   => $res['rdy'],
@@ -187,7 +185,6 @@ class YxhbCgfkApplyLogic extends Model {
             'date'    => $res['zd_date'],
             'title'   => $res['fylx'] == 1?'供货单位':'汽运公司',
             'name'    => $name['g_name'], 
-            'modname' => $modname,
             'stat'    => $res['stat']
         );
         return $result;
@@ -252,60 +249,7 @@ class YxhbCgfkApplyLogic extends Model {
         return $id.$count;
     }
 
-    /**
-     * 原材料采购付款提交 
-     */
-    public function submit(){
-        $today = date('Y-m-d',time());
-        $user  = session('name');
-        $val   = $this->cgfkValidata();
-        $ysye  = I('post.ysye');
-        $bank  = I('post.type');
-        $gyszh = I('post.gyszh');
-        $copyto_id = I('post.copyto_id');
-        if(!$val['bool']) return $val;
-        list($user_id, $notice,$money,$system) = $val['data'];
-        // 重复提交
-        if(!M('yxhb_cgfksq')->autoCheckToken($_POST)) return array('code' => 404,'msg' => '网络延迟，请勿点击提交按钮！');
-        $addData = array(
-            'dh'      => $this->getDhId(),
-            'zd_date' => $today,
-            'fkje'    => $money,
-            'gys'     => $user_id,
-            'zy'      => $notice,
-            'clmc'    => '',
-            'fkfs'    => $bank,
-            'rdy'     => $user,
-            'bm'      => 1,
-            'stat'    => 3,
-            'sqr'     => $user,
-            'clgg'    => '无',
-            'htbh'    => '无',
-            'cwbz'    => '',
-            'jjyy'    => '',
-            'gyszh'   => $gyszh,
-            'date'    => date('Y-m-d H:i:s',time()),
-            'fylx'    => 1,
-            'htlx'    => '汽运',
-            'yfye'    =>  $ysye
-        ); 
 
-        $result = M('yxhb_cgfksq')->add($addData);
-        if(!$result) return array('code' => 404,'msg' =>'提交失败，请重新尝试！');
-        // 抄送
-        $copyto_id = trim($copyto_id,',');
-        if (!empty($copyto_id)) {
-            // 发送抄送消息
-            D('YxhbAppcopyto')->copyTo($copyto_id,'CgfkApply', $result);
-        }
-        
-        $wf = A('WorkFlow');
-        $salesid = session('yxhb_id');
-        $res = $wf->setWorkFlowSV('CgfkApply', $result, $salesid, 'yxhb');
-
-        return array('code' => 200,'msg' => '提交成功' , 'aid' =>$result);
-
-    }
 
     /**
      * 物流采购付款提交 
@@ -357,7 +301,7 @@ class YxhbCgfkApplyLogic extends Model {
         
         $wf = A('WorkFlow');
         $salesid = session('yxhb_id');
-        $res = $wf->setWorkFlowSV('CgfkApply', $result, $salesid, 'yxhb');
+        $res = $wf->setWorkFlowSV('WlCgfkApply', $result, $salesid, 'yxhb');
 
         return array('code' => 200,'msg' => '提交成功' , 'aid' =>$result);
 

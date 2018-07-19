@@ -182,13 +182,13 @@ class SeekController extends BaseController
             // $res = M($tableInfo['table_name'])->field($tableInfo['copy_field'])->where(array($tableInfo['id'] => $v['aid']))->find();
 
             $res = D(ucfirst($system).$v['mod_name'], 'Logic')->sealNeedContent($v['aid']);
-            $appStatus =D($system.'Appflowproc')->getWorkFlowStatus($v['mod_name'], $v['aid']);
+            $appStatus =D($system.'Appflowproc')->getWorkFlowStatus($res['modname'], $v['aid']);
             $statRes   = $this->transStat($v['mod_name'],$res['stat']);
             $stat      = $statRes ? $statRes: $res['stat'];
             $arr = array(
                 'system'    => $system,
                 'systemName'=> $systemName[$system],
-                'mod_name'  => $v['mod_name'],
+                'mod_name'  => $res['modname'],
                 'title'     => $tableInfo['title'],
                 'aid'       => $v['aid'],
                 'date'      => date('m/d',strtotime($res['date'])),
@@ -230,13 +230,13 @@ class SeekController extends BaseController
         // 数据重构
         foreach($sub as $k => $v){
             $res       = D(ucfirst($tab[$v[0]]['system']).$tab[$v[0]]['mod_name'], 'Logic')->sealNeedContent($v['aid']);
-            $appStatus = D($tab[$v[0]]['system'].'Appflowproc')->getWorkFlowStatus($tab[$v[0]]['mod_name'], $v['aid']);
+            $appStatus = D($tab[$v[0]]['system'].'Appflowproc')->getWorkFlowStatus($res['modname'], $v['aid']);
             $statRes   = $this->transStat($tab[$v[0]]['mod_name'],$v['stat']);
             $stat      = $statRes ? $statRes: $v['stat'];
             $arr = array(
                 'system'    => $tab[$v[0]]['system'],
                 'systemName'=> $tab[$v[0]]['title'],
-                'mod_name'  => $tab[$v[0]]['mod_name'],
+                'mod_name'  => $res['modname'],
                 'title'     => $tab[$v[0]]['title'],
                 'aid'       => $v['aid'],
                 'date'      => date('m/d',strtotime($v['date'])),
@@ -262,7 +262,16 @@ class SeekController extends BaseController
         $this->assign('title','我的提交');   
         $this->assign('titleArr',$this->titleArr);
         $submit = $this->mySubmitData(1);
-        $this->assign('submit',$submit);
+        $tmp = array();
+        $count = 1;
+        foreach($submit as $val){
+            if($val['apply']['app_stat'] == 1 && $count < 8) continue;
+            if($val['apply']['app_stat'] == 1){
+                $count++;
+            }
+            $tmp = $val;
+        }
+        $this->assign('submit',$tmp);
         $this->display('Seek/mySubmit');
     }
 
@@ -298,13 +307,13 @@ class SeekController extends BaseController
         // 数据重构
         foreach($sub as $k => $v){
             $res       = D(ucfirst($table_info[$v[0]]['system']).$table_info[$v[0]]['mod_name'], 'Logic')->sealNeedContent($v['aid']);
-            $appStatus =D($table_info[$v[0]]['system'].'Appflowproc')->getWorkFlowStatus($table_info[$v[0]]['mod_name'], $v['aid']);
+            $appStatus =D($table_info[$v[0]]['system'].'Appflowproc')->getWorkFlowStatus($res['modname'], $v['aid']);
             $statRes = $this->transStat($table_info[$v[0]]['mod_name'],$v['stat']);
             $stat = $statRes ? $statRes: $v['stat'];
             $arr = array(
                 'system'    => $table_info[$v[0]]['system'],
                 'systemName'=> $table_info[$v[0]]['title'],
-                'mod_name'  => $table_info[$v[0]]['mod_name'],
+                'mod_name'  => $res['modname'],
                 'title'     => $table_info[$v[0]]['title'],
                 'aid'       => $v['aid'],
                 'date'      => date('m/d',strtotime($v['date'])),
@@ -458,13 +467,13 @@ class SeekController extends BaseController
             // $res = M($tableInfo['table_name'])->field($tableInfo['copy_field'])->where(array($tableInfo['id'] => $v['aid']))->find();
 
             $res = D(ucfirst($system).$v['mod_name'], 'Logic')->sealNeedContent($v['aid']);
-            $appStatus =D($system.'Appflowproc')->getWorkFlowStatus($v['mod_name'], $v['aid']);
+            $appStatus =D($system.'Appflowproc')->getWorkFlowStatus($res['modname'], $v['aid']);
             $statRes = $this->transStat($v['mod_name'],$res['stat']);
             $stat = $statRes ? $statRes: $res['stat'];
             $arr = array(
                 'system'    => $system,
                 'systemName'=> $systemName[$system],
-                'mod_name'  => $v['mod_name'],
+                'mod_name'  => $res['modname'],
                 'title'     => $tableInfo['title'],
                 'aid'       => $v['aid'],
                 'date'      => date('m/d',strtotime($res['date'])),
@@ -526,13 +535,13 @@ class SeekController extends BaseController
             // $res = M($tableInfo['table_name'])->field($tableInfo['copy_field'])->where(array($tableInfo['id'] => $v['aid']))->find();
 
             $res = D(ucfirst($system).$v['mod_name'], 'Logic')->sealNeedContent($v['aid']);
-            $appStatus =D($system.'Appflowproc')->getWorkFlowStatus($v['mod_name'], $v['aid']);
+            $appStatus =D($system.'Appflowproc')->getWorkFlowStatus($res['modname'], $v['aid']);
             $statRes = $this->transStat($v['mod_name'],$res['stat']);
             $stat = $statRes ? $statRes: $res['stat'];
             $arr = array(
                 'system'    => $system,
                 'systemName'=> $systemName[$system],
-                'mod_name'  => $v['mod_name'],
+                'mod_name'  => $res['modname'],
                 'title'     => $tableInfo['title'],
                 'aid'       => $v['aid'],
                 'date'      => date('m/d',strtotime($res['date'])),
@@ -547,7 +556,7 @@ class SeekController extends BaseController
             $result[] = $arr;
         }
         
-        return $result;
+        return $tmp;
     }
 
 
@@ -582,13 +591,13 @@ class SeekController extends BaseController
            // $res = M($tableInfo['table_name'])->field($tableInfo['copy_field'])->where(array($tableInfo['id'] => $v['aid']))->find();
 
             $res = D(ucfirst($system).$v['mod_name'], 'Logic')->sealNeedContent($v['aid']);
-            $appStatus =D($system.'Appflowproc')->getWorkFlowStatus($v['mod_name'], $v['aid']);
+            $appStatus =D($system.'Appflowproc')->getWorkFlowStatus($res['modname'], $v['aid']);
             $statRes = $this->transStat($v['mod_name'],$res['stat']);
             $stat = $statRes ? $statRes: $res['stat'];
             $arr = array(
                 'system'    => $system,
                 'systemName'=> $systemName[$system],
-                'mod_name'  => $v['mod_name'],
+                'mod_name'  => $res['modname'],
                 'title'     => $tableInfo['title'],
                 'aid'       => $v['aid'],
                 'date'      => date('m/d',strtotime($res['date'])),

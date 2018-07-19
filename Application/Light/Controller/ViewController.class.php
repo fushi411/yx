@@ -13,7 +13,8 @@ class ViewController extends BaseController
         $this->today = date('Y-m-d',time());
         $model = D('Msgdata');
         $mod_name = I('modname');
-        $this->PageArr = $model->GetMessage($mod_name);
+        $viewtype = I('viewtype');
+        $this->PageArr = $model->GetMessage($mod_name,$viewtype);
         $this->user = session('name');
     }
 
@@ -21,7 +22,7 @@ class ViewController extends BaseController
         // 系统和模块决定
         $mod_name = I('modname');
         $system = I('system');
-
+        $viewtype = I('viewtype');
         // 审批
         $appflow = GetAppFlow($system,$mod_name);
         // 推送
@@ -35,13 +36,13 @@ class ViewController extends BaseController
         $this -> assign('appflow',$appflow);
         $this -> assign('info',$this->PageArr);
 
-        $this -> assign('fixed',$this->PageArr[$system.$mod_name]);
+        $this -> assign('fixed',$this->PageArr[$viewtype.$system.$mod_name]);
 
         $this -> assign('today',$this->today);
 
         $this -> assign('title',$this->PageArr['title']);
         
-        $this -> display($mod_name.'/'.ucfirst($system).'View');
+        $this -> display($mod_name.'/'.ucfirst($system).$viewtype.'View');
 
     }
 

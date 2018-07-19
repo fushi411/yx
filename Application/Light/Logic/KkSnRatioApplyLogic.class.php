@@ -181,7 +181,7 @@ class KkSnRatioApplyLogic extends Model {
         return $this->field(true)->where($map)->getField('zby');
     }
     /**
-     * 我的审批，抄送，提交 所需信息
+     * 我的审批，抄送，提交 所需信息 // 签收区分
      * @param  integer $id 记录ID
      * @return array    所需内容      
      */

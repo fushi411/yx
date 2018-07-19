@@ -15,18 +15,40 @@
 {
     if(!$mod_name) return false;
     $res = M($system.'_appflowtable a')
-            ->field('a.pro_name,b.id,a.`condition`,b.name,b.avatar')
-            ->join($system.'_boss b on a.per_id = b.id')
-            ->where(array('a.pro_mod' => $mod_name, 'a.stat' =>1))
-            ->order('a.stage_id')
-            ->select();
+    ->field('a.pro_name,b.id,a.`condition`,b.name,b.avatar,a.stage_id')
+    ->join($system.'_boss b on a.per_id = b.id')
+    ->where(array('a.pro_mod' => $mod_name, 'a.stat' =>1))
+    ->order('a.stage_id')
+    ->select();
+    $temp    = array();
+    $proInfo = array();
     if(!empty($res)){
         foreach($res as $k=>$v){
-            $res[$k]['condition'] = json_decode($v['condition']);
+            $k = $v['stage_id']-1;
+            $temp[$k][] = $v;
+        }
+        foreach ($temp as $key => $value) {
+            $idx = end($value);
+            $id  = $idx['id'];
+            foreach($value as $k => $val){
+                $sign = count($value) < 2?'':1;
+                if($id == $val['id']) $sign = '';
+                $proInfo[] = array(
+                                    "pro_name"  => $val["pro_name"],
+                                    "id"        => $val["id"],
+                                    "condition" => $val["condition"],
+                                    "name"      => $val["name"],
+                                    "avatar"    => $val["avatar"],
+                                    'sign'      => $sign
+                                ); 
+            }
         }
     }
-    return $res;
+    return $proInfo;
 }
+
+
+
 
  /**
   * 获取某个流程的推送人员

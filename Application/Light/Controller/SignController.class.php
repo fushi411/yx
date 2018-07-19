@@ -3,8 +3,8 @@ namespace Light\Controller;
 use Think\Controller;
 
 class SignController 
-extends Controller { 
-#extends BaseController {
+#extends Controller { 
+extends BaseController {
     // 页面
     public function View(){
         $view = I('get.view');
@@ -12,7 +12,7 @@ extends Controller {
             array('title' => '待我签收','url' => U('Light/Sign/View',array('view' => 'myApprove')),'on' => '','action' => 'myApprove','unRead' => $this->unSignCount()),//
             array('title' => '我的提交','url' => U('Light/Sign/View',array('view' => 'mySubmit')),'on' => '','action' => 'mySubmit','unRead' => 0),
             array('title' => '推送我的','url' => U('Light/Sign/View',array('view' => 'pushToMe')),'on' => '','action' => 'pushToMe','unRead' => $this->getPushCount()),
-            array('title' => '抄送我的','url' => U('Light/Sign/View',array('view' => 'copyToMe')),'on' => '','action' => 'copyToMe','unRead' => 2)//
+            array('title' => '抄送我的','url' => U('Light/Sign/View',array('view' => 'copyToMe')),'on' => '','action' => 'copyToMe','unRead' => $this->getCopyCount())//
         );    
         $titleName = '';
         foreach($title as $key => $val){
@@ -33,7 +33,109 @@ extends Controller {
         $this->$action();
     }
 
-        /**
+    /**
+     * 抄送未读数量
+     */
+    public function getCopyCount(){
+        $wx_id = session('wxid'); 
+        //抄送未读  yxhb - kk
+        $copeSql = "SELECT count(1) as count from (
+            select * from kk_appcopyto where FIND_IN_SET('{$wx_id}',`copyto_id`) and !FIND_IN_SET('{$wx_id}',`readed_id`) and type=1 and stat!=0 {$this->qs_sql_or()} GROUP BY aid
+            union ALL
+            select * from yxhb_appcopyto where FIND_IN_SET('{$wx_id}',`copyto_id`) and !FIND_IN_SET('{$wx_id}',`readed_id`) and type=1  and stat!=0 {$this->qs_sql_or()} GROUP BY aid)a ";
+        $copyRes = M()->query($copeSql);
+        $copy_count =$copyRes[0]['count'];
+        return $copy_count?$copy_count:0;
+    }
+
+    /**
+     * 未读抄送接口
+     */
+    public function unReadCopy(){
+        $systemName = array('1'=>'建材', '2'=>'环保');
+        $page = I('post.page_num');
+        $searchText = I('post.search');
+        $searchArr = $this->dealSearch($searchText);
+        $page = $page?$page:1;
+        $wx_id = session('wxid'); 
+        $result = array();
+        $copySql = "SELECT * from (
+            select *,1 from kk_appcopyto where FIND_IN_SET('{$wx_id}',`copyto_id`) and !FIND_IN_SET('{$wx_id}',`readed_id`) and type=1 {$searchArr['yxhb']} and stat!=0 {$this->qs_sql_or()}
+            UNION ALL
+            select *,2 from yxhb_appcopyto where FIND_IN_SET('{$wx_id}',`copyto_id`) and !FIND_IN_SET('{$wx_id}',`readed_id`) and type=1  {$searchArr['kk']} and stat!=0 {$this->qs_sql_or()}) a 
+            GROUP BY aid order by time desc limit ".(($page-1)*20).",20"; 
+
+        $copy = M()->query($copySql);   
+
+        $result = $this->dealWithCopy($copy);
+        $this->ajaxReturn($result);   
+
+    }
+
+    /**
+     * 抄送未读数量
+     */
+    public function getPushCount(){
+        $wx_id = session('wxid'); 
+        //抄送未读  yxhb - kk
+        $copeSql = "SELECT count(1) as count from (
+            select * from kk_appcopyto where FIND_IN_SET('{$wx_id}',`copyto_id`) and !FIND_IN_SET('{$wx_id}',`readed_id`) and type=2 and stat<>0 {$this->qs_sql_or()} GROUP BY aid
+            union ALL
+            select * from yxhb_appcopyto where FIND_IN_SET('{$wx_id}',`copyto_id`) and !FIND_IN_SET('{$wx_id}',`readed_id`) and type=2  and stat<>0 {$this->qs_sql_or()} GROUP BY aid)a ";
+        $copyRes = M()->query($copeSql);
+        $copy_count =$copyRes[0]['count'];
+        return $copy_count?$copy_count:0;
+    }
+
+    /**
+     * 未读推送接口
+     */
+    public function unReadPush(){
+        $systemName = array('1'=>'建材', '2'=>'环保');
+        $page = I('post.page_num');
+        $searchText = I('post.search');
+        $searchArr = $this->dealSearch($searchText);
+        $page = $page?$page:1;
+        $wx_id = session('wxid'); 
+        $result = array();
+        $copySql = "SELECT * from (
+            select *,1 from kk_appcopyto where FIND_IN_SET('{$wx_id}',`copyto_id`) and !FIND_IN_SET('{$wx_id}',`readed_id`) and type=2 {$searchArr['yxhb']} and stat!=0 {$this->qs_sql_or()}
+            UNION ALL
+            select *,2 from yxhb_appcopyto where FIND_IN_SET('{$wx_id}',`copyto_id`) and !FIND_IN_SET('{$wx_id}',`readed_id`) and type=2  {$searchArr['kk']} and stat!=0 {$this->qs_sql_or()}) a 
+            GROUP BY aid order by time desc limit ".(($page-1)*20).",20"; 
+
+        $copy = M()->query($copySql);   
+
+        $result = $this->dealWithCopy($copy);
+        $this->ajaxReturn($result);   
+
+    }
+
+    /**
+     * 抄送接口
+     * @param integer 页码
+     */
+    public function copyToApi(){
+        $systemName = array('1'=>'建材', '2'=>'环保');
+        $page = I('post.page_num');
+        $searchText = I('post.search');
+        $searchArr = $this->dealSearch($searchText);
+        $page = $page?$page:1;
+        $wx_id = session('wxid'); 
+        $result = array();
+        $copySql = "SELECT * from (
+            select *,1 from kk_appcopyto where FIND_IN_SET('{$wx_id}',`copyto_id`) and FIND_IN_SET('{$wx_id}',`readed_id`) and type=1 {$searchArr['yxhb']} and stat!=0 {$this->qs_sql_or()}
+            UNION ALL
+            select *,2 from yxhb_appcopyto where FIND_IN_SET('{$wx_id}',`copyto_id`) and FIND_IN_SET('{$wx_id}',`readed_id`) and type=1  {$searchArr['kk']} and stat!=0 {$this->qs_sql_or()}) a 
+            GROUP BY aid order by time desc limit ".(($page-1)*20).",20"; 
+
+        $copy = M()->query($copySql);   
+
+        $result = $this->dealWithCopy($copy);
+        $this->ajaxReturn($result);   
+    }
+
+    /**
      * 抄送接口
      */
     public function pushToApi(){
@@ -43,46 +145,50 @@ extends Controller {
         $searchText = I('post.search');
         $searchArr = $this->dealSearch($searchText);
         $wx_id = session('wxid'); 
-        $result = array();
+        
         $copySql = "SELECT * from (
-            select *,1 from kk_appcopyto where FIND_IN_SET('{$wx_id}',`copyto_id`) and FIND_IN_SET('{$wx_id}',`readed_id`) and type=2  {$searchArr['yxhb']} and stat!=0 {$this->qs_sql()}
+            select *,1 from kk_appcopyto where FIND_IN_SET('{$wx_id}',`copyto_id`) and FIND_IN_SET('{$wx_id}',`readed_id`) and type=2  {$searchArr['yxhb']} and stat!=0 {$this->qs_sql_or()}
             UNION ALL
-            select *,2 from yxhb_appcopyto where FIND_IN_SET('{$wx_id}',`copyto_id`) and FIND_IN_SET('{$wx_id}',`readed_id`) and type=2 {$searchArr['kk']} and stat!=0 {$this->qs_sql()} ) a 
+            select *,2 from yxhb_appcopyto where FIND_IN_SET('{$wx_id}',`copyto_id`) and FIND_IN_SET('{$wx_id}',`readed_id`) and type=2 {$searchArr['kk']} and stat!=0 {$this->qs_sql_or()} ) a 
             GROUP BY aid order by time desc limit ".(($page-1)*20).",20"; 
         
         $copy = M()->query($copySql);   
-        
-        foreach($copy as $k => $v){
-            // 查询数据
-            $system = $v[1]==1?'kk':'yxhb';
-            $tableInfo = $this->searchTableInfo($system,$v['mod_name']);
-            // $res = M($tableInfo['table_name'])->field($tableInfo['copy_field'])->where(array($tableInfo['id'] => $v['aid']))->find();
+        $result = $this->dealWithCopy($copy);
 
-            $res = D(ucfirst($system).$v['mod_name'], 'Logic')->sealNeedContent($v['aid']);
-            $appStatus =D($system.'Appflowproc')->getWorkFlowStatus($v['mod_name'], $v['aid']);
-            $statRes = $this->transStat($v['mod_name'],$res['stat']);
-            $stat = $statRes ? $statRes: $res['stat'];
-            $arr = array(
-                'system'    => $system,
-                'systemName'=> $systemName[$system],
-                'mod_name'  => $v['mod_name'],
-                'title'     => $tableInfo['title'],
-                'aid'       => $v['aid'],
-                'date'      => date('m/d',strtotime($res['date'])),
-                'applyer'   => $res['sales'],
-                'stat'      => $stat,
-                'titlename' => $res['title'],
-                'name'      => $res['name'],
-                'approve'   => $res['approve'],
-                'notice'    => $res['notice'],
-                'apply'     => $appStatus
-            );
-            $result[] = $arr;
-        }
-        return $result;
+        $this->ajaxReturn($result);    
     }
 
-        /**
+    /**
+     * 抄送数据处理
+     */ 
+    public function dealWithCopy($data){
+        $result = array();
+        foreach($data as $k => $v){
+            // 查询数据
+            $system = $v[1]==1?'kk':'yxhb';
+            $logic  = D(ucfirst($system).$v['mod_name'], 'Logic');
+            $res    = $logic->sealNeedContent($v['aid']);
+            $info   = $this->searchTableInfo($system,$v['mod_name']);
+            $Content   = $logic->recordContent($v['aid']);
+            $statRes   = $this->transStat($v['mod_name'],$Content['stat']);
+            $stat      = $statRes ? $statRes: $Content['stat'];
+            $arr = array(
+                'system'    => $system,
+                'systemName'=> $info['title'],
+                'mod_name'  => $v['mod_name'],
+                'title'     => $info['title'],
+                'aid'       => $v['aid'],
+                'date'      => date('m/d',strtotime($v['time'])),
+                'applyer'   => $Content['applyerName'],
+                'stat'      => $stat,
+                'content'   => $res
+            );
+            $result[] = $arr;
+       }
+       return $result;
+    }
+
+    /**
      * 搜索查询模块检索
      * @param string $searchText 搜索字段
      */
@@ -93,7 +199,7 @@ extends Controller {
         if(empty($searchText)) return $result;
    
         // 系统是否要搜索 -- 1、只输入模块名，无系统名  2、系统加模块名
-        $tableArr = $this->getAppTable();
+        $tableArr = $this->config();
         $mod_name = array();
         foreach($tableArr as $k =>$v){
             $tmp = $this->spStr($v['search']);
@@ -154,20 +260,7 @@ extends Controller {
 
     
 
-    /**
-     * 抄送未读数量
-     */
-    public function getPushCount(){
-        $wx_id = session('wxid'); 
-        //抄送未读  yxhb - kk
-        $copeSql = "SELECT count(1) as count from (
-            select * from kk_appcopyto where FIND_IN_SET('{$wx_id}',`copyto_id`) and !FIND_IN_SET('{$wx_id}',`readed_id`) and type=2 and stat<>0 {$this->qs_sql()} GROUP BY aid
-            union ALL
-            select * from yxhb_appcopyto where FIND_IN_SET('{$wx_id}',`copyto_id`) and !FIND_IN_SET('{$wx_id}',`readed_id`) and type=2  and stat<>0 {$this->qs_sql()} GROUP BY aid)a ";
-        $copyRes = M()->query($copeSql);
-        $copy_count =$copyRes[0]['count'];
-        return $copy_count?$copy_count:0;
-    }
+
 
     /**
      * 签收排除数组
@@ -181,6 +274,20 @@ extends Controller {
         return $sql;
     }
 
+    /**
+     * 签收排除数组
+     */
+    public function qs_sql_or(){
+        $sql = '';
+        $mod_array = D('Msgdata')->QsArray();
+        $sql = " and ( ";
+        foreach($mod_array as $key=>$val){
+            if($key != 0) $sql .=" or ";
+            $sql .= "`mod_name` = '{$val['pro_mod']}'";
+        }
+        $sql .= ")";
+        return $sql;
+    }
 
 
     // 审核中的提交
@@ -356,7 +463,7 @@ extends Controller {
             $arr = array(
                 'system'    => $system,
                 'systemName'=> $info['title'],
-                'mod_name'  => $$v['mod_name'],
+                'mod_name'  => $v['mod_name'],
                 'title'     => $info['title'],
                 'aid'       => $v['aid'],
                 'date'      => date('m/d',strtotime($v['time'])),

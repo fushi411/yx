@@ -56,7 +56,14 @@ class YxhbAppflowprocModel extends Model {
     }
 
     public function getWorkFlowStatus($mod_name, $aid){
-      $appInfo = $this->field('app_stat,app_name,app_stage')->where(array('mod_name'=>$mod_name, 'aid'=>$aid, 'app_stat'=>array('egt',0), 'app_stat'=>array('lt',3)))->order('app_stat asc')->find();
+        $appInfo = $this->field('app_stat,app_name,app_stage')->where(array('mod_name'=>$mod_name, 'aid'=>$aid, 'app_stat'=>array('egt',0), 'app_stat'=>array('lt',3)))->order('app_stat asc')->select();
+        $temp = array();
+        foreach($appInfo as $val){
+            if($val['app_stat'] != 1 ) continue;
+            $temp = $val;
+        }
+        $appInfo = !empty($temp)?$temp:$this->field('app_stat,app_name,app_stage')->where(array('mod_name'=>$mod_name, 'aid'=>$aid, 'app_stat'=>array('egt',0), 'app_stat'=>array('lt',3)))->order('app_stat asc')->find();
+
       if($appInfo['app_stat']=='1'){
         $apply = array("stat"=>1, "content"=>"已退审", "stage"=>$appInfo['app_stage']);
       } elseif ($appInfo['app_stat']=='0'){

@@ -51,6 +51,10 @@ class ApplyController extends BaseController {
         $process = D($system.'Appflowproc');
         $procArr = $process->contentProc($mod_name, $apply_id, $authArr);
         $this->assign('process', $procArr['process']);      //审批流程
+        $isSigntemp = $procArr['process'];
+        $isSigntemp = end($isSigntemp);
+        $isSigning  = $isSigntemp['app_name'];
+        $this->assign('isSigning',$isSigning);
         $this->assign('isApplyer', $procArr['isApplyer']);
         $this->assign('isPasser', $procArr['isPasser']);
         $this->assign('isRefuse', $procArr['isRefuse']);
@@ -463,16 +467,11 @@ class ApplyController extends BaseController {
         header("Content-type:text/html;charset=utf-8");
       
         $authArr = array('wk','shh', 'csl', 'ChenBiSong','HuangShiQi');
-        $mod_name = 'SnRatioApply';
-        $apply_id =  337;
-        $system = 'kk';
-        $sql = '';
-        $mod_array = D('Msgdata')->QsArray();
-        foreach($mod_array as $val){
-            $sql .= " and `mod_name` <> '{$val['pro_mod']}'";
-        }
+        $system  = 'yxhb';
+        $mod_name = 'WlCgfkApply';
+        $aid = 344;
 
-        dump( $sql);
+
     }
 
 

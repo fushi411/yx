@@ -88,6 +88,7 @@
                                                     <h1 class="page__title">{$vo.msg}</h1>
                                                     <else/>
                                                     <!-- 不为空的情况 -->
+                                                   
                                                     <volist name="data" id="v">
 
                                                         <if condition="$i-$vo.count elt 1">
@@ -104,7 +105,12 @@
 
                                                             <span style='margin-right: 6px;font-size: 14px;'> {$v.name}</span>
                                                             <if condition="$i-$vo.count elt 0">
-                                                                <span class="glyphicon glyphicon-arrow-right" style="position: relative;top: -2.8em;right: -1.8em;"></span>
+                                                                    <if condition="$v.sign eq 1">
+                                                                            <span style="border-radius: 3px;position: relative;top: -2.5em;right: -1.8em;width: 6px;height: 6px;background-color: #333333"></span>
+                                                                        <else/>
+                                                                        <span class="glyphicon glyphicon-arrow-right" style="position: relative;top: -2.8em;right: -1.8em;"></span>
+                                                                    </if>
+                                                                
                                                             </if>
                                                             </li>
                                                         </if>

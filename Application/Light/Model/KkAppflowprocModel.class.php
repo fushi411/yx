@@ -59,7 +59,14 @@ class KkAppflowprocModel extends Model {
     }
 
     public function getWorkFlowStatus($mod_name, $aid){
-      $appInfo = $this->field('app_stat,app_name,app_stage')->where(array('mod_name'=>$mod_name, 'aid'=>$aid, 'app_stat'=>array('egt',0), 'app_stat'=>array('lt',3)))->order('app_stat asc')->find();
+        $appInfo = $this->field('app_stat,app_name,app_stage')->where(array('mod_name'=>$mod_name, 'aid'=>$aid, 'app_stat'=>array('egt',0), 'app_stat'=>array('lt',3)))->order('app_stat asc')->select();
+        $temp = array();
+        foreach($appInfo as $val){
+            if($val['app_stat'] != 1 ) continue;
+            $temp = $val;
+        }
+        $appInfo = !empty($temp)?$temp:$this->field('app_stat,app_name,app_stage')->where(array('mod_name'=>$mod_name, 'aid'=>$aid, 'app_stat'=>array('egt',0), 'app_stat'=>array('lt',3)))->order('app_stat asc')->find();
+
       if($appInfo['app_stat']=='1'){
         $apply = array("stat"=>1, "content"=>"已退审", "stage"=>$appInfo['app_stage']);
       } elseif ($appInfo['app_stat']=='0'){
@@ -115,10 +122,10 @@ class KkAppflowprocModel extends Model {
 
     /**
      * 获取同级未签数
-     * @param  [string] $mod_name [流程名]
-     * @param  [integer] $stage_id      [审批ID]
-     * @param  integer $uid      [用户ID]
-     * @return [array]           [流程信息]
+     * @param  [string]  $mod_name [流程名]
+     * @param  [integer] $stage_id [审批ID]
+     * @param  [integer] $uid      [用户ID]
+     * @return [array]             [流程信息]
      */
     public function getSameProcNum($mod_name, $aid, $stage_id)
     {

@@ -189,6 +189,7 @@ class YxhbTempCreditLineApplyLogic extends Model {
             'date'    => $res['date'],
             'title'   => '客户名称',
             'name'    => $clientname['g_khjc'], 
+            'modname' => 'TempCreditLineApply',
             'stat'    => $res['stat']
         );
         return $result;

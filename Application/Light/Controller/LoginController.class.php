@@ -147,7 +147,7 @@ class LoginController extends \Think\Controller {
         $subName = $boss->getusername($applyerid);
         $applyerName='('.$subName.'提交)';
        
-        $boss = D($system.'_boss')->getWXFromID($applyerid);
+        $boss = D($system.'_boss')->getWXFromID($pid);
         switch ($type) {
           case 'pass':
             $description = "您有一个流程已审批通过".$applyerName;
