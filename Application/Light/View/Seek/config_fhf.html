@@ -1,0 +1,217 @@
+<extend name="Apply:applyBase" />
+<block name="system"></block>
+<block name="disable_date"></block>
+<block name="able_date"></block>
+<block name="Process"></block>
+<block name="copyto"></block>
+<block name="pushto"></block>
+
+<!-- 配置主体 -->
+<block name="content_body">
+    <h3 class="titleTab" style="text-align: center;">指标配置</h3>
+    <div class="weui-cells weui-cells_form">
+            <div class="weui-cell weui-cell_select weui-cell_select-after">
+                    <div class="weui-cell__hd">
+                        <label class="weui-label">品种类别&nbsp;&nbsp;
+                            
+                        </label>
+                    </div>
+                    <div class="weui-cell__bd">
+                        <select class="weui-select" name="type" id='type'>
+                            
+                            <volist name="ratioType" id="item">
+                                <eq name="item.product" value="$product">
+                                    <option value="{$item.product}" selected >{$item.product}</option>
+                                    <else/>
+                                    <option value="{$item.product}">{$item.product}</option>
+                                </eq>
+                                   
+                            </volist>
+                        </select>
+                    </div>
+                </div>
+    </div>
+
+    <div class="weui-cells__title">点击对应指标修改</div>
+    <div class="weui-cells weui-cells_form">
+        
+        <div class="weui-cell weui-cell_select weui-cell_select-after weui-cell_access  show_div">
+            <div class="weui-cell__hd">
+                <label class="weui-label ">筛余&nbsp;&nbsp;
+                </label>
+            </div>
+            <div class="weui-cell__bd ">
+                <input class="weui-select" type="text" readonly id="sy_1" value="430 - 480" />
+            </div>
+        </div>
+        <div class="weui-cell weui-cell_vcode data_div">
+            <div class="weui-cell__hd">
+                <label class="weui-label ">
+                </label>
+            </div>
+            <div class="weui-cell__bd">
+                <input class="weui-input" type="number"  id="sy_2" value="5" placeholder="请输入" />
+            </div>
+            <div class="weui-cell__ft">
+                <button class="weui-vcode-btn">确定</button>
+            </div>
+        </div>
+
+        <div class="weui-cell weui-cell_select weui-cell_select-after weui-cell_access  show_div">
+            <div class="weui-cell__hd">
+                <label class="weui-label ">比表&nbsp;&nbsp;
+                </label>
+            </div>
+            <div class="weui-cell__bd">
+                <input class="weui-select" type="text" readonly id="bibiao_1" value="≤ 1 %" />
+            </div>
+        </div>
+        <div class="weui-cell weui-cell_vcode data_div">
+            <div class="weui-cell__hd">
+                <label class="weui-label ">
+                </label>
+            </div>
+            <div class="weui-cell__bd">
+                <input class="weui-input" type="number" id="bibiao_2" value="1" placeholder="请输入" />
+            </div>
+            <div class="weui-cell__ft">
+                <button class="weui-vcode-btn">确定</button>
+            </div>
+        </div>
+    </div>
+</block>
+<block name="submit">
+        <div class="weui-btn-area">
+            <input type="hidden" name="file_names" id="file_names">
+            <a class="weui-btn weui-btn_primary" href="javascript:" id="submit">提交</a>
+        </div>
+        <div class="weui-cells__title">注意事项</div>
+        <!-- <div class="weui-cells__title">各个中心主管及以上职位的申请抄送</div> -->
+        <div class="weui-cells" style="margin-top:0px;">
+            <div class="weui-cell">
+                <div class="weui-cell__bd">
+                    <div class="weui-uploader">
+                        <div class="weui-uploader__bd" style="height: 85px;">
+                             <div  style="color: #f12e2e;">请确认指标配置准确无误<br/>该指标数据关联产品合格率<br/>及不达标报警信息发送</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </block>
+<!-- JS -->
+<block name="js">
+        
+    <script>
+        var sy   = '',
+            bibiao = '',
+            ini_sy   = '',
+            ini_bibiao = '';
+        $('.data_div').hide();
+        $('.show_div').click(function(){
+            var index = $(this).index('.show_div'),
+                elm   = $('.data_div').eq(index);
+            elm.css('display') == 'none'?elm.fadeIn(200):elm.fadeOut(200);
+        });
+        // 点击确定
+        $('.weui-vcode-btn').click(function(){
+           var index = $(this).index('.weui-vcode-btn');
+            
+           if(index == 0){
+            Sy() // 细度方式
+           }else if(index == 1){
+            Bibiao(); // 细度
+           }
+        });
+      
+
+        
+
+        function  Sy(){
+            var value = $('#sy_2').val();
+            
+            if(!value || value < 0) return tooltip('请认真填写筛余指标');
+            sy = value;
+            $('#sy_1').val('≤ '+value+' %');
+            $('.data_div').eq(0).fadeOut(200);
+        }
+        
+
+        function  Bibiao(){
+            var value = $('#bibiao_2').val();
+            if(!value || value < 0) return tooltip('请认真填写比表指标');
+            bibiao = value;
+            $('#bibiao_1').val(value);
+            $('.data_div').eq(1).fadeOut(200);
+        }
+
+        // 类型选择
+        $('#type').change(function(){
+            getData();
+        });
+        
+        // 数据接口
+        getData();
+        function getData(){
+            toast.fadeIn(200);
+            $.ajax({
+                type:'POST',
+                url: "{:U('Light/Seek/seekApi')}",
+                dataType: 'json',
+                data: {
+                    type: 'config_api',
+                    product:$('#type').val(),
+                    mod:'FhfRatioApply'
+                },
+                success: function (res) {
+                    console.log(res.data);
+                    if(res.code == 200){
+                        sy         = res.data[0].value,
+                        bibiao     = res.data[1].value,
+                        ini_sy     = res.data[0].value,
+                        ini_bibiao = res.data[1].value;
+                       
+                        $('#sy_1').val('≤ '+sy+' %');
+                        $('#sy_2').val('');
+                        $('#bibiao_1').val(bibiao);
+                        $('#bibiao_2').val('');
+                    }
+                    toast.fadeOut(200);
+                }
+            });
+        }
+        // 修改提交
+        $('#submit').click(function () {
+           
+            // 无修改不提交
+            if(sy == ini_sy  && bibiao == ini_bibiao) return;
+            // 提示
+            if(!sy || sy < 0) return  tooltip('请认真填写筛余指标');
+            if(!bibiao || bibiao < 0) return  tooltip('请认真填写比表指标');
+            toast.fadeIn(200);
+            $.ajax({
+                type: 'POST',
+                url: "{:U('Light/Seek/seekApi')}",
+                dataType: 'json',
+                data: {
+                    data:[sy,bibiao],
+                    type: 'config_fhf_submit',
+                    mod:'FhfRatioApply',   
+                    product:$('#type').val(),
+                    __hash__: hash
+                },
+                dataType: 'json',
+                success: function (res) {
+                    toast.fadeOut(200);
+                    
+                    if(res.code==200){
+                       if( res.data.code == 404 ) return;
+                       $('#toast').fadeIn(200);
+                        setTimeout(function(){location.reload()},2000);  
+
+                    }
+                }
+            });
+        });
+    </script>
+</block>

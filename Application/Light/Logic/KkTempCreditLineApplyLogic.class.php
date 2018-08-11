@@ -35,7 +35,16 @@ class KkTempCreditLineApplyLogic extends Model {
         $result = array();
         $clientname = M('kk_guest2')->field('g_khjc')->where(array('id' => $res['clientid']))->find();
          //计算应收额度
-        
+        $result['content'][] = array('name'=>'申请单位：',
+                                     'value'=>'建材临时额度申请',
+                                     'type'=>'date',
+                                     'color' => 'black'
+                                    );
+        $result['content'][] = array('name'=>'提交时间：',
+                                     'value'=> date('Y-m-d H:i',strtotime($res['dtime'])),
+                                     'type'=>'string',
+                                     'color' => 'black'
+                                    );
         $result['content'][] = array('name'=>'执行时间：',
                                      'value'=>$res['date'],
                                      'type'=>'string',
@@ -148,6 +157,10 @@ class KkTempCreditLineApplyLogic extends Model {
         $result = array();
         $info = $this->getInfo($res['clientid'],$res['date'],$res['clientname']);
         $clientname = M('kk_guest2')->field('g_khjc')->where(array('id' => $res['clientid']))->find();
+        $result[] = array('name'=>'提交时间：',
+                                     'value'=> date('Y-m-d H:i',strtotime($res['dtime'])) ,
+                                     'type'=>'date'
+                                    );
         $result[] = array('name'=>'申请日期：',
                                      'value'=>$res['date'],
                                      'type'=>'date'
@@ -268,7 +281,12 @@ class KkTempCreditLineApplyLogic extends Model {
                     ->find();
         
         //  为过审的
-        if($res['stat'] == 2) return array('code' => 404,'msg' => '已有一条同等额度申请在审批');
+        $app_stat = M($system.'_appflowproc')
+                    ->where(array('aid' =>$res['id'],'mod_name' => 'TempCreditLineApply' ,'app_stat' => 1))
+                    ->find();
+        if(empty($app_stat)){
+            if($res['stat'] == 2 ) return array('code' => 404,'msg' => '已有一条同等额度申请在审批');
+        }
         // 过审的情况 有效期判断
         $day = str_replace('天','',$res['yxq']);
         if(strtotime($res['dtime'].' +'.$day.' day')>time()) return array('code' => 404,'msg' => '已有同等额度在有效期内');

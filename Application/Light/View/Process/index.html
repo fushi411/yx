@@ -1,0 +1,226 @@
+<extend name="Apply:base" />
+
+<block name="content_body">
+    <style>
+        td {
+            text-align: center;
+        }
+
+        th {
+            text-align: center;
+        }
+    </style>
+    <h3 class="titleTab" style="text-align: center">量库库存</h3>
+    <div class="weui-cells__title" style="text-align: right;padding-right: 0;">单位:库深(m) 数量(t)</div>
+    <div class="table-responsive" style="font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif;
+        font-size: 14px;">
+        <table class="table table-bordered" id="daichanlist2-2table">
+            <tr>
+                <th style="position: absolute; left: 15px; background-color: white; width: 89.2px;height: 75px; z-index: 99;padding: 25px;">
+                    <div>库号</div>
+                </th>
+                <th style="padding-left: 89.2px;" colspan="2">今天</th>
+                <th colspan="2">2018-07-30</th>
+                <th colspan="2">2018-08-01</th>
+                <th colspan="2">2018-08-02</th>
+            </tr>
+            <tr>
+                <th style="position: absolute; left: 15px; background-color: white; width: 89.2px;">
+                    <div></div>
+                </th>
+                <td style="padding-left: 89.2px;">库深</th>
+                    <td>数量</td>
+                    <td>库深</td>
+                    <td>数量</td>
+                    <td>库深</td>
+                    <td>数量</td>
+                    <td>库深</td>
+                    <td>数量</td>
+            </tr>
+
+            <tbody id="app">
+                <tr class="active">
+                    <td style="position: absolute; left: 15px; width: 89.2px; background-color: white;">1#库(粗灰)</td>
+                    <td style="padding-left: 89.2px;">23355</td>
+                    <td>112</td>
+                    <td>140</td>
+                    <td>123</td>
+                    <td>123</td>
+                    <td>123</td>
+                    <td>123</td>
+                    <td>123</td>
+                </tr>
+                <tr>
+                    <td style="position: absolute; left: 15px; width: 89.2px; background-color: white;">2#库(S95)</td>
+                    <td style="padding-left: 89.2px;">23355</td>
+                    <td>112</td>
+                    <td>140</td>
+                    <td>123</td>
+                    <td>123</td>
+                    <td>123</td>
+                    <td>123</td>
+                    <td>123</td>
+                </tr>
+                <tr class="active">
+                    <td style="position: absolute; left: 15px; width: 89.2px; background-color: white;">3#库(F85)</td>
+                    <td style="padding-left: 89.2px;">23355</td>
+                    <td>112</td>
+                    <td>140</td>
+                    <td>123</td>
+                    <td>123</td>
+                    <td>123</td>
+                    <td>123</td>
+                    <td>123</td>
+                </tr>
+                <tr>
+                    <td style="position: absolute; left: 15px; width: 89.2px; background-color: white;">4#库(F85)</td>
+                    <td style="padding-left: 89.2px;">23355</td>
+                    <td>112</td>
+                    <td>140</td>
+                    <td>123</td>
+                    <td>123</td>
+                    <td>123</td>
+                    <td>123</td>
+                    <td>123</td>
+                </tr>
+                <tr class="active">
+                    <td style="position: absolute; left: 15px; width: 89.2px; background-color: white;">5#库(F85)</td>
+                    <td style="padding-left: 89.2px;">23355</td>
+                    <td>112</td>
+                    <td>140</td>
+                    <td>123</td>
+                    <td>123</td>
+                    <td>123</td>
+                    <td>123</td>
+                    <td>123</td>
+                </tr>
+                <tr class="active">
+                    <td style="position: absolute; left: 15px; width: 89.2px; background-color: white;">6#库(F85)</td>
+                    <td style="padding-left: 89.2px;">23355</td>
+                    <td>112</td>
+                    <td>140</td>
+                    <td>123</td>
+                    <td>123</td>
+                    <td>123</td>
+                    <td>123</td>
+                    <td>123</td>
+                </tr>
+                <tr class="active">
+                    <td style="position: absolute; left: 15px; width: 89.2px; background-color: white;">合计</td>
+                    <td style="padding-left: 89.2px;">23355</td>
+                    <td>112</td>
+                    <td>140</td>
+                    <td>123</td>
+                    <td>123</td>
+                    <td>123</td>
+                    <td>123</td>
+                    <td>123</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <h3 class="titleTab" style="text-align: center">账面库存</h3>
+    <div class="weui-cells__title" style="text-align: right;padding-right: 0;">单位:(t)</div>
+    <div class="table-responsive" style="font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif;
+        font-size: 14px;">
+        <table class="table table-bordered" id="daichanlist2-2table">
+            <tr>
+                <th style="position: absolute; left: 15px; width: 89.2px; background-color: white;">库号</th>
+                <th style="padding-left: 89.2px;" >本日库存</th>
+                <th >上日进库</th>
+                <th >上日销售</th>
+                <th >上日库存</th>
+            </tr>
+           
+            <tbody id="app">
+                <tr class="active">
+                    <td style="position: absolute; left: 15px; width: 89.2px; background-color: white;">1#库(粗灰)</td>
+                    <td style="padding-left: 89.2px;">23355</td>
+                    <td>112</td>
+                    <td>140</td>
+                    <td>140</td>
+                </tr>
+                <tr>
+                    <td style="position: absolute; left: 15px; width: 89.2px; background-color: white;">2#库(S95)</td>
+                    <td style="padding-left: 89.2px;">23355</td>
+                    <td>112</td>
+                    <td>140</td>
+                    <td>140</td>
+                </tr>
+                <tr class="active">
+                    <td style="position: absolute; left: 15px; width: 89.2px; background-color: white;">3#库(F85)</td>
+                    <td style="padding-left: 89.2px;">23355</td>
+                    <td>112</td>
+                    <td>140</td>
+                    <td>140</td>
+                </tr>
+                <tr>
+                    <td style="position: absolute; left: 15px; width: 89.2px; background-color: white;">4#库(F85)</td>
+                    <td style="padding-left: 89.2px;">23355</td>
+                    <td>112</td>
+                    <td>140</td>
+                    <td>140</td>
+                </tr>
+                <tr class="active">
+                    <td style="position: absolute; left: 15px; width: 89.2px; background-color: white;">5#库(F85)</td>
+                    <td style="padding-left: 89.2px;">23355</td>
+                    <td>112</td>
+                    <td>140</td>
+                    <td>140</td>
+                </tr>
+                <tr class="active">
+                    <td style="position: absolute; left: 15px; width: 89.2px; background-color: white;">6#库(F85)</td>
+                    <td style="padding-left: 89.2px;">23355</td>
+                    <td>112</td>
+                    <td>140</td>
+                    <td>140</td>
+                </tr>
+                <tr class="active">
+                    <td style="position: absolute; left: 15px; width: 89.2px; background-color: white;">合计</td>
+                    <td style="padding-left: 89.2px;">23355</td>
+                    <td>112</td>
+                    <td>140</td>
+                    <td>140</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</block>
+
+<table border="1" cellspacing="0" width="50%" height="150">
+    <caption>纵向合并单元格</caption>
+    <tr>
+        <th>班级</t>
+            <th>姓名</th>
+            <th>年龄</th>
+            <th>电话</th>
+    </tr>
+    <tr>
+        <td rowspan="2">601班</td>
+        <td>Jack</td>
+        <td>24</td>
+        <td>1351234567</td>
+    </tr>
+    <tr>
+        <td>Tom</td>
+        <td>22</td>
+        <td>1351234567</td>
+    </tr>
+    <!--rowspan中必须指定要合并的列数目，是两行还是三行等等-->
+    <tr>
+        <td rowspan="3">602班</td>
+        <td>Rose</td>
+        <td>22</td>
+        <td>1351234567</td>
+    </tr>
+    <tr>
+        <td>张三</td>
+        <td>25</td>
+        <td>1351234567</td>
+    </tr>
+    <tr>
+        <td>李四</td>
+        <td>25</td>
+        <td>1351234567</td>
+    </tr>
+</table>

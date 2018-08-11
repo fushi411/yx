@@ -31,6 +31,11 @@ class YxhbContractApplyLogic extends Model {
     {
         $res = $this->record($id);
         $result = array();
+        $result['content'][] = array('name'=>'申请单位：',
+                                     'value'=>'环保开票申请',
+                                     'type'=>'date',
+                                     'color' => 'black'
+                                    );
         $result['content'][] = array('name'=>'客户名称：',
                                      'value'=>D('yxhb_guest2')->getName($res['ht_khmc']),
                                      'type'=>'string'

@@ -32,7 +32,45 @@ extends BaseController {
         $action = I('post.action');  
         $this->$action();
     }
+/**
+     *  一键全读功能之抄送全读
+     */
+    public function copyRead(){
+        $wx_id = session('wxid'); 
+        $copySql = "SELECT * from (
+            select `aid`,`readed_id`,`mod_name`,`time`,1 from kk_appcopyto where FIND_IN_SET('{$wx_id}',`copyto_id`) and !FIND_IN_SET('{$wx_id}',`readed_id`) and type=1  and stat!=0 {$this->qs_sql_or()}
+            UNION ALL
+            select `aid`,`readed_id`,`mod_name`,`time`,2 from yxhb_appcopyto where FIND_IN_SET('{$wx_id}',`copyto_id`) and !FIND_IN_SET('{$wx_id}',`readed_id`) and type=1 and stat!=0 {$this->qs_sql_or()}) a 
+            GROUP BY aid order by time desc "; 
+        $copy = M()->query($copySql);
+        foreach($copy as $k => $v){
+            // 查询数据
+            $system = $v[1] == 1?'kk':'yxhb';
+            $copyTo = D($system.'Appcopyto');
+            $copyTo->readCopytoApply($v['mod_name'],$v['aid'] ,null,1);
+        }
+        $this->ajaxReturn('success');
+    }
 
+    /**
+     *  一键全读功能之推送全读
+     */
+    public function pushRead(){
+        $wx_id = session('wxid'); 
+        $copySql = "SELECT * from (
+            select `aid`,`readed_id`,`mod_name`,`time`,1 from kk_appcopyto where FIND_IN_SET('{$wx_id}',`copyto_id`) and !FIND_IN_SET('{$wx_id}',`readed_id`) and type=2  and stat!=0 {$this->qs_sql_or()}
+            UNION ALL
+            select `aid`,`readed_id`,`mod_name`,`time`,2 from yxhb_appcopyto where FIND_IN_SET('{$wx_id}',`copyto_id`) and !FIND_IN_SET('{$wx_id}',`readed_id`) and type=2 and stat!=0 {$this->qs_sql_or()}) a 
+            GROUP BY aid order by time desc "; 
+        $copy = M()->query($copySql);
+        foreach($copy as $k => $v){
+            // 查询数据
+            $system = $v[1] == 1?'kk':'yxhb';
+            $copyTo = D($system.'Appcopyto');
+            $copyTo->readCopytoApply($v['mod_name'],$v['aid'] ,null,2);
+        }
+        $this->ajaxReturn('success');
+    }
     /**
      * 抄送未读数量
      */
@@ -602,30 +640,7 @@ extends BaseController {
 
     // 基本配置
     public function config(){
-        return array(
-            array( 
-                'title'      => '水泥配比通知' , 
-                'search'     => '水泥配比通知',
-                'system'     => 'kk' ,
-                'mod_name'   => 'SnRatioApply'    ,
-                'table_name' => 'kk_zlddtz'    ,
-                'id'         => 'id',
-                'stat'       => 'STAT',
-                'submit'     => array('name' => 'zby','stat' => 2),
-                'copy_field' => 'kk_zlddtz.id as aid, kk_zlddtz.jlsj as date,kk_zlddtz.STAT as state ,kk_zlddtz.zby as applyer'
-            ),
-            array( 
-                'title'      => '矿粉配比通知' , 
-                'search'     => '矿粉配比通知',
-                'system'     => 'yxhb' ,
-                'mod_name'   => 'KfRatioApply'    ,
-                'table_name' => 'yxhb_assay'    ,
-                'id'         => 'id',
-                'stat'       => 'state',
-                'submit'     => array('name' => 'name','stat' => 2),
-                'copy_field' => 'yxhb_assay.id as aid, yxhb_assay.cretime as date,yxhb_assay.state as state ,yxhb_assay.name as applyer'
-            ),
-        );
+        return D('Seek')->configSign();
       
     }
 

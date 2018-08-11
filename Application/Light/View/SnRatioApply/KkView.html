@@ -98,7 +98,8 @@
             <div class="weui-cell__bd" id="cnt">
                 <textarea class="weui-textarea" name="reason" id="reason" placeholder="请输入相关说明；
 配比通知不可修改；
-可在PC端记录页面删除；" rows="3"></textarea>
+可在PC端记录页面删除；
+无配比单无法填写生控数据；" rows="4"></textarea>
                 <div class="weui-textarea-counter">
                     <span id="reason_char">0</span>/200</div>
             </div>
@@ -191,7 +192,7 @@
                     <div class="weui-cell">
                         <div class="weui-cell__hd">
                             <label class="weui-label">
-                                <span class="font-width">配比合计</span>&nbsp;&nbsp;
+                                <span class="">配比合计</span>&nbsp;&nbsp;
 
                             </label>
                         </div>
@@ -202,7 +203,7 @@
                     <div class="weui-cell">
                         <div class="weui-cell__hd">
                             <label class="weui-label">
-                                <span class="font-width">入库熟料</span>&nbsp;&nbsp;
+                                <span class="">入库熟料</span>&nbsp;&nbsp;
                             </label>
                         </div>
                         <div class="weui-cell__bd">
@@ -213,7 +214,7 @@
                     <div class="weui-cell weui-cell_select weui-cell_select-after">
                         <div class="weui-cell__hd">
                             <label class="weui-label">
-                                <span class="font-width">补充库号</span>&nbsp;&nbsp;
+                                <span class="">补充库号</span>&nbsp;&nbsp;
                                 <span style="color:red;">*</span>
                             </label>
                         </div>
@@ -758,7 +759,8 @@
         })
 
         // 日期插件
-        datePicker.val(now);
+        datePicker.val(null);
+        datePicker.attr('placeholder','前一天至后两天');
         $('.weui-label').eq(1).html(label);
 
         $('.greyColor').change(function () {
@@ -827,6 +829,7 @@
             $('#showDatePicker').val(val);
         }
         $('#submit').click(function () {
+            if(!datePicker.val()) return tooltip('请选择日期');
             if(!getfazhi()) return;
             if ($('#type').val() == -1 || $('#type').val() == null) return tooltip('请选择生产品种');
             if ($('#mb').val() == -1 || $('#mb').val() == null) return tooltip('请选择生产线');

@@ -82,16 +82,17 @@ class KkAppcopytoModel extends Model {
     }
 
 
-    public function copyTo($cpid, $mod_name, $aid,$type='')
+    public function copyTo($cpid, $mod_name, $aid,$type='',$ture_mod='')
     {
         if($type=='')$type=1;
+        $url_mod = $ture_mod == ''?$mod_name:$ture_mod;
         $recevier = str_replace(',', '|', $cpid);
         $flowTable = M('kk_appflowtable');
         $mod_cname = $flowTable->getFieldByProMod($mod_name, 'pro_name');
-        $title = '建材ERP'.str_replace('表','',$mod_cname);
+        $title = '建材'.str_replace('表','',$mod_cname);
         $copy_man = session('name');
         $WeChat = new \Org\Util\WeChat;
-        $url = "http://www.fjyuanxin.com/WE/index.php?m=Light&c=Apply&a=applyInfo&system=kk&aid=".$aid."&modname=".$mod_name;    
+        $url = "http://www.fjyuanxin.com/WE/index.php?m=Light&c=Apply&a=applyInfo&system=kk&aid=".$aid."&modname=".$url_mod;    
 
         if($type == 1 ){
             $str = '抄送了';

@@ -31,6 +31,11 @@ class YxhbSalesRebatesApplyLogic extends Model {
     {
         $res = $this->record($id);
         $result = array();
+        $result['content'][] = array('name'=>'申请单位：',
+                                     'value'=>'环保',
+                                     'type'=>'date',
+                                     'color' => 'black'
+                                    );
         $result['content'][] = array('name'=>'客户名称：',
                                      'value'=>D('yxhb_guest2')->getName($res['clientid']),
                                      'type'=>'string'

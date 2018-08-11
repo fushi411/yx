@@ -31,12 +31,25 @@ class KkCgfkApplyLogic extends Model {
     {
         $res = $this->record($id);
         $result = array();
-        if($res['fylx'] == 1){
+        if($res['fylx'] == 1 || $res['fylx'] == 4){
             $clientname = M('kk_gys')->field('g_name')->where(array('id' => $res['gys']))->find();
-        }elseif($res['fylx'] == 2){
+        }elseif($res['fylx'] == 2 || $res['fylx'] == 7){
             $clientname = M('kk_wl')->field('g_name')->where(array('id' => $res['gys']))->find();
+        }elseif($res['fylx'] == 6){
+            $clientname = array( 'g_name' => $res['pjs']);
         }
+        
         $color = $res['yfye'] > 0? '#f12e2e':'black';
+         $result['content'][] = array('name'=>'申请单位：',
+                                     'value'=>'建材原材料采购付款',
+                                     'type'=>'date',
+                                     'color' => 'black'
+                                    );
+        $result['content'][] = array('name'=>'提交时间：',
+                                     'value'=>date('Y-m-d H:i',strtotime($res['date'])),
+                                     'type'=>'date',
+                                     'color' => 'black'
+                                    );
         $result['content'][] = array('name'=>'申请日期：',
                                      'value'=>$res['zd_date'],
                                      'type'=>'date',
@@ -47,12 +60,7 @@ class KkCgfkApplyLogic extends Model {
                                      'type'=>'string',
                                      'color' => 'black'
                                     );
-        // $result['content'][] = array('name'=>'申请单号：',
-        //                              'value'=>$res['dh'],
-        //                              'type'=>'string',
-        //                              'color' => 'black'
-        //                             );
-        if($res['fylx'] == 1){
+        if($res['fylx'] == 1 || $res['fylx'] == 4 ){
             $result['content'][] = array('name'=>'应付余额：',
                                      'value'=> "&yen;".number_format($res['yfye'],2,'.',',')."元",
                                      'type'=>'number',
@@ -114,11 +122,17 @@ class KkCgfkApplyLogic extends Model {
     public function getDescription($id){
         $res = $this->record($id);
         $result = array();
-        if($res['fylx'] == 1){
+        if($res['fylx'] == 1 || $res['fylx'] == 4){
             $clientname = M('kk_gys')->field('g_name')->where(array('id' => $res['gys']))->find();
-        }elseif($res['fylx'] == 2){
+        }elseif($res['fylx'] == 2 || $res['fylx'] == 7){
             $clientname = M('kk_wl')->field('g_name')->where(array('id' => $res['gys']))->find();
+        }elseif($res['fylx'] == 6){
+            $clientname = array( 'g_name' => $res['pjs']);
         }
+        $result[] = array('name'=>'提交时间：',
+                                     'value'=>date('Y-m-d H:i',strtotime($res['date'])),
+                                     'type'=>'date'
+                                    );
         $result[] = array('name'=>'申请日期：',
                                      'value'=>$res['zd_date'],
                                      'type'=>'date'
@@ -170,19 +184,25 @@ class KkCgfkApplyLogic extends Model {
      */
     public function sealNeedContent($id){
         $res = $this->record($id);
-        if($res['fylx'] == 1){
+        if($res['fylx'] == 1 || $res['fylx'] == 4){
             $name = M('kk_gys')->field('g_name')->where(array('id' => $res['gys']))->find();
             $modname = 'CgfkApply';
-        }elseif($res['fylx'] == 2){
+            $title = $res['fylx'] == 1?'供货单位':'卸船码头';
+        }elseif($res['fylx'] == 2 || $res['fylx'] == 7){
             $name = M('kk_wl')->field('g_name')->where(array('id' => $res['gys']))->find();
             $modname = 'WlCgfkApply';
+            $title = '汽运公司';
+        }elseif($res['fylx'] == 6){
+            $name = array( 'g_name' => $res['pjs']);
+            $modname = 'PjCgfkApply';
+            $title = '配件公司';
         }
         $result = array(
             'sales'   => $res['rdy'],
             'approve' => number_format($res['fkje'],2,'.',',')."元",
             'notice'  => $res['zy'],
             'date'    => $res['zd_date'],
-            'title'   => $res['fylx'] == 1?'供货单位':'汽运公司',
+            'title'   => $title,
             'name'    => $name['g_name'], 
             'modname' => $modname,
             'stat'    => $res['stat']
@@ -205,6 +225,7 @@ class KkCgfkApplyLogic extends Model {
                     a.id 
                 order by 
                     g_name asc";
+        //$sql = " SELECT a.id as id,g_name as text FROM kk_gys a where g_type='码头' ORDER BY g_name ASC";
         $res = M()->query($sql);
         return $res;
     }
@@ -322,7 +343,7 @@ class KkCgfkApplyLogic extends Model {
         if(!$val['bool']) return $val;
         list($user_id, $notice,$money,$system) = $val['data'];
         // 重复提交
-        if(!M('yxhb_cgfksq')->autoCheckToken($_POST)) return array('code' => 404,'msg' => '网络延迟，请勿点击提交按钮！');
+        if(!M('kk_cgfksq')->autoCheckToken($_POST)) return array('code' => 404,'msg' => '网络延迟，请勿点击提交按钮！');
         $addData = array(
             'dh'      => $this->getDhId(),
             'zd_date' => $today,
@@ -346,18 +367,18 @@ class KkCgfkApplyLogic extends Model {
             'yfye'    =>  0
         ); 
 
-        $result = M('yxhb_cgfksq')->add($addData);
+        $result = M('kk_cgfksq')->add($addData);
         if(!$result) return array('code' => 404,'msg' =>'提交失败，请重新尝试！');
         // 抄送
         $copyto_id = trim($copyto_id,',');
         if (!empty($copyto_id)) {
             // 发送抄送消息
-            D('YxhbAppcopyto')->copyTo($copyto_id,'CgfkApply', $result);
+            D('KkAppcopyto')->copyTo($copyto_id,'CgfkApply', $result);
         }
         
         $wf = A('WorkFlow');
-        $salesid = session('yxhb_id');
-        $res = $wf->setWorkFlowSV('CgfkApply', $result, $salesid, 'yxhb');
+        $salesid = session('kk_id');
+        $res = $wf->setWorkFlowSV('CgfkApply', $result, $salesid, 'kk');
 
         return array('code' => 200,'msg' => '提交成功' , 'aid' =>$result);
 

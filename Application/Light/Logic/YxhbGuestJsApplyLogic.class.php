@@ -32,6 +32,11 @@ class YxhbGuestJsApplyLogic extends Model {
         $jslx = array('1'=>'磅差调整', '3'=>'手续费', '4'=>'其他', '5'=>'价差调整', '6'=>'业务费调整');
         $res = $this->record($id);
         $result = array();
+        $result['content'][] = array('name'=>'申请单位：',
+                                     'value'=>'环保结算',
+                                     'type'=>'date',
+                                     'color' => 'black'
+                                    );
         $result['content'][] = array('name'=>'执行日期：',
                                      'value'=>$res['js_date'],
                                      'type'=>'date'

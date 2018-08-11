@@ -31,6 +31,11 @@ class YxhbGuesttjApplyLogic extends Model {
     {
         $res = $this->record($id);
         $result = array();
+        $result['content'][] = array('name'=>'申请单位：',
+                                     'value'=>'环保调价',
+                                     'type'=>'date',
+                                     'color' => 'black'
+                                    );
         $result['content'][] = array('name'=>'调价日期：',
                                      'value'=>$res['date'],
                                      'type'=>'data'

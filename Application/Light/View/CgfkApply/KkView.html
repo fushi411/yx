@@ -300,61 +300,6 @@ rows="3"></textarea>
         }
 
 
-        // 类型选择
-        $('#type').change(function(){
-            type = $(this).val();
-            if(!user_id) return tooltip('请选择供货单位');
-
-            if(type == 3) {
-                gyszh    = 0
-                return bank.fadeOut(200);
-            }
-            $.ajax({
-                type:'POST',
-                url: "{:U('Light/Api/CgfkApplyApi')}", //&system=yxhb&modname=CgfkApply&action=getCustomerList
-                dataType: 'json',
-                data: {
-                    type:type,
-                    user_id: user_id,
-                    system:"{$system}",
-                    modname:'CgfkApply',
-                    action:'bankInfo'
-                },
-                dataType: 'json',
-                success: function (res) {
-                    if(res.length == 0){
-                        bank.fadeOut(200);
-                        tooltip('无此银行信息，请先添加');
-                    } else{
-                        bank.fadeIn(200);
-                        bank_info = res;
-                        show.html('<input class="weui-input color" type="text" name="custodian" readonly   placeholder="自动填写" />');
-                        makeOption();
-                    }
-                }
-            });
-
-        });
-
-        function makeOption(){
-            var optionStr = '';
-            for(i=0;i<bank_info.length;i++){
-                optionStr += '<option selected="" index='+bank_info[i]['id']+' value="'+i+'">'+bank_info[i]['bank_account']+'</option>'; 
-            }
-            optionStr += '<option value="-1" disabled selected style="display:none;">请选择银行账号</option>';
-            accout.html(optionStr);
-        }
-
-        accout.change(function(){
-            var index = $(this).val();
-            gyszh = bank_info[index]['id'];
-            makeOption();
-            var html = '<input class="weui-input color" style="font-size:14px;" type="text" name="custodian"  readonly  value="账户名称：'+bank_info[index]['bank_zhmc']+'" />'+
-                        '<input class="weui-input color"  style="font-size:14px;" type="text" name="custodian" readonly  value="开户银行：'+bank_info[index]['bank_khh']+'" />'+
-                        '<input class="weui-input color"  style="font-size:14px;" type="text" name="custodian" readonly  value="银行账号：'+bank_info[index]['bank_account']+'" />';
-            show.html(html);
-        })
-
         submit.click(function(){
             //  console.log(gyszh);
             // return tooltip('测试中...稍等2分钟');

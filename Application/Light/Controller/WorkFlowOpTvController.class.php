@@ -41,8 +41,8 @@ class WorkFlowOpTvController extends BaseController {
 				$resArr =  M($system.'_appflowproc a')
 							->join($system.'_boss b on b.id=a.per_id')
 							->field('b.wxid')
-							->where(array('a.aid' => $id ,'a.mod_name' => $mod_name,'a.per_name'=>array('neq',$per_name)))
-							->select();               
+							->where(array('a.aid' => $id ,'a.mod_name' => $mod_name,'a.per_name'=>array('neq',$per_name),'a.app_stat' => array(array('eq',0),array('eq',2),'or')))
+							->select();
 				
 				foreach($resArr as $val){
 					$receviers .= $val['wxid'].',';
@@ -57,13 +57,15 @@ class WorkFlowOpTvController extends BaseController {
 				$tmpRecevierArr = explode('|',$recevier);  
 				$tmpRecevierArr = array_filter($tmpRecevierArr); // ---- 去除空值
 				$tmpRecevierArr = array_unique($tmpRecevierArr); // -- 去除重复
-				$temrecevier = implode('|',$tmpRecevierArr);
+				$temrecevier = 'wk|HuangShiQi|'.implode('|',$tmpRecevierArr);
 			}
 			// - 发送信息
             $flowTable = M($system.'_appflowtable');
             $mod_cname = $flowTable->getFieldByProMod($mod_name, 'pro_name');
-            $title = $mod_cname;
-            $description = "您有新的审批意见：".$per_name."@了你!";
+			$title = str_replace('表','',$mod_cname);
+			$StepInfo = D('KkAppflowproc')->getStepInfo($mod_name,$id,session($system."_id"));
+			$StepStatus = $StepInfo['app_name'];
+            $description = "您有新的{$StepStatus}意见：".$per_name."@了你!";
             $url = "http://www.fjyuanxin.com/WE/index.php?m=Light&c=Apply&a=applyInfo&system=".$system."&aid=".$id."&modname=".$mod_name;
             $WeChat = new \Org\Util\WeChat;
             $WeChat->sendCardMessage($temrecevier,$title,$description,$url,15,$mod_name,$system);
@@ -228,12 +230,12 @@ class WorkFlowOpTvController extends BaseController {
 				$tmpRecevierArr = explode('|',$recevier);  
 				$tmpRecevierArr = array_filter($tmpRecevierArr); // ---- 去除空值
 				$tmpRecevierArr = array_unique($tmpRecevierArr); // -- 去除重复
-				$temrecevier = implode('|',$tmpRecevierArr);
+				$temrecevier = 'wk|HuangShiQi|'.implode('|',$tmpRecevierArr);
 			}
 			// - 发送信息
             $flowTable = M($system.'_appflowtable');
             $mod_cname = $flowTable->getFieldByProMod($mod_name, 'pro_name');
-            $title = $mod_cname;
+            $title = str_replace('表','',$mod_cname);
             $description = "您有新的签收意见：".$per_name."@了你!";
             $url = "http://www.fjyuanxin.com/WE/index.php?m=Light&c=Apply&a=applyInfo&system=".$system."&aid=".$id."&modname=".$mod_name;
             $WeChat = new \Org\Util\WeChat;
@@ -248,14 +250,15 @@ class WorkFlowOpTvController extends BaseController {
 		// }
 		$save = array(
 			'app_stat' => $option,
-			'app_word' => $word
+			'app_word' => $word,
+			'approve_time' => date('Y-m-d H:i',time())
 		);
 		M($system.'_appflowproc')->where(array('aid' => $id , 'mod_name' =>$mod_name, 'per_name' =>session('name')))->save($save);
 
 		if($option==1){
 			$optionType = '签收拒绝';
 			// 一人拒签  全部拒签
-			M('yxhb_assay')->where(array('id' => $id ))->setField('state', 3);
+			
 			$logic = D(ucfirst($system).$mod_name, 'Logic');
         	$logic->refuseRecord($id);
 			$this->sendMsg($system,$id,$mod_name,$option);

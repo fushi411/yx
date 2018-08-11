@@ -247,7 +247,7 @@ class ProcessController extends Controller
     /**
      * 测试
      */
-    public function test(){
-        
+    public function forTest(){
+        $this->display('Process/index');
     }
 }

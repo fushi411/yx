@@ -62,6 +62,10 @@ class SeekController extends BaseController
             case 'config_sn_submit':
                 $data = $this->config_sn_submit();
                 $code = 200; 
+                break;  
+            case 'config_fhf_submit':
+                $data = $this->config_fhf_submit();
+                $code = 200; 
                 break;   
         }
         $this->ajaxReturn(array('code' => $code , 'data' => $data));
@@ -265,15 +269,20 @@ class SeekController extends BaseController
         $tmp = array();
         $count = 1;
         foreach($submit as $val){
-            if($val['apply']['app_stat'] == 1 && $count < 8) continue;
-            if($val['apply']['app_stat'] == 1){
-                $count++;
-            }
+            if($val['apply']['stat'] == 1 && $count < 5) continue;
+            if($val['apply']['stat'] == 1) $count++;
+            
             $tmp = $val;
         }
-        $this->assign('submit',$tmp);
+        
+        $this->assign('submit',$submit);
         $this->display('Seek/mySubmit');
     }
+    /**
+     *   deal with  my submission of record data
+     * @param array [$data] 
+     */
+   
 
     /**
      * 获取我的提交记录
@@ -404,7 +413,6 @@ class SeekController extends BaseController
                     UNION ALL
                      SELECT  `aid`,`readed_id`,`mod_name`,`time`,2 FROM `kk_appcopyto` WHERE FIND_IN_SET('{$wx_id}',`copyto_id`) AND !FIND_IN_SET('{$wx_id}',`readed_id`) and type=1 AND `stat` <> 0 {$this->qs_sql()}
                     ) a GROUP BY aid order by time desc";
-                    
         $copy = M()->query($copySql);          
 
         $copy = $this->dealCopyArr($copy);
@@ -556,7 +564,7 @@ class SeekController extends BaseController
             $result[] = $arr;
         }
         
-        return $tmp;
+        return $result;
     }
 
 
@@ -666,6 +674,7 @@ class SeekController extends BaseController
         $tableArr = $this->getAppTable();
         $result = '';
         foreach($tableArr as $k =>$v){
+            if($mod_name == 'WlCgfkApply' || $mod_name == 'PjCgfkApply' ) $mod_name = 'CgfkApply';
             if($v['system'] == $system && $v['mod_name'] == $mod_name){
                 $result = $v;
                
@@ -793,6 +802,9 @@ class SeekController extends BaseController
             case 'SnRatioApply':
                 $this->config_sn();      
             break;
+            case 'FhfRatioApply':
+                $this->config_fhf();      
+            break;
             default:
                 $this->config_kf();      
         }
@@ -819,6 +831,17 @@ class SeekController extends BaseController
         $this->assign('ratioType',$type);
         $this->assign('title','指标配置');
         $this->display('Seek/config_sn');
+    }
+     // 水泥配置
+     public function config_fhf(){
+        $pro = I('get.product');
+        $sql  = "SELECT DISTINCT product from ratio_config where stat=1 and modname='FhfRatioApply' ORDER BY id";
+        $type = M()->query($sql);
+        
+        $this->assign('product',$pro);
+        $this->assign('ratioType',$type);
+        $this->assign('title','指标配置');
+        $this->display('Seek/config_fhf');
     }
     /**
      * 配置数据查询 
@@ -900,7 +923,40 @@ class SeekController extends BaseController
         $res = M('ratio_history')->add($history);
 
         return $res?array('code' => 200):array('code' => 404);
+    }
 
+    // 复合粉 提交
+    public function config_fhf_submit(){
+        $type = I('post.product');
+        $data = I('post.data');
+        // 参数检验
+        $ini  = $this->config_api($type,'FhfRatioApply');
 
+        // 修改查看
+        $name   = session('name');
+        $change = array(); 
+        if($data[0] != $ini[0]['value'])  $change[] = array('筛余',$ini[0]['value'],$data[0]);
+        if($data[1] != $ini[1]['value'])  $change[] = array('比表',$ini[1]['value'],$data[1]);
+
+        // 重复提交
+        
+        if(!M('ratio_config')->autoCheckToken($_POST)) return array('code' => 404);
+        // 修改
+    
+        foreach($change as $v){
+            M('ratio_config')->where(array('product' => $type, 'name' => $v[0],'stat' => 1,'modname' => 'FhfRatioApply'))->setField('value', $v[2]);
+        }
+
+        // 历史记录
+        $history = array(
+            'name' => $name,
+            'time' => date('Y-m-d H:i',time()),
+            'word' => json_encode($change),
+            'modname' => 'FhfRatioApply',
+            'type'    =>  $type
+        );
+        $res = M('ratio_history')->add($history);
+
+        return $res?array('code' => 200):array('code' => 404);
     }
 }

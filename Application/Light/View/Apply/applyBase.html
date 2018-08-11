@@ -507,6 +507,7 @@
         tmpl = tmpl.replace('#name#', name);
         $selectUser.append($(tmpl.replace('#url#', img)));
         $("#copyto_id").val(ids);
+        $('#searchInput').val(null);
         $('#myModal').modal('hide')
     });
     // delete copyto user

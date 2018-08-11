@@ -51,13 +51,14 @@ class MsgdataModel extends Model {
     }
     
     // 采购付款
-    public function CgfkApply(){
+    
+    public function DataCgfkApply(){
         $result = array();
         $result['url'] = array(
             array('name' => '环保原材料采购付款','url' => U('Light/View/View',array('modname'=>'CgfkApply','system' => 'yxhb')),'modname' => 'yxhbCgfkApply'),
             array('name' => '建材原材料采购付款','url' => U('Light/View/View',array('modname'=>'CgfkApply','system' => 'kk')),'modname' => 'kkCgfkApply'), 
-            array('name' => '环保物流采购付款','url' => U('Light/View/View',array('modname'=>'WlCgfkApply','system' => 'yxhb')),'modname' => 'yxhbWlCgfkApply'),
-            array('name' => '建材物流采购付款','url' => U('Light/View/View',array('modname'=>'WlCgfkApply','system' => 'kk')),'modname' => 'kkWlCgfkApply'), 
+            array('name' => '环保物流运费付款','url' => U('Light/View/View',array('modname'=>'WlCgfkApply','system' => 'yxhb')),'modname' => 'yxhbWlCgfkApply'),
+            array('name' => '建材物流运费付款','url' => U('Light/View/View',array('modname'=>'WlCgfkApply','system' => 'kk')),'modname' => 'kkWlCgfkApply'), 
             array('name' => '环保配件采购付款','url' => U('Light/View/View',array('modname'=>'PjCgfkApply','system' => 'yxhb')),'modname' => 'yxhbPjCgfkApply'),
             array('name' => '建材配件采购付款','url' => U('Light/View/View',array('modname'=>'PjCgfkApply','system' => 'kk')),'modname' => 'kkPjCgfkApply'), 
         );
@@ -93,96 +94,20 @@ class MsgdataModel extends Model {
             
         );  
         return $result;      
-    }
-
-    // 物流采购付款
-    public function WlCgfkApply(){
-        $result = array();
-        $result['url'] = array(
-            array('name' => '环保原材料采购付款','url' => U('Light/View/View',array('modname'=>'CgfkApply','system' => 'yxhb')),'modname' => 'yxhbCgfkApply'),
-            array('name' => '建材原材料采购付款','url' => U('Light/View/View',array('modname'=>'CgfkApply','system' => 'kk')),'modname' => 'kkCgfkApply'), 
-            array('name' => '环保物流采购付款','url' => U('Light/View/View',array('modname'=>'WlCgfkApply','system' => 'yxhb')),'modname' => 'yxhbWlCgfkApply'),
-            array('name' => '建材物流采购付款','url' => U('Light/View/View',array('modname'=>'WlCgfkApply','system' => 'kk')),'modname' => 'kkWlCgfkApply'), 
-            array('name' => '环保配件采购付款','url' => U('Light/View/View',array('modname'=>'PjCgfkApply','system' => 'yxhb')),'modname' => 'yxhbPjCgfkApply'),
-            array('name' => '建材配件采购付款','url' => U('Light/View/View',array('modname'=>'PjCgfkApply','system' => 'kk')),'modname' => 'kkPjCgfkApply'), 
-        );
-        
-        $result['kkCgfkApply']   =  array(
-            'process' => U('Light/Process/ApplyProcess',array('modname'=>'CgfkApply','system' => 'kk')),
-            'info'    => U('Light/Apply/applyInfo',array('modname'=>'CgfkApply','system'=>'kk')),
-           
-        );
-        $result['yxhbCgfkApply'] = array(
-            'process' => U('Light/Process/ApplyProcess',array('modname'=>'CgfkApply','system' => 'yxhb')),
-            'info'    => U('Light/Apply/applyInfo',array('modname'=>'CgfkApply','system'=>'yxhb')),
-            
-        );   
-        $result['yxhbWlCgfkApply'] = array(
-            'process' => U('Light/Process/ApplyProcess',array('modname'=>'WlCgfkApply','system' => 'yxhb')),
-            'info'    => U('Light/Apply/applyInfo',array('modname'=>'WlCgfkApply','system'=>'yxhb')),
-           
-        );   
-        $result['wlkkWlCgfkApply'] = array(
-            'process' => U('Light/Process/ApplyProcess',array('modname'=>'WlCgfkApply','system' => 'kk')),
-            'info'    => U('Light/Apply/applyInfo',array('modname'=>'WlCgfkApply','system'=>'kk')),
-            
-        );  
-        $result['yxhbPjCgfkApply'] = array(
-            'process' => U('Light/Process/ApplyProcess',array('modname'=>'PjCgfkApply','system' => 'yxhb')),
-            'info'    => U('Light/Apply/applyInfo',array('modname'=>'PjCgfkApply','system'=>'yxhb')),
-           
-        );   
-        $result['kkPjCgfkApply'] = array(
-            'process' => U('Light/Process/ApplyProcess',array('modname'=>'PjCgfkApply','system' => 'kk')),
-            'info'    => U('Light/Apply/applyInfo',array('modname'=>'PjCgfkApply','system'=>'kk')),
-            
-        );  
-        return $result;   
     }
 
      // 采购付款
-     public function PjCgfkApply(){
-        $result = array();
-        $result['url'] = array(
-            array('name' => '环保原材料采购付款','url' => U('Light/View/View',array('modname'=>'CgfkApply','system' => 'yxhb')),'modname' => 'yxhbCgfkApply'),
-            array('name' => '建材原材料采购付款','url' => U('Light/View/View',array('modname'=>'CgfkApply','system' => 'kk')),'modname' => 'kkCgfkApply'), 
-            array('name' => '环保物流采购付款','url' => U('Light/View/View',array('modname'=>'WlCgfkApply','system' => 'yxhb')),'modname' => 'yxhbWlCgfkApply'),
-            array('name' => '建材物流采购付款','url' => U('Light/View/View',array('modname'=>'WlCgfkApply','system' => 'kk')),'modname' => 'kkWlCgfkApply'), 
-            array('name' => '环保配件采购付款','url' => U('Light/View/View',array('modname'=>'PjCgfkApply','system' => 'yxhb')),'modname' => 'yxhbPjCgfkApply'),
-            array('name' => '建材配件采购付款','url' => U('Light/View/View',array('modname'=>'PjCgfkApply','system' => 'kk')),'modname' => 'kkPjCgfkApply'), 
-        );
-        
-        $result['kkCgfkApply']   =  array(
-            'process' => U('Light/Process/ApplyProcess',array('modname'=>'CgfkApply','system' => 'kk')),
-            'info'    => U('Light/Apply/applyInfo',array('modname'=>'CgfkApply','system'=>'kk')),
-           
-        );
-        $result['yxhbCgfkApply'] = array(
-            'process' => U('Light/Process/ApplyProcess',array('modname'=>'CgfkApply','system' => 'yxhb')),
-            'info'    => U('Light/Apply/applyInfo',array('modname'=>'CgfkApply','system'=>'yxhb')),
-            
-        );   
-        $result['yxhbWlCgfkApply'] = array(
-            'process' => U('Light/Process/ApplyProcess',array('modname'=>'WlCgfkApply','system' => 'yxhb')),
-            'info'    => U('Light/Apply/applyInfo',array('modname'=>'WlCgfkApply','system'=>'yxhb')),
-           
-        );   
-        $result['wlkkWlCgfkApply'] = array(
-            'process' => U('Light/Process/ApplyProcess',array('modname'=>'WlCgfkApply','system' => 'kk')),
-            'info'    => U('Light/Apply/applyInfo',array('modname'=>'WlCgfkApply','system'=>'kk')),
-            
-        );  
-        $result['yxhbPjCgfkApply'] = array(
-            'process' => U('Light/Process/ApplyProcess',array('modname'=>'PjCgfkApply','system' => 'yxhb')),
-            'info'    => U('Light/Apply/applyInfo',array('modname'=>'PjCgfkApply','system'=>'yxhb')),
-           
-        );   
-        $result['kkPjCgfkApply'] = array(
-            'process' => U('Light/Process/ApplyProcess',array('modname'=>'PjCgfkApply','system' => 'kk')),
-            'info'    => U('Light/Apply/applyInfo',array('modname'=>'PjCgfkApply','system'=>'kk')),
-            
-        );  
-        return $result;      
+    public function CgfkApply(){
+        return $this->DataCgfkApply();
+    }
+    // 物流采购付款
+    public function WlCgfkApply(){
+        return $this->DataCgfkApply();
+    }
+
+    // 采购付款
+    public function PjCgfkApply(){
+        return $this->DataCgfkApply();
     }
 
     // 信用额度
@@ -227,15 +152,11 @@ class MsgdataModel extends Model {
     public function RatioApply(){
         $result = array();
         $result['url'] = array(
-            array('name' => '矿粉配比通知','url' => U('Light/View/View',array('modname'=>'KfRatioApply','system' => 'yxhb')),'modname' => 'yxhbKfRatioApply'),
-            array('name' => '水泥配比通知','url' => U('Light/View/View',array('modname'=>'SnRatioApply','system' => 'kk')),'modname' => 'kkSnRatioApply'),
-            // array('name' => '配比通知(钢渣粉)','url' => U('Light/View/View',array('modname'=>'GzyRatioApply','system' => 'kk')),'modname' => 'kkGzfRatioApply'), 
+            array('name' => '矿粉配比通知'  ,'url' => U('Light/View/View',array('modname'=>'KfRatioApply','system' => 'yxhb')),'modname' => 'yxhbKfRatioApply'),
+            array('name' => '水泥配比通知'  ,'url' => U('Light/View/View',array('modname'=>'SnRatioApply','system' => 'kk')),'modname' => 'kkSnRatioApply'),
+            array('name' => '复合粉配比通知','url' => U('Light/View/View',array('modname'=>'FhfRatioApply','system' => 'kk')),'modname' => 'kkFhfRatioApply'), 
         );
 
-        // $result['kk']   =  array(
-        //     'process' => U('Light/Process/ApplyProcess',array('modname'=>'TempCreditLineApply','system' => 'kk')),
-        //     'info'    => U('Light/Apply/applyInfo',array('modname'=>'TempCreditLineApply','system'=>'kk'))
-        // );
         $result['kkSnRatioApply'] = array(
             'process' => U('Light/Process/ApplyProcess',array('modname'=>'SnRatioApply','system' => 'kk')),
             'info'    => U('Light/Apply/applyInfo',array('modname'=>'SnRatioApply','system'=>'kk'))
@@ -244,6 +165,10 @@ class MsgdataModel extends Model {
             'process' => U('Light/Process/ApplyProcess',array('modname'=>'KfRatioApply','system' => 'yxhb')),
             'info'    => U('Light/Apply/applyInfo',array('modname'=>'KfRatioApply','system'=>'yxhb'))
         );   
+        $result['kkFhfRatioApply'] = array(
+            'process' => U('Light/Process/ApplyProcess',array('modname'=>'FhfRatioApply','system' => 'kk')),
+            'info'    => U('Light/Apply/applyInfo',array('modname'=>'FhfRatioApply','system'=>'kk'))
+        ); 
         return $result;  
     }
     // 矿粉配比通知
@@ -255,4 +180,23 @@ class MsgdataModel extends Model {
         return $this->RatioApply();
     }
 
+    // 复合粉配比通知
+    public function FhfRatioApply(){
+        return $this->RatioApply();
+    }
+
+    // 复合粉配比通知
+    public function LkStockApply(){
+        $result = array();
+        $result['url'] = array(
+            array('name' => '环保量库库存','url' => U('Light/View/View',array('modname'=>'LkStockApply','system' => 'yxhb')),'modname' => 'yxhbLkStockApply'),
+        );
+   
+        $result['yxhbLkStockApply'] = array(
+            'process' => U('Light/Process/ApplyProcess',array('modname'=>'LkStockApply','system' => 'yxhb')),
+            'info'    => U('Light/Apply/applyInfo',array('modname'=>'LkStockApply','system'=>'yxhb'))
+        );   
+        return $result;   
+    }
+    
 }

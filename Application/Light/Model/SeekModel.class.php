@@ -77,5 +77,42 @@ class SeekModel extends Model {
         return $appArr;
     }
 
-    
+    public function configSign(){
+        return array(
+            array( 
+                'title'      => '水泥配比通知' , 
+                'search'     => '水泥配比通知',
+                'system'     => 'kk' ,
+                'mod_name'   => 'SnRatioApply'    ,
+                'table_name' => 'kk_zlddtz'    ,
+                'id'         => 'id',
+                'stat'       => 'STAT',
+                'submit'     => array('name' => 'zby','stat' => 2),
+                'copy_field' => 'kk_zlddtz.id as aid, kk_zlddtz.jlsj as date,kk_zlddtz.STAT as state ,kk_zlddtz.zby as applyer'
+            ),
+            array( 
+                'title'      => '矿粉配比通知' , 
+                'search'     => '矿粉配比通知',
+                'system'     => 'yxhb' ,
+                'mod_name'   => 'KfRatioApply'    ,
+                'table_name' => 'yxhb_assay'    ,
+                'id'         => 'id',
+                'stat'       => 'state',
+                'submit'     => array('name' => 'name','stat' => 2),
+                'copy_field' => 'yxhb_assay.id as aid, yxhb_assay.cretime as date,yxhb_assay.state as state ,yxhb_assay.name as applyer'
+            ),
+            array( 
+                'title'      => '复合粉配比通知' , 
+                'search'     => '复合粉配比通知',
+                'system'     => 'kk' ,
+                'mod_name'   => 'FhfRatioApply'    ,
+                'table_name' => 'kk_zlddtz_gzf'    ,
+                'id'         => 'id',
+                'stat'       => 'STAT',
+                'submit'     => array('name' => 'zby','stat' => 2),
+                'copy_field' => 'kk_zlddtz_gzf.id as aid, kk_zlddtz_gzf.jlsj as date,kk_zlddtz_gzf.STAT as state ,kk_zlddtz_gzf.zby as applyer'
+            ),
+        );
+      
+    }
 }

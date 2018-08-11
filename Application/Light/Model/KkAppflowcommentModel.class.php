@@ -18,16 +18,17 @@ class KkAppflowcommentModel extends Model {
     {
         // 评论名单
         $comment_list = array();
-        $res =  $this->field('id,app_word,time,per_name,per_id,comment_to_id,sum(1) as count')->where(array('aid'=>$aid, 'mod_name'=>$mod_name, 'app_stat'=>1,'per_id' =>9999))->group('comment_to_id')->order('time desc')->select();
+        $res =  $this->field('id,app_word,time,per_name,per_id,comment_to_id,comment_img,sum(1) as count')->where(array('aid'=>$aid, 'mod_name'=>$mod_name, 'app_stat'=>1,'per_id' =>9999))->group('comment_to_id')->order('time desc')->select();
         $pushArr = array();
         if(!empty($res)){
             foreach($res as $v){
                 $count = $v['count'];
                 $tmp = explode('发起了',$v['app_word']);
                 $str = $tmp[0]."发起了第{$count}次".$tmp[1];
+                
                 $tmpArr = array(
                     'id'            =>  0,
-                    'app_word'      =>  str_replace("自动催审","自动催审<br />",$str),
+                    'app_word'      =>  strpos($str,'自动催审')?str_replace("自动催审","自动催审<br />",$str):str_replace("自动催收","自动催收<br />",$str),
                     "time"          =>  $v['time'],
                     "per_name"      =>  "系统定时任务",
                     "per_id"        =>  "9999",
@@ -36,8 +37,8 @@ class KkAppflowcommentModel extends Model {
                 $pushArr[] = $tmpArr;
             }
         }
-        $delArr = $this->field('id,app_word,time,per_name,per_id,comment_to_id')->where(array('aid'=>$aid, 'mod_name'=>$mod_name, 'app_stat'=>1,'per_id' =>8888))->order('time desc')->select();
-        $cl = $this->field('id,app_word,time,per_name,per_id,comment_to_id')->where(array('aid'=>$aid, 'mod_name'=>$mod_name, 'app_stat'=>1,'per_id' =>array('not in',array(9999,8888))))->order('time desc')->select();
+        $delArr = $this->field('id,app_word,time,per_name,per_id,comment_to_id,comment_img')->where(array('aid'=>$aid, 'mod_name'=>$mod_name, 'app_stat'=>1,'per_id' =>8888))->order('time desc')->select();
+        $cl = $this->field('id,app_word,time,per_name,per_id,comment_to_id,comment_img')->where(array('aid'=>$aid, 'mod_name'=>$mod_name, 'app_stat'=>1,'per_id' =>array('not in',array(9999,8888))))->order('time desc')->select();
         $cl = array_merge($pushArr,$cl);
         $cl = array_merge($delArr,$cl);
         $boss = D('kk_boss');
@@ -67,7 +68,13 @@ class KkAppflowcommentModel extends Model {
               if(strpos($v['app_word'],'@所有人') || $v['per_id'] == 9999 || $v['per_id'] == 8888){
                 $commentUser = " ";
               }
-              $comment_list[] = array('id'=>$v['id'], 'pid'=>$v['per_id'], 'avatar'=>$avatar, 'name'=>$v['per_name'], 'time'=>$v['time'], 'word'=>$commentUser.$v['app_word'], 'del_able'=>$v['del_able'],'wxid'=>$cwxUID);
+              // 图片检查 
+              $file = '';
+              if($v['comment_img']){
+                $file = explode('|',$v['comment_img']);
+                $file = array_filter($file);
+              }
+              $comment_list[] = array('id'=>$v['id'], 'is_img' => $v['comment_img']?1:0 , 'file' => $file, 'pid'=>$v['per_id'], 'avatar'=>$avatar, 'name'=>$v['per_name'], 'time'=>$v['time'], 'word'=>$commentUser.$v['app_word'], 'del_able'=>$v['del_able'],'wxid'=>$cwxUID);
         }
 
         return $comment_list;

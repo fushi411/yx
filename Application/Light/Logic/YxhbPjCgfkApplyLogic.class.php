@@ -7,9 +7,9 @@ use Think\Model;
  * @author 
  */
 
-class KkPjCgfkApplyLogic extends Model {
+class YxhbPjCgfkApplyLogic extends Model {
     // 实际表名
-    protected $trueTableName = 'kk_cgfksq';
+    protected $trueTableName = 'yxhb_cgfksq';
 
     /**
      * 记录内容
@@ -31,21 +31,23 @@ class KkPjCgfkApplyLogic extends Model {
     {
         $res = $this->record($id);
         $result = array();
+        
         if($res['fylx'] == 1){
-            $clientname = M('kk_gys')->field('g_name')->where(array('id' => $res['gys']))->find();
+            $clientname = M('yxhb_gys')->field('g_name')->where(array('id' => $res['gys']))->find();
+            
         }elseif($res['fylx'] == 2 || $res['fylx'] == 7){
-            $clientname = M('kk_wl')->field('g_name')->where(array('id' => $res['gys']))->find();
+            $clientname = M('yxhb_wl')->field('g_name')->where(array('id' => $res['gys']))->find();
         }elseif($res['fylx'] == 6){
             $clientname = array( 'g_name' => $res['pjs']);
         }
         $color = $res['yfye'] > 0? '#f12e2e':'black';
         $result['content'][] = array('name'=>'申请单位：',
-                                     'value'=>'建材配件采购付款',
+                                     'value'=>'环保配件采购付款',
                                      'type'=>'date',
                                      'color' => 'black'
                                     );
         $result['content'][] = array('name'=>'提交时间：',
-                                     'value'=> date('Y-m-d H:i',strtotime($res['date'])),
+                                     'value'=> date('Y-m-d H:i',strtotime($res['date'])) ,
                                      'type'=>'date',
                                      'color' => 'black'
                                     );
@@ -97,7 +99,7 @@ class KkPjCgfkApplyLogic extends Model {
                                      'color' => 'black'
                                     );
         $result['imgsrc'] = '';
-        $result['applyerID'] =  D('KkBoss')->getIDFromName($res['rdy']);
+        $result['applyerID'] =  D('yxhbBoss')->getIDFromName($res['rdy']);
         $result['applyerName'] = $res['rdy'];
         $result['stat'] = $res['stat'];
         return $result;
@@ -123,14 +125,15 @@ class KkPjCgfkApplyLogic extends Model {
         $res = $this->record($id);
         $result = array();
         if($res['fylx'] == 1){
-            $clientname = M('kk_gys')->field('g_name')->where(array('id' => $res['gys']))->find();
+            $clientname = M('yxhb_gys')->field('g_name')->where(array('id' => $res['gys']))->find();
+            
         }elseif($res['fylx'] == 2 || $res['fylx'] == 7){
-            $clientname = M('kk_wl')->field('g_name')->where(array('id' => $res['gys']))->find();
+            $clientname = M('yxhb_wl')->field('g_name')->where(array('id' => $res['gys']))->find();
         }elseif($res['fylx'] == 6){
             $clientname = array( 'g_name' => $res['pjs']);
         }
         $result[] = array('name'=>'提交时间：',
-                                     'value'=> date('Y-m-d H:i',strtotime($res['date'])),
+                                     'value'=> date('Y-m-d H:i',strtotime($res['date'])) ,
                                      'type'=>'date'
                                     );
         $result[] = array('name'=>'申请日期：',
@@ -182,11 +185,11 @@ class KkPjCgfkApplyLogic extends Model {
     public function sealNeedContent($id){
         $res = $this->record($id);
         if($res['fylx'] == 1){
-            $name = M('kk_gys')->field('g_name')->where(array('id' => $res['gys']))->find();
+            $name = M('yxhb_gys')->field('g_name')->where(array('id' => $res['gys']))->find();
             $modname = 'CgfkApply';
             $title = '供货单位';
         }elseif($res['fylx'] == 2 || $res['fylx'] == 7){
-            $name = M('kk_wl')->field('g_name')->where(array('id' => $res['gys']))->find();
+            $name = M('yxhb_wl')->field('g_name')->where(array('id' => $res['gys']))->find();
             $modname = 'WlCgfkApply';
             $title = '汽运公司';
         }elseif($res['fylx'] == 6){
@@ -214,7 +217,7 @@ class KkPjCgfkApplyLogic extends Model {
      */
     public function getDhId(){
         $today = date('Y-m-d',time());
-        $sql   = "select * from kk_cgfksq where date_format(date, '%Y-%m-%d' )='{$today}' and dh like 'CS%'";
+        $sql   = "select * from yxhb_cgfksq where date_format(date, '%Y-%m-%d' )='{$today}' and dh like 'CS%'";
         $res   = M()->query($sql);
         $count = count($res);
         $time  = str_replace('-','',$today);
@@ -238,9 +241,9 @@ class KkPjCgfkApplyLogic extends Model {
         if(!$val['bool']) return $val;
         list($user_id, $notice,$money,$system) = $val['data'];
         // 重复提交
-        if(!M('kk_cgfksq')->autoCheckToken($_POST)) return array('code' => 404,'msg' => '网络延迟，请勿点击提交按钮！');
-        $name = M('kk_gys')->field('g_name')->where(array('id' => $user_id ))->find();
-        
+        if(!M('yxhb_cgfksq')->autoCheckToken($_POST)) return array('code' => 404,'msg' => '网络延迟，请勿点击提交按钮！');
+        $name = M('yxhb_gys')->field('g_name')->where(array('id' => $user_id ))->find();
+
         $addData = array(
             'dh'      => $this->getDhId(),
             'zd_date' => $today,
@@ -257,30 +260,31 @@ class KkPjCgfkApplyLogic extends Model {
             'htbh'    => '无',
             'cwbz'    => '',
             'jjyy'    => '',
-            'gyszh'   =>  $gyszh,
+            'gyszh'   => $gyszh,
             'date'    => date('Y-m-d H:i:s',time()),
             'fylx'    => 6,
             'htlx'    => '汽运',
             'yfye'    =>  0,
             'pjs'     => $name['g_name']
-        );   
-        
-        $result = M('kk_cgfksq')->add($addData);
+        ); 
+      
+        $result = M('yxhb_cgfksq')->add($addData);
         if(!$result) return array('code' => 404,'msg' =>'提交失败，请重新尝试！');
         // 抄送
         $copyto_id = trim($copyto_id,',');
         if (!empty($copyto_id)) {
             // 发送抄送消息
-            D('KkAppcopyto')->copyTo($copyto_id,'CgfkApply', $result,1,'PjCgfkApply');
+            D('YxhbAppcopyto')->copyTo($copyto_id,'CgfkApply', $result,1,'PjCgfkApply');
         }
         
         $wf = A('WorkFlow');
-        $salesid = session('kk_id');
-        $res = $wf->setWorkFlowSV('PjCgfkApply', $result, $salesid, 'kk');
+        $salesid = session('yxhb_id');
+        $res = $wf->setWorkFlowSV('PjCgfkApply', $result, $salesid, 'yxhb');
 
         return array('code' => 200,'msg' => '提交成功' , 'aid' =>$result);
 
     }
+
 
       /**
      * 获取采购付款 供应商信息
@@ -295,7 +299,7 @@ class KkPjCgfkApplyLogic extends Model {
                     id AS id,
                     g_name AS text
                 FROM
-                    kk_gys
+                    yxhb_gys
                 WHERE
                     ( {$type} )
                 AND (
@@ -310,7 +314,9 @@ class KkPjCgfkApplyLogic extends Model {
         return $res;
     }
 
-       /**
+
+
+    /**
      * 获取银行账号信息
      */
     public function bankInfo(){
@@ -321,14 +327,13 @@ class KkPjCgfkApplyLogic extends Model {
             'bank_gys'  => $gys,
             'bank_lx'   => $type
         );
-        $data  = M('kk_bankgys')->field('bank_gys,bank_zhmc,bank_account,bank_khh,bank_lx,id')->where($where)->select();
+        $data  = M('yxhb_bankgys')->field('bank_gys,bank_zhmc,bank_account,bank_khh,bank_lx,id')->where($where)->select();
         foreach($data as $k => $v){
             $account = $v['bank_account'];
             $data[$k]['bank_account'] = substr($account,0,4).'****'.substr($account,-4);
         }
         return $data;
     }
-
     /**
      * 采购付款提交信息校验
      */

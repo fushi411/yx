@@ -33,6 +33,16 @@ class YxhbKfRatioApplyLogic extends Model {
         $result = array();
         $hour = $res['hour']>9?$res['hour']:'0'.$res['hour'];
         $scfz = $res['scfz']>9?$res['scfz']:'0'.$res['scfz'];
+        $result['content'][] = array('name'=>'申请单位：',
+                                     'value'=>'环保矿粉配比通知',
+                                     'type'=>'date',
+                                     'color' => 'black'
+                                    );
+        $result['content'][] = array('name'=>'提交时间：',
+                                     'value'=> date('Y-m-d H:i',strtotime($res['cretime']))  ,
+                                     'type'=>'date',
+                                     'color' => 'black'
+                                    );
         $result['content'][] = array('name'=>'生产时间：',
                                      'value'=>$res['date'].' '.$hour.':'.$scfz,
                                      'type'=>'date',
@@ -102,10 +112,23 @@ class YxhbKfRatioApplyLogic extends Model {
         }
 
         $out_scale = json_decode($data['out_scale']);
-        if(!empty($out_scale[0]->name)) {
-            $html .= "<input class='weui-input' type='text' style='color: black; font-weight: 700;border-bottom: 1px solid #e5e5e5; '  readonly value='磨外'>";
-            $html .= "<input class='weui-input' type='text' style='color: black;'  readonly value='{$out_scale[0]->value}：{$out_scale[0]->name}%'>";
+        // if(!empty($out_scale[0]->name)) {
+        //     $html .= "<input class='weui-input' type='text' style='color: black; font-weight: 700;border-bottom: 1px solid #e5e5e5; '  readonly value='磨外'>";
+        //     foreach($out_scale as $val){
+        //         $html .= "<input class='weui-input' type='text' style='color: black;'  readonly value='{$val->value}：{$val->name}%'>";
+        //     }
+            
+        // }
+        $temp_html = '';
+        $content   = ''; 
+        foreach($out_scale as $k =>$v){
+            $name      = $v->name;
+            if($name){
+                $temp_html = "<input class='weui-input' type='text' style='color: black; font-weight: 700;border-bottom: 1px solid #e5e5e5; '  readonly value='磨外'>"; 
+                $content  .= "<input class='weui-input' type='text' style='color: black;'  readonly value='{$v->value}：{$v->name}%'>";
+            } 
         }
+        $html .= $temp_html.$content;
         $html .= "<input class='weui-input' type='text' style='color: black; font-weight: 700;border-bottom: 1px solid #e5e5e5; '  readonly value='指标'>";
 
         $tailover = ceil($data['tailover']) == $data['tailover']?ceil($data['tailover']): $data['tailover'];
@@ -149,6 +172,10 @@ class YxhbKfRatioApplyLogic extends Model {
         $result = array();
         $hour = $res['hour']>9?$res['hour']:'0'.$res['hour'];
         $scfz = $res['scfz']>9?$res['scfz']:'0'.$res['scfz'];
+        $result[] = array('name'=>'提交时间：',
+                                     'value'=>date('Y-m-d H:i',strtotime($res['cretime']))  ,
+                                     'type'=>'date'
+                                    );
         $result[] = array('name'=>'生产时间：',
                                      'value'=>$res['date'].' '.$hour.':'.$scfz,
                                      'type'=>'date'
@@ -280,7 +307,7 @@ class YxhbKfRatioApplyLogic extends Model {
                 'app_stage'     => 1,
                 'app_word'      => '',
                 'time'          => date('Y-m-d H:i',time()),
-                'approve_time'  => date('Y-m-d H:i',time()),
+                'approve_time'  => '0000-00-00 00:00:00',
                 'mod_name'      => 'KfRatioApply',
                 'app_name'      => '签收',
                 'apply_user'    => '',

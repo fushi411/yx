@@ -82,24 +82,25 @@ class YxhbAppcopytoModel extends Model {
     }
 
 
-    public function copyTo($cpid, $mod_name, $aid,$type='')
+    public function copyTo($cpid, $mod_name, $aid,$type='',$ture_mod='')
     {
         if($type=='')$type=1;
+        $url_mod = $ture_mod == ''?$mod_name:$ture_mod;
         $recevier = str_replace(',', '|', $cpid);
         $flowTable = M('yxhb_appflowtable');
         $mod_cname = $flowTable->getFieldByProMod($mod_name, 'pro_name');
-        $title = '环保ERP'.str_replace('表','',$mod_cname);
+        $title = '环保'.str_replace('表','',$mod_cname);
         $copy_man = session('name');
         $WeChat = new \Org\Util\WeChat;
-        $url = "http://www.fjyuanxin.com/WE/index.php?m=Light&c=Apply&a=applyInfo&system=yxhb&aid=".$aid."&modname=".$mod_name;    
+        $url = "http://www.fjyuanxin.com/WE/index.php?m=Light&c=Apply&a=applyInfo&system=yxhb&aid=".$aid."&modname=".$url_mod;    
         if($type == 1 ){
             $str = '抄送了';
             $description = $copy_man.$str.$mod_cname."给你!";
             $WeChat->sendCardMessage($recevier,$title,$description,$url,15,$mod_name,'yxhb');
         }else{
             $logic = D('Yxhb'.$mod_name,'Logic');
-            // 提交人同为推送人
             $applyerArr  = $logic->recordContent($aid);
+            // 提交人同为推送人
             $applyerID   = D('YxhbBoss')->getWXFromID($applyerArr['applyerID']); // -- 申请人id
             // -- 去除是提交人的推送的人
             $recevierArr = explode('|',$recevier);

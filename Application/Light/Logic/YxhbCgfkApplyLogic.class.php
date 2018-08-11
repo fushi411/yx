@@ -33,13 +33,23 @@ class YxhbCgfkApplyLogic extends Model {
         $result = array();
         if($res['fylx'] == 1){
             $clientname = M('yxhb_gys')->field('g_name')->where(array('id' => $res['gys']))->find();
-        }elseif($res['fylx'] == 2){
+        }elseif($res['fylx'] == 2 || $res['fylx'] == 7){
             $clientname = M('yxhb_wl')->field('g_name')->where(array('id' => $res['gys']))->find();
+        }elseif($res['fylx'] == 6){
+            $clientname = array( 'g_name' => $res['pjs']);
         }
         
-
-
         $color = $res['yfye'] > 0? '#f12e2e':'black';
+        $result['content'][] = array('name'=>'申请单位：',
+                                     'value'=>'环保原材料采购',
+                                     'type'=>'date',
+                                     'color' => 'black'
+                                    );
+        $result['content'][] = array('name'=>'提交时间：',
+                                     'value'=> date('Y-m-d H:i',strtotime($res['date'])) ,
+                                     'type'=>'date',
+                                     'color' => 'black'
+                                    );
         $result['content'][] = array('name'=>'申请日期：',
                                      'value'=>$res['zd_date'],
                                      'type'=>'date',
@@ -50,11 +60,7 @@ class YxhbCgfkApplyLogic extends Model {
                                      'type'=>'string',
                                      'color' => 'black'
                                     );
-        // $result['content'][] = array('name'=>'申请单号：',
-        //                              'value'=>$res['dh'],
-        //                              'type'=>'string',
-        //                              'color' => 'black'
-        //                             );
+    
         if($res['fylx'] == 1){
             $result['content'][] = array('name'=>'应付余额：',
             'value'=> "&yen;".number_format($res['yfye'],2,'.',',')."元",
@@ -119,9 +125,15 @@ class YxhbCgfkApplyLogic extends Model {
         if($res['fylx'] == 1){
             $clientname = M('yxhb_gys')->field('g_name')->where(array('id' => $res['gys']))->find();
             
-        }elseif($res['fylx'] == 2){
+        }elseif($res['fylx'] == 2 || $res['fylx'] == 7){
             $clientname = M('yxhb_wl')->field('g_name')->where(array('id' => $res['gys']))->find();
+        }elseif($res['fylx'] == 6){
+            $clientname = array( 'g_name' => $res['pjs']);
         }
+        $result[] = array('name'=>'提交时间：',
+                                     'value'=> date('Y-m-d H:i',strtotime($res['date'])) ,
+                                     'type'=>'date'
+                                    );
         $result[] = array('name'=>'申请日期：',
                                      'value'=>$res['zd_date'],
                                      'type'=>'date'
@@ -129,11 +141,7 @@ class YxhbCgfkApplyLogic extends Model {
         $result[] = array('name'=>'客户名称：',
                                      'value'=>$clientname['g_name'],
                                      'type'=>'string'
-                                    );
-        // $result[] = array('name'=>'申请单号：',
-        //                              'value'=>$res['dh'],
-        //                              'type'=>'string'
-        //                             );    
+                                    );    
         if($res['fylx'] == 1){
             $result[] = array('name'=>'应付余额：',
                                      'value'=> number_format($res['yfye'],2,'.',',')."元",
@@ -176,16 +184,22 @@ class YxhbCgfkApplyLogic extends Model {
         if($res['fylx'] == 1){
             $name = M('yxhb_gys')->field('g_name')->where(array('id' => $res['gys']))->find();
             $modname = 'CgfkApply';
-        }elseif($res['fylx'] == 2){
+            $title = '供货单位';
+        }elseif($res['fylx'] == 2 || $res['fylx'] == 7){
             $name = M('yxhb_wl')->field('g_name')->where(array('id' => $res['gys']))->find();
             $modname = 'WlCgfkApply';
+            $title = '汽运公司';
+        }elseif($res['fylx'] == 6){
+            $name = array( 'g_name' => $res['pjs']);
+            $modname = 'PjCgfkApply';
+            $title = '配件公司';
         }
         $result = array(
             'sales'   => $res['rdy'],
             'approve' => number_format($res['fkje'],2,'.',',')."元",
             'notice'  => $res['zy'],
             'date'    => $res['zd_date'],
-            'title'   => $res['fylx'] == 1?'供货单位':'汽运公司',
+            'title'   => $title,
             'name'    => $name['g_name'], 
             'modname' => $modname,
             'stat'    => $res['stat']

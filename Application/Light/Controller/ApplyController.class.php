@@ -61,6 +61,9 @@ class ApplyController extends BaseController {
         $this->assign('isFlowBegin', $procArr['isFlowBegin']);
         $appStatus = $process->getWorkFlowStatus($mod_name, $apply_id);
         $this->assign('apply', $appStatus);
+        $StepInfo = D(ucfirst($system).'Appflowproc')->getStepInfo($mod_name,$apply_id,session($system."_id"));
+        $StepStatus = $StepInfo['app_name'];
+        $this->assign('stepStatus', $StepStatus);
         $authArr = $procArr['authArr'];
         
         //评论内容
@@ -145,43 +148,6 @@ class ApplyController extends BaseController {
         );
 
         $id = 1;
-        if(!cookie('copyFlag')){
-            $flagData = M('wx_info')->where(array('stat' => 1))->field('time')->find();
-            // 检查过期情况
-            $expire   = time()-$flagData['time'];
-            if($expire-86400*30>0){ // 过期 之前的用户失效
-                M('wx_info')->where(array('stat' => 1))->setField('stat',0);
-                $userInfo = $this->getAllUser($id); 
-                $userList = array();
-                foreach( $userInfo as $val ){
-                    // 简称获取
-                    $length = strlen($val['id']);
-                    $flag   = 1;
-                    $jc    = '';
-                    for($i=0;$i<$length;$i++){
-                        $asc = ord($val['id'][$i]);
-                        if($asc>64 && $asc<91 ){
-                            $jc.=$val['id'][$i];
-                            $flag = 0;
-                        }
-                    }
-                    if($flag){
-                        $jc = $val['id'];
-                    }
-                    // 数据插入
-                    $userList[] = array(
-                        'wxid'   => $val['id'],
-                        'name'   => $val['name'],
-                        'avatar' => $val['avatar'],
-                        'stat'   => 1,
-                        'time'   => time(),
-                        'jc'     => $jc
-                    );
-                }
-                M('wx_info')->addAll($userList);
-                cookie('copyFlag',1);
-            }
-        }
         $userInfoList  = M('wx_info')->where($where)->field('wxid as id,name,avatar')->select();
         $Dept          = D('department');
         $childDeptHtml = $Dept->genDeptUserHtml($userInfoList);
@@ -257,6 +223,7 @@ class ApplyController extends BaseController {
         $system = I('post.system');
         $per_id = session($system.'_id');
         $per_name = session('name');
+        $image    = I('post.file');
         if (M()->autoCheckToken($_POST)){
             $data['aid'] = I('post.aid');
             $ctoid = I('post.ctoid');
@@ -266,6 +233,7 @@ class ApplyController extends BaseController {
             $data['per_id'] = $per_id;
             $data['per_name'] = $per_name;
             $data['app_stat'] = 1;
+            $data['comment_img'] = $image;
             $data['time'] = date('Y-m-d H:i:s');
             // 后期使用
             $data['reply_id'] = 0;
@@ -308,7 +276,7 @@ class ApplyController extends BaseController {
             // - 发送信息
             $flowTable = M($system.'_appflowtable');
             $mod_cname = $flowTable->getFieldByProMod($data['mod_name'], 'pro_name');
-            $title = $mod_cname;
+            $title = str_replace('表','',$mod_cname) ;
             $description = "您有新的评论：".$per_name."@了你!";
             $url = "http://www.fjyuanxin.com/WE/index.php?m=Light&c=Apply&a=applyInfo&system=".$system."&aid=".$data['aid']."&modname=".$data['mod_name'];
             $WeChat = new \Org\Util\WeChat;
@@ -462,17 +430,70 @@ class ApplyController extends BaseController {
         }
     }
 
+    /*
+    * 评论时多图上传
+    */
+    public function commentUploadBaseImg() {
+        $uploader = new \Think\Upload\Driver\Local;
+        if(!$uploader){
+            E("不存在上传驱动");
+        }
+        // 生成子目录名
+        $savePath = date('Y-m-d')."/";
+
+        // 生成文件名
+        $img_str = I('post.imagefile');
+        $order = I('post.order');
+        $img_header = substr($img_str, 0, 23);
+        // echo $img_header;exit();
+        if (strpos($img_header, 'png')) {
+            $output_file = uniqid('comment_').'_'.$order.'.png';
+        }else{
+            $output_file = uniqid('comment_').'_'.$order.'.jpg';
+        }
+        //  $base_img是获取到前端传递的src里面的值，也就是我们的数据流文件
+        $base_img = I('post.imagefile');
+        if (strpos($img_header, 'png')) {
+            $base_img = str_replace('data:image/png;base64,', '', $base_img);
+        }else{
+            $base_img = str_replace('data:image/jpeg;base64,', '', $base_img);
+        }
+
+        //  设置文件路径和文件前缀名称
+        $rootPath = "/www/web/default/WE/Public/upload/html5uploads/";
+        /* 检测上传根目录 */
+        if(!$uploader->checkRootPath($rootPath)){
+            $error = $uploader->getError();
+            return false;
+        }
+        /* 检查上传目录 */
+        if(!$uploader->checkSavePath($savePath)){
+            $error = $uploader->getError();
+            return false;
+        }
+        $path = $rootPath.$savePath.$output_file;
+        //  创建将数据流文件写入我们创建的文件内容中
+        file_put_contents($path, base64_decode($base_img));
+        $val['path'] = $path;
+        $val['output_file'] = $savePath.$output_file;
+        $res[] = $val;
+        $this->ajaxReturn($res);
+    }
+    public function ReDescription($data){
+        $description = '';
+        foreach($data as $k =>$v){
+          $description.=$v['name'].$v['value']."\n";
+        }
+        return $description;
+    }
+
     public function forTest()
     {
         header("Content-type:text/html;charset=utf-8");
-      
-        $authArr = array('wk','shh', 'csl', 'ChenBiSong','HuangShiQi');
-        $system  = 'yxhb';
-        $mod_name = 'WlCgfkApply';
-        $aid = 344;
-
-
+        
     }
+
+   
 
 
 // ---END---

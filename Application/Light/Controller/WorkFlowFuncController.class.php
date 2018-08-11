@@ -267,6 +267,20 @@ class WorkFlowFuncController extends Controller {
 	}
 
 	/**
+     * 配比通知水泥签收通过后调用函数
+     * @param  [integre] $aid [临时额度记录ID]
+     * @return [array]      [状态]
+     */
+	public function  KkFhfRatioApplyEnd($aid)
+    {
+		$res = M('kk_zlddtz_gzf')->where(array('STAT'=>2, 'id'=>$aid))->setField('STAT', 1);
+		// 生成一条付款记录信息
+        $resArr = $res?array("status"=>"success"):array("status"=>"failure");
+        return $resArr;
+	}
+
+
+	/**
      * 采购付款审批通过后调用函数
      * @param  [integre] $aid [临时额度记录ID]
      * @return [array]      [状态]
@@ -329,14 +343,103 @@ class WorkFlowFuncController extends Controller {
 			'att_name' => ''
 		);
 		$clientname = M($system.'_wl')->field('g_name')->where(array('id' => $data['gys']))->find();
+		$gysid      = M($system.'_gys')->field('id')->where(array('g_name' => $clientname['g_name']))->find();
 		$dtgData = array(
 			'dh'  => $dh,
-			'gid' => $data['gys'],
+			'gid' => $gysid['id'],
 			'ang' => $clientname['g_name']
 		);
 		// 事务？
 		M($system.'_feecg') -> add($feeData);
 		M($system.'_dtg')   -> add($dtgData);
+	}
+
+
+		/**
+     * 采购付款审批通过后调用函数
+     * @param  [integre] $aid [临时额度记录ID]
+     * @return [array]      [状态]
+     */
+	public function KkPjCgfkApplyEnd($aid)
+    {
+		$res = M('kk_cgfksq')->where(array('stat'=>3, 'id'=>$aid))->setField('stat', 2);
+		// 生成一条付款记录信息
+		$this->makePjUnpayRecord('kk',$aid);
+        $resArr = $res?array("status"=>"success"):array("status"=>"failure");
+        return $resArr;
+	}
+
+	/**
+     * 采购付款审批通过后调用函数
+     * @param  [integre] $aid [临时额度记录ID]
+     * @return [array]      [状态]
+     */
+	public function YxhbPjCgfkApplyEnd($aid)
+    {
+		$res = M('yxhb_cgfksq')->where(array('stat'=>3, 'id'=>$aid))->setField('stat', 2);
+		// 生成一条付款记录信息
+		$this->makePjUnpayRecord('yxhb',$aid);
+        $resArr = $res?array("status"=>"success"):array("status"=>"failure");
+        return $resArr;
+	}
+
+			/**
+	 * 采购申请审批通过，生成一条付款记录
+	 * @param string $system 系统
+	 * @param        $aid    标识值
+	 */
+	public function makePjUnpayRecord($system,$aid){
+		// 生成一条付款记录信息
+		$today = date('Y-m-d',time());
+		$count = M($system.'_feecg')->where("date_format(jl_date, '%Y-%m-%d' )='$today' and dh like 'CY%'")->count();
+		$time  = str_replace('-','',$today);
+		$id    = "CY{$time}";
+		if($count < 9)    $dh = $id.'00'.($count+1);
+		elseif($count < 99)   $dh = $id.'0'.($count+1);
+		else $dh = $id.($count+1);
+		
+		$data = D(ucfirst($system).'PjCgfkApply','Logic')->record($aid);
+		$feeData = array(
+			'dh'      => $dh,
+			'sj_date' => $today,
+			'nmoney'  => -$data['fkje'],
+			'nbank'   => '',
+			'jl_date' => date('Y-m-d h:i:m',time()),
+			'npeople' => '系统',
+			'ntext'   => $data['zy'],
+			'nfkfs'   => $data['fkfs'],
+			'nfylx'   => '',
+			'njbr'    => $data['rdy'],
+			'shy'     => '',
+			'nbm'     => 1,
+			'stat'    => 4,
+			'sqdh'    => $data['dh'],
+			'sqlx'    => 0,
+			'att_name' => ''
+		);
+		
+		$dtgData = array(
+			'dh'  => $dh,
+			'gid' => $data['gys'],
+			'ang' => $data['pjs']
+		);
+		// 事务？
+		M($system.'_feecg') -> add($feeData);
+		M($system.'_dtg')   -> add($dtgData);
+	}
+
+	/**
+     * 环保量库库存审批通过后调用函数
+     * @param  [integre] $aid [临时额度记录ID]
+     * @return [array]      [状态]
+     */
+	public function YxhbLkStockApplyEnd($aid)
+    {
+		$res = M('yxhb_produce_stock')->where(array('stat'=>2, 'id'=>$aid))->setField('stat', 1);
+		// 同步更新 177 数据库
+		D('OtherMysql')->LkStockUpdate($aid);
+        $resArr = $res?array("status"=>"success"):array("status"=>"failure");
+        return $resArr;
 	}
 // -----END------
 }

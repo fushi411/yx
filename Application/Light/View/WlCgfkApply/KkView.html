@@ -346,9 +346,9 @@ rows="3"></textarea>
         // 类型选择
         $('#type').change(function(){
             type = $(this).val();
-            if(!user_id) return tooltip('请选择汽运公司');
+            if(!user_id) return tooltip('请选择物流公司');
 
-            if(type == 3 || type == 4) {
+            if(type == 3 ) {
                 gyszh    = 0
                 return bank.fadeOut(200);
             }

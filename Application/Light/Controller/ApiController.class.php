@@ -79,4 +79,23 @@ class ApiController extends BaseController {
         $this->ajaxReturn($res);
     }
 
+     // 复合粉配比
+     public function FhfRatioApplyApi(){
+        $system = I('system');
+        $mod    = I('modname');
+        $action = I('action');
+        $logic = D(ucfirst($system).$mod ,'Logic');
+        $res = $logic->$action();
+        $this->ajaxReturn($res);
+    }
+
+    // 量库库存
+    public function LkStockApplyApi(){
+        $system = I('system');
+        $mod    = I('modname');
+        $action = I('action');
+        $logic = D(ucfirst($system).$mod ,'Logic');
+        $res = $logic->$action();
+        $this->ajaxReturn($res);
+    }
 }
