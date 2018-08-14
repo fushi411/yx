@@ -23,7 +23,7 @@ class OtherMysqlModel extends Model {
      * 量库库存
      */
     public function getlkkc($today){
-        $three_days_ago = date('Y-m-d',strtotime($today)-3*24*3600);
+        
         $query ="SELECT * FROM (
                             SELECT
                                 date,time, yi_h,er_h,san_h,si_h,wu_h,liu_h,state
@@ -37,13 +37,13 @@ class OtherMysqlModel extends Model {
                         ) AS t
                     WHERE
                         date <= '{$today}'
-                        and date >= '{$three_days_ago}'
                     AND state = 1
                     AND (time = '7' OR time = '19')
             GROUP BY date HAVING time=MIN(time)
                     ORDER BY
                         date DESC,
-                        time DESC";
+                        time DESC
+                    LIMIT 0,4";
     
         $data = $this->query($query);
         $api_data = array();
@@ -66,6 +66,7 @@ class OtherMysqlModel extends Model {
             $kc_F85=$kc_2+$kc_3+$kc_4+$kc_5+$kc_6;
 
             $api_data['lk'][$key]['date'] = $row['date'];
+            $api_data['lk'][$key]['time'] = $row['time'];
             $api_data['lk'][$key][]       = array(number_format($ks_1,2,'.',''),$kc_1);
             $api_data['lk'][$key][] 	  = array(number_format($ks_2,2,'.',''),$kc_2);
             $api_data['lk'][$key][] 	  = array(number_format($ks_3,2,'.',''),$kc_3);

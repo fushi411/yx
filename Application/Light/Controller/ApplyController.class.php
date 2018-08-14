@@ -490,7 +490,7 @@ class ApplyController extends BaseController {
     public function forTest()
     {
         header("Content-type:text/html;charset=utf-8");
-        
+        D('YxhbLkStockApply','Logic')->getTableInfo();
     }
 
    

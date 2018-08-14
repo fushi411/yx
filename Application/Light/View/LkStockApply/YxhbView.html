@@ -22,16 +22,20 @@
                     <span class="font-width">库深详情</span>&nbsp;&nbsp;
                 </label>
             </div>
-            <div class="weui-cell__hd" >
+            <div class="weui-cell__hd">
                 <div id="ycl_content">
 
                 </div>
                 <div id="param_div">
-                    <span class=" greyColor"  >自动填写</span>
+                    <span class=" greyColor">自动填写</span>
                 </div>
             </div>
         </div>
+        <span class="weui-media-box weui-media-box_appmsg" >
+                <div class="weui-media-box__bd" id="apply_status">
 
+                </div>
+            </span>
     </div>
     <div class="weui-cells weui-cells_form">
         <div class="weui-cell">
@@ -52,7 +56,7 @@
         <div class="container">
             <div class="page js_show">
                 <h3 class="titleTab" style="text-align: center">库深配置</h3>
-                <div class="weui-cells__title">(单位:m)</div>
+                <div class="weui-cells__title">(单位:m 保留小数点后一位)</div>
                 <div class="weui-cells weui-cells_form">
                     <div class="weui-cell weui-cell_select weui-cell_select-after ">
                         <div class="weui-cell__hd">
@@ -62,7 +66,7 @@
                             </label>
                         </div>
                         <div class="weui-cell__bd">
-                            <input class="weui-select peibi scale" type="number" index="1#库容" maxlength="15" name="custodian" id="one" placeholder="请输入1#库容">
+                            <input class="weui-select peibi scale" type="number" index="1#库容" maxlength="15" name="custodian" id="one" placeholder="0-24">
                         </div>
                     </div>
                     <div class="weui-cell weui-cell_select weui-cell_select-after ">
@@ -73,7 +77,7 @@
                             </label>
                         </div>
                         <div class="weui-cell__bd">
-                            <input class="weui-select peibi scale" type="number" index="2#库容" maxlength="15" name="custodian" id="two" placeholder="请输入2#库容">
+                            <input class="weui-select peibi scale" type="number" index="2#库容" maxlength="15" name="custodian" id="two" placeholder="0-24">
                         </div>
                     </div>
                     <div class="weui-cell weui-cell_select weui-cell_select-after ">
@@ -84,7 +88,7 @@
                             </label>
                         </div>
                         <div class="weui-cell__bd">
-                            <input class="weui-select peibi scale" type="number" index="3#库容" maxlength="15" name="custodian" id="three" placeholder="请输入3#库容">
+                            <input class="weui-select peibi scale" type="number" index="3#库容" maxlength="15" name="custodian" id="three" placeholder="0-24">
                         </div>
                     </div>
                     <div class="weui-cell weui-cell_select weui-cell_select-after ">
@@ -95,7 +99,7 @@
                             </label>
                         </div>
                         <div class="weui-cell__bd">
-                            <input class="weui-select peibi scale" type="number" index="4#库容" maxlength="15" name="custodian" id="four" placeholder="请输入4#库容">
+                            <input class="weui-select peibi scale" type="number" index="4#库容" maxlength="15" name="custodian" id="four" placeholder="0-24">
                         </div>
                     </div>
                     <div class="weui-cell weui-cell_select weui-cell_select-after ">
@@ -106,7 +110,7 @@
                             </label>
                         </div>
                         <div class="weui-cell__bd">
-                            <input class="weui-select peibi scale" type="number" index="5#库容" maxlength="15" name="custodian" id="five" placeholder="请输入5#库容">
+                            <input class="weui-select peibi scale" type="number" index="5#库容" maxlength="15" name="custodian" id="five" placeholder="0-24">
                         </div>
                     </div>
                     <div class="weui-cell weui-cell_select weui-cell_select-after ">
@@ -117,7 +121,7 @@
                             </label>
                         </div>
                         <div class="weui-cell__bd">
-                            <input class="weui-select peibi scale" type="number" index="6#库容" maxlength="15" name="custodian" id="six" placeholder="请输入6#库容">
+                            <input class="weui-select peibi scale" type="number" index="6#库容" maxlength="15" name="custodian" id="six" placeholder="0-24">
                         </div>
                     </div>
                 </div>
@@ -130,8 +134,9 @@
     </div>
 </block>
 <block name="Process">
-    <div class="weui-cells__title">签收人员选择 <span style="color: #f12e2e">（各部门须选择1人签收）</span>
-        
+    <div class="weui-cells__title">签收人员选择
+        <span style="color: #f12e2e">（各部门须选择1人签收）</span>
+
     </div>
     <div class="weui-cells" style="margin-top:0px;">
         <div class="weui-cell" style="padding-top: 0px;padding-bottom: 5px;margin-bottom: 10px;">
@@ -139,16 +144,16 @@
                 <div class="weui-uploader">
                     <div class="weui-uploader__bd">
                         <ul class="weui-uploader__files" id="selectSign" style="margin-bottom: 0px;">
-                            <li class="weui-uploader__file" style="min-height:80px;" >
+                            <li class="weui-uploader__file" style="min-height:80px;">
                                 <div class="user_show">
 
                                 </div>
                                 <div class="box_div">
                                     <div class="weui-uploader__input-box" style="width: 2.5em;height: 2.5em;margin-right: 0px;margin-bottom: 0px;margin-top:10px;">
-                                            <input id="signInput" class="weui-uploader__input open_sign_model" index="9" type="button" name="sign" readonly />
-                                            <!--data-toggle="modal" data-target="#myModal" -->
-                                            
-                                        </div>
+                                        <input id="signInput" class="weui-uploader__input open_sign_model" index="9" type="button" name="sign" readonly />
+                                        <!--data-toggle="modal" data-target="#myModal" -->
+
+                                    </div>
                                     <span style="margin-right: 6px;font-size: 14px;">生产部</span>
                                 </div>
                             </li>
@@ -157,11 +162,11 @@
 
                                 </div>
                                 <div class="box_div">
-                                        <div class="weui-uploader__input-box" style="width: 2.5em;height: 2.5em;margin-right: 0px;margin-bottom: 0px;margin-top:10px;">
-                                                <input id="signInput" class="weui-uploader__input open_sign_model" index="10" type="button" name="sign" readonly />
-                                                <!--data-toggle="modal" data-target="#myModal" -->
-                                            </div>
-                                        <span style="margin-right: 6px;font-size: 14px;">品管部</span>
+                                    <div class="weui-uploader__input-box" style="width: 2.5em;height: 2.5em;margin-right: 0px;margin-bottom: 0px;margin-top:10px;">
+                                        <input id="signInput" class="weui-uploader__input open_sign_model" index="10" type="button" name="sign" readonly />
+                                        <!--data-toggle="modal" data-target="#myModal" -->
+                                    </div>
+                                    <span style="margin-right: 6px;font-size: 14px;">品管部</span>
                                 </div>
                             </li>
                         </ul>
@@ -289,7 +294,7 @@
             tmpl = tmpl.replace('#id#', id);
             tmpl = tmpl.replace('#name#', name);
             var index = 0;
-            if(department_id == 10) index = 1;
+            if (department_id == 10) index = 1;
             $selectSign.eq(index).html($(tmpl.replace('#url#', img)));
             $("#sign_id").val(ids);
             $('#signModal').modal('hide')
@@ -410,57 +415,105 @@
             the_date = datePicker.val(),
             this_time = new Date(the_date),
             H = new Date().getHours() + 1,
-            
-            one   = $('#one'),
-            two   = $('#two'),
+
+            one = $('#one'),
+            two = $('#two'),
             three = $('#three'),
-            four  = $('#four'),
-            five  = $('#five'),
-            six   = $('#six'),
+            four = $('#four'),
+            five = $('#five'),
+            six = $('#six'),
             scale_array = [],
             out_scale_array = [],
             peibi_value = 0,
             H = H > 9 ? H : '0' + H;
         var arr_week = new Array("星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六");
-        now = this_time.getFullYear()+'-'+((this_time.getMonth()+1)>9?(this_time.getMonth()+1):'0'+(this_time.getMonth()+1))+'-'+(this_time.getDate()>9?this_time.getDate():'0'+this_time.getDate())+ ' ' + H + ':00';
+        now = this_time.getFullYear() + '-' + ((this_time.getMonth() + 1) > 9 ? (this_time.getMonth() + 1) : '0' + (this_time.getMonth() + 1)) + '-' + (this_time.getDate() > 9 ? this_time.getDate() : '0' + this_time.getDate()) + ' ' + H + ':00';
 
 
         // 确定按钮
         $('#ratio-agree').click(function () {
 
-            var one_val   = one.val(),
-                two_val   = two.val(),
+            var one_val = one.val(),
+                two_val = two.val(),
                 three_val = three.val(),
-                four_val  = four.val(),
-                five_val  = five.val(),
-                six_val   = six.val();
+                four_val = four.val(),
+                five_val = five.val(),
+                six_val = six.val();
 
             if (!one_val && !two_val && !three_val && !four_val && !five_val && !six_val) return tooltip('请选择至少一量库填写');
-           
+
             scale_array[0] = { 'name': one_val ? one_val : null, 'value': one.attr('index') };
             scale_array[1] = { 'name': two_val ? two_val : null, 'value': two.attr('index') };
             scale_array[2] = { 'name': three_val ? three_val : null, 'value': three.attr('index') };
             scale_array[3] = { 'name': four_val ? four_val : null, 'value': four.attr('index') };
             scale_array[4] = { 'name': five_val ? five_val : null, 'value': five.attr('index') };
             scale_array[5] = { 'name': six_val ? six_val : null, 'value': six.attr('index') };
-            show_wl();
-            $('#other_page').fadeOut(200);
+            getTableInfo() 
+            
         });
 
         // 物料
         function show_wl() {
-            $('#ycl_content').empty();
-            var html = '';
-            for (i = 0; i < scale_array.length; i++) {
-                if (scale_array[i].name == null) continue;
-                html += '<div style="padding: 3px 0 0 10px;"><span class="" >' + scale_array[i].value + '</span>：' + (Math.floor(scale_array[i].name * 10) / 10).toFixed(1) + ' m</div>';
-            }
+
+            //$('#ycl_content').empty();
+            var html = '<div class="table-responsive" style="text-align: center;font-family:Helvetica Neue,Helvetica,Arial,sans-serif;" >'+
+                    '<table class="table table-bordered" id="daichanlist2-2table" style="color: #036;font-size: 15px;" >'+
+                        '<tr style=" font-weight: 600;">'+
+                           ' <th style="position: absolute; left: 15px; background-color: white; width: 89.2px;height: 76px; z-index: 99;padding: 25px;border-bottom: none;border-left: 1px solid #333;border-color: #333;">'+
+                                '<div>库号</div>'+
+                            '</th>'+
+                            '<th style="padding-left: 99.9px;padding-top: 25px;border-bottom: 1px solid #333;border-color: #333;" rowspan="2" colspan="2">本日账面'+tableinfo.date[0]+'时</th>'+
+                            '<th style="border-bottom: 1px solid #333;border-color: #333;" colspan="2">本日量库'+tableinfo.date[0]+'时</th>'+
+                            '<th style="border-bottom: 1px solid #333;border-color: #333;" colspan="2">上次量库'+tableinfo.date[1]+'时</th>'+
+                        '</tr>'+
+                        '<tr  style=" font-weight: 600;">'+
+                            '<th style="position: absolute; left: 15px; background-color: white; width: 89.2px;border-color: #333;">'+
+                                '<div></div>'+
+                            '</th>'+
+                            '<th style="border-bottom: 1px solid #333;border-color: #333;">库深(m)</th>'+
+                            '<th style="border-bottom: 1px solid #333;border-color: #333;">库存(t)</th>'+
+                            '<th style="border-bottom: 1px solid #333;border-color: #333;">库深(m)</th>'+
+                            '<th style="border-bottom: 1px solid #333;border-color: #333;">库存(t)</th>'+
+                       '</tr><tbody id="app" style="border:none">';
+                for(var k in tableinfo.zm){
+                    html += ' <tr class="active">';
+                    if(k < 6){
+                        html += '<td style="position: absolute; left: 15px; background-color: white; width: 89.2px;border-bottom: 1px solid #333;border-color: #333;">'+
+                           '<div></div>'+
+                        '</td>';
+                    }
+                        html += ' <td style="position: absolute; left: 15px; width: 89.2px; background-color: white;border-bottom: 1px solid #333;border-left: 1px solid #333; border-color: #333; font-weight: 600;">'+tableinfo.lk[k][0]+'</td>';
+                    if(k < 6){
+                        html += ' <td style="padding-left: 99.9px;border-color: #333;border-bottom: 1px solid #333;" colspan="2">'+tableinfo.zm[k][1]+'</td>';
+                    }else{
+                        html += '<td style="padding-left: 99.9px;border-color: #333;border-bottom: 1px solid #333;font-weight: 600;" colspan="2">'+tableinfo.zm[k][1]+'</td>';
+                    }
+                              
+                    if(k < 6){
+
+                        html += ' <td style="border-bottom: 1px solid #333;border-color: #333;">'+(Math.floor(scale_array[k].name * 10) / 10).toFixed(1)+'</td>'+
+                                '<td style="border-bottom: 1px solid #333;border-color: #333;">'+tableinfo.lk[k][2]+'</td>'+
+                                ' <td style="border-bottom: 1px solid #333;border-color: #333;">'+tableinfo.lk[k][3]+'</td>'+
+                                ' <td style="border-bottom: 1px solid #333;border-color: #333;">'+tableinfo.lk[k][4]+'</td>';
+                    }else{   
+                        html += '<td colspan="2" style="border-bottom: 1px solid #333;border-color: #333;font-weight: 600; ">'+tableinfo.lk[k][1]+'</td>'+
+                               ' <td colspan="2" style="border-bottom: 1px solid #333;border-color: #333;font-weight: 600;">'+tableinfo.lk[k][2]+'</td> ';
+                    }
+                       html += '</tr>';
+                
+                }
+                html += '</tbody></table></div>';
+            // for (i = 0; i < scale_array.length; i++) {
+            //     if (scale_array[i].name == null) continue;
+            //     html += '<div style="padding: 3px 0 0 10px;"><span class="" >' + scale_array[i].value + '</span>：' + (Math.floor(scale_array[i].name * 10) / 10).toFixed(1) + ' m</div>';
+            // }
             $('#param_div').fadeOut(200);
-            $('#ycl_content').html(html);
+            $('#other_page').fadeOut(200);
+            $('#apply_status').html(html);
         }
-   
-   
-        
+
+
+
         // 取消按钮
         $('#ratio-refuse').click(function () {
             $('#other_page').fadeOut(200);
@@ -474,13 +527,18 @@
         // 数字确定
         $('#other_page').on('change', '.peibi', function () {
             // 提示
+            if($(this).val() < 0 || $(this).val() > 24)  {
+                 tooltip('库深范围为0-24');
+                return $(this).val('');
+
+            }
             var value_of_this = (Math.floor($(this).val() * 10) / 10).toFixed(1);
             $(this).val(value_of_this);
         })
 
         // 日期插件
         datePicker.val(null);
-        datePicker.attr('placeholder','今天7点或19点');
+        datePicker.attr('placeholder', '今天7点或19点');
         $('.weui-label').eq(1).html(label);
 
         $('.greyColor').change(function () {
@@ -493,23 +551,23 @@
                 minites = [{ label: '00', value: '00' }],
                 symbol = [];
 
-     
-                $date = new Date();
-               
 
-                var Y = $date.getFullYear(),
-                    M = $date.getMonth() + 1,
-                    D = $date.getDate();
+            $date = new Date();
 
-                M = M > 9 ? M : '0' + M;
-                D = D > 9 ? D : '0' + D;
 
-                var symbol_item = {};
-                    symbol_item.label = '今天';
-                
-                symbol_item.value = Y + '-' + M + '-' + D;
-                symbol.push(symbol_item);
-            
+            var Y = $date.getFullYear(),
+                M = $date.getMonth() + 1,
+                D = $date.getDate();
+
+            M = M > 9 ? M : '0' + M;
+            D = D > 9 ? D : '0' + D;
+
+            var symbol_item = {};
+            symbol_item.label = '今天';
+
+            symbol_item.value = Y + '-' + M + '-' + D;
+            symbol.push(symbol_item);
+
 
             weui.picker(symbol, hours, minites, {
                 defaultValue: [the_date, $date.getHours() + 1, 0],
@@ -518,8 +576,8 @@
                 }
             });
         }
-        
-      
+
+
         // 日历填充
         function pickerValue(dateArr) {
             var val = dateArr[0] + ' ';
@@ -528,12 +586,50 @@
             val += ':';
             val += dateArr[2];
             $('#showDatePicker').val(val);
+            
         }
-        
+    
+    var tableinfo_7 = '',tableinfo_19 = '';
+
+        // 表格数据
+        function getTableInfo() {
+
+            var tabletime = new Date(datePicker.val());
+            var hour         = tabletime.getHours();
+            if(hour == 7){
+               if(tableinfo_7)  return tableinfo = tableinfo_7;
+            }else{
+                if(tableinfo_19)  return tableinfo = tableinfo_19;
+            }
+            toast.fadeIn(200);
+            $.ajax({
+                type: 'POST',
+                url: "{:U('Light/Api/LkStockApplyApi')}",
+                dataType: 'json',
+                data: {
+                    datetime: datePicker.val(),
+                    system: "{$system}",
+                    modname: 'LkStockApply',
+                    action: 'getTableInfo',
+                    __hash__: hash
+                },
+                dataType: 'json',
+                success: function (res) {
+                    if (res.code == 404) return tooltip(res.msg);
+                    if(hour == 7){
+                        tableinfo_7 = res.data;
+                    }else{
+                        tableinfo_19 = res.data;
+                    }
+                    tableinfo = res.data;
+                    show_wl();
+                    toast.fadeOut(200);
+                }
+            });
+        }
+
         $('#submit').click(function () {
-            if(!datePicker.val()) return tooltip('请选择日期');
-            
-            
+            if (!datePicker.val()) return tooltip('请选择日期');
             // 留言判断
             var reason = $('#reason').val(),
                 ids = $("#sign_id").val() + ",",
@@ -545,11 +641,11 @@
             if (flag) return tooltip('请选择签收人');
 
             str = $selectSign.eq(0).text();
-            str = str.replace(/\s+/g,"");
+            str = str.replace(/\s+/g, "");
             if (str == 0) return tooltip('请选择生产部签收人');
 
             str = $selectSign.eq(1).text();
-            str = str.replace(/\s+/g,"");
+            str = str.replace(/\s+/g, "");
             if (str == 0) return tooltip('请选择品管部签收人');
 
             toast.fadeIn(200);

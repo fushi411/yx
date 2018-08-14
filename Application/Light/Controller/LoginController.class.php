@@ -258,10 +258,7 @@ class LoginController extends \Think\Controller {
         $mod_cname = str_replace('表','',$mod_cname);
         $title = $systemName[$system].$mod_cname.'(催收)';
         $url = "http://www.fjyuanxin.com/WE/index.php?m=Light&c=Apply&a=applyInfo&system=".$system."&aid=".$id."&modname=".$flowName;
-        //crontab(CLI模式)无法正确生产URL
-        // if (PHP_SAPI=='cli') {
-        //   $detailsURL = str_replace('_PHP_FILE_', '/WE/index.php', $detailsURL);
-        // }
+        
         $boss = D($system.'_boss');
         $proName = $boss->getusername($pid);
 

@@ -43,6 +43,11 @@ class YxhbLkStockApplyLogic extends Model {
                                      'color' => 'black'
                                     );
 
+        $result['content']['show'][] = array('name'=>'量库时间：',
+                                     'value'=> date('Y-m-d H:i',strtotime($res['date'])+$res['time']*3600),
+                                     'type'=>'date',
+                                     'color' => 'black'
+                                    );
         $result['content']['date'] = date('m月d日',strtotime($res['cretime']));
         $result['content']['data'] = $this->deal_data($id);
         
@@ -71,6 +76,7 @@ class YxhbLkStockApplyLogic extends Model {
         }
         
         $lkdata = D('OtherMysql')->getlkkc($res['date']);
+        
         $data = array_merge($data,$lkdata);
         $data['lk'][0][0][0] = $res['one_height'];
         $data['lk'][0][1][0] = $res['two_height'];
@@ -79,10 +85,11 @@ class YxhbLkStockApplyLogic extends Model {
         $data['lk'][0][4][0] = $res['five_height'];
         $data['lk'][0][5][0] = $res['six_height'];
         $lk_data        = $this->lk_data($data['lk']);
-        $data['lk']     = $lk_data[0];
-        $data['date']   = $lk_data[1];
-        $data['zm_yestoday'][] = $this->get_yestoday($id);
+        $data['lk']     = $lk_data;
+        $data['date']   = array($res['time'],$lkdata['lk'][1]['time']);
+        //$data['zm_yestoday'][] = $this->get_yestoday($id);
         $data['zm']     = $this->zm_data($data['zm'],$data['zm_yestoday'],$res['date']);
+        
         return $data;
     }
 
@@ -125,6 +132,16 @@ class YxhbLkStockApplyLogic extends Model {
             $total_3   += $data_2[0]['zm']['xs'][$i];
             $total_4   += $data_2[0]['zm']['kc'][$i];
         }
+        
+        $result[] =array(
+            '粗灰总',round($data_1[0],2) 
+        );
+        $result[] =array(
+            'S95总',round($data_1[1],2) 
+        );
+        $result[] =array(
+            'F85总',round($data_1[2]+$data_1[3]+$data_1[4]+$data_1[5]+$data_1[6],2) 
+        );
         $temp =array(
             '合计',round($total_1,2) ,round($total_2,2) ,round($total_3,2) ,round($total_4,2)
         );
@@ -147,8 +164,7 @@ class YxhbLkStockApplyLogic extends Model {
         $cate_4     = $r['sshk'];
         $cate_5     = $r['whk'];
         $cate_6     = $r['lhk'];
-        $date       = array($data[1]['date'],$data[2]['date'],$data[3]['date']);
-
+      
         $total_1    = 0;
         $total_2    = 0;
         $total_3    = 0;
@@ -164,13 +180,13 @@ class YxhbLkStockApplyLogic extends Model {
             eval('$name=$cate_'.$num.';');  
             $temp   = array();
             $temp[] = $num.'#('.$name.')';
-            $temp[] = $data[0][$i][0];
+            $temp[] = sprintf("%.1f",$data[0][$i][0]);
             $temp[] = $data[0][$i][1];
-            $temp[] = $data[1][$i][0];
+            $temp[] = sprintf("%.1f",$data[1][$i][0]);
             $temp[] = $data[1][$i][1];
-            $temp[] = $data[2][$i][0];
+            $temp[] = round($data[2][$i][0],2);
             $temp[] = $data[2][$i][1];
-            $temp[] = $data[3][$i][0];
+            $temp[] = round($data[3][$i][0],2);
             $temp[] = $data[3][$i][1];
             $total_1    += $data[0][$i][0];
             $total_2    += $data[0][$i][1];
@@ -182,11 +198,53 @@ class YxhbLkStockApplyLogic extends Model {
             $total_8    += $data[3][$i][1];
             $result[] = $temp;
         }
-        $temp =array(
-            '合计',$total_1 ,$total_2 ,$total_3 ,$total_4 ,$total_5 ,$total_6 ,$total_7 ,$total_8
+        
+        $result[] =array(
+            '粗灰总',$data[0][0][1] ,$data[1][0][1] ,$data[2][0][1] ,$data[3][0][1]
         );
-        $result[] = $temp;
-        return array($result,$date);
+        $result[] =array(
+            'S95总',$data[0][1][1] ,$data[1][1][1] ,$data[2][1][1] ,$data[3][1][1],
+        );
+        $result[] =array(
+            'F85总',
+            $data[0][2][1]+$data[0][3][1]+$data[0][4][1]+$data[0][5][1],
+            $data[1][2][1]+$data[1][3][1]+$data[1][4][1]+$data[1][5][1],
+            $data[2][2][1]+$data[2][3][1]+$data[2][4][1]+$data[2][5][1],
+            $data[3][2][1]+$data[3][3][1]+$data[3][4][1]+$data[3][5][1],
+        );
+        $result[] =array(
+            '合计',$total_2 ,$total_4 ,$total_6,$total_8
+        );
+        return $result;
+    }
+
+
+    /**
+     * 获取表格信息
+     */
+    public function getTableInfo(){
+        $datetime    = I('post.datetime');
+        //$datetime    = '2018-08-13 07:00';
+        $res['date'] = date('Y-m-d',strtotime($datetime));
+        $res['time'] = date('H',strtotime($datetime));
+        if(date('H',time())< $res['time']) return array('code' => 404,'msg' => '不能提前提交' );
+        $time = strtotime($res['date']);
+        $auth = data_auth_sign($time);
+        $url  = "http://www.fjyuanxin.com/sngl/kf_stock_send_api.php?time={$time}&auth={$auth}";
+        $post_data = array();
+        $data = send_post($url,$post_data);
+         
+        $lkdata = D('OtherMysql')->getlkkc($res['date']);
+        
+        $data = array_merge($data,$lkdata);
+        
+        $lk_data        = $this->lk_data($data['lk']);
+        $data['lk']     = $lk_data;
+        $data['date']   = array($res['time'],$lkdata['lk'][1]['time']);
+        
+        $data['zm']     = $this->zm_data($data['zm'],$data['zm_yestoday'],$res['date']);
+        
+        return array('code' => 200,'msg' => '请求成功' , 'data' => $data );
     }
     /**
      * 获取上一日的销售 入库 出库
@@ -511,11 +569,7 @@ class YxhbLkStockApplyLogic extends Model {
                                      'type'=>'date'
                                     );
         $result[] = array('name'=>'申请日期：',
-                                     'value'=>$res['date'],
-                                     'type'=>'date'
-                                    );
-        $result[] = array('name'=>'申请时间：',
-                                     'value'=>$res['time'],
+                                     'value'=>  date('Y-m-d H:i',strtotime($res['date'])+$res['time']*3600) ,
                                      'type'=>'date'
                                     );
         $result[] = array('name'=>'申请人员：',

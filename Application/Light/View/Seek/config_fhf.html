@@ -207,8 +207,7 @@
                     if(res.code==200){
                        if( res.data.code == 404 ) return;
                        $('#toast').fadeIn(200);
-                        setTimeout(function(){location.reload()},2000);  
-
+                        setTimeout(function(){$('#toast').fadeOut(1500)},2000);  
                     }
                 }
             });

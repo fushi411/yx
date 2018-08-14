@@ -54,20 +54,6 @@
         getData();
     }
 
-    function geUnReadData(){
-        $.ajax({
-            type:'POST',
-            url: "{:U('Light/Sign/Api')}",
-            data: {
-                action: 'mySubmit'
-            },
-            dataType: 'json',
-            success: function (res) {
-                makeHtml(res,$('#sign'));
-                toast.fadeOut(200);
-            }
-        });
-    }
     
 // 未签收接口请求
     geUnSigntData();

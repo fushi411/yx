@@ -21,15 +21,16 @@
 </block>
 
 <block name="content_body">
-        <volist name="content.show" id="val">
-                <p class="weui-media-box__desc weui-flex">
-                    <span style="display: inline-block; width: 100px;text-align: right;">{$val.name}</span>
-                    <span class="weui-flex__item" style="color:{$val.color} ">
-                        {$val.value}
-                    </span>
-                </p>
-        </volist>
-
+    <volist name="content.show" id="val">
+        <p class="weui-media-box__desc weui-flex">
+            <span style="display: inline-block; width: 100px;">{$val.name}</span>
+            <span class="weui-flex__item" style="color:{$val.color} ">
+                {$val.value}
+            </span>
+        </p>
+    </volist>
+</block>
+<block name="table">
     <style>
         td {
             text-align: center;
@@ -39,77 +40,72 @@
             text-align: center;
         }
     </style>
-    <h3 class="titleTab" style="text-align: center">{$content['date']}量库库存</h3>
-    <div class="weui-cells__title" style="text-align: right;padding-right: 0;">单位:库深(m) 数量(t)</div>
-    <div class="table-responsive" style="font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif;
-        font-size: 14px;">
-        <table class="table table-bordered" id="daichanlist2-2table">
-            <tr>
-                <th style="position: absolute; left: 15px; background-color: white; width: 89.2px;height: 75px; z-index: 99;padding: 25px;border-left: 1px solid #ddd;">
-                    <div>库号</div>
-                </th>
-                <th style="padding-left: 89.2px;" colspan="2">今天</th>
-                
-                <volist name="content.data.date" id="val">
-                    <th colspan="2">{$val}</th>
-                </volist>
-            </tr>
-            <tr>
-                <th style="position: absolute; left: 15px; background-color: white; width: 89.2px;">
-                    <div></div>
-                </th>
-                <td style="padding-left: 99.9px;">库深</th>
-                    <td>数量</td>
-                    <td>库深</td>
-                    <td>数量</td>
-                    <td>库深</td>
-                    <td>数量</td>
-                    <td>库深</td>
-                    <td>数量</td>
-            </tr>
+    <div class="weui-panel" style="margin-top: 0px;">
 
-            <tbody id="app">
-                <volist name="content.data.lk" id="val">
-                    <tr class="active">
-                        <td style="position: absolute; left: 15px; width: 89.2px; background-color: white;border-left: 1px solid #ddd;">{$val['0']}</td>
-                        <td style="padding-left: 99.9px;">{$val['1']}</td>
-                        <td>{$val['2']}</td>
-                        <td>{$val['3']}</td>
-                        <td>{$val['4']}</td>
-                        <td>{$val['5']}</td>
-                        <td>{$val['6']}</td>
-                        <td>{$val['7']}</td>
-                        <td>{$val['8']}</td>
-                    </tr>
-                </volist>
-            </tbody>
-            
-        </table>
-    </div>
-    <h3 class="titleTab" style="text-align: center">{$content.date}账面库存</h3>
-    <div class="weui-cells__title" style="text-align: right;padding-right: 0;">单位:(t)</div>
-    <div class="table-responsive" style="font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif;
-        font-size: 14px;">
-        <table class="table table-bordered" id="daichanlist2-2table">
-            <tr>
-                <th style="position: absolute; left: 15px; width: 89.2px; background-color: white; border-left: 1px solid #ddd; ">库号</th>
-                <th style="padding-left: 99.9px;" >本日库存</th>
-                <th >上日进库</th>
-                <th >上日销售</th>
-                <th >上日库存</th>
-            </tr>
-            <tbody id="app">
-            <volist name="content.data.zm" id="val">
-                <tr class="active">
-                    <td style="position: absolute; left: 15px; width: 89.2px; background-color: white; border-left: 1px solid #ddd;">{$val['0']}</td>
-                    <td style="padding-left: 99.9px;">{$val['1']}</td>
-                    <td>{$val['2']}</td>
-                    <td>{$val['3']}</td>
-                    <td>{$val['4']}</td>
-                </tr>
-            </volist>
-            </tbody>
-        </table>
+        <div class="weui-panel__hd" style="font-size: 16px;background-color: #f8f8f8;color:black;padding-top: 10px;">表格
+                <span style="color: #f12e2e">（左右滑动，查看数据）</span>
+        </div>
+        <span class="weui-media-box weui-media-box_appmsg">
+            <div class="weui-media-box__bd" id="apply_status">
+
+
+
+                <div class="table-responsive" style="font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif;">
+                    <table class="table table-bordered" id="daichanlist2-2table" style="color: #036;font-size: 15px;">
+                        <tr style=" font-weight: 600;">
+                            <th style="position: absolute; left: 15px; background-color: white; width: 89.2px;height: 76px; z-index: 99;padding: 25px;
+                            border-bottom: none;border-left: 1px solid #333;border-color: #333;">
+                                <div>库号</div>
+                            </th>
+                            <th style="padding-left: 99.9px;padding-top: 25px;border-bottom: 1px solid #333;border-color: #333;" rowspan="2" colspan="2">本日账面{$content.data.date.0}时</th>
+
+                            <th style="border-bottom: 1px solid #333;border-color: #333;" colspan="2">本日量库{$content.data.date.0}时</th>
+                            <th style="border-bottom: 1px solid #333;border-color: #333;" colspan="2">上次量库{$content.data.date.1}时</th>
+                        </tr>
+                        <tr  style=" font-weight: 600;">
+                            <th style="position: absolute; left: 15px; background-color: white; width: 89.2px;border-color: #333;">
+                                <div></div>
+                            </th>
+                            <th style="border-bottom: 1px solid #333;border-color: #333;">库深(m)</th>
+                            <th style="border-bottom: 1px solid #333;border-color: #333;">库存(t)</th>
+                            <th style="border-bottom: 1px solid #333;border-color: #333;">库深(m)</th>
+                            <th style="border-bottom: 1px solid #333;border-color: #333;">库存(t)</th>
+                        </tr>
+                        
+                        <tbody id="app" style="border:none">
+                            <volist name="content.data.lk" id="val">
+                                <tr class="active">
+                                    <if condition="$key gt 6">
+                                        <td style="position: absolute; left: 15px; background-color: white; width: 89.2px;border-bottom: 1px solid #333;border-color: #333;">
+                                            <div></div>
+                                        </td>
+                                    </if>
+                                            <td style="position: absolute; left: 15px; width: 89.2px; background-color: white;
+                                            border-bottom: 1px solid #333;border-left: 1px solid #333; border-color: #333; font-weight: 600;">{$val['0']}</td>
+                                            <if condition="$key lt 6">
+                                                    <td style="padding-left: 99.9px;border-color: #333;border-bottom: 1px solid #333;" colspan="2">{$content.data.zm.$key.1}</td>
+                                                <else/>
+                                                <td style="padding-left: 99.9px;border-color: #333;border-bottom: 1px solid #333;font-weight: 600;" colspan="2">{$content.data.zm.$key.1}</td>
+                                            </if>
+                                            
+                                            <if condition="$key lt 6">
+                                                <td style="border-bottom: 1px solid #333;border-color: #333;">{$val['1']}</td>
+                                                <td style="border-bottom: 1px solid #333;border-color: #333;">{$val['2']}</td>
+                                                <td style="border-bottom: 1px solid #333;border-color: #333;">{$val['3']}</td>
+                                                <td style="border-bottom: 1px solid #333;border-color: #333;">{$val['4']}</td>
+                                                <else/>
+                                                <td colspan="2" style="border-bottom: 1px solid #333;border-color: #333;font-weight: 600; ">{$val['1']}</td>
+                                                <td colspan="2" style="border-bottom: 1px solid #333;border-color: #333;font-weight: 600;">{$val['2']}</td> 
+                                            </if>
+                                </tr>
+                            </volist>
+                        </tbody>
+
+                    </table>
+                </div>
+                
+            </div>
+        </span>
     </div>
 </block>
 

@@ -259,7 +259,7 @@ class YxhbCreditLineApplyLogic extends Model {
             'dtime' => $dtime,
             'notice' => $reason,
             'line' => $money,
-            'oline' => $oline
+            'oline' => $oline?$oline:0
         );
 
         // 表单重复提交
