@@ -600,15 +600,11 @@ class YxhbLkStockApplyLogic extends Model {
      */
     public function sealNeedContent($id){
         $res = $this->record($id);
+
         $result = array(
-            'sales'   => $res['rdy'],
-            'approve' => number_format($res['fkje'],2,'.',',')."元",
-            'notice'  => $res['zy'],
-            'date'    => $res['zd_date'],
-            'title'   => $title,
-            'name'    => $name['g_name'], 
-            'modname' => $modname,
-            'stat'    => $res['stat']
+            array('提交时间',date('Y-m-d H:i',strtotime($res['cretime']))),
+            array('量库时间',date('Y-m-d H:i',strtotime($res['date'])+$res['time']*3600)),
+            array('相关说明',$res['bz']?$res['bz']:'无')
         );
         return $result;
     }
@@ -617,7 +613,6 @@ class YxhbLkStockApplyLogic extends Model {
      * 原材料采购付款提交 
      */
     public function submit(){
-
         $scale     = I('post.scale');
         $text      = I('post.text');
         $datetime  = I('post.datetime');
@@ -627,6 +622,10 @@ class YxhbLkStockApplyLogic extends Model {
         $sign_arr  = array_filter($sign_arr);// 去空
         $sign_arr  = array_unique($sign_arr); // 去重
 
+        $date = Date('Y-m-d',strtotime($datetime));
+        $time = Date('H',strtotime($datetime));
+        $flag = D('OtherMysql')->haveProduceRecord($date,$time);
+        if(!$flag) return array('code' => 404,'msg' => "请确认是否有{$datetime}量库记录");
         // a - 非当天不能提交     b - 19点以前不能提交19点的
         if( date('Y-m-d',strtotime($datetime)) != date('Y-m-d',time())) return array('code' => 404,'msg' => '非当天不能提交');
         if(strtotime($datetime) > time() )  return array('code' => 404,'msg' => '禁止提前提交');

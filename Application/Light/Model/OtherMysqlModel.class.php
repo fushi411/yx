@@ -94,4 +94,15 @@ class OtherMysqlModel extends Model {
         $this->table('yxhb_produce_record')->where("date_format(`date`,'%Y-%m-%d')= '{$res['date']}' and time={$res['time']}" )->save($data);
         $this->table('yxhb_produce_recordb')->where("date_format(`date`,'%Y-%m-%d')= '{$res['date']}' and time={$res['time']}" )->save($data);
     }
+
+    /**
+     * 查看当天是否有记录
+     */
+    public function haveProduceRecord($date,$time){
+        $flag1 = $this->table('yxhb_produce_record')->where("date_format(`date`,'%Y-%m-%d')= '{$date}' and time={$time}" )->find();
+        $flag2 = $this->table('yxhb_produce_recordb')->where("date_format(`date`,'%Y-%m-%d')= '{$date}' and time={$time}" )->find();
+        $flag  = 0;
+        if($flag1 || $flag2) $flag = 1;
+        return $flag ? 1: 0;
+    }
 }

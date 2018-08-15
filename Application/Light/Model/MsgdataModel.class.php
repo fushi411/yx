@@ -199,4 +199,17 @@ class MsgdataModel extends Model {
         return $result;   
     }
     
+        // 复合粉配比通知
+        public function SalesReceiptsApply(){
+            $result = array();
+            $result['url'] = array(
+                array('name' => '建材销售收款','url' => U('Light/View/View',array('modname'=>'SalesReceiptsApply','system' => 'kk')),'modname' => 'kkSalesReceiptsApply'),
+            );
+       
+            $result['kkSalesReceiptsApply'] = array(
+                'process' => U('Light/Process/ApplyProcess',array('modname'=>'SalesReceiptsApply','system' => 'kk')),
+                'info'    => U('Light/Apply/applyInfo',array('modname'=>'SalesReceiptsApply','system'=>'kk'))
+            );   
+            return $result;   
+        }
 }

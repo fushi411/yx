@@ -258,6 +258,12 @@
 
 <block name="js">
     <script>
+        // 表格小于0的显示红色
+        var td_length = $('#app td').length; 
+        for(let i=0;i<td_length;i++){
+            var td_val = $('#app td').eq(i).text();
+            if( td_val < 0) $('#app td').eq(i).css({'color':'#f12e2e'});
+        }
         // apply
         $("#apply-area").on("click", "#apply-agree-qs,#apply-refuse-qs", function () {
             $('#loadingToast').fadeIn(100);

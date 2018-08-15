@@ -491,9 +491,14 @@ class ApplyController extends BaseController {
     {
         header("Content-type:text/html;charset=utf-8");
         D('YxhbLkStockApply','Logic')->getTableInfo();
+        $date = '2018-08-14';
+        $time = 7;
+        $flag = D('OtherMysql')->haveProduceRecord($date,$time);
+        echo $flag?'have':"none";
+        
+
     }
 
-   
 
 
 // ---END---

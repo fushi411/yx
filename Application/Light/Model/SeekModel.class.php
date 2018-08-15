@@ -112,6 +112,17 @@ class SeekModel extends Model {
                 'submit'     => array('name' => 'zby','stat' => 2),
                 'copy_field' => 'kk_zlddtz_gzf.id as aid, kk_zlddtz_gzf.jlsj as date,kk_zlddtz_gzf.STAT as state ,kk_zlddtz_gzf.zby as applyer'
             ),
+            array( 
+                'title'      => '环保量库库存' , 
+                'search'     => '环保量库库存',
+                'system'     => 'yxhb' ,
+                'mod_name'   => 'LkStockApply'    ,
+                'table_name' => 'yxhb_produce_stock'    ,
+                'id'         => 'id',
+                'stat'       => 'stat',
+                'submit'     => array('name' => 'rdy','stat' => 2),
+                'copy_field' => 'yxhb_produce_stock.id as aid, yxhb_produce_stock.cretime as date,yxhb_produce_stock.stat as state ,yxhb_produce_stock.rdy as applyer'
+            ),
         );
       
     }
