@@ -199,17 +199,22 @@ class MsgdataModel extends Model {
         return $result;   
     }
     
-        // 复合粉配比通知
+        // 销售收款
         public function SalesReceiptsApply(){
             $result = array();
             $result['url'] = array(
                 array('name' => '建材销售收款','url' => U('Light/View/View',array('modname'=>'SalesReceiptsApply','system' => 'kk')),'modname' => 'kkSalesReceiptsApply'),
+                array('name' => '环保销售收款','url' => U('Light/View/View',array('modname'=>'SalesReceiptsApply','system' => 'yxhb')),'modname' => 'yxhbSalesReceiptsApply'),
             );
        
             $result['kkSalesReceiptsApply'] = array(
                 'process' => U('Light/Process/ApplyProcess',array('modname'=>'SalesReceiptsApply','system' => 'kk')),
                 'info'    => U('Light/Apply/applyInfo',array('modname'=>'SalesReceiptsApply','system'=>'kk'))
-            );   
+            );  
+            $result['yxhbSalesReceiptsApply'] = array(
+                'process' => U('Light/Process/ApplyProcess',array('modname'=>'SalesReceiptsApply','system' => 'yxhb')),
+                'info'    => U('Light/Apply/applyInfo',array('modname'=>'SalesReceiptsApply','system'=>'yxhb'))
+            );    
             return $result;   
         }
 }

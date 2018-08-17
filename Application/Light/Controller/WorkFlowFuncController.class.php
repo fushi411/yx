@@ -441,5 +441,22 @@ class WorkFlowFuncController extends Controller {
         $resArr = $res?array("status"=>"success"):array("status"=>"failure");
         return $resArr;
 	}
+
+	/**
+     * 建材销售收款审批通过后调用函数
+     * @param  [integre] $aid [记录ID]
+     * @return [array]      [状态]
+     */
+	public function KkSalesReceiptsApplyEnd($aid)
+    {
+		$res = M('kk_feexs')->where(array('stat'=>2, 'id'=>$aid))->setField('stat', 1);
+		// ->承兑汇票
+		$data = D('KkSalesReceiptsApply','Logic')->record($aid);
+		if($data['nfkfs'] == 3){
+			M('kk_cdhp')->where(array('stat'=>3, 'odh'=>$data['db']))->setField('stat', 1);
+		}
+        $resArr = $res?array("status"=>"success"):array("status"=>"failure");
+        return $resArr;
+	}
 // -----END------
 }

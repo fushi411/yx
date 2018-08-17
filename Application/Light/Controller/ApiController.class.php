@@ -104,6 +104,7 @@ class ApiController extends BaseController {
         $system = I('system');
         $mod    = I('modname');
         $action = I('action');
+        if(!$mod) list($system,$mod,$action) = array($_GET['system'],$_GET['modname'],$_GET['action']);
         $logic = D(ucfirst($system).$mod ,'Logic');
         $res = $logic->$action();
         $this->ajaxReturn($res);

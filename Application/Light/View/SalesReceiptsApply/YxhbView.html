@@ -612,7 +612,7 @@
             function formatRepoSelection(repo) { return repo.text }
             $("#user_name").select2({
                 ajax: {
-                    url: "{:U('Light/Api/SalesReceiptsApplyApi')}" + "&system=kk&modname=SalesReceiptsApply&action=getCustomerList",
+                    url: "{:U('Light/Api/SalesReceiptsApplyApi')}" + "&system=yxhb&modname=SalesReceiptsApply&action=getCustomerList",
                     dataType: 'json',
                     delay: 350,
                     data: function (params) {

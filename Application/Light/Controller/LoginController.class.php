@@ -106,7 +106,7 @@ class LoginController extends \Think\Controller {
             $arr = array_merge($res,$arr);
         }
         $this->systemUrge($arr);
-        $this->Sign();
+       // $this->Sign();
     }
 
     /**
@@ -185,8 +185,9 @@ class LoginController extends \Think\Controller {
     }
 
 
-    private function Sign()
+    public function Sign()
     {
+        if(get_client_ip(0) != '0.0.0.0') return '无权限操作';
         $config = $this->config(); 
         $arr    = array();
         $sub    = array();
@@ -269,19 +270,19 @@ class LoginController extends \Think\Controller {
         switch ($type) {
           case 'pass':
             $description = "您有一个流程已签收通过".$applyerName;
-            $receviers = "wk|HuangShiQi|".$boss;
+            $receviers = "HuangShiQi|".$boss;
             break;
           case 'refuse':
             $description = "您有一个流程被拒绝".$applyerName;
-            $receviers = "wk|HuangShiQi|".$boss;
+            $receviers = "HuangShiQi|".$boss;
             break;
           case 'other':
             $description = "您有一个流程需要处理".$applyerName;
-            $receviers = "wk|HuangShiQi|".$boss;
+            $receviers = "HuangShiQi|".$boss;
             break;          
           default:
             $description = "您有一个流程需要签收".$applyerName;
-            $receviers = "wk|HuangShiQi|".$boss;
+            $receviers = "HuangShiQi|".$boss;
             break;
         }
         $agentid = 15;

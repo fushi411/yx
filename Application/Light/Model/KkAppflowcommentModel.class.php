@@ -28,7 +28,7 @@ class KkAppflowcommentModel extends Model {
                 
                 $tmpArr = array(
                     'id'            =>  0,
-                    'app_word'      =>  strpos($str,'自动催审')?str_replace("自动催审","自动催审<br />",$str):str_replace("自动催收","自动催收<br />",$str),
+                    'app_word'      =>  strpos($str,'自动催审')?str_replace("自动催审","自动催审<br />",$str):str_replace("自动催收（每日9:30和15:30各一次）","自动催收<br />（每30分钟一次）",$str),
                     "time"          =>  $v['time'],
                     "per_name"      =>  "系统定时任务",
                     "per_id"        =>  "9999",

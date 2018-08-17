@@ -197,7 +197,7 @@ class KkFhfRatioApplyLogic extends Model {
         );
         return $result;
     }
-
+    
     /**
      * 矿粉提交
      */

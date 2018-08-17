@@ -45,7 +45,6 @@ class BaseController extends Controller {
     $rule  = $this->getRule();
 
     if ( !$this->checkRule($rule,array('in','1,2,3,4')) ){
-        echo $rule;
         $this->error('无访问权限!'.$rule);
     }
   }
@@ -61,6 +60,7 @@ class BaseController extends Controller {
         return  strtolower(MODULE_NAME.'/'.$system.'/'.$mod_name);
     }elseif(strtolower(CONTROLLER_NAME) == 'api'){
         $mod_name = I('modname');
+        if(!$mod_name) $mod_name = $_GET['modname'];
         return  strtolower(MODULE_NAME.'/'.$mod_name.'/'.ACTION_NAME);
     }
 

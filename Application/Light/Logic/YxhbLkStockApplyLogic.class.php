@@ -555,7 +555,16 @@ class YxhbLkStockApplyLogic extends Model {
         $map = array('id' => $id);
         return $this->field(true)->where($map)->setField('stat',0);
     }
-
+    /**
+     * 拒收
+     * @param  integer $id 记录ID
+     * @return integer     影响行数
+     */
+    public function refuseRecord($id)
+    {
+        $map = array('id' => $id);
+        return $this->field(true)->where($map)->setField('stat',3);
+    }
          /**
      * 记录内容
      * @param  integer $id 记录ID
