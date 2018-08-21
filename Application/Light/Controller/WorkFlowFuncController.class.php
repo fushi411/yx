@@ -458,5 +458,21 @@ class WorkFlowFuncController extends Controller {
         $resArr = $res?array("status"=>"success"):array("status"=>"failure");
         return $resArr;
 	}
+	/**
+     * 环保销售收款审批通过后调用函数
+     * @param  [integre] $aid [记录ID]
+     * @return [array]      [状态]
+     */
+	public function YxhbSalesReceiptsApplyEnd($aid)
+    {
+		$res = M('yxhb_feexs')->where(array('stat'=>2, 'id'=>$aid))->setField('stat', 1);
+		// ->承兑汇票
+		$data = D('YxhbSalesReceiptsApply','Logic')->record($aid);
+		if($data['nfkfs'] == 3){
+			M('yxhb_cdhp')->where(array('stat'=>3, 'odh'=>$data['db']))->setField('stat', 1);
+		}
+        $resArr = $res?array("status"=>"success"):array("status"=>"failure");
+        return $resArr;
+	}
 // -----END------
 }

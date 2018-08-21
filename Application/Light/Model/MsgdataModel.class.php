@@ -209,11 +209,19 @@ class MsgdataModel extends Model {
        
             $result['kkSalesReceiptsApply'] = array(
                 'process' => U('Light/Process/ApplyProcess',array('modname'=>'SalesReceiptsApply','system' => 'kk')),
-                'info'    => U('Light/Apply/applyInfo',array('modname'=>'SalesReceiptsApply','system'=>'kk'))
+                'info'    => U('Light/Apply/applyInfo',array('modname'=>'SalesReceiptsApply','system'=>'kk')),
+                'fiexd_copy_id' => 'xly',
+                'copydata' => array(
+                    array('name' =>'许丽颖','url' => 'http://shp.qpic.cn/bizmp/nFsVdIIiaLZsmAv2LEDiaFwmzW1KMfkUIA3IW1c9PibAfaPCICgibpibQNA/'),
+                )
             );  
             $result['yxhbSalesReceiptsApply'] = array(
                 'process' => U('Light/Process/ApplyProcess',array('modname'=>'SalesReceiptsApply','system' => 'yxhb')),
-                'info'    => U('Light/Apply/applyInfo',array('modname'=>'SalesReceiptsApply','system'=>'yxhb'))
+                'info'    => U('Light/Apply/applyInfo',array('modname'=>'SalesReceiptsApply','system'=>'yxhb')),
+                'fiexd_copy_id' => 'xly',
+                'copydata' => array(
+                    array('name' =>'许丽颖','url' => 'http://shp.qpic.cn/bizmp/nFsVdIIiaLZsmAv2LEDiaFwmzW1KMfkUIA3IW1c9PibAfaPCICgibpibQNA/'),
+                )
             );    
             return $result;   
         }

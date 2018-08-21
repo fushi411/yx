@@ -179,6 +179,7 @@ class KkFhfRatioApplyLogic extends Model {
     {
         $map = array('id' => $id);
         return $this->field(true)->where($map)->getField('zby');
+        
     }
     /**
      * 我的审批，抄送，提交 所需信息 // 签收区分

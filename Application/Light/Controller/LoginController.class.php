@@ -267,22 +267,22 @@ class LoginController extends \Think\Controller {
         $applyerName='('.$subName.'提交)';
        
         $boss = D($system.'_boss')->getWXFromID($pid);
+        $h    = intval(date('G'));
+        $receviers = $boss;
+        if($h > 8 && $h < 19) $receviers = "HuangShiQi|".$boss;
+        
         switch ($type) {
           case 'pass':
             $description = "您有一个流程已签收通过".$applyerName;
-            $receviers = "HuangShiQi|".$boss;
             break;
           case 'refuse':
             $description = "您有一个流程被拒绝".$applyerName;
-            $receviers = "HuangShiQi|".$boss;
             break;
           case 'other':
             $description = "您有一个流程需要处理".$applyerName;
-            $receviers = "HuangShiQi|".$boss;
             break;          
           default:
             $description = "您有一个流程需要签收".$applyerName;
-            $receviers = "HuangShiQi|".$boss;
             break;
         }
         $agentid = 15;

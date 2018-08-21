@@ -146,7 +146,7 @@ class YxhbSalesReceiptsApplyLogic extends Model {
                                      'type'=>'string'
                                     );
         $result[] = array('name'=>'客户别名：',
-                                     'value'=>$dtg['ang'],
+                                     'value'=>$dtg['ang']?$dtg['ang']:'无',
                                      'type'=>'string'
                                     );
         $result[] = array('name'=>'收款金额：',

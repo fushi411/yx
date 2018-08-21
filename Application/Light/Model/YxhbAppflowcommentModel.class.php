@@ -47,6 +47,7 @@ class YxhbAppflowcommentModel extends Model {
               
               if (!empty($v['comment_to_id'])) {
                   $commentUserArr = explode(',', $v['comment_to_id']);
+                  $commentUserArr = array_filter($commentUserArr);
                   $commentUserArr = array_map(function($wxid) use ($boss) {
                       $cid = $boss->getIDFromWX($wxid);
                       $crealname = $boss->getusername($cid);
@@ -63,9 +64,8 @@ class YxhbAppflowcommentModel extends Model {
               } else {
                   $v['del_able'] = 1;
               }
-              echo strpos($v['app_word'],'@所有人');
-              echo $v['app_word'];
-              if(strpos($v['app_word'],'@所有人') || $v['per_id'] == 9999 || $v['per_id'] == 8888){
+              
+              if(strpos("烦躁".$v['app_word'],'@所有人') || $v['per_id'] == 9999 || $v['per_id'] == 8888){
                 $commentUser = " ";
               }
                // 图片检查 
@@ -77,7 +77,7 @@ class YxhbAppflowcommentModel extends Model {
               $comment_list[] = array('id'=>$v['id'],'is_img' => $v['comment_img']?1:0 , 'file' => $file, 'pid'=>$v['per_id'], 'avatar'=>$avatar, 'name'=>$v['per_name'], 'time'=>$v['time'], 'word'=>$commentUser.$v['app_word'], 'del_able'=>$v['del_able'],'wxid'=>$cwxUID);
         }
 
-        return $comment_list;
+        return list_sort_by($comment_list,'time','desc');
     }
 
 }

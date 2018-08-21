@@ -74,12 +74,10 @@
     <div class="container" id="container">
         <div class="page tabbar js_show" >
             <div class="page__bd" style="height: 100%;">
-                    <if condition="$stat neq 0">
-                <if condition="(($apply.stat eq 0)) AND (($isApplyer eq 1) OR ($isApplyUser eq 1) OR ($isPasser eq 1) OR ($isCopyto eq 1))">
+                    
                         <div class="weui-tab">
                             <div class="weui-tab__panel">
-                    </if>
-                    </if>
+                    
                     <div class="weui-panel weui-panel_access">
                         <!-- <div class="weui-panel__hd">审批信息</div> -->
                         <div class="weui-panel__bd">
@@ -507,9 +505,9 @@
                         </div> -->
                     </div>
                 </if>
-                <if condition="$stat neq 0">
+                
                 <block name="operation">
-                            <if condition="(($apply.stat eq 0)) AND (($isApplyer eq 1) OR ($isApplyUser eq 1) OR ($isPasser eq 1) OR ($isCopyto eq 1))">
+                            
                                 </div>
                                 <div class="weui-tabbar" style="padding-top: 8px;/*position: fixed;*/">
                                     <a href="#" class="weui-tabbar__item" style="text-decoration: none;">
@@ -538,9 +536,8 @@
                                     </a>
                                 </div>
                                 </div>
-                            </if>
                 </block>
-            </if>
+            
             </div>
         </div>
         <!--BEGIN toast-->
@@ -624,7 +621,8 @@
                             <div class="page__bd">
                                 <textarea name="comment_content" id="comment_content" class="comment" data-aid="{$aid}" placeholder="请输入评论内容;
 评论内容可@指定人;
-无指定默认@所有人（含抄送）;" rows="5" cols="30"></textarea> {__TOKEN__}
+无指定默认@所有人（含抄送）;
+任意流程均可评论;" rows="5" cols="30"></textarea> {__TOKEN__}
                             </div>
                         </div>
                         <div class="weui-tabbar" style="padding-top: 8px;position: initial;">
@@ -706,7 +704,7 @@
                     </div>
                 </div>
             </div>
-        <if condition="(($apply.stat eq 0)) AND (($isApplyer eq 1) OR ($isApplyUser eq 1) OR ($isPasser eq 1) OR ($isCopyto eq 1))">
+        
             <!-- 撤销记录 -->
             <div class="js_dialog" id="iosDialog_delete" style="display: none;">
                 <div class="weui-mask"></div>
@@ -725,6 +723,8 @@
                     </div>
                 </div>
             </div>
+
+            <if condition="(($apply.stat eq 0)) AND (($isApplyer eq 1) OR ($isApplyUser eq 1) OR ($isPasser eq 1) OR ($isCopyto eq 1))">
             <!-- 催审记录 -->
             <div class="js_dialog" id="iosDialog_urge" style="display: none;">
                 <div class="weui-mask"></div>
@@ -1673,6 +1673,14 @@
                 //alert("非申请人不可撤销！");
                 return false;
             }
+
+            if(!{$isqs} && $('#apply_status .label').eq(0).text() != '审批中'){
+                $("#alert_content").text('审批流程不可撤销！');
+                $("#iosDialog_alert").fadeIn(200);
+                //alert("非申请人不可撤销！");
+                return false;
+            }
+
             $("#iosDialog_delete").fadeIn(200);
         });
 

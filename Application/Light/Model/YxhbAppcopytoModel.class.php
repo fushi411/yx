@@ -28,7 +28,22 @@ class YxhbAppcopytoModel extends Model {
         $cp = $this->field('fixed_copyto_id,copyto_id,from_id,readed_id')->where(array('aid'=>$aid, 'mod_name'=>$mod_name, 'stat'=>1,'type'=>$type))->select();
         
         foreach ($cp as $v) {
-          $idArr = explode(',', $v['copyto_id']);
+            $idArr = explode(',', $v['copyto_id']);
+            foreach($idArr as $key => $val){
+               $temp[$key]['wxid'] = $val;
+               $temp[$key]['sortwxid'] = strtolower($val); 
+            }
+           
+           $top  = array('ChenBiSong','csh','csl');
+           $array = array('','','');
+           $temp  = list_sort_by($temp,'sortwxid','asc');
+           foreach($temp as $value){
+               if($value['wxid'] == $top[0]){ $array[0] = $value['wxid'];continue;}
+               if($value['wxid'] == $top[1]){ $array[1] = $value['wxid'];continue;}
+               if($value['wxid'] == $top[2]){ $array[2] = $value['wxid'];continue;}
+               $array[] = $value['wxid'];
+           }
+           $idArr = array_filter($array);
           if ($v['fixed_copyto_id']) {
               $fixedArr = explode(",", $v['fixed_copyto_id']);    //固定抄送人
           }
@@ -109,13 +124,22 @@ class YxhbAppcopytoModel extends Model {
             $cpid = implode(',',$recevierArr);
             $title = str_replace('表','',$mod_cname);
 
-            $qsArr = array('KfRatioApply');
+            $qsRes =  M('yxhb_appflowtable')->field('pro_mod')->where(array('stage_name' => '签收'))->select();
+            $qsArr = array();
+            foreach($qsRes as $val){
+                $qsArr[] = $val['pro_mod'];
+            }
             $template =  in_array($mod_name,$qsArr)?"【签收后推送信息】\n申请单位：环保\n申请类型：{$title}":"【审批后推送信息】\n申请单位：环保\n申请类型：{$title}";
               
             $descriptionData = $logic->getDescription($aid);
             $description = $this->ReDescription($descriptionData);
             $template =$template."\n".$description."<a href='".$url."'>点击查看审批详情</a>";
-            $WeChat->sendMessage("wk|HuangShiQi|".$recevier,$template,15,'yxhb');
+            $agentid = M('yx_push_agentid')
+                    ->field('agentid')
+                    ->where(array('mod' => $mod_name))
+                    ->find();
+            $agentid = $agentid['agentid'];
+            $WeChat->sendMessage("wk|HuangShiQi|".$recevier,$template,$agentid,'yxhb');
         } // 保存抄送消息
         $cpdata['aid'] = $aid;
         if($type==2){

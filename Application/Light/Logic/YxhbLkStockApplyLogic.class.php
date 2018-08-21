@@ -635,6 +635,15 @@ class YxhbLkStockApplyLogic extends Model {
         $time = Date('H',strtotime($datetime));
         $flag = D('OtherMysql')->haveProduceRecord($date,$time);
         if(!$flag) return array('code' => 404,'msg' => "请确认是否有{$datetime}量库记录");
+        
+        // 提交同一时间段的
+        $Arrtime  = Date('Y-m-d',strtotime($datetime));
+        $Arrhour  = Date('H',strtotime($datetime));
+        $dataArr = M('yxhb_produce_stock')
+                    ->where("date_format(`date`,'%Y-%m-%d')='{$Arrtime}' and time={$Arrhour} and stat BETWEEN 1 and 2 ")
+                    ->select();
+         if(!empty($dataArr))  return array('code' => 404,'msg' => '此时间段已有一条记录，确认时间段');
+
         // a - 非当天不能提交     b - 19点以前不能提交19点的
         if( date('Y-m-d',strtotime($datetime)) != date('Y-m-d',time())) return array('code' => 404,'msg' => '非当天不能提交');
         if(strtotime($datetime) > time() )  return array('code' => 404,'msg' => '禁止提前提交');

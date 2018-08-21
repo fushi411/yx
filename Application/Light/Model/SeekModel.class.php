@@ -123,6 +123,28 @@ class SeekModel extends Model {
                 'submit'     => array('name' => 'rdy','stat' => 2),
                 'copy_field' => 'yxhb_produce_stock.id as aid, yxhb_produce_stock.cretime as date,yxhb_produce_stock.stat as state ,yxhb_produce_stock.rdy as applyer'
             ),
+            array( 
+                'title'      => '环保销售收款' , 
+                'search'     => '环保销售收款',
+                'system'     => 'yxhb' ,
+                'mod_name'   => 'SalesReceiptsApply'    ,
+                'table_name' => 'yxhb_feexs'    ,
+                'id'         => 'id',
+                'stat'       => 'stat',
+                'submit'     => array('name' => 'npeople','stat' => 2),
+                'copy_field' => 'yxhb_feexs.id as aid, yxhb_feexs.jl_date as date,yxhb_feexs.stat as state ,yxhb_feexs.npeople as applyer'
+            ),
+            array( 
+                'title'      => '建材销售收款' , 
+                'search'     => '建材销售收款',
+                'system'     => 'kk' ,
+                'mod_name'   => 'SalesReceiptsApply'    ,
+                'table_name' => 'kk_feexs'    ,
+                'id'         => 'id',
+                'stat'       => 'stat',
+                'submit'     => array('name' => 'npeople','stat' => 2),
+                'copy_field' => 'kk_feexs.id as aid, kk_feexs.jl_date as date,kk_feexs.stat as state ,kk_feexs.npeople as applyer'
+            ),
         );
       
     }

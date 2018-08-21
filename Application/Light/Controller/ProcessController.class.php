@@ -240,7 +240,23 @@ class ProcessController extends Controller
             $where .= "wxid='{$v}'";
         }
         $where .= ')';
-        $res =M($system.'_boss')->where($where)->field('name,avatar')->select();
+        $res =M($system.'_boss')->where($where)->field('name,wxid,avatar')->select();
+        $temp = $res;
+        foreach($temp as $k => $v){
+            $temp[$k]['sortwxid'] = strtolower($v['wxid']); 
+        }
+        $top  = array('ChenBiSong','csh','csl');
+        $array = array('','','');
+
+        $temp  = list_sort_by($temp,'sortwxid','asc');
+      
+        foreach($temp as $v){
+            if($v['wxid'] == $top[0]){ $array[0] = $v;continue;}
+            if($v['wxid'] == $top[1]){ $array[1] = $v;continue;}
+            if($v['wxid'] == $top[2]){ $array[2] = $v;continue;}
+            $array[] = $v;
+        }
+        $res = array_filter($array);
         return $res;
     }
 
