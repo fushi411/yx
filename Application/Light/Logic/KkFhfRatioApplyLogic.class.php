@@ -40,7 +40,7 @@ class KkFhfRatioApplyLogic extends Model {
                                      'color' => 'black'
                                     );
         $result['content'][] = array('name'=>'提交时间：',
-                                     'value'=> date('Y-m-d H:i',strtotime($res['jlsj'])) ,
+                                     'value'=> date('m-d H:i',strtotime($res['jlsj'])) ,
                                      'type'=>'date',
                                      'color' => 'black'
                                     );                                    
@@ -143,7 +143,7 @@ class KkFhfRatioApplyLogic extends Model {
         $fz   = str_replace('分','',$res['scfz']);
         $hour = $hour>9?$hour:'0'.$hour;
         $result[] = array('name'=>'提交时间：',
-                                     'value'=> date('Y-m-d H:i',strtotime($res['jlsj'])) ,
+                                     'value'=> date('m-d H:i',strtotime($res['jlsj'])) ,
                                      'type'=>'date'
                                     );
         $result[] = array('name'=>'生产时间：',

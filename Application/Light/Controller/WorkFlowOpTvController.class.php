@@ -338,7 +338,7 @@ class WorkFlowOpTvController extends BaseController {
 
         $WeChat = new \Org\Util\WeChat;
 
-        $template = $description."\n<a href='".$url."'>点击查看</a>";
+        $template = $description."\n<a href='".$url."'>点击查看签收详情</a>";
        
         // $template = $description."\n类型：".$title."\n申请人：".$applyerName."\n调休理由：".$record['content']."\n<a href=\"".$url."\">点击查看</a>";
         $agentid = 15;

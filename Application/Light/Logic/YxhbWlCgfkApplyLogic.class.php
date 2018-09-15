@@ -46,7 +46,7 @@ class YxhbWlCgfkApplyLogic extends Model {
                                      'color' => 'black'
                                     );
         $result['content'][] = array('name'=>'提交时间：',
-                                     'value'=> date('Y-m-d H:i',strtotime($res['date'])) ,
+                                     'value'=> date('m-d H:i',strtotime($res['date'])) ,
                                      'type'=>'date',
                                      'color' => 'black'
                                     );
@@ -124,7 +124,7 @@ class YxhbWlCgfkApplyLogic extends Model {
             $clientname = array( 'g_name' => $res['pjs']);
         }
         $result[] = array('name'=>'提交时间：',
-                                     'value'=> date('Y-m-d H:i',strtotime($res['date'])),
+                                     'value'=> date('m-d H:i',strtotime($res['date'])),
                                      'type'=>'date'
                                     );
         $result[] = array('name'=>'申请日期：',
@@ -193,6 +193,7 @@ class YxhbWlCgfkApplyLogic extends Model {
         }
         $result = array(
             'sales'   => $res['rdy'],
+            'title2'  => '申请金额',
             'approve' => number_format($res['fkje'],2,'.',',')."元",
             'notice'  => $res['zy'],
             'date'    => $res['zd_date'],
@@ -314,7 +315,7 @@ class YxhbWlCgfkApplyLogic extends Model {
                     yxhb_cght AS b,
                     yxhb_gys as c
                 WHERE
-                    a.id = b.ht_wl
+                   ( a.id = b.ht_wl or a.id=20)
                 AND b.ht_stat = 2
                 AND a.g_ch = ''
                 AND c.g_name=a.g_name
@@ -350,7 +351,6 @@ class YxhbWlCgfkApplyLogic extends Model {
         $where = array(
             'bank_stat' => 1,
             'bank_wl'  => $gys,
-            'bank_lx'   => $type
         );
         $data  = M('yxhb_bankwl')->field('bank_wl,bank_zhmc,bank_account,bank_khh,bank_lx,id')->where($where)->select();
         foreach($data as $k => $v){

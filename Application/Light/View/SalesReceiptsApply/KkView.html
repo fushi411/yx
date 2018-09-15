@@ -8,12 +8,12 @@
     <div class="weui-cells weui-cells_form">
         <div class="weui-cell weui-cell_select weui-cell_select-after">
             <div class="weui-cell__hd">
-                <label class="weui-label">提货单位&nbsp;&nbsp;
+                <label class="weui-label">客户名称&nbsp;&nbsp;
                     <span style="color:red;">*</span>
                 </label>
             </div>
-            <div class="weui-cell__bd">
-                <select class="weui-select" name="user_name[]" id="user_name" multiple="multiple" style="width: 95%;" data-placeholder="请选择客户或拼音缩写">
+            <div class="weui-cell__bd" id='alter_div'>
+                <select class="weui-select" name="user_name[]" id="user_name" multiple="multiple" style="width: 95%;" data-placeholder="客户范围为账户有效客户">
                 </select>
             </div>
         </div>
@@ -25,6 +25,17 @@
             </div>
             <div class="weui-cell__bd">
                 <input class="weui-select peibi scale" type="text" name="user_other_name" id="user_other_name" placeholder="名称不一致,填入汇款单位名称">
+            </div>
+        </div>
+        <div class="weui-cell ">
+            <div class="weui-cell__hd">
+                <label class="weui-label">应收余额&nbsp;&nbsp;
+
+                </label>
+            </div>
+            <div class="weui-cell__bd">
+                <input class="weui-input show_number" type="text" name="custodian" readonly placeholder="自动填写" />
+                <span  id="ysye"></span>
             </div>
         </div>
     </div>
@@ -43,6 +54,16 @@
                     <option value="2">公司账户</option>
                     <option value="3">承兑汇票</option>
                 </select>
+            </div>
+        </div>
+        <div class="weui-cell weui-cell_select weui-cell_select-after" id="btnhp" style="display:none;">
+            <div class="weui-cell__hd">
+                <label class="weui-label">汇票详情&nbsp;&nbsp;
+                    <span style="color:red;">*</span>
+                </label>
+            </div>
+            <div class="weui-cell__bd">
+                <input class="weui-select " type="text" readonly id="select_ycl" style="color: #337ab7;" value="点击进入汇票页面" />
             </div>
         </div>
         <div class="weui-cell weui-cell_select weui-cell_select-after">
@@ -85,7 +106,8 @@
         <div class="weui-cell">
             <div class="weui-cell__bd" id="cnt">
                 <textarea class="weui-textarea" name="reason" id="reason" placeholder="请输入相关说明；
-" rows="2"></textarea>
+签收后仍可使用撤销功能；
+" rows="3"></textarea>
                 <div class="weui-textarea-counter">
                     <span id="reason_char">0</span>/200</div>
             </div>
@@ -616,6 +638,7 @@
                     dataType: 'json',
                     delay: 350,
                     data: function (params) {
+                        $('#alter_div input').eq(0).attr('placeholder', '请选择客户或拼音缩写');
                         return {
                             math: params.term,
                         };
@@ -635,21 +658,25 @@
                 templateResult: formatRepo,
                 templateSelection: formatRepoSelection
             });
-
+            $('#alter_div').on('blur','input',function(){
+                if(!user_id) $('#alter_div input').eq(0).attr('placeholder', '客户范围为账户有效客户');
+            })
             // select2 点击触发
             $("#user_name").on("select2:selecting", function (e) {
                 $('.select2-selection__choice__remove').click();
                 var selectArr = e.params.args.data;
+
+                getAuth(selectArr.id,selectArr.text);
+
                 if (selectArr.text.length > 9) {
                     selectArr.text = selectArr.text.replace(/有限/, "");
                     selectArr.text = selectArr.text.replace(/责任/, "");
                     selectArr.text = selectArr.text.replace(/公司/, "");
                 }
                 $('.select2-selection__choice').text(selectArr.text);
-
                 user_id = selectArr.id;
-
                 money.val('');
+                
             });
             $("#user_name").on("select2:unselecting", function (e) {
                 $('.color').val('');
@@ -657,6 +684,33 @@
             });
 
         });
+        
+        
+        // 获取
+        function getAuth(user_id,clientname){
+            toastfadeIn(200,'数据加载中');
+            $.ajax({
+                url: "{:U('Light/Api/SalesReceiptsApplyApi')}"+"&system=kk&modname=SalesReceiptsApply&action=getCustomerInfo",
+                dataType: 'json',
+                data: {
+                    user_id: user_id
+                },
+                dataType: 'json',
+                success: function (res) {
+                    
+                       
+                    var  classNmae = '';
+                    if (res<20000) classNmae = 'redColor';
+                    $('#ysye').removeClass('redColor').addClass(classNmae);
+                    $('#ysye').html("&yen;"+formatMoney(res,2));
+                    
+                    $('.show_number').hide();
+                    toast.fadeOut(200);
+                    $('.color').removeClass('redColor greenColor');
+                    
+                }
+            })
+        }
 
         // bank获取
         var bankInfo = '',imagepath='';
@@ -738,8 +792,8 @@
     filechooser.onchange = function () {
         if (!this.files.length) return;
         var files = Array.prototype.slice.call(this.files);
-        if (files.length > 9 || img_num > 8) {
-            alert("最多只可上传9张图片");
+        if (files.length > 1 || img_num > 0) {
+            alert("最多只可上传1张图片");
             return;
         }
         files.forEach(function (file, i) {
@@ -1190,8 +1244,17 @@
 
         // 汇票弹出
         $('#fkfs').change(function () {
-            if($(this).val() == 3)$('#other_page').fadeIn(200);
+            if($(this).val() == 3){
+                $('#btnhp').fadeIn(200);
+            }else{
+                $('#btnhp').fadeOut(200);
+            }
         })
+        // 点击汇票按钮跳出汇票页面
+        
+        $('#select_ycl').click(function () {
+            $('#other_page').fadeIn(200);
+        });
         // 银行名称隐藏
         $('#bank_name_div').hide();
         $('#kpyh1').change(function () {
@@ -1200,7 +1263,7 @@
         })
         // 日期插件
         datePicker.val(null);
-        datePicker.attr('placeholder', '前三天到今日');
+        datePicker.attr('placeholder', '前三天至今天');
         $('.weui-label').eq(1).html(label);
 
         $('.greyColor').change(function () {
@@ -1287,6 +1350,7 @@
                     bank: bank,
                     money: money,
                     text: reason,
+                    ysye: $('#ysye').html(),
                     user_other_name: $('#user_other_name').val(),
                     jbr: jbr,
                     datetime: datePicker.val(),

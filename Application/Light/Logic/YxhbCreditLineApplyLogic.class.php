@@ -182,6 +182,7 @@ class YxhbCreditLineApplyLogic extends Model {
         $clientname = M('yxhb_guest2')->field('g_khjc')->where(array('id' => $res['clientid']))->find();
         $result = array(
             'sales'   => $res['sales'],
+            'title2'  => '申请金额',
             'approve' => number_format($res['line'],2,'.',',')."元",
             'notice'  => $res['notice'],
             'date'    => $res['date'],

@@ -150,6 +150,7 @@ class SeekController extends BaseController
         $kkCount    = substr_count($searchText,'建材');
         
         $table_info = $this->getAppTable();
+        $table_info = $this->arrayMerge($table_info);
         $yxhb_id    = session('yxhb_id');
         $kk_id      = session('kk_id');
         $Mod        = array('kk' => '', 'yxhb' => '');
@@ -163,7 +164,11 @@ class SeekController extends BaseController
             $res = $this->searchFind($v['search'],$searchText);
             if($res){
                 empty($where)?$where = 'and (' : $where .= ' or ';
-                $where .=" mod_name='{$v['mod_name']}' ";
+                if($v['mod_name'] == 'CgfkApply' ){
+                    $where .=" mod_name='{$v['mod_name']}' or mod_name='PjCgfkApply' or mod_name='WlCgfkApply'";
+                }else{
+                    $where .=" mod_name='{$v['mod_name']}' ";
+                }
             } 
             $Mod[$v['system']] .= "mod_name='{$v['mod_name']}'";
         }
@@ -198,6 +203,7 @@ class SeekController extends BaseController
                 'date'      => date('m/d',strtotime($res['date'])),
                 'applyer'   => $res['sales'],
                 'titlename' => $res['title'],
+                'title2'    => $res['title2'],
                 'name'      => $res['name'],
                 'stat'      => $stat,
                 'approve'   => $res['approve'],
@@ -214,6 +220,7 @@ class SeekController extends BaseController
      */
     public function noApprove(){
         $tab = $this->getAppTable();
+        $tab = $this->arrayMerge($tab);
         $result = array();
         $sub = array();
         foreach ($tab as $k => $v ) {
@@ -221,7 +228,7 @@ class SeekController extends BaseController
             $res = M($v['system'].'_appflowproc a')
                     ->join("{$v['table_name']}  on a.aid={$v['table_name']}.{$v['id']}")
                     ->field($v['copy_field'])
-                    ->where(array('a.app_stat' => 0,"{$v['table_name']}.stat" => $v['submit']['stat'],'a.mod_name' => $v['mod_name'] , 'a.per_id' => $id))
+                    ->where(array('a.app_stat' => 0,"{$v['table_name']}.{$v['stat']}" => $v['submit']['stat'],'a.mod_name' => $v['mod_name'] , 'a.per_id' => $id))
                     ->select();    
             if(!empty($res)){
                 foreach($res as $key => $val){
@@ -235,7 +242,7 @@ class SeekController extends BaseController
         foreach($sub as $k => $v){
             $res       = D(ucfirst($tab[$v[0]]['system']).$tab[$v[0]]['mod_name'], 'Logic')->sealNeedContent($v['aid']);
             $appStatus = D($tab[$v[0]]['system'].'Appflowproc')->getWorkFlowStatus($res['modname'], $v['aid']);
-            $statRes   = $this->transStat($tab[$v[0]]['mod_name'],$v['stat']);
+            $statRes   = $this->transStat($res['modname'],$v['stat']);
             $stat      = $statRes ? $statRes: $v['stat'];
             $arr = array(
                 'system'    => $tab[$v[0]]['system'],
@@ -245,6 +252,7 @@ class SeekController extends BaseController
                 'aid'       => $v['aid'],
                 'date'      => date('m/d',strtotime($v['date'])),
                 'applyer'   => $v['applyer'],
+                'title2'    => $res['title2'],
                 'stat'      => $stat,
                 'titlename' => $res['title'],
                 'name'      => $res['name'],
@@ -257,6 +265,55 @@ class SeekController extends BaseController
         return $result;
     }
 
+    public function arrayMerge($data){
+        $appArr = array(
+            array( 
+                'title'      => '环保采购付款' , 
+                'search'     => '配件采购付款',
+                'system'     => 'yxhb' ,
+                'mod_name'   => 'PjCgfkApply'          ,
+                'table_name' => 'yxhb_cgfksq'              ,
+                'id'         => 'id',
+                'stat'       => 'stat',
+                'submit'     => array('name' => 'rdy','stat' => 3),
+                'copy_field' => 'yxhb_cgfksq.id as aid,yxhb_cgfksq.rdy as applyer,yxhb_cgfksq.zd_date as date,yxhb_cgfksq.fkje as approve,yxhb_cgfksq.zy as notice,yxhb_cgfksq.stat'
+            ),
+            array( 
+                'title'      => '环保采购付款' , 
+                'search'     => '物流采购付款',
+                'system'     => 'yxhb' ,
+                'mod_name'   => 'WlCgfkApply'          ,
+                'table_name' => 'yxhb_cgfksq'              ,
+                'id'         => 'id',
+                'stat'       => 'stat',
+                'submit'     => array('name' => 'rdy','stat' => 3),
+                'copy_field' => 'yxhb_cgfksq.id as aid,yxhb_cgfksq.rdy as applyer,yxhb_cgfksq.zd_date as date,yxhb_cgfksq.fkje as approve,yxhb_cgfksq.zy as notice,yxhb_cgfksq.stat'
+            ),
+            array( 
+                'title'      => '建材采购付款' , 
+                'search'     => '配件采购付款',
+                'system'     => 'kk'   ,
+                'mod_name'   => 'PjCgfkApply'          ,
+                'table_name' => 'kk_cgfksq'                ,
+                'id'         => 'id' ,
+                'stat'       => 'stat',
+                'submit'     => array('name' => 'rdy','stat' => 3),
+                'copy_field' => 'kk_cgfksq.id as aid,kk_cgfksq.rdy as applyer,kk_cgfksq.zd_date,kk_cgfksq.fkje as approve,kk_cgfksq.zy  as notice,kk_cgfksq.stat'
+            ),
+            array( 
+                'title'      => '建材采购付款' , 
+                'search'     => '物流采购付款',
+                'system'     => 'kk'   ,
+                'mod_name'   => 'WlCgfkApply'          ,
+                'table_name' => 'kk_cgfksq'                ,
+                'id'         => 'id' ,
+                'stat'       => 'stat',
+                'submit'     => array('name' => 'rdy','stat' => 3),
+                'copy_field' => 'kk_cgfksq.id as aid,kk_cgfksq.rdy as applyer,kk_cgfksq.zd_date,kk_cgfksq.fkje as approve,kk_cgfksq.zy  as notice,kk_cgfksq.stat'
+            ),
+        );
+        return array_merge($data,$appArr);
+    }
     /**
      * 提交记录
      */
@@ -303,7 +360,7 @@ class SeekController extends BaseController
             $name = session('name');
             foreach($table_info as $k =>$v){
                 if($k != 0) $submit_sql .= ' UNION all ';
-                $submit_sql .=  " select {$v['copy_field']},{$k} from {$v['table_name']} where {$v['submit']['name']}='{$name}' and stat={$v['submit']['stat']}";
+                $submit_sql .=  " select {$v['copy_field']},{$k} from {$v['table_name']} where {$v['submit']['name']}='{$name}' and {$v['stat']}={$v['submit']['stat']}";
             }
         }
         $submit_sql .=')a ORDER BY date desc';
@@ -328,6 +385,7 @@ class SeekController extends BaseController
                 'date'      => date('m/d',strtotime($v['date'])),
                 'applyer'   => $v['applyer'],
                 'stat'      => $stat,
+                'title2'    => $res['title2'],
                 'titlename' => $res['title'],
                 'name'      => $res['name'],
                 'approve'   => $v['approve'],
@@ -372,7 +430,7 @@ class SeekController extends BaseController
                     if(!$res && $v['system'] != 'kk')  $del = ' and 1=-1 '; # 排除建材系统 模块不在搜索方位
                 }
             }
-            $submit_sql .=  " select {$v['copy_field']},{$k} from {$v['table_name']} where {$v['submit']['name']}='{$name}' and stat!={$v['submit']['stat']} {$del}";
+            $submit_sql .=  " select {$v['copy_field']},{$k} from {$v['table_name']} where {$v['submit']['name']}='{$name}' and {$v['stat']}!={$v['submit']['stat']} {$del}";
         }
 
         return $submit_sql;
@@ -487,6 +545,7 @@ class SeekController extends BaseController
                 'date'      => date('m/d',strtotime($res['date'])),
                 'applyer'   => $res['sales'],
                 'stat'      => $stat,
+                'title2'    => $res['title2'],
                 'titlename' => $res['title'],
                 'name'      => $res['name'],
                 'approve'   => $res['approve'],
@@ -555,6 +614,7 @@ class SeekController extends BaseController
                 'date'      => date('m/d',strtotime($res['date'])),
                 'applyer'   => $res['sales'],
                 'stat'      => $stat,
+                'title2'    => $res['title2'],
                 'titlename' => $res['title'],
                 'name'      => $res['name'],
                 'approve'   => $res['approve'],
@@ -577,7 +637,9 @@ class SeekController extends BaseController
     public function transStat($modname,$stat){
         if($stat == 0) return 0;
         $statArr = array(
-            'CgfkApply' => array('4' =>2 ,'3' => 2 ,'2' => 1)
+            'CgfkApply' => array('4' =>2 ,'3' => 2 ,'2' => 1),
+            'WlCgfkApply' => array('4' =>2 ,'3' => 2 ,'2' => 1),
+            'PjCgfkApply' => array('4' =>2 ,'3' => 2 ,'2' => 1),
         );
 
         if(!$statArr[$modname]) return 0;
@@ -612,6 +674,7 @@ class SeekController extends BaseController
                 'myDate'    => $res['date'],
                 'applyer'   => $res['sales'],
                 'titlename' => $res['title'],
+                'title2'    => $res['title2'],
                 'name'      => $res['name'],
                 'stat'      => $stat,
                 'approve'   => $res['approve'],
@@ -632,9 +695,9 @@ class SeekController extends BaseController
         $wx_id = session('wxid'); 
         //抄送未读  yxhb - kk
         $copeSql = "SELECT count(1) as count from (
-            select * from kk_appcopyto where FIND_IN_SET('{$wx_id}',`copyto_id`) and !FIND_IN_SET('{$wx_id}',`readed_id`) and type=1 and stat!=0 GROUP BY aid
+            select * from kk_appcopyto where FIND_IN_SET('{$wx_id}',`copyto_id`) and !FIND_IN_SET('{$wx_id}',`readed_id`) and type=1 and stat!=0 {$this->qs_sql()} GROUP BY aid
             union ALL
-            select * from yxhb_appcopyto where FIND_IN_SET('{$wx_id}',`copyto_id`) and !FIND_IN_SET('{$wx_id}',`readed_id`) and type=1  and stat!=0 GROUP BY aid)a ";
+            select * from yxhb_appcopyto where FIND_IN_SET('{$wx_id}',`copyto_id`) and !FIND_IN_SET('{$wx_id}',`readed_id`) and type=1  and stat!=0 {$this->qs_sql()} GROUP BY aid)a ";
         $copyRes = M()->query($copeSql);
         $copy_count =$copyRes[0]['count'];
         return $copy_count?$copy_count:0;
@@ -651,7 +714,7 @@ class SeekController extends BaseController
             $res = M($v['system'].'_appflowproc a')
                     ->join("{$v['table_name']} b on a.aid=b.{$v['id']}")
                     ->field('1')
-                    ->where(array('a.app_stat' => 0,'b.stat' => $v['submit']['stat'],'a.mod_name' => $v['mod_name'] , 'a.per_id' => $id))
+                    ->where(array('a.app_stat' => 0,'b.'.$v['stat'] => $v['submit']['stat'],'a.mod_name' => $v['mod_name'] , 'a.per_id' => $id))
                     ->select();
             $count += count($res);
         }

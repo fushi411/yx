@@ -20,6 +20,7 @@ class SeekModel extends Model {
                 'mod_name'   => 'TempCreditLineApply',
                 'table_name' => 'yxhb_tempcreditlineconfig',
                 'id'         => 'id' ,
+                'stat'       => 'stat',
                 'submit'     => array('name' => 'sales','stat' => 2),
                 'copy_field' => 'yxhb_tempcreditlineconfig.id as aid,yxhb_tempcreditlineconfig.sales as applyer,yxhb_tempcreditlineconfig.date,yxhb_tempcreditlineconfig.line as approve,yxhb_tempcreditlineconfig.notice,yxhb_tempcreditlineconfig.stat'
             ),
@@ -30,6 +31,7 @@ class SeekModel extends Model {
                 'mod_name'   => 'CreditLineApply'    ,
                 'table_name' => 'yxhb_creditlineconfig'    ,
                 'id'         => 'aid',
+                'stat'       => 'stat',
                 'submit'     => array('name' => 'sales','stat' => 2),
                 'copy_field' => 'yxhb_creditlineconfig.aid,yxhb_creditlineconfig.sales as applyer,yxhb_creditlineconfig.date,yxhb_creditlineconfig.line as approve,yxhb_creditlineconfig.notice,yxhb_creditlineconfig.stat'
             ),
@@ -40,6 +42,7 @@ class SeekModel extends Model {
                 'mod_name'   => 'CgfkApply'          ,
                 'table_name' => 'yxhb_cgfksq'              ,
                 'id'         => 'id',
+                'stat'       => 'stat',
                 'submit'     => array('name' => 'rdy','stat' => 3),
                 'copy_field' => 'yxhb_cgfksq.id as aid,yxhb_cgfksq.rdy as applyer,yxhb_cgfksq.zd_date as date,yxhb_cgfksq.fkje as approve,yxhb_cgfksq.zy as notice,yxhb_cgfksq.stat'
             ),
@@ -50,6 +53,7 @@ class SeekModel extends Model {
                 'mod_name'   => 'TempCreditLineApply',
                 'table_name' => 'kk_tempcreditlineconfig'  ,
                 'id'         => 'id' ,
+                'stat'       => 'stat',
                 'submit'     => array('name' => 'sales','stat' => 2),
                 'copy_field' => 'kk_tempcreditlineconfig.id as aid,kk_tempcreditlineconfig.sales as applyer,kk_tempcreditlineconfig.date,kk_tempcreditlineconfig.line as approve,kk_tempcreditlineconfig.notice,kk_tempcreditlineconfig.stat'
             ),
@@ -60,6 +64,7 @@ class SeekModel extends Model {
                 'mod_name'   => 'CreditLineApply'    ,
                 'table_name' => 'kk_creditlineconfig'      ,
                 'id'         => 'aid',
+                'stat'       => 'stat',
                 'submit'     => array('name' => 'sales','stat' => 2),
                 'copy_field' => 'kk_creditlineconfig.aid,kk_creditlineconfig.sales as applyer,kk_creditlineconfig.date,kk_creditlineconfig.line as approve,kk_creditlineconfig.notice,kk_creditlineconfig.stat'
             ),
@@ -70,9 +75,33 @@ class SeekModel extends Model {
                 'mod_name'   => 'CgfkApply'          ,
                 'table_name' => 'kk_cgfksq'                ,
                 'id'         => 'id' ,
+                'stat'       => 'stat',
                 'submit'     => array('name' => 'rdy','stat' => 3),
                 'copy_field' => 'kk_cgfksq.id as aid,kk_cgfksq.rdy as applyer,kk_cgfksq.zd_date,kk_cgfksq.fkje as approve,kk_cgfksq.zy  as notice,kk_cgfksq.stat'
             ),
+            array(
+                'title'      => '环保发货修改' , 
+                'search'     => '发货修改',
+                'system'     => 'kk' ,
+                'mod_name'   => 'fh_edit_Apply_hb',
+                'table_name' => 'yxhb_fh',
+                'id'         => 'id' ,
+                'stat'       => 'fh_stat4',
+                'submit'     => array('name' => 'fh_kpy','stat' => 2),
+                'copy_field' => 'yxhb_fh.id as aid,yxhb_fh.fh_kpy as applyer,yxhb_fh.fh_da,yxhb_fh.fh_client as approve,yxhb_fh.fh_num,yxhb_fh.fh_stat4'
+            ),
+            array(
+                'title'      => '建材发货修改' , 
+                'search'     => '发货修改',
+                'system'     => 'kk' ,
+                'mod_name'   => 'fh_edit_Apply',
+                'table_name' => 'kk_fh',
+                'id'         => 'id' ,
+                'stat'       => 'fh_stat4',
+                'submit'     => array('name' => 'fh_kpy','stat' => 2),
+                'copy_field' => 'kk_fh.id as aid,kk_fh.fh_kpy as applyer,kk_fh.fh_da,kk_fh.fh_client as approve,kk_fh.fh_num,kk_fh.fh_stat4'
+            ),
+
         );
         return $appArr;
     }

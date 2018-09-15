@@ -578,6 +578,7 @@ function vendor($class, $baseUrl = '', $ext='.php') {
  * @return Think\Model
  */
 function D($name='',$layer='') {
+    if('logic' == strtolower($layer))$name = str_replace('_','',$name); // 修改 解决模块名为 fh_edit_Apply 报错问题
     if(empty($name)) return new Think\Model;
     static $_model  =   array();
     $layer          =   $layer? : C('DEFAULT_M_LAYER');

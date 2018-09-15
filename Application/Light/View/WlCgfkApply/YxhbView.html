@@ -14,8 +14,8 @@
                     </label>
                 </div>
                 <div class="weui-cell__bd">
-                    <div class="weui-cell__bd">
-                        <select class="weui-select" name="user_name[]" id="user_name" multiple="multiple" style="width: 95%;" data-placeholder="请选择客户或拼音缩写">
+                    <div class="weui-cell__bd"  id='alter_div'>
+                        <select class="weui-select" name="user_name[]" id="user_name" multiple="multiple" style="width: 95%;" data-placeholder="客户范围为账户有效客户">
                         </select>
                     </div>
                 </div>
@@ -258,6 +258,7 @@ rows="3"></textarea>
                 dataType: 'json',
                 delay: 350,
                 data: function (params) {
+                    $('#alter_div input').eq(0).attr('placeholder', '请选择客户或拼音缩写');
                     return {
                         math: params.term,
                     };
@@ -277,7 +278,9 @@ rows="3"></textarea>
             templateResult: formatRepo,
             templateSelection: formatRepoSelection
         });
-
+        $('#alter_div').on('blur','input',function(){
+            if(!user_id) $('#alter_div input').eq(0).attr('placeholder', '客户范围为账户有效客户');
+        })
         // select2 点击触发
         $("#user_name").on("select2:selecting", function (e) {
             $('.select2-selection__choice__remove').click();

@@ -39,7 +39,6 @@ class OtherMysqlModel extends Model {
                         date <= '{$today}'
                     AND state = 1
                     AND (time = '7' OR time = '19')
-            GROUP BY date HAVING time=MIN(time)
                     ORDER BY
                         date DESC,
                         time DESC

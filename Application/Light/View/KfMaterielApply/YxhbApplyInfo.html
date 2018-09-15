@@ -1,0 +1,28 @@
+<extend name="Apply:base" />
+
+
+<block name="js">
+    <script>
+        $('.wk-select__user').eq(1).find('span').eq(1).remove();
+
+        getUserSection();
+        function getUserSection() {
+            $.ajax({
+                type: 'POST',
+                url: "{:U('Light/Api/KfMaterielApplyApi')}",
+                dataType: 'json',
+                data: {
+                    system: "{$system}",
+                    modname: 'KfMaterielApply',
+                    action: 'getUserSection',
+            
+                },
+                dataType: 'json',
+                success: function (res) {
+                    rid = res == 1 ? 1 : 0;
+                    $('.wk-select__user').eq(rid).remove();
+                }
+            });
+        }
+    </script>
+</block>

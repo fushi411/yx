@@ -28,6 +28,15 @@ class ProcessController extends Controller
             case 'TempCreditLineApply': 
                         $func = 'TempCreditLineApply'; 
                 break;
+            case 'fh_edit_Apply_hb': 
+                        $func = 'fh_edit_Apply_hb'; 
+                break;
+            case 'fh_edit_Apply': 
+                        $func = 'fh_edit_Apply'; 
+                break;
+            case 'KfMaterielApply': 
+                        $func = 'KfMaterielApply'; 
+                break;
             default:
                         $func = 'getApplyProcess';
         }
@@ -103,8 +112,58 @@ class ProcessController extends Controller
         );
         return $temp;
     }
+    /**
+     * 环保发货修改流程数据
+     * @param array  流程数据
+     */
+    private function fh_edit_Apply_hb($proData){
+        $temp = array();
+        $temp[] = array(
+            'title' => '授权库号一致审批流程',
+            'count' => 0
+        );
+        $temp[] = array(
+            'title' => '授权库号不一致审批流程',
+            'count' => 1
+        );
+        return $temp;
+    }
+
+    /**
+     * 环保物料配置数据
+     * @param array  流程数据
+     */
+    private function KfMaterielApply($proData){
+        $temp = array();
+        $temp[] = array(
+            'title' => '化验室提交审批流程',
+            'count' => 0
+        );
+        $temp[] = array(
+            'title' => '生产部提交审批流程',
+            'count' => 1,
+            'only'  => 1
+        );
+        return $temp;
+    }
 
 
+        /**
+     * 环保发货修改流程数据
+     * @param array  流程数据
+     */
+    private function fh_edit_Apply($proData){
+        $temp = array();
+        $temp[] = array(
+            'title' => '授权库号一致审批流程',
+            'count' => 0
+        );
+        $temp[] = array(
+            'title' => '授权库号不一致审批流程',
+            'count' => 1
+        );
+        return $temp;
+    }
     /**
      * 其他审批流程
      * @param array  流程数据

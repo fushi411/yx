@@ -1,0 +1,629 @@
+<extend name="Apply:applyBase" />
+
+<!-- 去除不可选择日期 -->
+<block name="able_date"></block>
+<block name="disable_date"></block>
+<!-- 去除不可选择日期 end-->
+<block name="content_body">
+    <style>
+        body .weui-form-preview__value {
+            color: #4e4e4e;
+        }
+
+        .no-more {
+            display: none;
+            text-align: center;
+            line-height: 30px;
+            color: #cecece;
+            font-size: 12px;
+            background: #f0f0f0;
+        }
+
+        .load-more {
+            display: none;
+            text-align: center;
+            line-height: 30px;
+            color: #6ea3f3;
+            font-size: 12px;
+            border-radius: 5px;
+            width: 98%;
+            margin: 0 auto;
+            border-top: 1px solid rgb(243, 237, 237);
+        }
+
+        .load-more:active {
+            background: #97d4ff;
+            color: #fff;
+        }
+
+        #btn-all {
+            display: none;
+            right: 10px;
+            bottom: 10px;
+            position: fixed;
+            text-align: center;
+            z-index: 999;
+        }
+
+        label {
+            font-weight: 400;
+            margin-bottom: 0px;
+        }
+
+        .searchCenter {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+    </style>
+    <div class="weui-cells" id="content1">
+        <div class="weui-cell weui-cell_select weui-cell_select-after">
+            <div class="weui-cell__hd">
+                <label class="weui-label">发货选择&nbsp;&nbsp;
+                </label>
+            </div>
+            <div class="weui-cell__bd">
+                <input class="weui-select " type="text" readonly id="select_ycl" style="color: #337ab7;" value="点击选择发货记录" />
+            </div>
+        </div>
+        <div class="weui-cell ">
+            <div class="weui-cell__hd">
+                <label class="weui-label">客户名称&nbsp;&nbsp;
+                </label>
+            </div>
+            <div class="weui-cell__bd">
+                <input class="weui-input " type="text" id="khmc" name="custodian" readonly placeholder="自动填写" />
+                
+            </div>
+        </div>
+        <div class="weui-cell ">
+            <div class="weui-cell__hd">
+                <label class="weui-label">发货日期&nbsp;&nbsp;
+                </label>
+            </div>
+            <div class="weui-cell__bd">
+                <input class="weui-input " type="text" id="fhrq" name="custodian" readonly placeholder="自动填写" />
+               
+            </div>
+        </div>
+        <div class="weui-cell ">
+            <div class="weui-cell__hd">
+                <label class="weui-label">
+                    <span class="font-width">发货详情</span>&nbsp;&nbsp;
+                </label>
+            </div>
+            <div class="weui-cell__hd">
+                <div id="ycl_content">
+
+                </div>
+                <div id="param_div">
+                    <span class=" greyColor">自动填写</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="weui-cells">
+        
+        <div class="weui-cell weui-cell_select weui-cell_select-after">
+            <div class="weui-cell__hd">
+                <label class="weui-label">修改名称&nbsp;&nbsp;
+                    <span style="color:red;">*</span>
+                </label>
+            </div>
+            <div class="weui-cell__bd" id="mydiv">
+                <select class="weui-select" id="alter" multiple="multiple" style="width: 95%;" data-placeholder="客户范围为合同有效客户">
+                    <option selected value=""></option>
+                </select>
+            </div>
+        </div>
+        <div class="weui-cell ">
+            <div class="weui-cell__hd">
+                <label class="weui-label">授权库号&nbsp;&nbsp;
+                </label>
+            </div>
+            <div class="weui-cell__bd">
+                <input class="weui-input " type="text" id="qxkh" name="custodian" readonly placeholder="自动填写" />
+                <div id='qxkh_show'></div>
+            </div>
+        </div>
+        <div class="weui-cell ">
+            <div class="weui-cell__hd">
+                <label class="weui-label">运输方式&nbsp;&nbsp;
+                </label>
+            </div>
+            <div class="weui-cell__bd">
+                <input class="weui-input " type="text" id="wlfs" name="custodian" readonly placeholder="自动填写" />
+                <div id='qxkh_show'></div>
+            </div>
+        </div>
+    </div>
+    <div class="other_page" id="other_page">
+        <div class="container">
+            <div class="page js_show">
+                    <div class="weui-cells weui-cells_form">
+                            <div class="weui-cell weui-cell_select weui-cell_select-after">
+                                <div class="weui-cell__hd">
+                                    <label class="weui-label">发货日期&nbsp;&nbsp;
+                                    </label>
+                                </div>
+                                <div class="weui-cell__bd">
+                                    <input class="weui-select" type="text" name="custodian" id="showDatePicker" readonly placeholder="请选择发货日期" value="" />
+                                </div>
+                            </div>
+                        
+                  
+                    <div class="weui-cell weui-cell_select weui-cell_select-after">
+                            <div class="weui-cell__hd">
+                                <label class="weui-label">客户选择&nbsp;&nbsp;
+                                </label>
+                            </div>
+                        <div class="weui-cell__bd">
+                            <div class="weui-cell__bd"  id='alter_div'>
+                                <select class="weui-select" name="user_name[]" id="user_name" multiple="multiple" style="width: 95%;" data-placeholder="客户范围为合同有效客户">
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="weui-cell weui-cell_select weui-cell_select-after ">
+                        <div class="weui-cell__hd">
+                            <label class="weui-label" style="color:#999;">承运车号&nbsp;&nbsp;
+                            </label>
+                        </div>
+                        <div class="weui-cell__bd">
+                            <input class="weui-select peibi scale" type="text" name="user_other_name" id="user_other_name" placeholder="暂未开通">
+                        </div>
+                    </div>
+                </div>
+                <div class="weui-cells weui-cells_form" id="order_select" style="margin-top: 0;min-height: 101%">
+
+                    <div class="page__bd">
+                        <div class="weui-cells searchbar-result" id="order_searchResult" style="background-color:#f8f8f8;margin-top:0;">
+
+
+                        </div>
+                        <div class="no-more">信息已经到底...</div>
+                        <div class="load-more">点我加载更多...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="weui-cells weui-cells_form">
+        <div class="weui-cell">
+            <div class="weui-cell__hd">
+                <label class="weui-label">申请理由&nbsp;&nbsp;
+                    <span style="color:red;">*</span>
+                </label>
+            </div>
+        </div>
+        <div class="weui-cell">
+            <div class="weui-cell__bd" id="cnt">
+                <textarea class="weui-textarea" name="reason" id="reason" placeholder="申请理由至少5个字(必填)；" rows="3"></textarea>
+                <div class="weui-textarea-counter">
+                    <span id="reason_char">0</span>/200</div>
+            </div>
+        </div>
+    </div>
+    <input type="hidden" id="ratio" value="ratio">
+    <div id="btn-all">
+        <a href="javascript:;" class="weui-btn weui-btn_mini weui-btn_primary">返回</a>
+    </div>
+</block>
+<block name="js">
+
+    <script src="__PUBLIC__/assets/js/AmountConversionformat.js"></script>
+
+    <script>
+        var page = 1,
+            fhinfo = [],
+            user_id = '';
+        var no_more = $('.no-more'),
+            load_more = $('.load-more');
+        load_more.click(function () {
+            getFhList();
+        })
+
+ var arr_week = new Array("星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六");
+    function ratioTime() {
+            // 日期选择
+            var hours = [],
+                minites = [],
+                symbol = [];
+
+            for (var i = 0; i < 100; i++) {
+                $date = new Date();
+                $date = $date.setDate($date.getDate() - 99 + i);
+                $date = new Date($date);
+
+                var Y = $date.getFullYear(),
+                    M = $date.getMonth() + 1,
+                    D = $date.getDate();
+
+                var hours_item = {};
+                hours_item.label = Y + '-' + M + '-' + D + ' ' + arr_week[$date.getDay()];
+                if (i == 99) {
+                    hours_item.label = '今天';
+                }
+                hours_item.value = Y + '-' + M + '-' + D;
+                hours.push(hours_item);
+            }
+
+            weui.picker(symbol, hours, minites, {
+                defaultValue: [0, hours_item.value, 0],
+                onConfirm: function (result) {
+                    pickerValue(result);
+                }
+            });
+        }
+
+        // 日历填充
+        function pickerValue(dateArr) {
+            var val = dateArr[1];
+            $('#showDatePicker').val(val);
+        }
+        $('body').on('click','#weui-picker-confirm',function(){
+            $('#order_searchResult').html('');
+            page = 1;
+            getFhList();
+        });
+        // 获取发货记录
+        getFhList();
+        function getFhList() {
+            $.ajax({
+                type: 'POST',
+                url: "{:U('Light/Api/fh_edit_ApplyApi')}",
+                dataType: 'json',
+                data: {
+                    date:$('#showDatePicker').val(),
+                    system: "{$system}",
+                    modname: 'fh_edit_Apply',
+                    action: 'getFhList',
+                    client: user_id,
+                    page: page,
+                    __hash__: hash
+                },
+                dataType: 'json',
+                success: function (res) {
+                    if (res.length < 20) {
+                        no_more.show();
+                        load_more.hide();
+                    } else {
+                        page++;
+                        load_more.show();
+                        no_more.hide();
+                    }
+                    makeHtml(res);
+                }
+            });
+        }
+        function makeHtml(data) {
+            var html = '',
+                length = fhinfo.length;
+
+            for (i = 0; i < data.length; i++) {
+                fhinfo.push(data[i]);
+                idx = length + i;
+                if(data[i]['fh_bzfs'] == '编织袋') $bzfs = '袋' ;
+                else if(data[i]['fh_bzfs'] == '散装') $bzfs = '散';
+                html += '<div class="weui-cell__bd weui-cell_primary fhindex"  index="' + idx + '">' +
+                    '<div class="weui-cells__title">' + data[i]['fh_newdate'] + ' <span style="float: right;">' + data[i]['fh_num'] + '</span></div>' +
+                    '<div class="weui-form-preview">' +
+                    '<div class="weui-form-preview__bd">' +
+                    '<div class="weui-form-preview__item">' +
+                    '<label class="weui-form-preview__label">客户名称</label>' +
+                    '<span class="weui-form-preview__value" style="text-align:left;">' + data[i]['fh_clientname'] + '</span>' +
+                    '</div>' +
+                    '<div class="weui-flex">' +
+                    '<div class="weui-form-preview__item weui-flex__item">' +
+                    '<label class="weui-form-preview__label">承运车号</label>' +
+                    '<span class="weui-form-preview__value" style="text-align:left;">' + data[i]['fh_carnum'] + '</span>' +
+                    '</div>' +
+                    '<div class="weui-form-preview__item weui-flex__item">' +
+                    '<label class="weui-form-preview__label">产品品种</label>' +
+                    '<span class="weui-form-preview__value">' + $bzfs+ data[i]['fh_cate'] + '</span>' +
+                    '</div>' +
+                    '</div>' +
+                    '<div class="weui-flex">' +
+                    '<div class="weui-form-preview__item weui-flex__item">' +
+                    '<label class="weui-form-preview__label">产品编号</label>' +
+                    '<span class="weui-form-preview__value" style="text-align:left;">' + data[i]['fh_snbh'] + '</span>' +
+                    '</div>' +
+                    '<div class="weui-form-preview__item weui-flex__item">' +
+                    '<label class="weui-form-preview__label">我方重量</label>' +
+                    '<span class="weui-form-preview__value"> ' + data[i]['fh_zl'] + '</span>' +
+                    '</div>' +
+                    '</div>' +
+                    '</div>' +
+                    '</div>' +
+                    '</div>';
+            }
+           
+            $('#order_searchResult').append(html);
+            $('.fhindex').click(function () {
+                var index = $(this).attr('index')
+                div_show();
+                clickInfo = fhinfo[index];
+                console.log(clickInfo);
+                alter_show();
+            });
+        }
+        function alter_show() {
+            $('#param_div').fadeOut(100);
+            $('#ycl_content').empty();
+            var text = clickInfo['fh_clientname'];
+            if (text.length > 9) {
+                text = text.replace(/有限/, "");
+                text = text.replace(/责任/, "");
+                text = text.replace(/公司/, "");
+            } 
+            if(clickInfo['fh_bzfs'] == '编织袋') $bzfs = '袋' ;
+            else if(clickInfo['fh_bzfs'] == '散装') $bzfs = '散';
+            var html = '<div  "><span class="" >提货单号</span>：' + clickInfo['fh_num'] + '</div>';
+                html += '<div  "><span class="" >产品品种</span>：' + $bzfs+clickInfo['fh_cate'] + '</div>';
+                html += '<div  "><span class="" >发货库号</span>：' + clickInfo['fh_kh'] + '</div>';
+                html += '<div  "><span class="" >产品编号</span>：' + clickInfo['fh_snbh'] + '</div>';
+                html += '<div  "><span class="" >我方重量</span>：' + clickInfo['fh_zl'] + '</div>';
+                html += '<div  "><span class="" >承运车号</span>：' + clickInfo['fh_carnum'] + '</div>';
+                html += '<div  "><span class="" >运输方式</span>：' + clickInfo['fh_wlfs'] + '</div>';
+            $('#ycl_content').html(html);
+            $('#khmc').val(text);
+            strlength = clickInfo['fh_date'].length;
+            $('#fhrq').val( clickInfo['fh_date'].substring(0,strlength-3));
+        }
+
+        var clickInfo = '';
+        // 显示
+        div_show();
+        function div_show(type) {
+            if (type == 1) {
+                $('#content1').hide();
+                $('.weui-cells').eq(1).hide();
+                $('#other_page').show();
+                $('#btn-all').show();
+            } else {
+                $('#content1').show();
+                $('.weui-cells').eq(1).show();
+                $('#other_page').hide();
+                $('#btn-all').hide();
+            }
+        }
+        $('#btn-all').click(function () {
+            div_show();
+        });
+        $('#select_ycl').click(function () {
+            div_show(1);
+        })
+        // 下拉框
+        // 用户选择
+        function formatRepo(repo) { return repo.text; }
+
+        function formatRepoSelection(repo) { return repo.text }
+        
+        $("#user_name").select2({
+            ajax: {
+                url: "{:U('Light/Api/fh_edit_ApplyApi')}" + "&system=kk&modname=fh_edit_Apply&action=getCustomerList",
+                dataType: 'json',
+                delay: 350,
+                data: function (params) {
+                    $('#alter_div input').eq(0).attr('placeholder', '请选择客户或拼音缩写');
+                    return {
+                        math: params.term,
+                    };
+                },
+                processResults: function (data) {
+                    return {
+                        results: data
+                    };
+                },
+                cache: true
+            },
+            escapeMarkup: function (markup) { return markup; },
+            minimumInputLength: 0,
+            minimumResultsForSearch: 9,
+            // allowClear: true,
+            language: "zh-CN",
+            templateResult: formatRepo,
+            templateSelection: formatRepoSelection
+        });
+        
+        $('#alter_div').on('blur','input',function(){
+            if(!user_id) $('#alter_div input').eq(0).attr('placeholder', '客户范围为合同有效客户');
+        })
+        // select2 点击触发
+        $("#user_name").on("select2:selecting", function (e) {
+            $('#alter_div .select2-selection__choice__remove').click();
+            var selectArr = e.params.args.data;
+            user_id = selectArr.id;
+            selectArr.text = selectArr.jc;
+            $('#user_name .select2-selection__choice').text(selectArr.text);
+            $('#order_searchResult').html('');
+            page = 1;
+            getFhList();
+        });
+        
+   
+        $("#user_name").on("select2:unselecting", function (e) {
+            user_id = '';
+            $('#order_searchResult').html('');
+            page = 1;
+            getFhList();
+           
+        });
+
+        var alter_user_id = '';
+        // 选择修改公司
+
+
+        $("#alter").select2({
+            ajax: {
+                url: "{:U('Light/Api/fh_edit_ApplyApi')}" + "&system=kk&modname=fh_edit_Apply&action=getCustomerList",
+                dataType: 'json',
+                delay: 350,
+                data: function (params) {
+                    $('#mydiv input').eq(0).attr('placeholder', '请选择客户或拼音缩写');
+                    return {
+                        math: params.term,
+                    };
+                },
+                processResults: function (data) {
+                    return {
+                        results: data
+                    };
+                },
+                cache: true
+            },
+            escapeMarkup: function (markup) { return markup; },
+            minimumInputLength: 0,
+            minimumResultsForSearch: 9,
+            // allowClear: true,
+            language: "zh-CN",
+            templateResult: formatRepo,
+            templateSelection: formatRepoSelection
+        });
+        $('#mydiv').on('blur','input',function(){
+            if(!alter_user_id) $('#mydiv input').eq(0).attr('placeholder', '客户范围为合同有效客户');
+        })
+
+        var fh_cate = '',fh_wl='';
+        // select2 点击触发
+        $("#alter").on("select2:selecting", function (e) {
+            $('.select2-selection__choice__remove').click();
+            var selectArr = e.params.args.data;
+            alter_user_id = selectArr.id;
+            selectArr.text = selectArr.jc;
+            fh_cate  = selectArr.cate;
+            fh_wl    = selectArr.wl;
+            $('#mydiv .select2-selection__choice').text(selectArr.text);
+            if (alter_user_id == clickInfo['fh_client']) tooltip('客户一致，请重新选择！');
+            
+            if (!clickInfo)tooltip('请选择发货记录');
+             getNewGys();
+        });
+        function getNewGys(){
+            $.ajax({
+                type: 'POST',
+                url: "{:U('Light/Api/fh_edit_ApplyApi')}",
+                dataType: 'json',
+                data: {
+                    user_id:alter_user_id,
+                    date:clickInfo['fh_date'],
+                    kh:clickInfo['fh_kh'],
+                    cate:clickInfo['fh_cate'],
+                    system: "{$system}",
+                    modname: 'fh_edit_Apply',
+                    action: 'getkhInfo',
+                    __hash__: hash
+                },
+                dataType: 'json',
+                success: function (res) {
+                    var length = $('#mydiv .select2-selection__choice__remove').length;
+                    if(length >= 2){
+                        
+                        $('#mydiv .select2-selection__choice__remove').eq(0).parent().remove();
+                        if (!clickInfo) return $('#mydiv .select2-selection__choice__remove').click();
+                    }
+                    if(clickInfo['fh_bzfs'] == '编织袋') $bzfs = '袋' ;
+                    else if(clickInfo['fh_bzfs'] == '散装') $bzfs = '散';
+                    click_info_cate = $bzfs+clickInfo['fh_cate'];
+                    if (  fh_cate.indexOf(click_info_cate)  == -1 ){
+                        alter_user_id = '';
+                        $('#mydiv .select2-selection__choice__remove').click();
+                        dialog_know("产品品种与原发货品种不一致<br />此提交无法修改");
+                        $("#alter").val("");
+                        $("#alter").trigger("change");
+                        return
+                    }
+                    if (!clickInfo) return; 
+                    $('#qxkh').fadeOut(100);
+                    var res_length = res[0].length;
+                    div_count = Math.ceil(res_length/2);
+                    html = res[0][0]?'':'无';
+                    for(i=0;i<div_count;i++){
+                        index = i*2;
+                        html += "<div>"+res[0][index]; 
+                        if(res[0][index+1]) html += " - "+res[0][index+1];
+                        html += "</div>";
+                    }
+                    
+                    $('#qxkh_show').html(html);
+                    $('#qxkh').val(res[0]);
+                    $('#wlfs').val(fh_wl);
+                    var cue = '';
+                    if( clickInfo['fh_wlfs'] != fh_wl){
+                        cue += '运输方式与原发货运输方式不一致!';
+                        $('#wlfs').css('color','#f12e2e');
+                    }
+                    if(res[1]){
+                        $('#qxkh_show').css('color','#333');
+                        app_proHtml(1);
+                    }else{
+                        if(cue) cue += "<br />";
+                        cue += '授权库号与发货库号不一致!';
+                        $('#qxkh_show').css('color','#f12e2e');
+                        app_proHtml(2);
+                    }
+                    if(cue) dialog_know(cue);
+                }
+            });
+        }
+        var appflow = {$appflow};
+        app_proHtml(1)
+            // 审批流程显示
+        function app_proHtml(val){
+
+            var html = '';
+            for(i=0;i<val;i++){
+                html += "<li class='weui-uploader__file wk-select__user' id='"+appflow[i]['id']+"' style='height:90px;";        
+                if(i != 0) html+= "margin-left:8px";
+                html += "'><img src='"+appflow[i]['avatar']+"' class='weui-selet__user' style='margin-bottom: 0px;margin-right: 6px;margin-top:10px;'>"+
+                                "<span style='margin-right: 6px;font-size: 14px;'>"+appflow[i]['name']+"</span>";
+                if(val == 2 && i<val-1){
+                    html+="<span style='border-radius: 3px;position: relative;top: -2.5em;right: -1.8em;width: 6px;height: 6px;background-color: #333333'></span>";
+                }                    
+                html +=  "</li>";
+            }
+            $('#app_pro').html(html);
+        }
+        $("#alter").on("select2:unselecting", function (e) {
+            alter_user_id = '';
+        });
+
+        $('#alter_div input').eq(0).css('width', 'auto');
+
+        $('#submit').click(function () {
+            if (!alter_user_id) return tooltip('请选择修改客户名称');
+            // 没有修改直接提交
+            if (alter_user_id == clickInfo['fh_client']) return tooltip('无改动，无需提交');
+            var notice = $('#reason').val();
+            if (notice.length < 5) return tooltip('备注不能少于5个字');
+            toast.fadeIn(200);
+            $.ajax({
+                type: 'POST',
+                url: "{:U('Light/Api/fh_edit_ApplyApi')}",
+                dataType: 'json',
+                data: {
+                    user_id: alter_user_id,
+                    text: notice,
+                    fh_wl:fh_wl,
+                    fhinfo: clickInfo,
+                    copyto_id: $("#copyto_id").val(),
+                    system: "{$system}",
+                    modname: 'fh_edit_Apply',
+                    action: 'submit',
+                    __hash__: hash
+                },
+                dataType: 'json',
+                success: function (res) {
+                    toast.fadeOut(200);
+                    if (res.code == 200) {
+                        window.location.href = "{$fixed['info']}" + "&aid=" + res.aid;
+                    } else {
+                        tooltip(res.msg);
+                    }
+                }
+            });
+        });
+    </script>
+</block>

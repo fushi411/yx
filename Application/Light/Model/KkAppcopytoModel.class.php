@@ -104,7 +104,9 @@ class KkAppcopytoModel extends Model {
         $recevier = str_replace(',', '|', $cpid);
         $flowTable = M('kk_appflowtable');
         $mod_cname = $flowTable->getFieldByProMod($mod_name, 'pro_name');
-        $title = '建材'.str_replace('表','',$mod_cname);
+        $system_msg = '建材';
+        if( $mod_name == 'fh_edit_Apply_hb' ) $system_msg = '环保';
+        $title = $system_msg.str_replace('表','',$mod_cname);
         $copy_man = session('name');
         $WeChat = new \Org\Util\WeChat;
         $url = "http://www.fjyuanxin.com/WE/index.php?m=Light&c=Apply&a=applyInfo&system=kk&aid=".$aid."&modname=".$url_mod;    
@@ -130,16 +132,18 @@ class KkAppcopytoModel extends Model {
                 foreach($qsRes as $val){
                         $qsArr[] = $val['pro_mod'];
                 }
-              $template =  in_array($mod_name,$qsArr)?"【签收后推送信息】\n申请单位：建材\n申请类型：{$title}":"【审批后推送信息】\n申请单位：建材\n申请类型：{$title}";
+              
+              $template =  in_array($mod_name,$qsArr)?"【签收后推送信息】\n申请单位：{$system_msg}\n申请类型：{$title}":"【审批后推送信息】\n申请单位：{$system_msg}\n申请类型：{$title}";
               
               $descriptionData = $logic->getDescription($aid);
               $description     = $this->ReDescription($descriptionData);
-              $template        = $template."\n".$description."<a href='".$url."'>点击查看审批详情</a>";
+              $click           = in_array($mod_name,$qsArr)?'签收':'审批';
+              $template        = $template."\n".$description."<a href='".$url."'>点击查看{$click}详情</a>";
               $agentid = M('yx_push_agentid')
                         ->field('agentid')
                         ->where(array('mod' => $mod_name))
                         ->find();
-              $agentid = $agentid['agentid'];
+              $agentid = $agentid['agentid']?$agentid['agentid']:15;
               $WeChat->sendMessage("wk|HuangShiQi|".$recevier,$template,$agentid,'kk');
         } 
         

@@ -1,14 +1,15 @@
 <?php
 namespace Light\Logic;
-use Think\Model;
+
 
 /**
  * 临时额度逻辑模型
  * @author 
  */
 
-class YxhbCgfkApplyLogic extends Model {
+class YxhbforTestLogic  {
     // 实际表名
+    
     protected $trueTableName = 'yxhb_cgfksq';
 
     /**

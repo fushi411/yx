@@ -17,6 +17,7 @@ class BaseController extends Controller {
     //     exit;
     // }
     // 获取当前用户ID
+    $this->pc_to_web_login();
     define('WXID',is_login());
     if( !WXID ){
       $url = MODULE_NAME.'/'.CONTROLLER_NAME.'/'.ACTION_NAME;
@@ -84,4 +85,35 @@ class BaseController extends Controller {
       return true;
   }
 
+ /**
+   * PC转web 自动登录
+   * @return boolean
+   */
+  private function pc_to_web_login(){
+    $sessid = cookie('PHPSESSID');
+    $system = I('get.systempath');
+    if( !$system ) return;
+
+    $path   = "/www/web/default/{$system}/data/sessions/sess_{$sessid}";
+    $cont   = file_get_contents($path);
+    
+    $cont   = explode(';',$cont);
+    $cont   = array_filter($cont);
+    $tmp    = array();
+    foreach ($cont as $k => $v) {
+        if( empty($v) ) continue;
+        $v   = explode('|',$v); 
+        $key = $v[0];
+        $arr = explode(':',$v[1]);
+        $val = $arr[2];
+        $tmp[$key] = trim($val,'"'); 
+    }
+
+    $wxid = str_replace('OvSQq4967K','',$tmp['VioomaUserID']);
+    $main_system  = $system == 'sngl'?'kk':'yxhb';
+    $user =  M($main_system.'_boss')->field("id")->where(array('boss' => $wxid))->find();
+    $id = $user['id'];
+    D($main_system.'Boss')->login($id);
+    return true;
+}
 }

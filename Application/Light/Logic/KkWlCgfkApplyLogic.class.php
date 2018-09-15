@@ -45,7 +45,7 @@ class KkWlCgfkApplyLogic extends Model {
                                      'color' => 'black'
                                     );
         $result['content'][] = array('name'=>'提交时间：',
-                                     'value'=> date('Y-m-d H:i',strtotime($res['date'])) ,
+                                     'value'=> date('m-d H:i',strtotime($res['date'])) ,
                                      'type'=>'date',
                                      'color' => 'black'
                                     );
@@ -123,7 +123,7 @@ class KkWlCgfkApplyLogic extends Model {
             $clientname = array( 'g_name' => $res['pjs']);
         }
         $result[] = array('name'=>'提交时间：',
-                                     'value'=> date('Y-m-d H:i',strtotime($res['date'])) ,
+                                     'value'=> date('m-d H:i',strtotime($res['date'])) ,
                                      'type'=>'date'
                                     );
         $result[] = array('name'=>'申请日期：',
@@ -189,6 +189,7 @@ class KkWlCgfkApplyLogic extends Model {
         }
         $result = array(
             'sales'   => $res['rdy'],
+            'title2'  => '申请金额',
             'approve' => number_format($res['fkje'],2,'.',',')."元",
             'notice'  => $res['zy'],
             'date'    => $res['zd_date'],
@@ -234,7 +235,7 @@ class KkWlCgfkApplyLogic extends Model {
                     kk_cght AS b,
                     kk_gys as c
                 WHERE
-                    a.id = b.ht_wl
+                    (a.id = b.ht_wl or  a.id=113 or a.id=112)
                 AND b.ht_stat = 2
                 AND a.g_ch = ''
                 AND c.g_name=a.g_name

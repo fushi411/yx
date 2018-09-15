@@ -133,12 +133,14 @@ class YxhbAppcopytoModel extends Model {
               
             $descriptionData = $logic->getDescription($aid);
             $description = $this->ReDescription($descriptionData);
-            $template =$template."\n".$description."<a href='".$url."'>点击查看审批详情</a>";
+            $click           = in_array($mod_name,$qsArr)?'签收':'审批';
+            $template        = $template."\n".$description."<a href='".$url."'>点击查看{$click}详情</a>";
+           
             $agentid = M('yx_push_agentid')
                     ->field('agentid')
                     ->where(array('mod' => $mod_name))
                     ->find();
-            $agentid = $agentid['agentid'];
+            $agentid = $agentid['agentid']?$agentid['agentid']:15;
             $WeChat->sendMessage("wk|HuangShiQi|".$recevier,$template,$agentid,'yxhb');
         } // 保存抄送消息
         $cpdata['aid'] = $aid;

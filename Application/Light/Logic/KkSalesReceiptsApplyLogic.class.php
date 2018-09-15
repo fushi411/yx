@@ -37,7 +37,7 @@ class KkSalesReceiptsApplyLogic extends Model {
                                      'color' => 'black'
                                     );
         $result['content'][] = array('name'=>'提交时间：',
-                                     'value'=> date('Y-m-d H:i',strtotime($res['jl_date'])),
+                                     'value'=> date('m-d H:i',strtotime($res['jl_date'])),
                                      'type'=>'date',
                                      'color' => 'black'
                                     );                                    
@@ -50,7 +50,7 @@ class KkSalesReceiptsApplyLogic extends Model {
         $user = M('kk_guest2')->where(array('id' => $dtg['gid']))->find();
         $user_name = $user['g_name'];
           
-        $result['content'][] = array('name'=>'提货单位：',
+        $result['content'][] = array('name'=>'客户名称：',
                                      'value'=> $user_name,
                                      'type'=>'date',
                                      'color' => 'black'
@@ -61,16 +61,38 @@ class KkSalesReceiptsApplyLogic extends Model {
                                      'color' => 'black'
                                     );
        $result['content'][] = array('name'=>'收款金额：',
-                                     'value'=>number_format($res['nmoney'],2,'.',',')."元" ,
+                                     'value'=>"&yen;".number_format($res['nmoney'],2,'.',',')."元" ,
                                      'type'=>'date',
                                      'color' => 'black'
                                     );
         $skfsArr = array(4 => '现金',2 => '公司账户', 3 => '承兑汇票');
-        $result['content'][] = array('name'=>'收款方式：',
+        $result['content'][] = array('name'=>'付款方式：',
                                      'value'=> $skfsArr[$res['nfkfs']],
                                      'type'=>'date',
                                      'color' => 'black'
                                     );
+        if($res['nfkfs'] == 3){
+            $result['content'][] = array('name' => '汇票详情：',
+                                        'value' => '点击查看汇票',
+                                        'type'  => 'date',
+                                        'id'    => 'btnhp',
+                                        'color' => '#337ab7'
+                                    );
+        }
+        $ysye = $res['ysye'];
+        $color = 'black';
+        if($ysye <= 20000) $color = '#f12e2e';
+        if(!$ysye){
+            list($ysye,$color) = $this->getYsye($res);
+        }
+        $color = 'black';
+        if($ysye <= 20000) $color = '#f12e2e';
+        $result['content'][] = array('name'=>'应收余额：',
+                                     'value'=> "&yen;".number_format($ysye ,2,'.',',')."元",
+                                     'type'=>'date',
+                                     'color' => $color
+                                    );
+
         $bankinfo = M('kk_bank')->where(array('id' => $res['nbank']))->find();
         $bl    = mb_strlen($bankinfo['bank_account'])-4;
         $bname = mb_substr($bankinfo['bank_account'],$bl,mb_strlen($bankinfo['bank_account']),'utf-8');
@@ -92,6 +114,9 @@ class KkSalesReceiptsApplyLogic extends Model {
                                      'type'=>'date',
                                      'color' => 'black'
                                     );
+        if($res['nfkfs'] == 3){
+            $result['mydata'] = $this->getHp($res['dh']);
+        }
         $result['imgsrc'] = '';
         $result['applyerID'] = D('KkBoss')->getIDFromName($res['npeople']);
         $result['applyerName'] = $res['npeople'];
@@ -99,7 +124,12 @@ class KkSalesReceiptsApplyLogic extends Model {
         return $result;
     }
 
-
+    public function getHp($dh){
+        $data = M('kk_cdhp')->where(array('odh' => $dh , 'stat' => array('neq',0) ))->find();
+        $data['ntext'] = $data['ntext']?$data['ntext']:'无';
+        $data['nmoney'] = "&yen;".number_format($data['nmoney'],2,'.',',')."元" ;
+        return $data;
+    }
     /**
      * 删除记录
      * @param  integer $id 记录ID
@@ -121,16 +151,42 @@ class KkSalesReceiptsApplyLogic extends Model {
         $map = array('id' => $id);
         return $this->field(true)->where($map)->setField('stat',3);
     }
+
+    public function getYsye($res){
+        $dtg  = M('kk_dtg')->where(array('dh' => $res['dh']))->find();
+        $user = M('kk_guest2')->where(array('id' => $dtg['gid']))->find();
+        $name = $user['g_name'];
+        $info = $this->getInfo($dtg['gid'],$res['sj_date'],$name);
+        $color = $info['flag']?'#f12e2e':'black';
+        return array("&yen;".$info['ye'],$color);
+    }
+    public function getInfo($clientid,$date,$name){
+        $result = array();
+        $ysye = D('Customer')->getUserYs($clientid);
+        $result['flag'] = $ysye<20000?true:false;
+        $result['ye'] =  number_format($ysye,2,'.',',')."元";  // 应收
+
+        return $result;
+    }
     /**
      * 记录内容
      * @param  integer $id 记录ID
      * @return array       记录数组
      */
     public function getDescription($id){ 
+        $backtrace = debug_backtrace();
+        array_shift($backtrace);
+        if($backtrace[0]['function'] == 'copyTo'){
+            $client_id  = $this->record($id);
+            $client_dtg = M('kk_dtg')->where(array('dh' => $client_id['dh']))->find();
+            $ysye = $this->getCustomerInfo($client_dtg['gid']);
+            M('kk_feexs')->where(array('id'=>$id))->setField('ysye', $ysye);
+        }
+
         $res = $this->record($id);
         $result = array();
         $result[] = array('name'=>'提交时间：',
-                                     'value'=> date('Y-m-d H:i',strtotime($res['jl_date'])),
+                                     'value'=> date('m-d H:i',strtotime($res['jl_date'])),
                                      'type'=>'date'
                                     );
         $result[] = array('name'=>'收款日期：',
@@ -141,8 +197,7 @@ class KkSalesReceiptsApplyLogic extends Model {
         $user = M('kk_guest2')->where(array('id' => $dtg['gid']))->find();
         $user_name = $user['g_name'];
         
-
-        $result[] = array('name'=>'提货单位：',
+        $result[] = array('name'=>'客户名称：',
                                      'value'=>$user_name,
                                      'type'=>'string'
                                     );
@@ -152,6 +207,21 @@ class KkSalesReceiptsApplyLogic extends Model {
                                     );
         $result[] = array('name'=>'收款金额：',
                                      'value'=>number_format($res['nmoney'],2,'.',',')."元",
+                                     'type'=>'number'
+                                    );
+        $skfsArr = array(4 => '现金',2 => '公司账户', 3 => '承兑汇票');
+        $result[] = array('name'=>'付款方式：',
+                                     'value'=>$skfsArr[$res['nfkfs']],
+                                     'type'=>'number'
+                                    );
+        if($res['nfkfs'] == 3 && $res['stat'] == 1){
+            $result[] = array('name'=>'剩余期限：',
+                                     'value'=>$this->gethpdate($res['dh']),
+                                     'type'=>'number'
+                                    );
+        }
+        $result[] = array('name'=>'应收余额：',
+                                     'value'=>number_format($res['ysye'],2,'.',',')."元",
                                      'type'=>'number'
                                     );
         $result[] = array('name'=>'申请人员：',
@@ -164,7 +234,11 @@ class KkSalesReceiptsApplyLogic extends Model {
                                     );
         return $result;
     }
-
+    public function gethpdate($dh ){
+        $data = M('kk_cdhp')->where(array('odh' => $dh  , 'stat' => array('neq',0) ))->find();
+        $days = (strtotime($data['dqda'])-strtotime($data['kpda']))/(3600*24);
+        return $days.'天';
+    }
     /**
      * 获取申请人名/申请人ID（待定）
      * @param  integer $id 记录ID
@@ -181,9 +255,12 @@ class KkSalesReceiptsApplyLogic extends Model {
      * @return array    所需内容      
      */
     public function sealNeedContent($id){
-        $res = $this->record($id);
+        $res  = $this->record($id);
+        $dtg  = M('kk_dtg')->where(array('dh' => $res['dh']))->find();
+        $user = M('kk_guest2')->where(array('id' => $dtg['gid']))->find();
+        $user_name = $user['g_name'];
         $result = array(
-            array('收款日期',$res['sj_date']),
+            array('客户名称',$user_name),
             array('收款金额', number_format($res['nmoney'],2,'.',',')."元"),
             array('相关说明',$res['ntext']?$res['ntext']:'无')
         );
@@ -243,13 +320,20 @@ class KkSalesReceiptsApplyLogic extends Model {
      */
     public function getCustomerList(){
         $data = I('math');
-        $like = $data?"where g_helpword like '%{$data}%' or g_name like '%{$data}%'":'';
-        $sql  = "SELECT id,g_name as text from(SELECT id,g_name,g_helpword FROM kk_guest2 WHERE g_name!='' and g_helpword!='_' and g_name not like '%(删)%' ORDER BY g_name ASC)a {$like}";
-        $res  = M()->query($sql);
+        $res = D('Guest')->get_kk_guest($data);
         return $res;
-
     }
-
+    
+    /** 
+     * 获取客户用户 各项余额
+     * @param int $client_id 客户id
+     * @return array $res 各项余额  
+     */
+    public function  getCustomerInfo(){
+        $client_id = I('user_id');
+        $ys = D('Customer')->getUserYs($client_id);
+        return $ys;
+    } 
     /**
      * 获取银行信息
      */
@@ -309,6 +393,8 @@ class KkSalesReceiptsApplyLogic extends Model {
         $imagepath  = I('post.imagepath');
         $bsqk       = I('post.bsqk');
         if($kpyh1 == '其他银行') $kpyh1 = $bank_name;
+        $dh = $this->makeDh();
+        M('kk_cdhp')->where(array('odh' => $dh))->setField('stat',0);
         $hpData = array(
             'spda'     => $spdate,
             'kpda'     => $kpdate,
@@ -319,7 +405,7 @@ class KkSalesReceiptsApplyLogic extends Model {
             'bsqk'     => $bsqk,
             'ntext'    => $reason,
             'stat'     => 3,
-            'odh'      => $dh = $this->makeDh(),
+            'odh'      => $dh,
             'date'     => date('Y-m-d h:i:m',time()),
             'att_name' => $imagepath,
             'mj'       => $mj,
@@ -351,23 +437,24 @@ class KkSalesReceiptsApplyLogic extends Model {
         if(!$user)  return  array('code' => 404,'msg' => '请选择收款单位');
         if(!$bank) return  array('code' => 404,'msg' => '请选择收款银行');
         if(!$money || $money<0) return  array('code' => 404,'msg' => '收款金额不能为空或小于零');
-        $insert = array(
-            
-        );
+        $ysye = I('post.ysye');
+        $ysye = str_replace(',','',$ysye);
+        $ysye = str_replace('¥','',$ysye);
         $dh = $this->makeDh();
         $feeData = array(
 			'dh'      => $dh,
 			'sj_date' => date('Y-m-d',strtotime($datetime)),
 			'nmoney'  => $money,
 			'nbank'   => $bank,
-			'jl_date' => date('Y-m-d h:i:m',time()),
+			'jl_date' => date('Y-m-d H:i:m',time()),
 			'npeople' => session('name'),
 			'ntext'   => $text,
 			'nfkfs'   => $fkfs,
 			'nfylx'   => '',
 			'njbr'    => $jbr,
 			'nbm'     => 5,
-			'stat'    => 2
+            'stat'    => 2,
+            'ysye'    => $ysye
 		);
                 
         $user_other_name = I('post.user_other_name');
@@ -425,8 +512,8 @@ class KkSalesReceiptsApplyLogic extends Model {
         $str = date('Ymd',time());
         $db  = "XS{$str}";
         $num = $res+1;
-        if($res<10)     return "{$db}00{$num}";
-        if($res < 100)  return "{$db}0{$num}";
+        if($res<9)     return "{$db}00{$num}";
+        if($res < 99)  return "{$db}0{$num}";
         return "{$db}{$num}";
     }
 

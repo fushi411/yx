@@ -16,13 +16,246 @@ class CustomerModel extends Model
         parent::__construct();
         $this->today = date('Y-m-d',time());
     }
+    /**
+     * 获取建材的有效客户
+     */
+
+    public function getVaildUser(){
+        list($reid,$result,$tmp) = $this->getKkCustomerNews();
+        return array_diff($result,$reid);
+    }
+    /**
+     * 获取用户的应收余额
+     */
+    public function getUserYs($client_id){
+        list($reid,$result,$tmp) = $this->getKkCustomerNews();
+        $res = $tmp[$client_id];
+        if($res['reid'] == 0){
+            return $res['qmje'];
+        } 
+        else{
+            return $tmp[$res['reid']]['qmje'];
+        } 
+    }
+
+    /**
+     * 获取环保的有效客户
+     */
+
+    public function getYxhbVaildUser(){
+        list($reid,$result) = $this->getYxhbCustomerNews();
+        return $reid;
+    }
+    /**
+     * 获取环保客户 应收额度
+     * @param int $client_id 客户id
+     * @return array $res 各项余额  
+     */
+    public function getYxhbCustomerNews(){
+        $today      = date("Y-m-d",time());
+        $tomonth    = date("m",time());
+        $mday       = date("Y-m",time())."-01";
+        $time       = M('yxhb_px')->field('time,sdate,edate')->order('time desc')->find();
+        $time1      = $time['time'];
+        $sdate      = $time['sdate'];
+        $edate      = $time['edate'];
+        $px_time    = date("Y-m-d H:i:s",time());
+        if($px_time > date("Y-m-d H:i:s",strtotime($time1)+600) || $bk_sdate != $sdate || $bk_edate != $edate){
+            // 更新px表 
+        }
+        $pxs    = M('yxhb_px')->where('reid=0')->order('qmje')->select();
+        $result = array();
+        $reid   = array();
+        foreach( $pxs as $k => $rpx){
+            $jcje   = round($rpx['jcje'] ,2);
+            $bqhr   = round($rpx['bqhr'] ,2);
+            $fhje   = round($rpx['fhje'] ,2);
+            $bcje   = round($rpx['bcje'] ,2);
+            $flje   = round($rpx['flje'] ,2);
+            $sxje   = round($rpx['sxje'] ,2);
+            $qtje   = round($rpx['qtje'] ,2);
+            $jctzje = round($rpx['jctzje'] ,2);
+            $bz     = $rpx['bz'];
+            $qmye   = -$fhje+$bcje+$flje+$sxje+$qtje+$jctzje+$jcje+$bqhr;
+            if(round($jcje,2)==0&&$bqhr==0&&$fhje==0&&$bcje==0&&$flje==0&&$sxje==0&&$qtje==0&&$jctzje==0) continue;  
+            $rpx['qmye'] = $qmye;
+            $result[$rpx['gid']] = $rpx;
+            $cor = M('yxhb_px')->where(array('reid' => $rpx['gid']))->select();
+            $reid[] = $rpx['gid'];
+            
+        }
+        return array($reid,$result);
+    }
+
+    /**
+     * 获取客户 应收额度
+     * @param int $client_id 客户id
+     * @return array $res 各项余额  
+     */
+    public function getKkCustomerNews(){
+        
+        $sdate = date('Y-m-01',time());
+        $res   = M('kk_guest_accounts_receivable')
+                ->where(array('reid' => 0, 'sdate' => $sdate))
+                ->group('clientid')
+                ->order('reid')
+                ->select();
+
+        foreach($res as $v){
+            $data = M('kk_guest_accounts_receivable')
+                    ->where(array('reid' => $v['clientid'], 'sdate' => $sdate))
+                    ->group('clientid')
+                    ->order('reid')
+                    ->select();
+            if( count($data)>0){
+                foreach($data as $val){
+                    //期初金额
+                    $ajcje=$val['qcye'];
+                    //本期付款
+                    $afhje=$val['fhje'];
+                    //本期汇入金额
+                    $abqhr=$val['bqhr'];
+                    //审核磅差金额
+                    $abcje=$val['bcje'];//-----审核磅差金额
+                    //审核返利金额
+                    $aflje=$val['flje'];//-----审核返利金额(new)
+                    //审核手续费金额
+                    $asxje=$val['sxje'];
+                    //审核其他金额
+                    $aqtje=$val['qtje'];
+                    //审核价差金额
+                    $ajctzje=$val['jctzje'];
+                    $aqmje=$ajcje+$abqhr-$afhje+$abcje+$aflje+$asxje+$aqtje+$ajctzje;			
+                    $ar_client[]=array("id"=>$val['clientid'],
+                                        "jcje"=>$ajcje,
+                                        "bqhr"=>$abqhr,
+                                        "fhje"=>$afhje,
+                                        "bcje"=>$abcje,
+                                        "flje"=>$aflje,
+                                        "sxje"=>$asxje,
+                                        "qtje"=>$aqtje,
+                                        "jctzje"=>$ajctzje,
+                                        "qmje"=>$aqmje,
+                                        "reid"=>$val['reid']);
+                    //小计
+                    $xjjcje+=number_format($ajcje,2,'.','');
+                    $xjbqhr+=$abqhr;
+                    $xjfhje+=number_format($afhje,2,'.','');
+                    $xjbcje+=number_format($abcje,2,'.','');
+                    $xjflje+=number_format($aflje,2,'.','');
+                    $xjsxje+=number_format($asxje,2,'.','');
+                    $xjjctzje+=number_format($ajctzje,2,'.','');
+                    $xjqtje+=number_format($aqtje,2,'.','');
+                    $xjqmje+=number_format($aqmje,2,'.','');
+                }
+                $a_client[]=array("id"=>$v['clientid'],
+                                "jcje"=>$xjjcje,
+                                "bqhr"=>$xjbqhr,
+                                "fhje"=>$xjfhje,
+                                "bcje"=>$xjbcje,
+                                "flje"=>$xjflje,
+                                "sxje"=>$xjsxje,
+                                "qtje"=>$xjqtje,
+                                "jctzje"=>$xjjctzje,
+                                "qmje"=>$xjqmje,
+                                "reid"=>"0",
+                                "flag"=> count($data));
+                //累计金额
+                //累计金额
+                $ljjcje+=number_format($xjjcje,2,'.','');
+                $ljbqhr+=$xjbqhr;
+                $ljfhje+=number_format($xjfhje,2,'.','');
+                $ljbcje+=number_format($xjbcje,2,'.','');
+                $ljflje+=number_format($xjflje,2,'.','');
+                $ljsxje+=number_format($xjsxje,2,'.','');
+                $ljqtje+=number_format($xjqtje,2,'.','');
+                $ljjctzje+=number_format($xjjctzje,2,'.','');
+                //-----------------------------
+                $xjjcje=$xjbqhr=$xjfhje=$xjbcje=$xjflje=$xjsxje=$xjqtje=$xjjctzje=$xjqmje=0;
+            }else{
+                //期初金额
+			     $ijcje=$v['qcye'];
+				 //本期付款
+				 $ifhje=$v['fhje'];
+ 				//本期汇入金额
+				 $ibqhr=$v['bqhr'];
+				 //审核磅差金额
+				 $ibcje=$v['bcje'];//-----审核磅差金额
+				 //审核返利金额
+				 $iflje=$v['flje'];
+	             //审核手续费金额
+				 $isxje=$v['sxje'];
+		 		//审核其他金额
+				 $iqtje=$v['qtje'];
+		 		//审核价差调整金额
+				 $ijctzje=$v['jctzje'];
+				 $iqmje=$ijcje+$ibqhr-$ifhje+$ibcje+$iflje+$isxje+$iqtje+$ijctzje;
+				 $a_client[]=array("id"=>$v['clientid'],
+				 				  "jcje"=>$ijcje,
+								  "bqhr"=>$ibqhr,
+								  "fhje"=>$ifhje,
+								  "bcje"=>$ibcje,
+								  "flje"=>$iflje,
+								  "sxje"=>$isxje,
+								  "jctzje"=>$ijctzje,
+								  "qtje"=>$iqtje,
+								  "qmje"=>$iqmje,
+								  "reid"=>"0",
+								  "flag"=>"0");
+                            //显示
+                            //累计金额
+                $ljjcje+=number_format($ijcje,2,'.','');
+                $ljbqhr+=$ibqhr;
+                $ljfhje+=number_format($ifhje,2,'.','');
+                $ljbcje+=number_format($ibcje,2,'.','');
+                $ljflje+=number_format($iflje,2,'.','');
+                $ljsxje+=number_format($isxje,2,'.','');
+                $ljjctzje+=number_format($ijctzje,2,'.','');
+                $ljqtje+=number_format($iqtje,2,'.','');
+            }
+        }
+        $ljqmje=$ljjcje+$ljbqhr-$ljfhje+$ljbcje+$ljflje+$ljsxje+$ljqtje+$ljjctzje;
+        foreach ($a_client as $key => $value) {
+            $kqmje[$key] = $value["qmje"];
+        }
+        array_multisort($kqmje,SORT_ASC,SORT_NUMERIC,$a_client);
+        $tmp = array(); // 数据储存
+        $reid = array(); // 有二级客户的id
+        $result = array(); // id结果集
+        foreach ($a_client as $key => $value) {
+            if(round($value["jcje"],2)==0&&round($value["bqhr"],2)==0&&round($value["fhje"],2)==0&&round($value["bcje"],2)==0&&round($value["flje"],2)==0&&round($value["sxje"],2)==0&&round($value["qtje"],2)==0&&round($value["jctzje"],2)==0&&round($value["qmje"],2)==0) continue;
+            $tmp[$value['id']] = $value;
+            $result[] = $value['id'];
+            if($value['flag'] == 0 ) continue;
+            
+            foreach($ar_client as $values){
+                if($values['reid'] != $value['id']) continue;	
+                if(round($values["jcje"],2)==0&&round($values["bqhr"],2)==0&&round($values["fhje"],2)==0&&round($values["bcje"],2)==0&&round($values["flje"],2)==0&&round($values["sxje"],2)==0&&round($values["qtje"],2)==0&&round($values["qmje"],2)==0) continue;
+                $reid[] = $value['id'];
+                $result[] = $values['id'];
+                $tmp[$values['id']] = $values;
+            }
+        }
+        $reid = array_unique($reid); // 去重
+        return array($reid,$result,$tmp);
+    } 
+
+
+
+
+
+
+
+
+
 
     /**
      * 获取客户用户 各项余额
      * @param int $client_id 客户id
      * @return array $res 各项余额  
      */
-    public function  getCustomerInfo(){
+    public function  getCustomerInfo($date){
+        if($date) $this->today = $date;
         $client_id = I('user_id');
         $system = I('system');
         if(!$system)$system='yxhb';
@@ -59,7 +292,46 @@ class CustomerModel extends Model
         return array('code' => 200,'data' => $res);
     }
 
+    /**
+     * 获取客户用户 各项余额
+     * @param int $client_id 客户id
+     * @return array $res 各项余额  
+     */
+    public function  getCustomerInfoParams($client_id,$system,$date){
+        if($date) $this->today = $date;
+        if(!$system)$system='yxhb';
+        if(!$client_id){
+            return array('code' => 404,'msg' => '请重新刷新页面！');
+        }
+        // 临额申请情况
+        $info = $this->getQuoteTimes($client_id,$system);
 
+        if($system == 'kk') {
+            $clientname = $this->getClientname($client_id,$system);
+           // $name = htmlentities($clientname, ENT_QUOTES);
+            $res['name'] = data_auth_sign($clientname);
+            $res['line'] = $this->getkkline($client_id,$this->today);
+            $res['info'] = $info;
+            return array('code' => 200, 'data' => $res);
+        }
+        // 临时额度
+        $existTempQuote = $this->getTempCredit($client_id,$system);
+
+        // 应收余额  信用额度
+        $ye = $this->getClientFHYE($client_id,$this->today);
+
+        $res = array(
+            'exist' => number_format($existTempQuote,2), // 已有临额 1
+            'line' => number_format($ye['line'],2),  // 信用额度 1
+            'ysye' => number_format(-$ye['ysye'],2)// 应收余额 0
+        );
+        
+        $res['ysflag'] = -$ye['ysye']<20000?true:false;
+        $res['info'] = $info;
+        $res['fhye'] = number_format($ye['line']-$ye['ysye']+$existTempQuote,2); // 发货额度 由前面3个决定
+        $res['ye'] =  $res['fhye'];
+        return array('code' => 200,'data' => $res);
+    }
     /**
      * 获取客户用户 发货余额
      * @param int $client_id 客户id
@@ -466,10 +738,19 @@ class CustomerModel extends Model
      * @return integer 临时额度
      */
     public function getTempCredit($clientid,$system,$date=''){
+        $this->today = date('Y-m-d H:i',time());
         if(!empty($date)) $this->today=$date;
-        $sql = "SELECT max(line) as line FROM `{$system}_tempcreditlineconfig` WHERE `clientid` = {$clientid} AND DATEDIFF('{$this->today}',date) <= SUBSTRING(yxq,1) AND `stat` = 1 ORDER BY date desc ";
+        $sql = "SELECT * FROM `{$system}_tempcreditlineconfig` WHERE `clientid` = {$clientid} AND DATEDIFF('{$this->today}',date) <= SUBSTRING(yxq,1) AND `stat` = 1 ORDER BY date desc ";
         $res = M()->query($sql);
-        return empty($res[0]['line'])?0:$res[0]['line'];
+        $line = 0;
+        foreach($res as $val){
+            $yxq = substr($val['yxq'],0,1);
+            $yxq = strtotime($val['dtime']) + $yxq*24*3600;
+            if(strtotime($this->today) < $yxq){
+                $line += $val['line'];
+            }  
+        }
+        return $line;
     }
 
     /**

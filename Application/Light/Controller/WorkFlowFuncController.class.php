@@ -453,7 +453,7 @@ class WorkFlowFuncController extends Controller {
 		// ->承兑汇票
 		$data = D('KkSalesReceiptsApply','Logic')->record($aid);
 		if($data['nfkfs'] == 3){
-			M('kk_cdhp')->where(array('stat'=>3, 'odh'=>$data['db']))->setField('stat', 1);
+			M('kk_cdhp')->where(array('stat'=>3, 'odh'=>$data['dh']))->setField('stat', 1);
 		}
         $resArr = $res?array("status"=>"success"):array("status"=>"failure");
         return $resArr;
@@ -469,8 +469,43 @@ class WorkFlowFuncController extends Controller {
 		// ->承兑汇票
 		$data = D('YxhbSalesReceiptsApply','Logic')->record($aid);
 		if($data['nfkfs'] == 3){
-			M('yxhb_cdhp')->where(array('stat'=>3, 'odh'=>$data['db']))->setField('stat', 1);
+			M('yxhb_cdhp')->where(array('stat'=>3, 'odh'=>$data['dh']))->setField('stat', 1);
 		}
+        $resArr = $res?array("status"=>"success"):array("status"=>"failure");
+        return $resArr;
+	}
+
+	/**
+     * 环保发货修改通过后调用函数
+     * @param  [integre] $aid [记录ID]
+     * @return [array]      [状态]
+     */
+	public function Kkfh_edit_Apply_hbEnd($aid)
+    {
+		$res = D('Kkfh_edit_Apply_hb','Logic')->theEnd($aid);
+        $resArr = $res?array("status"=>"success"):array("status"=>"failure");
+        return $resArr;
+	}
+		/**
+     * 建材发货修改通过后调用函数
+     * @param  [integre] $aid [记录ID]
+     * @return [array]      [状态]
+     */
+	public function Kkfh_edit_ApplyEnd($aid)
+    {
+		$res = D('Kkfh_edit_Apply','Logic')->theEnd($aid);
+        $resArr = $res?array("status"=>"success"):array("status"=>"failure");
+        return $resArr;
+	}
+
+	/**
+     * 矿粉物料配置审批通过后调用函数
+     * @param  [integre] $aid [临时额度记录ID]
+     * @return [array]      [状态]
+     */
+	public function YxhbKfMaterielApplyEnd($aid)
+    {
+		$res = M('yxhb_materiel')->where(array('stat'=>2, 'id'=>$aid))->setField('stat', 1);
         $resArr = $res?array("status"=>"success"):array("status"=>"failure");
         return $resArr;
 	}

@@ -41,7 +41,7 @@ class KkTempCreditLineApplyLogic extends Model {
                                      'color' => 'black'
                                     );
         $result['content'][] = array('name'=>'提交时间：',
-                                     'value'=> date('Y-m-d H:i',strtotime($res['dtime'])),
+                                     'value'=> date('m-d H:i',strtotime($res['dtime'])),
                                      'type'=>'string',
                                      'color' => 'black'
                                     );
@@ -137,7 +137,6 @@ class KkTempCreditLineApplyLogic extends Model {
           );
         $res = send_post('http://www.fjyuanxin.com/sngl/include/getClientCreditApi.php', $post_data);
         
-
         // $result['ye'] = number_format(-($ye-$res['ye']+$res['tmp']),2,'.',',')."元";
         // $result['flag'] = -$res['ye']<20000?true:false;
 
@@ -158,7 +157,7 @@ class KkTempCreditLineApplyLogic extends Model {
         $info = $this->getInfo($res['clientid'],$res['date'],$res['clientname']);
         $clientname = M('kk_guest2')->field('g_khjc')->where(array('id' => $res['clientid']))->find();
         $result[] = array('name'=>'提交时间：',
-                                     'value'=> date('Y-m-d H:i',strtotime($res['dtime'])) ,
+                                     'value'=> date('m-d H:i',strtotime($res['dtime'])) ,
                                      'type'=>'date'
                                     );
         $result[] = array('name'=>'申请日期：',
@@ -212,6 +211,7 @@ class KkTempCreditLineApplyLogic extends Model {
         $clientname = M('kk_guest2')->field('g_khjc')->where(array('id' => $res['clientid']))->find();
         $result = array(
             'sales'   => $res['sales'],
+            'title2'  => '申请金额',
             'approve' => number_format($res['line'],2,'.',',')."元",
             'notice'  => $res['notice'],
             'date'    => $res['date'],

@@ -53,7 +53,7 @@ class ViewController extends BaseController
      * @return array:string  $result 
      */
     public function appflowJson($appflow,$mod){
-        $modArr = array('TempCreditLineApply');
+        $modArr = array('TempCreditLineApply','fh_edit_Apply_hb','fh_edit_Apply');
         return in_array($mod,$modArr) ? json_encode($appflow) : $appflow;
     }
 

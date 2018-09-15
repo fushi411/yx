@@ -32,12 +32,12 @@ class YxhbSalesReceiptsApplyLogic extends Model {
         $res = $this->record($id);
         $result = array();
         $result['content'][] = array('name'=>'申请单位：',
-                                     'value'=>'建材销售收款',
+                                     'value'=>'环保销售收款',
                                      'type'=>'date',
                                      'color' => 'black'
                                     );
         $result['content'][] = array('name'=>'提交时间：',
-                                     'value'=> date('Y-m-d H:i',strtotime($res['jl_date'])),
+                                     'value'=> date('m-d H:i',strtotime($res['jl_date'])),
                                      'type'=>'date',
                                      'color' => 'black'
                                     );                                    
@@ -50,7 +50,7 @@ class YxhbSalesReceiptsApplyLogic extends Model {
         $user = M('yxhb_guest2')->where(array('id' => $dtg['gid']))->find();
         $user_name = $user['g_name'];
           
-        $result['content'][] = array('name'=>'提货单位：',
+        $result['content'][] = array('name'=>'客户名称：',
                                      'value'=> $user_name,
                                      'type'=>'date',
                                      'color' => 'black'
@@ -61,7 +61,7 @@ class YxhbSalesReceiptsApplyLogic extends Model {
                                      'color' => 'black'
                                     );
        $result['content'][] = array('name'=>'收款金额：',
-                                     'value'=>number_format($res['nmoney'],2,'.',',')."元" ,
+                                     'value'=>"&yen;".number_format($res['nmoney'],2,'.',',')."元" ,
                                      'type'=>'date',
                                      'color' => 'black'
                                     );
@@ -71,6 +71,25 @@ class YxhbSalesReceiptsApplyLogic extends Model {
                                      'type'=>'date',
                                      'color' => 'black'
                                     );
+        if($res['nfkfs'] == 3){
+            $result['content'][] = array('name' => '汇票详情：',
+                                        'value' => '点击查看汇票',
+                                        'type'  => 'date',
+                                        'id'    => 'btnhp',
+                                        'color' => '#337ab7'
+                                    );
+        }
+
+        list($ysye,$flag) = $this->getYsye($res);
+        $ysye = $res['ysye']?$res['ysye']:$ysye;
+        $color = 'black';
+        if($flag) $color = '#f12e2e';
+        $result['content'][] = array('name'=>'应收余额：',
+                                     'value'=> "&yen;".number_format($ysye,2,'.',',')."元" ,
+                                     'type'=>'date',
+                                     'color' => $color
+                                    );
+        
         $bankinfo = M('yxhb_bank')->where(array('id' => $res['nbank']))->find();
         $bl    = mb_strlen($bankinfo['bank_account'])-4;
         $bname = mb_substr($bankinfo['bank_account'],$bl,mb_strlen($bankinfo['bank_account']),'utf-8');
@@ -92,6 +111,9 @@ class YxhbSalesReceiptsApplyLogic extends Model {
                                      'type'=>'date',
                                      'color' => 'black'
                                     );
+        if($res['nfkfs'] == 3){
+            $result['mydata'] = $this->getHp($res['dh']);
+        }
         $result['imgsrc'] = '';
         $result['applyerID'] = D('YxhbBoss')->getIDFromName($res['npeople']);
         $result['applyerName'] = $res['npeople'];
@@ -99,7 +121,25 @@ class YxhbSalesReceiptsApplyLogic extends Model {
         return $result;
     }
 
-
+    public function getHp($dh){
+        $data = M('yxhb_cdhp')->where(array('odh' => $dh  , 'stat' => array('neq',0) ))->find();
+        $data['ntext'] = $data['ntext']?$data['ntext']:'无';
+        $data['nmoney'] = "&yen;".number_format($data['nmoney'],2,'.',',')."元" ;
+        return $data;
+    }
+    public function getYsye($res){
+        $dtg   = M('yxhb_dtg')->where(array('dh' => $res['dh']))->find();
+        $client_id = $dtg['gid'];
+        $post_data = array(
+            'client' => $client_id,
+            'auth'   => data_auth_sign($client_id),
+            'type'   => 'add'
+        ); 
+        $res = send_post('http://www.fjyuanxin.com/sngl/client_ye_hb_api.php', $post_data);
+        $ysye = $res[1];
+        $flag = $ysye <20000?1:0;
+        return array($ysye,$flag);
+    }
     /**
      * 删除记录
      * @param  integer $id 记录ID
@@ -126,10 +166,19 @@ class YxhbSalesReceiptsApplyLogic extends Model {
      * @return array       记录数组
      */
     public function getDescription($id){ 
+        $backtrace = debug_backtrace();
+        array_shift($backtrace);
+        if($backtrace[0]['function'] == 'copyTo'){
+            $client_id  = $this->record($id);
+            $client_dtg = M('yxhb_dtg')->where(array('dh' => $client_id['dh']))->find();
+            $ysye = $this->getCustomerInfo($client_dtg['gid']);
+            $newNum = str_replace(',','',$ysye['data']['ysye']);
+            M('yxhb_feexs')->where(array('id'=>$id))->setField('ysye', $newNum);
+        }
         $res = $this->record($id);
         $result = array();
         $result[] = array('name'=>'提交时间：',
-                                     'value'=> date('Y-m-d H:i',strtotime($res['jl_date'])),
+                                     'value'=> date('m-d H:i',strtotime($res['jl_date'])),
                                      'type'=>'date'
                                     );
         $result[] = array('name'=>'收款日期：',
@@ -141,7 +190,7 @@ class YxhbSalesReceiptsApplyLogic extends Model {
         $user_name = $user['g_name'];
         
 
-        $result[] = array('name'=>'提货单位：',
+        $result[] = array('name'=>'客户名称：',
                                      'value'=>$user_name,
                                      'type'=>'string'
                                     );
@@ -151,6 +200,21 @@ class YxhbSalesReceiptsApplyLogic extends Model {
                                     );
         $result[] = array('name'=>'收款金额：',
                                      'value'=>number_format($res['nmoney'],2,'.',',')."元",
+                                     'type'=>'number'
+                                    );
+        $skfsArr = array(4 => '现金',2 => '公司账户', 3 => '承兑汇票');
+        $result[] = array('name'=>'付款方式：',
+                                     'value'=>$skfsArr[$res['nfkfs']],
+                                     'type'=>'number'
+                                    );
+        if($res['nfkfs'] == 3 && $res['stat'] == 1){
+            $result[] = array('name'=>'剩余期限：',
+                                     'value'=>$this->gethpdate($res['dh']),
+                                     'type'=>'number'
+                                    );
+        }
+        $result[] = array('name'=>'应收余额：',
+                                     'value'=>number_format($res['ysye'],2,'.',',')."元",
                                      'type'=>'number'
                                     );
         $result[] = array('name'=>'申请人员：',
@@ -163,6 +227,12 @@ class YxhbSalesReceiptsApplyLogic extends Model {
                                     );
         return $result;
     }
+    public function gethpdate($dh ){
+        $data = M('yxhb_cdhp')->where(array('odh' => $dh  , 'stat' => array('neq',0) ))->find();
+        $days = (strtotime($data['dqda'])-strtotime($data['kpda']))/(3600*24);
+        return $days.'天';
+    }
+
 
     /**
      * 获取申请人名/申请人ID（待定）
@@ -181,8 +251,11 @@ class YxhbSalesReceiptsApplyLogic extends Model {
      */
     public function sealNeedContent($id){
         $res = $this->record($id);
+        $dtg  = M('yxhb_dtg')->where(array('dh' => $res['dh']))->find();
+        $user = M('yxhb_guest2')->where(array('id' => $dtg['gid']))->find();
+        $user_name = $user['g_name'];
         $result = array(
-            array('收款日期',$res['sj_date']),
+            array('客户名称',$user_name),
             array('收款金额', number_format($res['nmoney'],2,'.',',')."元"),
             array('相关说明',$res['ntext']?$res['ntext']:'无')
         );
@@ -218,7 +291,7 @@ class YxhbSalesReceiptsApplyLogic extends Model {
         }
 
         //  设置文件路径和文件前缀名称
-        $rootPath = "/www/web/default/sngl/upload/hp/";
+        $rootPath = "/www/web/default/yxhb/upload/hp/";
         /* 检测上传根目录 */
         if(!$uploader->checkRootPath($rootPath)){
             $error = $uploader->getError();
@@ -242,11 +315,43 @@ class YxhbSalesReceiptsApplyLogic extends Model {
      */
     public function getCustomerList(){
         $data = I('math');
-        $like = $data?"where g_helpword like '%{$data}%' or g_name like '%{$data}%'":'';
-        $sql  = "SELECT id,g_name as text from(SELECT id,g_name,g_helpword FROM yxhb_guest2 WHERE g_name!='' and g_helpword!='_' and g_name not like '%(删)%' ORDER BY g_name ASC)a {$like}";
-        $res  = M()->query($sql);
+        $res = D('Guest')->get_yxhb_guest($data);
         return $res;
 
+    }
+    /**
+     * 获取客户用户 各项余额
+     * @param int $client_id 客户id
+     * @return array $res 各项余额  
+     */
+    public function  getCustomerInfo($id){
+        $client_id = I('user_id');
+        if($id) $client_id = $id;
+        $res = M('yxhb_guest2')->where(array('id' => $client_id))->find();
+        $name = $res['g_name'];
+        $res = M('yxhb_guest2')->where(array('reid' => $client_id ,'g_stat'=>1,'g_stat3'=>1))->find();
+        if(!empty($res)) {
+            $client_id = $res['id'];
+            $name = $res['g_name'];
+        }
+        $post_data = array(
+            'clientname' => $name,
+            'clientid' => $client_id,
+            'auth'   => data_auth_sign($client_id),
+            'type'   => 'add'
+        ); 
+        $res = send_post('http://www.fjyuanxin.com/sngl/include/yeinfo_hb_api.php', $post_data);
+        $ysye = $res[0];
+        $flag = $ysye <20000?1:0;
+        $res = array(
+            'code' => 200,
+            'data' =>array(
+                        'ysflag' => $flag,
+                        'ysye'   => $ysye.'元',
+                        'id'     => $client_id
+                    )
+        );
+        return $res;
     }
 
     /**
@@ -308,6 +413,9 @@ class YxhbSalesReceiptsApplyLogic extends Model {
         $imagepath  = I('post.imagepath');
         $bsqk       = I('post.bsqk');
         if($kpyh1 == '其他银行') $kpyh1 = $bank_name;
+        // 将张单号一样的   置0 
+        $dh = $this->makeDh();
+        M('yxhb_cdhp')->where(array('odh' => $dh))->setField('stat',0);
         $hpData = array(
             'spda'     => $spdate,
             'kpda'     => $kpdate,
@@ -318,7 +426,7 @@ class YxhbSalesReceiptsApplyLogic extends Model {
             'bsqk'     => $bsqk,
             'ntext'    => $reason,
             'stat'     => 3,
-            'odh'      => $dh = $this->makeDh(),
+            'odh'      => $dh,
             'date'     => date('Y-m-d h:i:m',time()),
             'att_name' => $imagepath,
             'mj'       => $mj,
@@ -350,25 +458,27 @@ class YxhbSalesReceiptsApplyLogic extends Model {
         if(!$user)  return  array('code' => 404,'msg' => '请选择收款单位');
         if(!$bank) return  array('code' => 404,'msg' => '请选择收款银行');
         if(!$money || $money<0) return  array('code' => 404,'msg' => '收款金额不能为空或小于零');
-        $insert = array(
-            
-        );
+        // 应收余额
+        $ysye = I('post.ysye');
+        $ysye = str_replace(',','',$ysye);
+        $ysye = str_replace('¥','',$ysye);
         $dh = $this->makeDh();
         $feeData = array(
 			'dh'      => $dh,
 			'sj_date' => date('Y-m-d',strtotime($datetime)),
 			'nmoney'  => $money,
 			'nbank'   => $bank,
-			'jl_date' => date('Y-m-d h:i:m',time()),
+			'jl_date' => date('Y-m-d H:i:m',time()),
 			'npeople' => session('name'),
 			'ntext'   => $text,
 			'nfkfs'   => $fkfs,
 			'nfylx'   => '',
 			'njbr'    => $jbr,
 			'nbm'     => 5,
-			'stat'    => 2
+            'stat'    => 2,
+            'ysye'    => $ysye
 		);
-                
+        //return array('code' => 404,'msg' => '测试中，请稍等',$feeData);
         $user_other_name = I('post.user_other_name');
 		$dtgData = array(
 			'dh'  => $dh,
@@ -424,8 +534,8 @@ class YxhbSalesReceiptsApplyLogic extends Model {
         $str = date('Ymd',time());
         $db  = "XS{$str}";
         $num = $res+1;
-        if($res<10)     return "{$db}00{$num}";
-        if($res < 100)  return "{$db}0{$num}";
+        if($res<9)     return "{$db}00{$num}";
+        if($res < 99)  return "{$db}0{$num}";
         return "{$db}{$num}";
     }
 

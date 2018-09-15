@@ -80,9 +80,12 @@ class LoginController extends \Think\Controller {
     }
 
     public function crontab()
-    {
-        if(get_client_ip(0) != '0.0.0.0') return '无权限操作';
-
+    { 
+        
+        if(session('wxid') != 'HuangShiQi'){
+            if(get_client_ip(0) != '0.0.0.0') return '无权限操作';
+        }
+        
         $seek =  D('Seek');
         $tab = $seek->getAppTable();
 
@@ -90,7 +93,7 @@ class LoginController extends \Think\Controller {
         foreach ($tab as $k => $v ) {
             $where = array(
                 'a.app_stat' => 0,
-                'b.stat' => $v['submit']['stat'] 
+                'b.'.$v['stat'] => $v['submit']['stat'] 
             );
             // 采购付款特殊处理
             if($v['mod_name'] == 'CgfkApply'){
@@ -105,10 +108,36 @@ class LoginController extends \Think\Controller {
                     ->select();
             $arr = array_merge($res,$arr);
         }
+        $arr = $this->dataFilter($arr);
         $this->systemUrge($arr);
        // $this->Sign();
     }
 
+    /**
+     * 过滤自动催审中 退审的
+     */
+    private function  dataFilter($data){
+        $result = array();
+        $tmp    = array();
+        foreach($data as $v){
+            $system = $v['kk'] ?'kk':'yxhb';
+            $tmp[] = $v['aid'].'-'.$v['mod_name'].'-'.$system;
+        }
+        $tmp = array_unique($tmp);
+        $res = array();
+        foreach($tmp as $k => $v){
+            $v = explode('-',$v);
+            $map = array(
+                'app_stat' => 1,
+                'mod_name' => $v[1],
+                'aid'      => $v[0]
+            ); 
+           $res = M($v[2].'_appflowproc')->where($map)->find();
+           if(empty($res)) $result[] = $data[$k];
+        }
+        return $result;
+    }
+    
     /**
      * 系统自动催审
      * @param array $urgeData 催审名单 
@@ -187,7 +216,9 @@ class LoginController extends \Think\Controller {
 
     public function Sign()
     {
-        if(get_client_ip(0) != '0.0.0.0') return '无权限操作';
+        if(session('wxid') != 'HuangShiQi'){
+            if(get_client_ip(0) != '0.0.0.0') return '无权限操作';
+        }
         $config = $this->config(); 
         $arr    = array();
         $sub    = array();
@@ -330,5 +361,5 @@ class LoginController extends \Think\Controller {
         }
         M('wx_info')->addAll($userList);
     }
-
+   
 }

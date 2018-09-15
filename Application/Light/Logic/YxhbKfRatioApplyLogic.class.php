@@ -39,7 +39,7 @@ class YxhbKfRatioApplyLogic extends Model {
                                      'color' => 'black'
                                     );
         $result['content'][] = array('name'=>'提交时间：',
-                                     'value'=> date('Y-m-d H:i',strtotime($res['cretime']))  ,
+                                     'value'=> date('m-d H:i',strtotime($res['cretime']))  ,
                                      'type'=>'date',
                                      'color' => 'black'
                                     );
@@ -124,7 +124,6 @@ class YxhbKfRatioApplyLogic extends Model {
         foreach($out_scale as $k =>$v){
             $name      = $v->name;
             if($name){
-                $temp_html = "<input class='weui-input' type='text' style='color: black; font-weight: 700;border-bottom: 1px solid #e5e5e5; '  readonly value='磨外'>"; 
                 $content  .= "<input class='weui-input' type='text' style='color: black;'  readonly value='{$v->value}：{$v->name}%'>";
             } 
         }
@@ -173,7 +172,7 @@ class YxhbKfRatioApplyLogic extends Model {
         $hour = $res['hour']>9?$res['hour']:'0'.$res['hour'];
         $scfz = $res['scfz']>9?$res['scfz']:'0'.$res['scfz'];
         $result[] = array('name'=>'提交时间：',
-                                     'value'=>date('Y-m-d H:i',strtotime($res['cretime']))  ,
+                                     'value'=>date('m-d H:i',strtotime($res['cretime']))  ,
                                      'type'=>'date'
                                     );
         $result[] = array('name'=>'生产时间：',

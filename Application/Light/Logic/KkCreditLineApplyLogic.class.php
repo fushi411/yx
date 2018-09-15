@@ -43,7 +43,7 @@ class KkCreditLineApplyLogic extends Model {
                                      'color' => 'black'
                                     );
         $result['content'][] = array('name'=>'提交时间：',
-                                     'value'=> date('Y-m-d H:i',strtotime($res['dtime'])) ,
+                                     'value'=> date('m-d H:i',strtotime($res['dtime'])) ,
                                      'type'=>'date',
                                      'color' => 'black'
                                     );
@@ -115,7 +115,7 @@ class KkCreditLineApplyLogic extends Model {
         $info = $this->getInfo($res['clientid'],$date,$res['clientname']);
         $clientname = M('kk_guest2')->field('g_khjc')->where(array('id' => $res['clientid']))->find();
         $result[] = array('name'=>'提交时间：',
-                                     'value'=> date('Y-m-d H:i',strtotime($res['dtime'])) ,
+                                     'value'=> date('m-d H:i',strtotime($res['dtime'])) ,
                                      'type'=>'date'
                                     );
         $result[] = array('name'=>'申请日期：',
@@ -199,6 +199,7 @@ class KkCreditLineApplyLogic extends Model {
         $clientname = M('kk_guest2')->field('g_khjc')->where(array('id' => $res['clientid']))->find();
         $result = array(
             'sales'   => $res['sales'],
+            'title2'  => '申请金额',
             'approve' => number_format($res['line'],2,'.',',')."元",
             'notice'  => $res['notice'],
             'date'    => $res['date'],

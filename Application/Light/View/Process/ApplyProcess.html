@@ -90,30 +90,53 @@
                                                     <!-- 不为空的情况 -->
                                                    
                                                     <volist name="data" id="v">
-
-                                                        <if condition="$i-$vo.count elt 1">
-                                                            <neq name="i" value="1">                                                   
-                                                                <li class='weui-uploader__file wk-select__user' style='height:90px;margin-left:8px'>
-                                                                <else/>
-                                                                <li class='weui-uploader__file wk-select__user' style='height:90px;'>
-                                                            </neq>
-                                                            <if condition="$v.avatar eq ''">
-                                                                    <img src="Public/assets/i/defaul.png" class='weui-selet__user' style='margin-bottom: 0px;margin-right: 6px;margin-top:10px;'>
-                                                                <else/>
-                                                                <img src="{$v.avatar}" class='weui-selet__user' style='margin-bottom: 0px;margin-right: 6px;margin-top:10px;'>
-                                                            </if>
-
-                                                            <span style='margin-right: 6px;font-size: 14px;'> {$v.name}</span>
-                                                            <if condition="$i-$vo.count elt 0">
-                                                                    <if condition="$v.sign eq 1">
-                                                                            <span style="border-radius: 3px;position: relative;top: -2.5em;right: -1.8em;width: 6px;height: 6px;background-color: #333333"></span>
+                                                        <if condition="$vo.only eq 1">
+                                                                <if condition="$i-$vo.count eq 1">
+                    
+                                                                        <li class='weui-uploader__file wk-select__user' style='height:90px;'>
+                                                                        <if condition="$v.avatar eq ''">
+                                                                                <img src="Public/assets/i/defaul.png" class='weui-selet__user' style='margin-bottom: 0px;margin-right: 6px;margin-top:10px;'>
+                                                                            <else/>
+                                                                            <img src="{$v.avatar}" class='weui-selet__user' style='margin-bottom: 0px;margin-right: 6px;margin-top:10px;'>
+                                                                        </if>
+            
+                                                                        <span style='margin-right: 6px;font-size: 14px;'> {$v.name}</span>
+                                                                        <if condition="$i-$vo.count elt 0">
+                                                                                <if condition="$v.sign eq 1">
+                                                                                        <span style="border-radius: 3px;position: relative;top: -2.5em;right: -1.8em;width: 6px;height: 6px;background-color: #333333"></span>
+                                                                                    <else/>
+                                                                                    <span class="glyphicon glyphicon-arrow-right" style="position: relative;top: -2.8em;right: -1.8em;"></span>
+                                                                                </if>
+                                                                            
+                                                                        </if>
+                                                                    </li>
+                                                                </if>
+                                                            <else/>
+                                                            <if condition="$i-$vo.count elt 1">
+                                                                    <neq name="i" value="1">                                                   
+                                                                        <li class='weui-uploader__file wk-select__user' style='height:90px;margin-left:8px'>
                                                                         <else/>
-                                                                        <span class="glyphicon glyphicon-arrow-right" style="position: relative;top: -2.8em;right: -1.8em;"></span>
+                                                                        <li class='weui-uploader__file wk-select__user' style='height:90px;'>
+                                                                    </neq>
+                                                                    <if condition="$v.avatar eq ''">
+                                                                            <img src="Public/assets/i/defaul.png" class='weui-selet__user' style='margin-bottom: 0px;margin-right: 6px;margin-top:10px;'>
+                                                                        <else/>
+                                                                        <img src="{$v.avatar}" class='weui-selet__user' style='margin-bottom: 0px;margin-right: 6px;margin-top:10px;'>
                                                                     </if>
-                                                                
-                                                            </if>
-                                                            </li>
+        
+                                                                    <span style='margin-right: 6px;font-size: 14px;'> {$v.name}</span>
+                                                                    <if condition="$i-$vo.count elt 0">
+                                                                            <if condition="$v.sign eq 1">
+                                                                                    <span style="border-radius: 3px;position: relative;top: -2.5em;right: -1.8em;width: 6px;height: 6px;background-color: #333333"></span>
+                                                                                <else/>
+                                                                                <span class="glyphicon glyphicon-arrow-right" style="position: relative;top: -2.8em;right: -1.8em;"></span>
+                                                                            </if>
+                                                                        
+                                                                    </if>
+                                                                    </li>
+                                                                </if>
                                                         </if>
+                                                       
 
                                                     </volist>
                                                     <!-- 不为空的情况 -->
@@ -201,6 +224,7 @@
 <script src="https://cdn.bootcss.com/select2/4.0.3/js/select2.min.js"></script>
 <script src="https://cdn.bootcss.com/select2/4.0.3/js/i18n/zh-CN.js"></script>
 <script>
+  
 
     $(".zhineng").click('on', function () {
         $(".zhi").toggle(500);

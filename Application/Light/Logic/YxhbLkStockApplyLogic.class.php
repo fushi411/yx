@@ -38,7 +38,7 @@ class YxhbLkStockApplyLogic extends Model {
                                      'color' => 'black'
                                     );
         $result['content']['show'][] = array('name'=>'提交时间：',
-                                     'value'=> date('Y-m-d H:i',strtotime($res['cretime'])),
+                                     'value'=> date('m-d H:i',strtotime($res['cretime'])),
                                      'type'=>'date',
                                      'color' => 'black'
                                     );
@@ -65,7 +65,7 @@ class YxhbLkStockApplyLogic extends Model {
         $res = $this->record($id);
         // 账面库存 有 -> 存，没有 -> 获取
         if(!$res['zm']){
-            $time = strtotime($res['date']);
+            $time = strtotime($res['date'])+$res['time']*3600;
             $auth = data_auth_sign($time);
             $url  = "http://www.fjyuanxin.com/sngl/kf_stock_send_api.php?time={$time}&auth={$auth}";
             $post_data = array();
@@ -574,7 +574,7 @@ class YxhbLkStockApplyLogic extends Model {
         $res = $this->record($id);
         $result = array();
         $result[] = array('name'=>'提交时间：',
-                                     'value'=>  date('Y-m-d H:i',strtotime($res['cretime'])),
+                                     'value'=>  date('m-d H:i',strtotime($res['cretime'])),
                                      'type'=>'date'
                                     );
         $result[] = array('name'=>'申请日期：',

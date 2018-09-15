@@ -25,7 +25,8 @@ class ApplyController extends BaseController {
         $this->assign('applyer', $res['applyerName']);
         $this->assign('applyerID', $res['applyerID']);
         $this->assign('stat', $res['stat']);
-
+        $this->assign('mydata', $res['mydata']);
+        
         // 是否签收
         $qsRes =  M($system.'_appflowtable')->field('pro_mod')->where(array('stage_name' => '签收'))->select();
         $qsArr = array();
@@ -502,22 +503,10 @@ class ApplyController extends BaseController {
     public function forTest()
     {
         header("Content-type:text/html;charset=utf-8");
-
-        // $res = D('KkSalesReceiptsApply','Logic')->getDescription(9963);
-           // 评论名单
-           $system = 'kk' ;
-           $mod_name = 'FhfRatioApply' ;
-       
-        $agentid = M('yx_push_agentid')
-            ->field('agentid')
-            ->where(array('mod' => $mod_name))
-            ->find();
-        $agentid = $agentid['agentid'];
-        dump($agentid);
-           
+        
     }
 
-  
+ 
 
 
 // ---END---

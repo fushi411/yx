@@ -309,7 +309,9 @@ class WorkFlowController extends BaseController {
             break;
         }
         $title = str_replace('表','',$title);
-        $template = "您有一个流程{$description}\n申请单位：{$systemName[$system]}\n申请类型：{$title}";
+        $system_msg = $systemName[$system];
+        if( $flowName == 'fh_edit_Apply_hb' ) $system_msg = '环保';
+        $template = "您有一个流程{$description}\n申请单位：{$system_msg}\n申请类型：{$title}";
 
         $logic = D(ucfirst($system).$flowName,'Logic');
         $descriptionData = $logic->getDescription($id);
@@ -344,7 +346,10 @@ class WorkFlowController extends BaseController {
         $flowTable = M($system.'_appflowtable');
         $mod_cname = $flowTable->getFieldByProMod($flowName, 'pro_name');
         $mod_cname = str_replace('表','',$mod_cname);
-        $title = $systemName[$system].$mod_cname.$subTitle;
+        $system_msg = $systemName[$system];
+        if( $flowName == 'fh_edit_Apply_hb' ) $system_msg = '环保';
+
+        $title = $system_msg.$mod_cname.$subTitle;
         $url = "http://www.fjyuanxin.com/WE/index.php?m=Light&c=Apply&a=applyInfo&system=".$system."&aid=".$id."&modname=".$flowName;
         //crontab(CLI模式)无法正确生产URL
         // if (PHP_SAPI=='cli') {

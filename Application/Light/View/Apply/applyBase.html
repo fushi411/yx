@@ -5,6 +5,7 @@
     <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0"> -->
     <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    
     <title>{$title}</title>
     <link href="//cdn.bootcss.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet">
     <!-- 引入 WeUI -->
@@ -107,6 +108,7 @@
 </head>
 <body>
     <div class="weui-toptips weui-toptips_warn js_tooltips" style="opacity: 1;">错误提示</div>
+    
     <div class="container" id="container">
         <div class="page js_show">
             <!-- 系统选择 -->
@@ -353,15 +355,16 @@
                 </div>
             </div>
             <div class="js_dialog" id="knowDialog" style="display: none;">
-                <div class="weui-mask"></div>
+                <div class="weui-mask" style="z-index: 1999;"></div>
                 <div class="weui-dialog">
-                    <div class="weui-dialog__bd">图片布局方向须朝上！</div>
+                    <div class="weui-dialog__bd" id="knowDialogContent">图片布局方向须朝上！</div>
                     <div class="weui-dialog__ft">
                         <a href="javascript:;" onclick="dialog_iknow()" class="weui-dialog__btn weui-dialog__btn_primary">知道了</a>
                     </div>
                 </div>
             </div>
         </div>
+        
         <!-- END dialog -->  
         <block name="other"></block> 
 <script src="//cdn.bootcss.com/jquery/1.11.1/jquery.min.js"></script>
@@ -373,7 +376,11 @@
 <script src="__PUBLIC__/assets/js/exif.js"></script>
 </body>
 <script>
-
+ 
+ 
+    
+    $('input').attr('autocomplete','off');
+    
     var $tooltips = $('.js_tooltips'),
         toast     = $('#loadingToast'),
         hash      = $("meta[name='__hash__']").attr('content');
@@ -399,7 +406,15 @@
             $tooltips.css('display', 'none');
         }, 2000);
     }
+    function dialog_iknow(){
+        $("#knowDialog").fadeOut(100);
+    }
 
+    function dialog_know(text){
+        if(!text) text = '图片布局方向须朝上！';
+        $("#knowDialogContent").html(text);
+        $("#knowDialog").fadeIn(100);
+    }
     // 日期选择
     $('#showDatePicker').on('click', function () {
         if($('#ratio').val() == 'ratio'){

@@ -47,7 +47,7 @@ class YxhbPjCgfkApplyLogic extends Model {
                                      'color' => 'black'
                                     );
         $result['content'][] = array('name'=>'提交时间：',
-                                     'value'=> date('Y-m-d H:i',strtotime($res['date'])) ,
+                                     'value'=> date('m-d H:i',strtotime($res['date'])) ,
                                      'type'=>'date',
                                      'color' => 'black'
                                     );
@@ -133,7 +133,7 @@ class YxhbPjCgfkApplyLogic extends Model {
             $clientname = array( 'g_name' => $res['pjs']);
         }
         $result[] = array('name'=>'提交时间：',
-                                     'value'=> date('Y-m-d H:i',strtotime($res['date'])) ,
+                                     'value'=> date('m-d H:i',strtotime($res['date'])) ,
                                      'type'=>'date'
                                     );
         $result[] = array('name'=>'申请日期：',
@@ -199,6 +199,7 @@ class YxhbPjCgfkApplyLogic extends Model {
         }
         $result = array(
             'sales'   => $res['rdy'],
+            'title2'  => '申请金额',
             'approve' => number_format($res['fkje'],2,'.',',')."元",
             'notice'  => $res['zy'],
             'date'    => $res['zd_date'],
