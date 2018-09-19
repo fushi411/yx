@@ -351,6 +351,7 @@ class YxhbWlCgfkApplyLogic extends Model {
         $where = array(
             'bank_stat' => 1,
             'bank_wl'  => $gys,
+            'bank_lx'   => $type
         );
         $data  = M('yxhb_bankwl')->field('bank_wl,bank_zhmc,bank_account,bank_khh,bank_lx,id')->where($where)->select();
         foreach($data as $k => $v){

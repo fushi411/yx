@@ -8,6 +8,7 @@
 
 <!-- 配置主体 -->
 <block name="content_body">
+       
     <h3 class="titleTab" style="text-align: center;">指标配置</h3>
     <div class="weui-cells weui-cells_form">
             <div class="weui-cell weui-cell_select weui-cell_select-after">
@@ -102,10 +103,11 @@
     </div>
 </block>
 <block name="submit">
-        <div class="weui-btn-area">
-            <input type="hidden" name="file_names" id="file_names">
-            <a class="weui-btn weui-btn_primary" href="javascript:" id="submit">提交</a>
-        </div>
+        <div class="button-sp-area" style="margin-bottom: 20px;display: flex;flex-direction: row;width: 100%;justify-content: space-around;align-items: baseline;">
+                <input type="hidden" name="file_names" id="file_names">
+                <span id="btn-all" class="weui-btn weui-btn_warn" style="width: 40%;">取消</span>
+                <span id="submit" class="weui-btn weui-btn_primary" style="width: 40%">确定</span>
+            </div>
         <div class="weui-cells__title">注意事项</div>
         <!-- <div class="weui-cells__title">各个中心主管及以上职位的申请抄送</div> -->
         <div class="weui-cells" style="margin-top:0px;">
@@ -135,6 +137,10 @@
             var index = $(this).index('.show_div'),
                 elm   = $('.data_div').eq(index);
             elm.css('display') == 'none'?elm.fadeIn(200):elm.fadeOut(200);
+        });
+        // 点击返回
+        $('#btn-all').click(function(){
+            window.location.href="{:U('Light/View/View',array('modname' =>'KfRatioApply','system' => 'yxhb'))}";
         });
         // 点击确定
         $('.weui-vcode-btn').click(function(){

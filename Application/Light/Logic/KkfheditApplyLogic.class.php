@@ -35,7 +35,7 @@ class KkfheditApplyLogic extends Model {
         $result = array();
         $clientname = M('kk_guest2')->field('g_name')->where(array('id' => $res['fh_client']))->find();
         $result['content'][] = array('name'=>'申请单位：',
-                                     'value'=>'环保发货修改',
+                                     'value'=>'建材发货修改',
                                      'type'=>'date',
                                      'color' => 'black'
                                     );
@@ -50,9 +50,10 @@ class KkfheditApplyLogic extends Model {
                                      'color' => 'black'
                                     );
         $map  = array('id' => $id);
-        $name = M('yxhb_fh')->field(true)->where($map)->find();
+        $name = M('kk_fh')->field(true)->where($map)->find();
+        $show_wlfs = $name;
         $html = $this->makeDeatilHtml($res,$name);
-        $name = M('yxhb_guest2')->field('g_name')->where(array('id' => $name['fh_client']))->find();
+        $name = M('kk_guest2')->field('g_name')->where(array('id' => $name['fh_client']))->find();
         $result['content'][] = array('name'=>'客户名称：',
                                      'value'=>$name['g_name'],
                                      'type'=>'string',
@@ -81,7 +82,7 @@ class KkfheditApplyLogic extends Model {
         list($kh,$flag) = $this->getkhInfo($res['fh_client'],$res['fh_date'],$res['fh_kh']);
         $color = $flag ? 'black' :'#f12e2e';
         $result['content'][] = array('name'=>'授权库号：',
-                                     'value'=>empty($kh) ? '无' : implode(' - ' ,$kh),
+                                     'value'=>empty($kh[0]) ? '无' : implode(' - ' ,$kh),
                                      'type'=>'number',
                                      'color' => $color
                                     );   
@@ -92,7 +93,7 @@ class KkfheditApplyLogic extends Model {
         );
         $wlfs = M('kk_ht')->where($map)->find();        
         $color = 'black';
-        if($wlfs['ht_wlfs'] != $name['fh_wlfs']) { $color = '#f12e2e';}
+        if($wlfs['ht_wlfs'] != $show_wlfs['fh_wlfs']) { $color = '#f12e2e';}
         $result['content'][] = array('name'=>'运输方式：',
                                      'value'=>$wlfs['ht_wlfs'],
                                      'type'=>'text',
@@ -246,10 +247,10 @@ class KkfheditApplyLogic extends Model {
                                      'value'=>$clientname['g_name'],
                                      'type'=>'string'
                                     );
-        list($kh,$flag) = $this->getkhInfo($res['fh_client'],$res['fh_date'],$res['fh_kh']);
+        list($kh,$flag,$tmp) = $this->getkhInfo($res['fh_client'],$res['fh_date'],$res['fh_kh']);
 
         $result[] = array('name'=>'授权库号：',
-                                     'value' => empty($kh) ? '无' : implode(',' ,$kh),
+                                     'value' => empty($kh[0])?'无':implode(',' ,$kh),
                                      'type' =>'text'
                                     );    
         $map = array(
@@ -325,7 +326,6 @@ class KkfheditApplyLogic extends Model {
         
         foreach($res as $v){
             if($v['app_stat'] == 1) return 1;
-            if($v['app_stat'] == 0) $flag = 0;
         }
         return $flag;
     }
@@ -381,6 +381,7 @@ class KkfheditApplyLogic extends Model {
         $today = date('Y-m-d',time());
         $data = I('math');
         $like = $data?"and (g_helpword like '%{$data}%' or g_name like '%{$data}%')":'';
+        
         $sql  = "SELECT a.id AS id,
                         g_name as text,
                         g_khjc as jc,
@@ -433,15 +434,33 @@ class KkfheditApplyLogic extends Model {
      * 获取库号是否在一致
      */
     public function getkhInfo($user_id,$date,$fh_kh){
+        // 判断品种
+        if(!$user_id){
+            $bzfs = I('post.bzfs');
+            $cate = I('post.cate');
+        }
         $user_id = $user_id ? $user_id : I('post.user_id');
         $date    = $date    ? $date    : I('post.date');
         $fh_kh   = $fh_kh   ? $fh_kh   : I('post.kh'); 
-        
+        $have = 0;
+        if($bzfs){
+            $today = date('Y-m-d',time());
+            $map  = array(
+                'ht_khmc'  => $user_id,
+                'ht_stday' => array('elt',$today),
+                'ht_enday' => array('egt',$today),
+                'ht_stat'  => 2,
+                'ht_bzfs'  => $bzfs,
+                'ht_cate'  => $cate,
+            );
+            $bzfs = M('kk_ht')->where($map)->find(); 
+            if(empty($bzfs)) $have=1;
+        } 
         $res  = M('kk_config_kh_child')->where(array( 'clientid' => $user_id , 'dtime' => array('lt',$date)))->order('dtime desc')->find();
         $kh   = explode(',',$res['kh']);
         $flag = 1;
         if(!in_array($fh_kh,$kh)) $flag = 0;
-        return array($kh,$flag);
+        return array($kh,$flag,$have);
     }
 
     /**

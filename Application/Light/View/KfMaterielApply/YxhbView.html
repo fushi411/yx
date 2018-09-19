@@ -165,7 +165,7 @@
     </div>
 
     <div id="dialog_materiel">
-        <div class="js_dialog" id="iosDialog_materiel" style="display: none;">
+        <div class="js_dialog" id="iosDialog_materiel" style="display: none;font-size: 16px;">
             <div class="weui-mask"></div>
             <div class="weui-dialog">
                 <div class="weui-dialog__hd">
@@ -199,17 +199,6 @@
                             </select>
                         </div>
                     </div>
-                    <div class="weui-cell weui-cell_select weui-cell_select-after " style="background-color: #fff;font-size: 16px;">
-                        <div class="weui-cell__hd">
-                            <label class="weui-label">分配比例&nbsp;&nbsp;
-                                <span style="color:red;">*</span>
-                            </label>
-                        </div>
-                        <div class="weui-cell__bd">
-                            <input class="weui-select peibi scale" type="number" maxlength="15" name="custodian"
-                                placeholder="100%">
-                        </div>
-                    </div>
                     <div id="more_materiel" style="display: none;">
                         <div class="weui-cell weui-cell_select weui-cell_select-after" style="background-color: #fff;font-size: 16px;">
                             <div class="weui-cell__hd">
@@ -232,14 +221,15 @@
                                     <span style="color:red;">*</span>
                                 </label>
                             </div>
-                            <div class="weui-cell__bd">
-                                <input class="weui-select peibi scale" type="number" maxlength="15" name="custodian"
-                                    placeholder="100%">
+                            <div class="weui-cell__bd weui-flex" >
+                                <input class="weui-select peibi scale" style="text-align:center;padding: 0;width: 45px;" type="number" maxlength="15" name="custodian" value="1" placeholder="1">
+                                <span style="padding-top: 7px;">比 </span>
+                                <input class="weui-select peibi scale" style="text-align:center;" type="number" maxlength="15" name="custodian" value="1" placeholder="1">
                             </div>
                         </div>
                     </div>
 
-                    <div class="weui-cells__title" style="text-align:left;"><span id='materiel_add' class="weui-btn weui-btn_mini weui-btn_primary">添加物料</span></div>
+                    <div class="weui-cells__title" style="text-align:left;"><span id='materiel_add' style="background-color: #fff;" class="weui-btn weui-btn_mini greenColor weui-btn_default ">添加物料</span></div>
                 </div>
                 <div class="weui-dialog__ft">
                     <a href="javascript:;" id="materiel_cancel" class="weui-dialog__btn weui-dialog__btn_default">取消</a>
@@ -260,8 +250,21 @@
                     <span id="ratio-refuse" class="weui-btn weui-btn_warn" style="width: 40%;">取消</span>
                     <span id="ratio-agree" class="weui-btn weui-btn_primary" style="width: 40%">确定</span>
                 </div>
-
+                <div class="weui-cells__title">注意事项</div>
+                <!-- <div class="weui-cells__title">各个中心主管及以上职位的申请抄送</div> -->
+                <div class="weui-cells" style="margin-top:0px;">
+                    <div class="weui-cell">
+                        <div class="weui-cell__bd">
+                            <div class="weui-uploader">
+                                <div class="weui-uploader__bd" style="height: 60px;">
+                                     <div  style="color: #f12e2e;">可选物料为对应配比通知设定物料<br/>同一皮带称如有两种物料需分配比例</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
+
         </div>
     </div>
     <div class="js_dialog" id="iosDialog_ratio" style="display: none;">
@@ -273,6 +276,7 @@
                 </div>
             </div>
         </div>
+        
 </block>
 <block name='js'>
     <script>
@@ -281,7 +285,7 @@
             info = [],
             option_arr = [];
         select = [],
-            temp_arr = [],// 选择中的缓存
+            //temp_arr = [],// 选择中的缓存
             materiel = 0,
             select_arr = [],// 点击三级页面确定后的缓存
             sb_arr = [],// 点击二级页面确定 数据保存 
@@ -378,20 +382,23 @@
 
                 var selectname = ycl.eq(i).find('.selectname');
                 var selectval = ycl.eq(i).find('.selectval');
+                // console.log(selectval);
                 if (!selectname.eq(0).text()) continue;
                 var sb_tmp = {
                     'pd': pdArr[i],
                     'data': []
                 };
-                sb_tmp['data'].push({ 'name': selectname.eq(0).text(), 'value': selectval.eq(0).text() });
+                sb_tmp['data'].push({ 'name': selectname.eq(0).text(), 'value': selectval.eq(0).val() });
                 materiel++;
                 html += '<div style="padding: 3px 0 0 0;border-bottom: 1px solid #e5e5e5; "><strong  >' + pdArr[i] + '</strong></div>';
-                html += '<div style="padding: 3px 0 0 10px;"><span class="">' + selectname.eq(0).text() + '</span>：' + selectval.eq(0).text() + '%</div>';
                 if (selectname.eq(1).text()) {
-                    sb_tmp['data'].push({ 'name': selectname.eq(1).text(), 'value': selectval.eq(1).text() });
+                    sb_tmp['data'].push({ 'name': selectname.eq(1).text(), 'value': selectval.eq(1).val() });
                     materiel++;
-                    html += '<div style="padding: 3px 0 0 10px;"><span class="">' + selectname.eq(1).text() + '</span>：' + selectval.eq(1).text() + '%</div>';
-                };
+                    html += '<div style="padding: 3px 0 0 10px;"><span class="">' + selectname.eq(0).text() + ':'+selectname.eq(1).text()+'</span></div>';
+                    html += '<div style="padding: 3px 0 0 10px;"><span class="">分配比例</span>：' +selectval.eq(0).val() + '比'+selectval.eq(1).val() + '</div>';
+                }else{
+                    html += '<div style="padding: 3px 0 0 10px;"><span class="">' + selectname.eq(0).text() + '</span></div>';
+                }
                 sb_arr.push(sb_tmp);
             }
             other_page.fadeOut(200);
@@ -407,7 +414,7 @@
             materiel_cancel();
             makeThreeOption(idx);
             $('#iosDialog_materiel').fadeIn(200);
-            $('.scale').val(100).attr('readonly', true);
+            $('.scale').val(1).attr('readonly', true);
             maketypename();
            
         });
@@ -422,31 +429,33 @@
         $('#materiel_sure').click(function () {
             var length = 1;
             if ($('#materiel_add').text() == '删除物料') length = 2;
-            
             var tmp = [];
             var str = '';
-            var num = 0;
+            
             for (i = 0; i < length; i++) {
                 var typename = $('.typename').eq(i).val();
                 if (typename == -1 || !typename) return tooltip('请选择材料');
                 if (!$('.scale').eq(i).val()) return tooltip('请选择' + typename + '分配比例');
                 tmp.push(typename);
-                num += parseInt( $('.scale').eq(i).val());
-                str += '<div style="padding: 3px 0 0 10px;"><span class="selectname">' + typename + '</span>：<span class="selectval">' + $('.scale').eq(i).val() + '</span>%</div>';
-                if ($.inArray(typename, temp_arr) != -1) return tooltip('已有该材料，请重新选择');
+                str += '<input type="hidden" class="selectval" value="'+$('.scale').eq(i).val()+'">'
+                if(i==0){
+                    str += '<div style="padding: 3px 0 0 10px;"><span class="selectname">' + typename + '</span>';
+                }else{
+                    str += '：<span class="selectname">' + typename + '</span></div>';
+                    str += '<div style="padding: 3px 0 0 10px;"><span >分配比例：' + $('.scale').eq(0).val()+'比'+ $('.scale').eq(1).val() + '</span></div>';
+                }
+                //if ($.inArray(typename, temp_arr) != -1) return tooltip('已有该材料，请重新选择');
                 
             }
-            console.log(num);
-            if (num != 100) return tooltip('所在比例之和需为100%');
-            temp_arr = temp_arr.concat(tmp);
+            if(i==1) str += "</div>";
+            //temp_arr = temp_arr.concat(tmp);
             var pd = $('#three_pd_name').val();
-
             select_pd.push(parseInt(pd));
             $('.er_show').eq(pd).fadeIn(200);
             $('.ycl_content').eq(pd).html(str);
             $('#iosDialog_materiel').fadeOut(200);
         });
-
+       
         $('#materiel_add').click(function () {
             if ($(this).text() == '添加物料') {
                 materiel_add();
@@ -462,22 +471,23 @@
                 $(this).val(-1);
                 return tooltip('已有该材料，请重新选择');
             }
-            if ($.inArray($(this).val(), temp_arr) != -1) return tooltip('已有该材料，请重新选择');
+            
         });
         // 添加 
         function materiel_add() {
             $('#more_materiel').fadeIn(200);
             $('#materiel_add').text('删除物料');
-            $('.scale').val('').removeAttr('readonly');
-            $('#materiel_add').removeClass('weui-btn_primary').addClass('weui-btn_warn');
+            $('.scale').removeAttr('readonly');
+            $('.scale').eq(1).val(1);
+            $('#materiel_add').removeClass('greenColor').addClass('redColor');
         }
         // 删除
         function materiel_cancel() {
             $('#more_materiel').fadeOut(200);
             $('#materiel_add').text('添加物料');
             $('.typename').eq(1).val(-1);
-            $('.scale').val(100).attr('readonly', true);
-            $('#materiel_add').removeClass('weui-btn_warn').addClass('weui-btn_primary');
+            $('.scale').val(1).attr('readonly', true);
+            $('#materiel_add').removeClass('redColor').addClass('greenColor');
         }
 
          pd_show();
@@ -610,8 +620,6 @@
             if (!$('#kh').val()) return tooltip('请选择入库号');
             if (sb_arr.length <= 0) return tooltip('请点击配置物料');
             // 备注检测
-            var notice = $('#reason').val();
-            if (notice.length < 5) return tooltip('备注不能少于5个字');
 
             toastfadeIn(200, '数据提交中');
             $.ajax({
@@ -648,10 +656,10 @@
         // 查看配比通知详情
         $('#open_ratio').click(function(){
             if ($('#ratio_sel').val() == -1 || !$('#ratio_sel').val()) return tooltip('请选择配比通知单');
-            $('#iosDialog_ratio').fadeIn(200);
+            $('#iosDialog_ratio').show();
         });
         $('#close_ratio').click(function(){
-            $('#iosDialog_ratio').fadeOut(200);
+            $('#iosDialog_ratio').hide();
         });
         function ratioDetail(){
             $.ajax({
@@ -667,6 +675,7 @@
                 dataType: 'json',
                 success: function (res) {
                    $('#show_ratio').html(res);
+                   
                 }
             });
         }

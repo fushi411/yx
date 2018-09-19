@@ -502,11 +502,14 @@
              getNewGys();
         });
         function getNewGys(){
+            var bzfs = clickInfo['fh_bzfs'];
+            if(clickInfo['fh_bzfs'] == '编织袋') bzfs='袋装';
             $.ajax({
                 type: 'POST',
                 url: "{:U('Light/Api/fh_edit_ApplyApi')}",
                 dataType: 'json',
                 data: {
+                    bzfs:bzfs,
                     user_id:alter_user_id,
                     date:clickInfo['fh_date'],
                     kh:clickInfo['fh_kh'],
@@ -527,7 +530,7 @@
                     if(clickInfo['fh_bzfs'] == '编织袋') $bzfs = '袋' ;
                     else if(clickInfo['fh_bzfs'] == '散装') $bzfs = '散';
                     click_info_cate = $bzfs+clickInfo['fh_cate'];
-                    if (  fh_cate.indexOf(click_info_cate)  == -1 ){
+                    if (  res[2]  == 1 ){
                         alter_user_id = '';
                         $('#mydiv .select2-selection__choice__remove').click();
                         dialog_know("产品品种与原发货品种不一致<br />此提交无法修改");

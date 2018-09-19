@@ -89,6 +89,7 @@ class YxhbKfRatioApplyLogic extends Model {
      * @return string $html 
      */
     public function makeDeatilHtml($data){
+        $scale = json_decode($data['scale']);
         $html = "<input class='weui-input' type='text' style='color: black; font-weight: 700;border-bottom: 1px solid #e5e5e5; '  readonly value='磨内'>";
         if(!empty($data['scale1']) ) {
             $proportion1 = ceil($data['proportion1']) == $data['proportion1']?ceil($data['proportion1']): $data['proportion1'];
@@ -110,7 +111,10 @@ class YxhbKfRatioApplyLogic extends Model {
             $proportion5 = ceil($data['proportion5']) == $data['proportion5']?ceil($data['proportion5']): $data['proportion5'];
             $html .= "<input class='weui-input' type='text' style='color: black;'  readonly value='{$data['scale5']}：{$proportion5}%'>";
         }
-
+        if(!empty($scale[5]) && !empty($scale[5]->name)) {
+            $proportion5 = ceil($scale[5]->name) == $scale[5]->name?ceil($scale[5]->name): $scale[5]->name;
+            $html .= "<input class='weui-input' type='text' style='color: black;'  readonly value='{$scale[5]->value}：{$scale[5]->name}%'>";
+        }
         $out_scale = json_decode($data['out_scale']);
         // if(!empty($out_scale[0]->name)) {
         //     $html .= "<input class='weui-input' type='text' style='color: black; font-weight: 700;border-bottom: 1px solid #e5e5e5; '  readonly value='磨外'>";
@@ -124,6 +128,7 @@ class YxhbKfRatioApplyLogic extends Model {
         foreach($out_scale as $k =>$v){
             $name      = $v->name;
             if($name){
+                $temp_html = "<input class='weui-input' type='text' style='color: black; font-weight: 700;border-bottom: 1px solid #e5e5e5; '  readonly value='磨外'>"; 
                 $content  .= "<input class='weui-input' type='text' style='color: black;'  readonly value='{$v->value}：{$v->name}%'>";
             } 
         }

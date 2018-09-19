@@ -268,36 +268,36 @@ class MsgdataModel extends Model {
     public function KfMaterielApply(){
         return $this->MaterielApply();
     }
-    // 复合粉物料配置 
-    public function FhfMaterielApply(){
-        return $this->MaterielApply();
-    }
-    // 水泥物料配置
-    public function SnMaterielApply(){
-        return $this->MaterielApply();
-    }
+    // // 复合粉物料配置 
+    // public function FhfMaterielApply(){
+    //     return $this->MaterielApply();
+    // }
+    // // 水泥物料配置
+    // public function SnMaterielApply(){
+    //     return $this->MaterielApply();
+    // }
 
       // 配比通知
       public function MaterielApply(){
         $result = array();
         $result['url'] = array(
             array('name' => '矿粉物料配置'  ,'url' => U('Light/View/View',array('modname'=>'KfMaterielApply','system' => 'yxhb')),'modname' => 'yxhbKfMaterielApply'),
-            array('name' => '水泥物料配置'  ,'url' => U('Light/View/View',array('modname'=>'SnMaterielApply','system' => 'kk')),'modname' => 'kkSnMaterielApply'),
-            array('name' => '复合粉物料配置','url' => U('Light/View/View',array('modname'=>'FhfMaterielApply','system' => 'kk')),'modname' => 'kkFhfMaterielApply'), 
+            // array('name' => '水泥物料配置'  ,'url' => U('Light/View/View',array('modname'=>'SnMaterielApply','system' => 'kk')),'modname' => 'kkSnMaterielApply'),
+            // array('name' => '复合粉物料配置','url' => U('Light/View/View',array('modname'=>'FhfMaterielApply','system' => 'kk')),'modname' => 'kkFhfMaterielApply'), 
         );
 
-        $result['kkSnMaterielApply'] = array(
-            'process' => U('Light/Process/ApplyProcess',array('modname'=>'SnMaterielApply','system' => 'kk')),
-            'info'    => U('Light/Apply/applyInfo',array('modname'=>'SnMaterielApply','system'=>'kk'))
-        ); 
+        // $result['kkSnMaterielApply'] = array(
+        //     'process' => U('Light/Process/ApplyProcess',array('modname'=>'SnMaterielApply','system' => 'kk')),
+        //     'info'    => U('Light/Apply/applyInfo',array('modname'=>'SnMaterielApply','system'=>'kk'))
+        // ); 
         $result['yxhbKfMaterielApply'] = array(
             'process' => U('Light/Process/ApplyProcess',array('modname'=>'KfMaterielApply','system' => 'yxhb')),
             'info'    => U('Light/Apply/applyInfo',array('modname'=>'KfMaterielApply','system'=>'yxhb'))
         );   
-        $result['kkFhfMaterielApply'] = array(
-            'process' => U('Light/Process/ApplyProcess',array('modname'=>'FhfMaterielApply','system' => 'kk')),
-            'info'    => U('Light/Apply/applyInfo',array('modname'=>'FhfMaterielApply','system'=>'kk'))
-        ); 
+        // $result['kkFhfMaterielApply'] = array(
+        //     'process' => U('Light/Process/ApplyProcess',array('modname'=>'FhfMaterielApply','system' => 'kk')),
+        //     'info'    => U('Light/Apply/applyInfo',array('modname'=>'FhfMaterielApply','system'=>'kk'))
+        // ); 
         return $result;  
     }
 }

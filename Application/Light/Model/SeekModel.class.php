@@ -101,6 +101,17 @@ class SeekModel extends Model {
                 'submit'     => array('name' => 'fh_kpy','stat' => 2),
                 'copy_field' => 'kk_fh.id as aid,kk_fh.fh_kpy as applyer,kk_fh.fh_da,kk_fh.fh_client as approve,kk_fh.fh_num,kk_fh.fh_stat4'
             ),
+            array(
+                'title'      => '环保矿粉物料配置' , 
+                'search'     => '矿粉物料配置',
+                'system'     => 'yxhb' ,
+                'mod_name'   => 'KfMaterielApply',
+                'table_name' => 'yxhb_materiel',
+                'id'         => 'id' ,
+                'stat'       => 'stat',
+                'submit'     => array('name' => 'tjr','stat' => 2),
+                'copy_field' => 'yxhb_materiel.id as aid,yxhb_materiel.tjr as applyer,yxhb_materiel.sb_date,yxhb_materiel.ku as approve,yxhb_materiel.info as notice,yxhb_materiel.stat'
+            ),
 
         );
         return $appArr;

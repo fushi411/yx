@@ -9,7 +9,7 @@
         <div class="weui-cell weui-cell_select weui-cell_select-after">
             <div class="weui-cell__hd">
                 <label class="weui-label">生产品种&nbsp;&nbsp;
-                    <span style="color:red;">*</span>
+                     
                 </label>
             </div>
             <div class="weui-cell__bd">
@@ -26,7 +26,7 @@
             <div class="weui-cell__hd">
                 <label class="weui-label">
                     <span class="font-width">生产线</span>&nbsp;&nbsp;
-                    <span style="color:red;">*</span>
+                     
                 </label>
             </div>
             <div class="weui-cell__bd">
@@ -41,7 +41,7 @@
             <div class="weui-cell__hd">
                 <label class="weui-label">
                     <span class="font-width">入库号</span>&nbsp;&nbsp;
-                    <span style="color:red;">*</span>
+                     
                 </label>
             </div>
             <div class="weui-cell__bd">
@@ -62,7 +62,7 @@
         <div class="weui-cell weui-cell_select weui-cell_select-after">
             <div class="weui-cell__hd">
                 <label class="weui-label">原料选择&nbsp;&nbsp;
-                    <span style="color:red;">*</span>
+                     
                 </label>
             </div>
             <div class="weui-cell__bd">
@@ -113,7 +113,7 @@
                         <div class="weui-cell__hd">
                             <label class="weui-label">
                                 <span class="">宝钢水渣</span>&nbsp;&nbsp;
-                                <span style="color:red;">*</span>
+                                 
                             </label>
                         </div>
                         <div class="weui-cell__bd">
@@ -124,7 +124,7 @@
                         <div class="weui-cell__hd">
                             <label class="weui-label">
                                 <span class="font-width">石灰石</span>&nbsp;&nbsp;
-                                <span style="color:red;">*</span>
+                                 
                             </label>
                         </div>
                         <div class="weui-cell__bd">
@@ -135,22 +135,33 @@
                         <div class="weui-cell__hd">
                             <label class="weui-label">
                                 <span class="">电厂炉渣</span>&nbsp;&nbsp;
-                                <span style="color:red;">*</span>
+                                 
                             </label>
                         </div>
                         <div class="weui-cell__bd">
-                            <input class="weui-select peibi scale" type="number" index="电厂炉渣" maxlength="15" name="custodian" id="scale3" placeholder="0-20%">
+                            <input class="weui-select peibi scale" type="number" index="电厂炉渣" maxlength="15" name="custodian" id="scale3" placeholder="0-30%">
                         </div>
                     </div>
                     <div class="weui-cell weui-cell_select weui-cell_select-after ">
                         <div class="weui-cell__hd">
                             <label class="weui-label">
                                 <span class="">矿热炉渣</span>&nbsp;&nbsp;
-                                <span style="color:red;">*</span>
+                                 
                             </label>
                         </div>
                         <div class="weui-cell__bd">
                             <input class="weui-select peibi scale" type="number" index="矿热炉渣" maxlength="15" name="custodian" id="scale4" placeholder="0-50%">
+                        </div>
+                    </div>
+                    <div class="weui-cell weui-cell_select weui-cell_select-after ">
+                        <div class="weui-cell__hd">
+                            <label class="weui-label">
+                                <span class="">精炼炉渣</span>&nbsp;&nbsp;
+                                 
+                            </label>
+                        </div>
+                        <div class="weui-cell__bd">
+                            <input class="weui-select peibi scale" type="number" index="精炼炉渣" maxlength="15" name="custodian" id="scale5" placeholder="0-15%">
                         </div>
                     </div>
                     <div class="weui-cell">
@@ -168,11 +179,11 @@
                         <div class="weui-cell__hd">
                             <label class="weui-label">
                                 <span class="font-width">激发剂</span>&nbsp;&nbsp;
-                                <span style="color:red;">*</span>
+                                 
                             </label>
                         </div>
                         <div class="weui-cell__bd">
-                            <input class="weui-select peibi scale" type="number" index="激发剂" maxlength="15" name="custodian" id="scale5" placeholder="0-0.2%">
+                            <input class="weui-select peibi scale" type="number" index="激发剂" maxlength="15" name="custodian" id="scale6" placeholder="0-0.2%">
                         </div>
                     </div>
                 </div>
@@ -182,7 +193,7 @@
                         <div class="weui-cell__hd">
                             <label class="weui-label">
                                 <span class="font-width">脱硫灰</span>&nbsp;&nbsp;
-                                <span style="color:red;">*</span>
+                                 
                             </label>
                         </div>
                         <div class="weui-cell__bd">
@@ -193,7 +204,7 @@
                         <div class="weui-cell__hd">
                             <label class="weui-label">
                                 <span class="font-width">复合粉</span>&nbsp;&nbsp;
-                                <span style="color:red;">*</span>
+                                 
                             </label>
                         </div>
                         <div class="weui-cell__bd">
@@ -497,6 +508,7 @@
             scale3 = $('#scale3'),
             scale4 = $('#scale4'),
             scale5 = $('#scale5'),
+            scale6 = $('#scale6'),
             scale_array = [],
             out_scale_array = [],
             peibi_value = 0,
@@ -561,16 +573,18 @@
                 scale_3 = scale3.val(),
                 scale_4 = scale4.val(),
                 scale_5 = scale5.val(),
+                scale_6 = scale6.val(),
                 out_scale  = $('#out_scale').val();
                 out_scale1 = $('#out_scale1').val();
 
-            if (!scale_1 && !scale_2 && !scale_3 && !scale_4 && !scale_5) return tooltip('请选择至少一种物料');
+            if (!scale_1 && !scale_2 && !scale_3 && !scale_4 && !scale_5 && !scale_6) return tooltip('请选择至少一种物料');
             scale_array = [];
             scale_array[0] = { 'name': scale_1 ? scale_1 : null, 'value': scale1.attr('index') };
             scale_array[1] = { 'name': scale_2 ? scale_2 : null, 'value': scale2.attr('index') };
             scale_array[2] = { 'name': scale_3 ? scale_3 : null, 'value': scale3.attr('index') };
             scale_array[3] = { 'name': scale_4 ? scale_4 : null, 'value': scale4.attr('index') };
             scale_array[4] = { 'name': scale_5 ? scale_5 : null, 'value': scale5.attr('index') };
+            scale_array[5] = { 'name': scale_6 ? scale_6 : null, 'value': scale6.attr('index') };
             out_scale_array[0] = { 'name': out_scale ? out_scale : null, 'value': $('#out_scale').attr('index') };
             out_scale_array[1] = { 'name': out_scale1 ? out_scale1 : null, 'value': $('#out_scale1').attr('index') };
             show_wl();
@@ -596,8 +610,9 @@
         var F85 = [
             ['宝钢水渣',50,97,1],
             ['石灰石'  ,0,5,1],
-            ['电厂炉渣',0,20,1],
+            ['电厂炉渣',0,30,1],
             ['矿热炉渣',0,50,1],
+            ['精炼炉渣',0,15,1],
             ['激发剂'  ,0,0.2,1],
             ['脱硫灰'  ,0,10,1],
             ['复合粉'  ,6,20,1],
@@ -621,8 +636,8 @@
                 });
             }
             var count = 0;
-            for (var i = 0; i < 5; i++) {
-                if ($('.peibi').eq(i).attr('index') == '脱硫灰' || $('.peibi').eq(i).attr('index') == '激发剂') continue;
+            for (var i = 0; i < F85.length; i++) {
+                if ($('.peibi').eq(i).attr('index') == '脱硫灰' || $('.peibi').eq(i).attr('index') == '激发剂' || $('.peibi').eq(i).attr('index') == '复合粉') continue;
                 num = $('.peibi').eq(i).val() ? $('.peibi').eq(i).val() : 0;
                 count += parseFloat(num);
             }
@@ -716,6 +731,7 @@
             $('#showDatePicker').val(val);
         }
         $('#submit').click(function () {
+            
             if(!datePicker.val()) return tooltip('请选择日期');
             if(!getfazhi()) return;
             if ($('#type').val() == -1 || $('#type').val() == null) return tooltip('请选择生产品种');

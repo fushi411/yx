@@ -60,7 +60,11 @@ class YxhbKfMaterielApplyLogic extends Model {
                                      'type'=>'string',
                                      'color' => 'black'
                                     );
-      
+        $result['content'][] = array('name'=>'配比详情：',
+                                     'value'=> "<span  onclick=ratioDetail({$res['rid']}) id='ratio_btn_look' style='color: #337ab7;cursor: pointer;'>点击查看详情</span>" ,
+                                     'type'=>'string',
+                                     'color' => 'black'
+                                    );
         $result['content'][] = array('name'=>'生产品种：',
                                      'value'=>$res['product'],
                                      'type'=>'number',
@@ -100,8 +104,11 @@ class YxhbKfMaterielApplyLogic extends Model {
         $data = json_decode($data,true);
         foreach( $data as $v){
             $html.="<input class='weui-input' type='text' style='color: black; font-weight: 700;border-bottom: 1px solid #e5e5e5; '  readonly value='{$v['pd']}'>";
-            foreach($v['data'] as $val){
-                $html .= "<input class='weui-input' type='text' style='color: black;'  readonly value='{$val['name']}：{$val['value']}%'>";
+            if(count($v['data']) == 1){
+                $html .= "<input class='weui-input' type='text' style='color: black;padding: 3px 0 0 10px;'  readonly value='{$v['data'][0]['name']}'>";
+            }else{
+                $html .= "<input class='weui-input' type='text' style='color: black;padding: 3px 0 0 10px;'  readonly value='{$v['data'][0]['name']}：{$v['data'][1]['name']}'>";
+                $html .= "<input class='weui-input' type='text' style='color: black;padding: 3px 0 0 10px;'  readonly value='分配比例：{$v['data'][0]['value']}比{$v['data'][1]['value']}'>";
             }
         }
         return $html;
@@ -252,13 +259,13 @@ class YxhbKfMaterielApplyLogic extends Model {
             'scx'   => 'A#生产线',
             'state' => 1
         );
-        $res   = M('yxhb_assay')->where($map)->order('date desc')->find();
+        $res   = M('yxhb_assay')->where($map)->order('cretime desc')->find();
         $result[] = $res;
         $map = array(
             'scx'   => 'B#生产线',
             'state' => 1
         );
-        $res   = M('yxhb_assay')->where($map)->order('date desc')->find();
+        $res   = M('yxhb_assay')->where($map)->order('cretime desc')->find();
         $result[] = $res;
         $res = array();
         foreach($result as $val){
