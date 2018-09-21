@@ -110,7 +110,13 @@ class BaseController extends Controller {
     }
 
     $wxid = str_replace('OvSQq4967K','',$tmp['VioomaUserID']);
-    $main_system  = $system == 'sngl'?'kk':'yxhb';
+    if($system == 'sngl'){
+        $main_system == 'kk';
+    }elseif($system == 'yxtz'){
+        $main_system == 'yxtz';
+    }else{
+        $main_system == 'yxhb';
+    }
     $user =  M($main_system.'_boss')->field("id")->where(array('boss' => $wxid))->find();
     $id = $user['id'];
     D($main_system.'Boss')->login($id);

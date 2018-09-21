@@ -509,5 +509,39 @@ class WorkFlowFuncController extends Controller {
         $resArr = $res?array("status"=>"success"):array("status"=>"failure");
         return $resArr;
 	}
+	/**
+     * 建材其他收入通过后调用函数
+     * @param  [integre] $aid [记录ID]
+     * @return [array]      [状态]
+     */
+	public function KkAddMoneyQtEnd($aid)
+    {
+		$res = M('kk_feeqt')->where(array('stat'=>2, 'id'=>$aid))->setField('stat', 1);
+		// ->承兑汇票
+		$data = D('KkAddMoneyQt','Logic')->record($aid);
+		if($data['nfkfs'] == 3){
+			M('kk_cdhp')->where(array('stat'=>3, 'odh'=>$data['dh']))->setField('stat', 1);
+		}
+        $resArr = $res?array("status"=>"success"):array("status"=>"failure");
+        return $resArr;
+	}
+
+	/**
+     * 环保其他收入通过后调用函数
+     * @param  [integre] $aid [记录ID]
+     * @return [array]      [状态]
+     */
+	public function YxhbAddMoneyQtEnd($aid)
+    {
+		$res = M('yxhb_feeqt')->where(array('stat'=>2, 'id'=>$aid))->setField('stat', 1);
+		// ->承兑汇票
+		$data = D('YxhbAddMoneyQt','Logic')->record($aid);
+		if($data['nfkfs'] == 3){
+			M('yxhb_cdhp')->where(array('stat'=>3, 'odh'=>$data['dh']))->setField('stat', 1);
+		}
+        $resArr = $res?array("status"=>"success"):array("status"=>"failure");
+        return $resArr;
+	}
+	
 // -----END------
 }
