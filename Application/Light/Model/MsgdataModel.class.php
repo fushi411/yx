@@ -302,11 +302,12 @@ class MsgdataModel extends Model {
     }
 
        // 其他收入
-       public function AddMoneyQt(){
+    public function AddMoneyQt(){
         $result = array();
         $result['url'] = array(
             array('name' => '环保其他收入','url' => U('Light/View/View',array('modname'=>'AddMoneyQt','system' => 'yxhb')),'modname' => 'yxhbAddMoneyQt'),
             array('name' => '建材其他收入','url' => U('Light/View/View',array('modname'=>'AddMoneyQt','system' => 'kk')),'modname' => 'kkAddMoneyQt'),
+            array('name' => '投资其他收入','url' => U('Light/View/View',array('modname'=>'AddMoneyQtTz','system' => 'kk')),'modname' => 'kkAddMoneyQtTz'),
         );
    
         $result['yxhbAddMoneyQt'] = array(
@@ -317,6 +318,34 @@ class MsgdataModel extends Model {
             'process' => U('Light/Process/ApplyProcess',array('modname'=>'AddMoneyQt','system' => 'kk')),
             'info'    => U('Light/Apply/applyInfo',array('modname'=>'AddMoneyQt','system'=>'kk'))
         ); 
+        $result['kkAddMoneyQtTz'] = array(
+            'process' => U('Light/Process/ApplyProcess',array('modname'=>'AddMoneyQtTz','system' => 'kk')),
+            'info'    => U('Light/Apply/applyInfo',array('modname'=>'AddMoneyQtTz','system'=>'kk'))
+        ); 
         return $result;   
     }
+
+        // 其他收入
+        public function AddMoneyQtTz(){
+            $result = array();
+            $result['url'] = array(
+                array('name' => '环保其他收入','url' => U('Light/View/View',array('modname'=>'AddMoneyQt','system' => 'yxhb')),'modname' => 'yxhbAddMoneyQt'),
+                array('name' => '建材其他收入','url' => U('Light/View/View',array('modname'=>'AddMoneyQt','system' => 'kk')),'modname' => 'kkAddMoneyQt'),
+                array('name' => '投资其他收入','url' => U('Light/View/View',array('modname'=>'AddMoneyQtTz','system' => 'kk')),'modname' => 'kkAddMoneyQtTz'),
+            );
+       
+            $result['yxhbAddMoneyQt'] = array(
+                'process' => U('Light/Process/ApplyProcess',array('modname'=>'AddMoneyQt','system' => 'yxhb')),
+                'info'    => U('Light/Apply/applyInfo',array('modname'=>'AddMoneyQt','system'=>'yxhb'))
+            );   
+            $result['kkAddMoneyQt'] = array(
+                'process' => U('Light/Process/ApplyProcess',array('modname'=>'AddMoneyQt','system' => 'kk')),
+                'info'    => U('Light/Apply/applyInfo',array('modname'=>'AddMoneyQt','system'=>'kk'))
+            ); 
+            $result['kkAddMoneyQtTz'] = array(
+                'process' => U('Light/Process/ApplyProcess',array('modname'=>'AddMoneyQtTz','system' => 'kk')),
+                'info'    => U('Light/Apply/applyInfo',array('modname'=>'AddMoneyQtTz','system'=>'kk'))
+            ); 
+            return $result;   
+        }
 }

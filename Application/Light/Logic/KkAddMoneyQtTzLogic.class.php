@@ -7,9 +7,9 @@ use Think\Model;
  * @author 
  */
 
-class KkAddMoneyQtLogic extends Model {
+class KkAddMoneyQtTzLogic extends Model {
     // 实际表名
-    protected $trueTableName = 'kk_feeqt';
+    protected $trueTableName = 'yxtz_feeqt';
 
     /**
      * 记录内容
@@ -32,7 +32,7 @@ class KkAddMoneyQtLogic extends Model {
         $res = $this->record($id);
         $result = array();
         $result['content'][] = array('name'=>'申请单位：',
-                                     'value'=>'建材其他收入',
+                                     'value'=>'投资其他收入',
                                      'type'=>'date',
                                      'color' => 'black'
                                     );
@@ -60,7 +60,7 @@ class KkAddMoneyQtLogic extends Model {
                                         'color' => '#337ab7'
                                     );
         }
-        $bankinfo = M('kk_bank')->where(array('id' => $res['nbank']))->find();
+        $bankinfo = M('yxtz_bank')->where(array('id' => $res['nbank']))->find();
         $bl    = mb_strlen($bankinfo['bank_account'])-4;
         $bname = mb_substr($bankinfo['bank_account'],$bl,mb_strlen($bankinfo['bank_account']),'utf-8');
         
@@ -97,6 +97,7 @@ class KkAddMoneyQtLogic extends Model {
             $result['mydata'] = $this->getHp($res['dh']);
         }
         $result['imgsrc'] = '';
+        // TODO 名字
         $result['applyerID'] = D('KkBoss')->getIDFromName($res['npeople']);
         $result['applyerName'] = $res['npeople'];
         $result['stat'] = $res['stat'];
@@ -104,13 +105,13 @@ class KkAddMoneyQtLogic extends Model {
     }
 
     public function getHp($dh){
-        $data = M('kk_cdhp')->where(array('odh' => $dh  , 'stat' => array('neq',0) ))->find();
+        $data = M('yxtz_cdhp')->where(array('odh' => $dh  , 'stat' => array('neq',0) ))->find();
         $data['ntext'] = $data['ntext']?$data['ntext']:'无';
         $data['nmoney'] = "&yen;".number_format($data['nmoney'],2,'.',',')."元" ;
         return $data;
     }
     public function getYsye($res){
-        $dtg   = M('kk_dtg')->where(array('dh' => $res['dh']))->find();
+        $dtg   = M('yxtz_dtg')->where(array('dh' => $res['dh']))->find();
         $client_id = $dtg['gid'];
         $post_data = array(
             'client' => $client_id,
@@ -169,7 +170,7 @@ class KkAddMoneyQtLogic extends Model {
                                      'type'=>'number'
                                     );
         }
-        $bankinfo = M('kk_bank')->where(array('id' => $res['nbank']))->find();
+        $bankinfo = M('yxtz_bank')->where(array('id' => $res['nbank']))->find();
         $bl    = mb_strlen($bankinfo['bank_account'])-4;
         $bname = mb_substr($bankinfo['bank_account'],$bl,mb_strlen($bankinfo['bank_account']),'utf-8');
         
@@ -204,7 +205,7 @@ class KkAddMoneyQtLogic extends Model {
         return $result;
     }
     public function gethpdate($dh ){
-        $data = M('kk_cdhp')->where(array('odh' => $dh  , 'stat' => array('neq',0) ))->find();
+        $data = M('yxtz_cdhp')->where(array('odh' => $dh  , 'stat' => array('neq',0) ))->find();
         $days = (strtotime($data['dqda'])-strtotime($data['kpda']))/(3600*24);
         return $days.'天';
     }
@@ -214,13 +215,18 @@ class KkAddMoneyQtLogic extends Model {
      */
     public function getSrlx($id){
         $result = array(
-            "1" => '利息',
-            "3" => '铁渣收入',
-            "4" => '贷款',
-            "5" => '往来款',
-            "6" => '汇票托收款',
-            "7" => '其他收入',
-        );      
+            "1" => '利息收入',
+            "2" => '汇票托收款',
+            "3" => '其他收入',
+            "4" => '投资款',
+            "5" => '借支还款',
+            "6" => '代垫还款',
+            "7" => '代垫款',
+            "8" => '分红',
+            "9" => '转让股权收入',
+            "10" => '还款',
+            "11" => '租金收入',
+        );
         return $result[$id];
     }
     /**
@@ -302,9 +308,8 @@ class KkAddMoneyQtLogic extends Model {
      */
     public function getCustomerList(){
         $data = I('math');
-        $res = D('Guest')->get_kk_guest($data);
+        $res = D('Guest')->get_yxtz_guest($data);
         return $res;
-
     }
    
     /**
@@ -312,7 +317,7 @@ class KkAddMoneyQtLogic extends Model {
      */
     public function getBankInfo($id)
     {
-        $sql = "SELECT * FROM kk_bank";
+        $sql = "SELECT * FROM yxtz_bank";
         $res = M()->query($sql);
         $result = array();
        
@@ -368,7 +373,7 @@ class KkAddMoneyQtLogic extends Model {
         if($kpyh1 == '其他银行') $kpyh1 = $bank_name;
         // 将张单号一样的   置0 
         $dh = $this->makeDh();
-        M('kk_cdhp')->where(array('odh' => $dh))->setField('stat',0);
+        M('yxtz_cdhp')->where(array('odh' => $dh))->setField('stat',0);
         $hpData = array(
             'spda'     => $spdate,
             'kpda'     => $kpdate,
@@ -385,7 +390,7 @@ class KkAddMoneyQtLogic extends Model {
             'mj'       => $mj,
             'xz'       => $xz
         );
-        $res = M('kk_cdhp')   -> add($hpData);
+        $res = M('yxtz_cdhp')   -> add($hpData);
         return  array('code' => $res ?200:404,'msg' => '汇票录入失败,请联系管理员');
     }
 
@@ -425,14 +430,14 @@ class KkAddMoneyQtLogic extends Model {
             'stat'    => 2,
 		);
         
-        if(!M('kk_feeqt')->autoCheckToken($_POST)) return array('code' => 404,'msg' => '网络延迟，请勿点击提交按钮！');
-        $result = M('kk_feeqt')->add($feeData);
+        if(!M('yxtz_feeqt')->autoCheckToken($_POST)) return array('code' => 404,'msg' => '网络延迟，请勿点击提交按钮！');
+        $result = M('yxtz_feeqt')->add($feeData);
         if(!$result) return array('code' => 404,'msg' =>'提交失败，请刷新页面重新尝试！');
         // 抄送
         $copyto_id = trim($copyto_id,',');
         if (!empty($copyto_id)) {
             // 发送抄送消息
-            D('KkAppcopyto')->copyTo($copyto_id,'AddMoneyQt', $result);
+            D('KkAppcopyto')->copyTo($copyto_id,'AddMoneyQtTz', $result);
         }
         // 签收通知
         $all_arr = array();
@@ -448,7 +453,7 @@ class KkAddMoneyQtLogic extends Model {
                 'app_word'      => '',
                 'time'          => date('Y-m-d H:i',time()),
                 'approve_time'  => '0000-00-00 00:00:00',
-                'mod_name'      => 'AddMoneyQt',
+                'mod_name'      => 'AddMoneyQtTz',
                 'app_name'      => '签收',
                 'apply_user'    => '',
                 'apply_user_id' => 0, 
@@ -467,7 +472,7 @@ class KkAddMoneyQtLogic extends Model {
      */
     public function makeDh(){
         $today=date("Y-m-d",time());
-        $res = M('kk_feeqt') ->where("date_format(jl_date, '%Y-%m-%d' )='$today' ")->count();
+        $res = M('yxtz_feeqt') ->where("date_format(jl_date, '%Y-%m-%d' )='$today' ")->count();
         $str = date('Ymd',time());
         $db  = "QT{$str}";
         $num = $res+1;
@@ -481,7 +486,7 @@ class KkAddMoneyQtLogic extends Model {
      */
     public function sendMessage($apply_id,$boss){
         $system = 'kk';
-        $mod_name = 'AddMoneyQt';
+        $mod_name = 'AddMoneyQtTz';
         $logic = D(ucfirst($system).$mod_name, 'Logic');
         $res   = $logic->record($apply_id);
         $systemName = array('yxhb'=>'建材', 'yxhb'=>'环保');

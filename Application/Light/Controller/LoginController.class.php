@@ -289,6 +289,7 @@ class LoginController extends \Think\Controller {
         $mod_cname = $flowTable->getFieldByProMod($flowName, 'pro_name');
         $mod_cname = str_replace('表','',$mod_cname);
         $title = $systemName[$system].$mod_cname.'(催收)';
+        if($system == 'kk' && $flowName == 'AddMoneyQtTz') $title = '投资'.$mod_cname.'(催收)';
         $url = "http://www.fjyuanxin.com/WE/index.php?m=Light&c=Apply&a=applyInfo&system=".$system."&aid=".$id."&modname=".$flowName;
         
         $boss = D($system.'_boss');

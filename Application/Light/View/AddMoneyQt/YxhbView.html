@@ -439,7 +439,7 @@
             tmpl = tmpl.replace('#id#', id);
             tmpl = tmpl.replace('#name#', name);
             var index = 0;
-            if (department_id == 5) index = 1;
+            if (department_id == 4 || department_id == 23 ||  department_id == 24 ) index = 1;
             $selectSign.eq(index).html($(tmpl.replace('#url#', img)));
             $("#sign_id").val(ids);
             $('#signModal').modal('hide')
@@ -1228,6 +1228,7 @@
             str = str.replace(/\s+/g, "");
             if (str == 0) return tooltip('请选择财务部签收人');
 
+           
             toast.fadeIn(200);
             $.ajax({
                 type: 'POST',

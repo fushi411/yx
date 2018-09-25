@@ -190,7 +190,7 @@ class YxhbAddMoneyQtLogic extends Model {
                                      'type'=>'number'
                                     );
         $result[] = array('name'=>'收入类型：',
-                                     'value'=>$this->getSrlx($res['$nfylx']),
+                                     'value'=>$this->getSrlx($res['nfylx']),
                                      'type'=>'number'
                                     );
         $result[] = array('name'=>'申请人员：',
@@ -213,17 +213,18 @@ class YxhbAddMoneyQtLogic extends Model {
      * 收入类型获取
      */
     public function getSrlx($id){
-        $id = $id-1;
+    
         $result = array(
-            '利息收入',
-            '汇票托收款',
-            '其他收入',
-            '投资款',
-            '借支还款',
-            '代垫还款',
-            '税点',
-            '贴息收入'
+            "1" => '利息收入',  
+            "2" => '汇票托收款',  
+            "3" => '其他收入' , 
+            "4" => '投资款' , 
+            "5" => '借支还款',  
+            "6" => '代垫还款' , 
+            "7" => '税点'  ,
+            "8" => '贴息收入', 
         );
+                       
         return $result[$id];
     }
     /**

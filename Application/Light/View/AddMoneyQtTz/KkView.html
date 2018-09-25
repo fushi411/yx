@@ -70,12 +70,17 @@
             <div class="weui-cell__bd">
                 <select class="weui-select greyColor" name="type" id='srlx'>
                     <option value='-1' disabled selected style='display:none;'>请选择收入类型</option>
-                    <option value="1">利息</option>
-                    <option value="3">铁渣收入</option>
-                    <option value="4">贷款</option>
-                    <option value="5">往来款</option>
-                    <option value="6">汇票托收款</option>
-                    <option value="7">其他收入</option>
+                    <option value="1">利息收入</option>
+                    <option value="2">汇票托收款</option>
+                    <option value="3">其他收入</option>
+                    <option value="4">投资款</option>
+                    <option value="5">借支还款</option>
+                    <option value="6">代垫还款</option>
+                    <option value="7">代垫款</option>
+                    <option value="8">分红</option>
+                    <option value="9">转让股权收入</option>
+                    <option value="10">还款</option>
+                    <option value="11">租金收入</option>
                 </select>
             </div>
         </div>
@@ -301,15 +306,14 @@
                                 </div>
                                 <div class="box_div">
                                     <div class="weui-uploader__input-box" style="width: 2.5em;height: 2.5em;margin-right: 0px;margin-bottom: 0px;margin-top:10px;">
-                                        <input id="signInput" class="weui-uploader__input open_sign_model" index="25"
+                                        <input id="signInput" class="weui-uploader__input open_sign_model" index="4"
                                             type="button" name="sign" readonly />
                                         <!--data-toggle="modal" data-target="#myModal" -->
 
                                     </div>
-                                    <span style="margin-right: 6px;font-size: 14px;">财务部</span>
+                                    <span style="font-size: 14px; display: inline-block;width: 4em;">财务中心</span>
                                 </div>
                             </li>
-                            
                         </ul>
                         <input type="hidden" name="sign_id" id="sign_id" value="">
                     </div>
@@ -438,7 +442,7 @@
             tmpl = tmpl.replace('#id#', id);
             tmpl = tmpl.replace('#name#', name);
             var index = 0;
-            if (department_id == 5 || department_id == 23 ||  department_id == 24) index = 1;
+            if (department_id == 5) index = 1;
             $selectSign.eq(index).html($(tmpl.replace('#url#', img)));
             $("#sign_id").val(ids);
             $('#signModal').modal('hide')
@@ -610,11 +614,11 @@
         function getBank() {
             $.ajax({
                 type: 'POST',
-                url: "{:U('Light/Api/AddMoneyQtApi')}",
+                url: "{:U('Light/Api/AddMoneyQtTzApi')}",
                 dataType: 'json',
                 data: {
                     system: "{$system}",
-                    modname: 'AddMoneyQt',
+                    modname: 'AddMoneyQtTz',
                     action: 'getBankInfo',
                 },
                 success: function (res) {
@@ -916,9 +920,9 @@
             // formdata.append('imagefile', blob);
             formdata.append('imagefile', basestr);
             formdata.append('system', "{$system}");
-            formdata.append('modname', "AddMoneyQt");
+            formdata.append('modname', "AddMoneyQtTz");
             formdata.append('action', "hpsc");
-            u = "{:U('Light/Api/AddMoneyQtApi')}";
+            u = "{:U('Light/Api/AddMoneyQtTzApi')}";
             xhr.open('post', u);
             xhr.onreadystatechange = function () {
                 if (xhr.readyState == 4 && xhr.status == 200) {
@@ -1099,7 +1103,7 @@
             toast.fadeIn(200);
             $.ajax({
                 type: 'POST',
-                url: "{:U('Light/Api/AddMoneyQtApi')}",
+                url: "{:U('Light/Api/AddMoneyQtTzApi')}",
                 dataType: 'json',
                 data: {
                     hphm: hphm,
@@ -1115,7 +1119,7 @@
                     reason: $('#hpsm').val(),
                     imagepath: imagepath,
                     system: "{$system}",
-                    modname: 'AddMoneyQt',
+                    modname: 'AddMoneyQtTz',
                     action: 'hptj',
                     __hash__: hash
                 },
@@ -1227,11 +1231,10 @@
             str = str.replace(/\s+/g, "");
             if (str == 0) return tooltip('请选择财务部签收人');
 
-            
             toast.fadeIn(200);
             $.ajax({
                 type: 'POST',
-                url: "{:U('Light/Api/AddMoneyQtApi')}",
+                url: "{:U('Light/Api/AddMoneyQtTzApi')}",
                 dataType: 'json',
                 data: {
                     sign: ids,
@@ -1243,7 +1246,7 @@
                     datetime: datePicker.val(),
                     copyto_id: $("#copyto_id").val(),
                     system: "{$system}",
-                    modname: 'AddMoneyQt',
+                    modname: 'AddMoneyQtTz',
                     action: 'submit',
                     __hash__: hash
                 },

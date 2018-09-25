@@ -79,16 +79,13 @@ class KkSalesReceiptsApplyLogic extends Model {
                                         'color' => '#337ab7'
                                     );
         }
-        $ysye = $res['ysye'];
-        $color = 'black';
-        if($ysye <= 20000) $color = '#f12e2e';
+        
         if(!$ysye){
             list($ysye,$color) = $this->getYsye($res);
         }
-        $color = 'black';
-        if($ysye <= 20000) $color = '#f12e2e';
+
         $result['content'][] = array('name'=>'应收余额：',
-                                     'value'=> "&yen;".number_format($ysye ,2,'.',',')."元",
+                                     'value'=> $ysye ,
                                      'type'=>'date',
                                      'color' => $color
                                     );

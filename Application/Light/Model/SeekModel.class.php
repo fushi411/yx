@@ -185,6 +185,39 @@ class SeekModel extends Model {
                 'submit'     => array('name' => 'npeople','stat' => 2),
                 'copy_field' => 'kk_feexs.id as aid, kk_feexs.jl_date as date,kk_feexs.stat as state ,kk_feexs.npeople as applyer'
             ),
+            array( 
+                'title'      => '建材其他收入' , 
+                'search'     => '建材其他收入',
+                'system'     => 'kk' ,
+                'mod_name'   => 'AddMoneyQt'    ,
+                'table_name' => 'kk_feeqt'    ,
+                'id'         => 'id',
+                'stat'       => 'stat',
+                'submit'     => array('name' => 'npeople','stat' => 2),
+                'copy_field' => 'kk_feeqt.id as aid, kk_feeqt.jl_date as date,kk_feeqt.stat as state ,kk_feeqt.npeople as applyer'
+            ),
+            array( 
+                'title'      => '环保其他收入' , 
+                'search'     => '环保其他收入',
+                'system'     => 'yxhb' ,
+                'mod_name'   => 'AddMoneyQt'    ,
+                'table_name' => 'yxhb_feeqt'    ,
+                'id'         => 'id',
+                'stat'       => 'stat',
+                'submit'     => array('name' => 'npeople','stat' => 2),
+                'copy_field' => 'yxhb_feeqt.id as aid, yxhb_feeqt.jl_date as date,yxhb_feeqt.stat as state ,yxhb_feeqt.npeople as applyer'
+            ),
+            array( 
+                'title'      => '投资其他收入' , 
+                'search'     => '投资其他收入',
+                'system'     => 'kk' ,
+                'mod_name'   => 'AddMoneyQtTz'    ,
+                'table_name' => 'yxtz_feeqt'    ,
+                'id'         => 'id',
+                'stat'       => 'stat',
+                'submit'     => array('name' => 'npeople','stat' => 2),
+                'copy_field' => 'yxtz_feeqt.id as aid, yxtz_feeqt.jl_date as date,yxtz_feeqt.stat as state ,yxtz_feeqt.npeople as applyer'
+            ),
         );
       
     }

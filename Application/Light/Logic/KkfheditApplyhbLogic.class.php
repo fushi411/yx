@@ -191,6 +191,28 @@ class KkfheditApplyhbLogic extends Model {
             'xg_person'     => $res['xg_person']
         ); 
         M('yxhb_fh')->add($addData);
+        $this->AutomaticRenewalTwoMonth($id);
+    }
+
+
+    /**
+     * 发货修改后 自动续期两个月
+     * @param integer $id aid
+     */
+    private function AutomaticRenewalTwoMonth($id){
+        $res = $this->record($id);
+        $bzfs = $res['fh_bzfs'] == '编织袋'?'袋装':'散装';
+        $map = array(
+            'ht_stday' => array('elt',$res['fh_da']),
+            'ht_enday' => array('egt',$res['fh_da']),
+            'ht_stat'  => 2,
+            'ht_khmc'  => $res['fh_client'],
+            'ht_cate'  => $res['fh_cate'],
+            'ht_wlfs'  => $res['fh_wlfs'],
+            'ht_bzfs'  => $bzfs
+        );
+        $date = date('Y-m-d',strtotime('+2 month'));
+        $res = M('yxhb_ht')->where($map)->setField('ht_enday',$date);
     }
     /**
      * 记录内容
@@ -291,6 +313,7 @@ class KkfheditApplyhbLogic extends Model {
         $map  = array('id' => $id);
         $name = M('yxhb_fh')->field(true)->where($map)->find();
         $name = M('yxhb_guest2')->field('g_name')->where(array('id' => $name['fh_client']))->find();
+        if($res['xg_person']) $res['fh_kpy'] = $res['xg_person'];
         $result = array(
             'sales'   => $res['fh_kpy'],
             'title2'  => '修改名称',

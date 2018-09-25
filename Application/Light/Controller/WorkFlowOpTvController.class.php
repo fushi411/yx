@@ -160,7 +160,8 @@ class WorkFlowOpTvController extends BaseController {
         $mod_cname   = $flowTable->getFieldByProMod($mod_name, 'pro_name');
 
         $title       = '【已退审推送】';
-        $description = $systemName[$system].$mod_cname."({$apply_user}提交)\n退审意见：".$word;
+		$description = $systemName[$system].$mod_cname."({$apply_user}提交)\n退审意见：".$word;
+		if($system == 'kk' && $mod_name == 'AddMoneyQtTz') $description = '投资'.$mod_cname."({$apply_user}提交)\n退审意见：".$word;
         $url         = "http://www.fjyuanxin.com/WE/index.php?m=Light&c=Apply&a=applyInfo&system=".$system."&aid=".$id."&modname=".$mod_name;
         $WeChat      = new \Org\Util\WeChat;
 

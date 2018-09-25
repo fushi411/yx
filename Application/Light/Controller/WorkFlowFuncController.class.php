@@ -542,6 +542,23 @@ class WorkFlowFuncController extends Controller {
         $resArr = $res?array("status"=>"success"):array("status"=>"failure");
         return $resArr;
 	}
+
+	/**
+     * 环保其他收入通过后调用函数
+     * @param  [integre] $aid [记录ID]
+     * @return [array]      [状态]
+     */
+	public function KkAddMoneyQtTzEnd($aid)
+    {
+		$res = M('yxtz_feeqt')->where(array('stat'=>2, 'id'=>$aid))->setField('stat', 1);
+		// ->承兑汇票
+		$data = D('KkAddMoneyQtTz','Logic')->record($aid);
+		if($data['nfkfs'] == 3){
+			M('yxtz_cdhp')->where(array('stat'=>3, 'odh'=>$data['dh']))->setField('stat', 1);
+		}
+        $resArr = $res?array("status"=>"success"):array("status"=>"failure");
+        return $resArr;
+	}
 	
 // -----END------
 }

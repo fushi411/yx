@@ -166,4 +166,14 @@ class ApiController extends BaseController {
         $this->ajaxReturn($res);
     }
 
+    // 投资其他收入
+    public function AddMoneyQtTzApi(){
+        $system = I('system');
+        $mod    = I('modname');
+        $action = I('action');
+        $logic = D(ucfirst($system).$mod ,'Logic');
+        $res = $logic->$action();
+        $this->ajaxReturn($res);
+    }
+
 }

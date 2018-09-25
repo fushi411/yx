@@ -412,6 +412,7 @@ class ApplyController extends BaseController {
 
         $title       = '【已撤销推送】';
         $description = $systemName[$system].$mod_cname."({$apply_user}提交)\n撤销理由：".$reason;
+        if($system == 'kk' && $mod_name == 'AddMoneyQtTz') $description = '投资'.$mod_cname."({$apply_user}提交)\n撤销理由：".$reason;
         $url         = "http://www.fjyuanxin.com/WE/index.php?m=Light&c=Apply&a=applyInfo&system=".$system."&aid=".$id."&modname=".$mod_name;
         $WeChat      = new \Org\Util\WeChat;
         $WeChat->sendCardMessage($temrecevier,$title,$description,$url,15,$mod_name,$system);

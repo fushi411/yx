@@ -106,6 +106,7 @@ class KkAppcopytoModel extends Model {
         $mod_cname = $flowTable->getFieldByProMod($mod_name, 'pro_name');
         $system_msg = '建材';
         if( $mod_name == 'fh_edit_Apply_hb' ) $system_msg = '环保';
+        if( $mod_name == 'AddMoneyQtTz' ) $system_msg = '投资';
         $title = $system_msg.str_replace('表','',$mod_cname);
         $copy_man = session('name');
         $WeChat = new \Org\Util\WeChat;

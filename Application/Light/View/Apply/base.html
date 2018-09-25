@@ -906,7 +906,7 @@
     // Confirm dialog
     function dialog_urge_confirm() {
         var $reason = $('#urge_reason').val();
-        if($reason.length <=5) return $('#urge_cue').text('催审理由至少5个字');
+        if($reason.length <5) return $('#urge_cue').text('催审理由至少5个字');
         $("#iosDialog_urge").fadeOut(100);
         var aid = $('#comment_content').attr('data-aid');
         var $dtoast = $('#doingToast');
@@ -1429,7 +1429,7 @@
     // Confirm dialog
     function dialog_delete_confirm() {
         var $reason = $('#delete_reason').val();
-        if($reason.length <=5) return $('#delete_cue').text('撤销理由至少5个字');
+        if($reason.length <5) return $('#delete_cue').text('撤销理由至少5个字');
         $("#iosDialog_delete").fadeOut(100);
         var id = {$aid};
         var $dtoast = $('#doingToast');
