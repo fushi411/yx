@@ -57,8 +57,9 @@
                             border-bottom: none;border-left: 1px solid #333;border-color: #333;">
                                 <div>库号</div>
                             </th>
-                            <th style="padding-left: 99.9px;padding-top: 25px;border-bottom: 1px solid #333;border-color: #333;" rowspan="2" colspan="2">本日账面{$content.data.date.0}时</th>
-
+                            <th style="padding-left: 99.9px;border-bottom: 1px solid #333;border-color: #333;vertical-align: middle;" rowspan="2" colspan="2">上日进库</th>
+                            <th style="border-bottom: 1px solid #333;border-color: #333;vertical-align: middle;" rowspan="2" colspan="2">上日销售</th>
+                            <th style="border-bottom: 1px solid #333;border-color: #333;vertical-align: middle;" rowspan="2" colspan="2">本日账面{$content.data.date.0}时</th>
                             <th style="border-bottom: 1px solid #333;border-color: #333;" colspan="2">本日量库{$content.data.date.0}时</th>
                             <th style="border-bottom: 1px solid #333;border-color: #333;" colspan="2">上次量库{$content.data.date.1}时</th>
                         </tr>
@@ -83,9 +84,13 @@
                                             <td style="position: absolute; left: 15px; width: 89.2px; background-color: white;
                                             border-bottom: 1px solid #333;border-left: 1px solid #333; border-color: #333; font-weight: 600;">{$val['0']}</td>
                                             <if condition="$key lt 6">
-                                                    <td style="padding-left: 99.9px;border-color: #333;border-bottom: 1px solid #333;" colspan="2">{$content.data.zm.$key.1}</td>
+                                                    <td style="padding-left: 99.9px;border-color: #333;border-bottom: 1px solid #333;" colspan="2">{$content.data.zm.$key.2}</td>
+                                                    <td style="border: 1px solid #333;" colspan="2">{$content.data.zm.$key.3}</td>
+                                                    <td style="border: 1px solid #333;" colspan="2">{$content.data.zm.$key.1}</td>
                                                 <else/>
-                                                <td style="padding-left: 99.9px;border-color: #333;border-bottom: 1px solid #333;font-weight: 600;" colspan="2">{$content.data.zm.$key.1}</td>
+                                                <td style="padding-left: 99.9px;border-color: #333;border-bottom: 1px solid #333;font-weight: 600;" colspan="2">{$content.data.zm.$key.2}</td>
+                                                <td style="border-color: #333;border: 1px solid #333;font-weight: 600;" colspan="2">{$content.data.zm.$key.3}</td>
+                                                <td style="border-color: #333;border: 1px solid #333;font-weight: 600;" colspan="2">{$content.data.zm.$key.1}</td>
                                             </if>
                                             
                                             <if condition="$key lt 6">

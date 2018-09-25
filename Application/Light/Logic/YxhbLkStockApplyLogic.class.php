@@ -87,12 +87,44 @@ class YxhbLkStockApplyLogic extends Model {
         $lk_data        = $this->lk_data($data['lk']);
         $data['lk']     = $lk_data;
         $data['date']   = array($res['time'],$lkdata['lk'][1]['time']);
-        //$data['zm_yestoday'][] = $this->get_yestoday($id);
+        $data['zm_yestoday'][] = $this->get_yestoday($id);
         $data['zm']     = $this->zm_data($data['zm'],$data['zm_yestoday'],$res['date']);
-        
         return $data;
     }
 
+      /**
+     * 表格显示信息处理
+     */
+    public function deal_data($id){
+        $res = $this->record($id);
+        // 账面库存 有 -> 存，没有 -> 获取
+        if(!$res['zm']){
+            $time = strtotime($res['date'])+$res['time']*3600;
+            $auth = data_auth_sign($time);
+            $url  = "http://www.fjyuanxin.com/sngl/kf_stock_send_api.php?time={$time}&auth={$auth}";
+            $post_data = array();
+            $data = send_post($url,$post_data);
+            $this->where(array('id'=> $id))->setField('zm',json_encode($data));
+        }else{
+            $data = json_decode($res['zm'],true);
+        }
+        
+        $lkdata = D('OtherMysql')->getlkkc($res['date']);
+        
+        $data = array_merge($data,$lkdata);
+        $data['lk'][0][0][0] = $res['one_height'];
+        $data['lk'][0][1][0] = $res['two_height'];
+        $data['lk'][0][2][0] = $res['three_height'];
+        $data['lk'][0][3][0] = $res['four_height'];
+        $data['lk'][0][4][0] = $res['five_height'];
+        $data['lk'][0][5][0] = $res['six_height'];
+        $lk_data        = $this->lk_data($data['lk']);
+        $data['lk']     = $lk_data;
+        $data['date']   = array($res['time'],$lkdata['lk'][1]['time']);
+        $data['zm_yestoday'][] = $this->get_yestoday($id);
+        $data['zm']     = $this->zm_data($data['zm'],$data['zm_yestoday'],$res['date']);
+        dump( $data);
+    }
     /**
      * 账面数据处理
      */
