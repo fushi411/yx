@@ -463,7 +463,9 @@
                            ' <th style="position: absolute; left: 15px; background-color: white; width: 89.2px;height: 76px; z-index: 99;padding: 25px;border-bottom: none;border-left: 1px solid #333;border-color: #333;">'+
                                 '<div>库号</div>'+
                             '</th>'+
-                            '<th style="padding-left: 99.9px;padding-top: 25px;border-bottom: 1px solid #333;border-color: #333;" rowspan="2" colspan="2">本日账面'+tableinfo.date[0]+'时</th>'+
+                            '<th style="padding-left: 99.9px;border-bottom: 1px solid #333;border-color: #333;vertical-align: middle;" rowspan="2" colspan="2">上日进库</th>'+
+                            '<th style="border-bottom: 1px solid #333;border-color: #333;vertical-align: middle;" rowspan="2" colspan="2">上日销售</th>'+
+                            '<th style="border-bottom: 1px solid #333;border-color: #333;vertical-align: middle;" rowspan="2" colspan="2">本日账面'+tableinfo.date[0]+'时</th>'+
                             '<th style="border-bottom: 1px solid #333;border-color: #333;" colspan="2">本日量库'+tableinfo.date[0]+'时</th>'+
                             '<th style="border-bottom: 1px solid #333;border-color: #333;" colspan="2">上次量库'+tableinfo.date[1]+'时</th>'+
                         '</tr>'+
@@ -485,9 +487,13 @@
                     }
                         html += ' <td style="position: absolute; left: 15px; width: 89.2px; background-color: white;border-bottom: 1px solid #333;border-left: 1px solid #333; border-color: #333; font-weight: 600;">'+tableinfo.lk[k][0]+'</td>';
                     if(k < 6){
-                        html += ' <td style="padding-left: 99.9px;border-color: #333;border-bottom: 1px solid #333;" colspan="2">'+tableinfo.zm[k][1]+'</td>';
+                        html += ' <td style="padding-left: 99.9px;border-color: #333;border-bottom: 1px solid #333;" colspan="2">'+tableinfo.zm[k][2]+'</td>';
+                        html += ' <td style="border: 1px solid #333;" colspan="2">'+tableinfo.zm[k][3]+'</td>';
+                        html += ' <td style="border: 1px solid #333;" colspan="2">'+tableinfo.zm[k][1]+'</td>';
                     }else{
-                        html += '<td style="padding-left: 99.9px;border-color: #333;border-bottom: 1px solid #333;font-weight: 600;" colspan="2">'+tableinfo.zm[k][1]+'</td>';
+                        html += '<td style="padding-left: 99.9px;border-color: #333;border-bottom: 1px solid #333;font-weight: 600;" colspan="2">'+tableinfo.zm[k][2]+'</td>';
+                        html += '<td style="border-color: #333;border: 1px solid #333;font-weight: 600;" colspan="2">'+tableinfo.zm[k][3]+'</td>';
+                        html += '<td style="border-color: #333;border: 1px solid #333;font-weight: 600;" colspan="2">'+tableinfo.zm[k][1]+'</td>';
                     }
                               
                     if(k < 6){

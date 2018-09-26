@@ -92,39 +92,6 @@ class YxhbLkStockApplyLogic extends Model {
         return $data;
     }
 
-      /**
-     * 表格显示信息处理
-     */
-    public function deal_data($id){
-        $res = $this->record($id);
-        // 账面库存 有 -> 存，没有 -> 获取
-        if(!$res['zm']){
-            $time = strtotime($res['date'])+$res['time']*3600;
-            $auth = data_auth_sign($time);
-            $url  = "http://www.fjyuanxin.com/sngl/kf_stock_send_api.php?time={$time}&auth={$auth}";
-            $post_data = array();
-            $data = send_post($url,$post_data);
-            $this->where(array('id'=> $id))->setField('zm',json_encode($data));
-        }else{
-            $data = json_decode($res['zm'],true);
-        }
-        
-        $lkdata = D('OtherMysql')->getlkkc($res['date']);
-        
-        $data = array_merge($data,$lkdata);
-        $data['lk'][0][0][0] = $res['one_height'];
-        $data['lk'][0][1][0] = $res['two_height'];
-        $data['lk'][0][2][0] = $res['three_height'];
-        $data['lk'][0][3][0] = $res['four_height'];
-        $data['lk'][0][4][0] = $res['five_height'];
-        $data['lk'][0][5][0] = $res['six_height'];
-        $lk_data        = $this->lk_data($data['lk']);
-        $data['lk']     = $lk_data;
-        $data['date']   = array($res['time'],$lkdata['lk'][1]['time']);
-        $data['zm_yestoday'][] = $this->get_yestoday($id);
-        $data['zm']     = $this->zm_data($data['zm'],$data['zm_yestoday'],$res['date']);
-        dump( $data);
-    }
     /**
      * 账面数据处理
      */
@@ -166,13 +133,18 @@ class YxhbLkStockApplyLogic extends Model {
         }
         
         $result[] =array(
-            '粗灰总',round($data_1[0],2) 
+            '粗灰总',round($data_1[0],2),round($data_2[0]['zm']['sc'][0],2),round($data_2[0]['zm']['xs'][0],2)
         );
         $result[] =array(
-            'S95总',round($data_1[1],2) 
+            'S95总',round($data_1[1],2),
+            round($data_2[0]['zm']['sc'][1] + $data_2[0]['zm']['sc'][4],2),
+            round($data_2[0]['zm']['xs'][1] + $data_2[0]['zm']['xs'][4],2),
         );
         $result[] =array(
-            'F85总',round($data_1[2]+$data_1[3]+$data_1[4]+$data_1[5]+$data_1[6],2) 
+            'F85总',round($data_1[2]+$data_1[3]+$data_1[4]+$data_1[5]+$data_1[6],2) ,
+             
+             round($data_2[0]['zm']['sc'][2] + $data_2[0]['zm']['sc'][3] + $data_2[0]['zm']['sc'][5],2),
+             round($data_2[0]['zm']['xs'][2] + $data_2[0]['zm']['xs'][3] + $data_2[0]['zm']['xs'][5],2),
         );
         $temp =array(
             '合计',round($total_1,2) ,round($total_2,2) ,round($total_3,2) ,round($total_4,2)
@@ -259,7 +231,7 @@ class YxhbLkStockApplyLogic extends Model {
         //$datetime    = '2018-08-13 07:00';
         $res['date'] = date('Y-m-d',strtotime($datetime));
         $res['time'] = date('H',strtotime($datetime));
-        if(date('H',time())< $res['time']) return array('code' => 404,'msg' => '不能提前提交' );
+        // if(date('H',time())< $res['time']) return array('code' => 404,'msg' => '不能提前提交' );
         $time = strtotime($res['date']);
         $auth = data_auth_sign($time);
         $url  = "http://www.fjyuanxin.com/sngl/kf_stock_send_api.php?time={$time}&auth={$auth}";
@@ -273,20 +245,23 @@ class YxhbLkStockApplyLogic extends Model {
         $lk_data        = $this->lk_data($data['lk']);
         $data['lk']     = $lk_data;
         $data['date']   = array($res['time'],$lkdata['lk'][1]['time']);
-        
+        $data['zm_yestoday'][] = $this->get_yestoday(1,$datetime);
         $data['zm']     = $this->zm_data($data['zm'],$data['zm_yestoday'],$res['date']);
         
         return array('code' => 200,'msg' => '请求成功' , 'data' => $data );
     }
+
+
     /**
      * 获取上一日的销售 入库 出库
      */
-    public function get_yestoday($id){
+    public function get_yestoday($id,$paramDate){
         $yestoday = array();
         $res      = $this->record($id);
+        if($paramDate) $res['date'] = $paramDate;
         $yes      = date('Y-m-d',strtotime($res['date'])-24*3600);
         $year     = date('Y-m',strtotime($res['date'])-24*3600);
-        list($qckc_1,$qckc_2,$qckc_3,$qckc_4,$qckc_5,$qckc_6,$qckc_S95,$qckc_F75) = $yestoday['zm']['kc'] = $this-> getkc($id);
+        list($qckc_1,$qckc_2,$qckc_3,$qckc_4,$qckc_5,$qckc_6,$qckc_S95,$qckc_F75) = $yestoday['zm']['kc'] = $this-> getkc($id,$paramDate);
         $flag    = 0;
         $query   = "select date from (select date_format(fh_da,'%Y-%m-%d') as date from yxhb_fh where date_format(fh_da,'%Y-%m')='$year' and fh_stat='1' GROUP BY date_format(fh_da,'%Y-%m-%d') union select date_format(sc_date,'%Y-%m-%d') as date from yxhb_product_daily_report where date_format(sc_date,'%Y-%m')='$year' GROUP BY date_format(sc_date,'%Y-%m-%d')) as t order by date";
         $dateArr = M()->query($query);
@@ -411,9 +386,9 @@ class YxhbLkStockApplyLogic extends Model {
     /**
      * 获取库存  ** 代码看瞎
      */ 
-    public function getkc($id){
+    public function getkc($id,$paramDate){
         $res   = $this->record($id);
-
+        if($paramDate) $res['date'] = $paramDate;
         $year  = date("Y-m",strtotime($res['date']));
         $year1=date("Y-m",strtotime("-1 month",strtotime($year)));
         //期初库存和盘点数计算
