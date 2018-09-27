@@ -433,7 +433,7 @@ class KkSalesReceiptsApplyLogic extends Model {
         if(!$fkfs)     return  array('code' => 404,'msg' => '请选择收款方式');
         if(!$user)  return  array('code' => 404,'msg' => '请选择收款单位');
         if(!$bank) return  array('code' => 404,'msg' => '请选择收款银行');
-        if(!$money || $money<0) return  array('code' => 404,'msg' => '收款金额不能为空或小于零');
+        if(!$money ) return  array('code' => 404,'msg' => '收款金额不能为空');
         $ysye = I('post.ysye');
         $ysye = str_replace(',','',$ysye);
         $ysye = str_replace('¥','',$ysye);

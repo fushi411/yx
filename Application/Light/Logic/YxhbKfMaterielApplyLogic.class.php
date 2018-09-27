@@ -42,11 +42,7 @@ class YxhbKfMaterielApplyLogic extends Model {
                                      'type'=>'date',
                                      'color' => 'black'
                                     );
-        $result['content'][] = array('name'=>'申请日期：',
-                                     'value'=> date('Y-m-d',strtotime($res['sb_date'])),
-                                     'type'=>'date',
-                                     'color' => 'black'
-                                    );
+ 
         $result['content'][] = array('name'=>'生产时间：',
                                      'value'=> $res['pruduct_date'],
                                      'type'=>'date',
@@ -83,7 +79,7 @@ class YxhbKfMaterielApplyLogic extends Model {
                                      'color' => 'black'
                                     );    
         $result['content'][] = array('name'=>'申请理由：',
-                                     'value'=>$res['info'],
+                                     'value'=>$res['info']?$res['info']:'无',
                                      'type'=>'text',
                                      'color' => 'black'
                                     );
@@ -137,8 +133,8 @@ class YxhbKfMaterielApplyLogic extends Model {
                                      'value'=> date('m-d H:i',strtotime($res['sb_date'])),
                                      'type'=>'date'
                                     );
-        $result[] = array('name'=>'申请日期：',
-                                     'value'=>date('Y-m-d',strtotime($res['sb_date'])),
+        $result[] = array('name'=>'生产时间：',
+                                     'value'=>date('Y-m-d',strtotime($res['pruduct_date'])),
                                      'type'=>'date'
                                     );
     
@@ -163,7 +159,7 @@ class YxhbKfMaterielApplyLogic extends Model {
                                      'type'=>'string'
                                     );
         $result[] = array('name'=>'申请理由：',
-                                     'value'=>$res['info'],
+                                     'value'=>$res['info']?$res['info']:'无',
                                      'type'=>'text'
                                     );
         return $result;
@@ -206,7 +202,6 @@ class YxhbKfMaterielApplyLogic extends Model {
      */
     public function submit(){
         $user  = session('name');
-
         $pdate = I('post.time');
         $select= I('post.select');
         $kh    = I('post.kh');
@@ -224,7 +219,7 @@ class YxhbKfMaterielApplyLogic extends Model {
             'ku'            => $kh.'#',
             'product'       => $select['product'],
             'tjr'           => $user,
-            'sb_date'       => date('Y-m-d H:i:s',time()),
+            'sb_date'       => date('Y-m-d H:i:s',strtotime($pdate)),
             'data'          => json_encode($sb),
             'info'          => $notice,
             'stat'          => 2,
@@ -254,19 +249,20 @@ class YxhbKfMaterielApplyLogic extends Model {
      * select id,date,scx,scale,out_scale from yxhb_assay WHERE scx='B#生产线' and state=1 ORDER BY date desc LIMIT 1
      */
     public function getRatio(){
-        $result = array();
-        $map = array(
-            'scx'   => 'A#生产线',
-            'state' => 1
-        );
-        $res   = M('yxhb_assay')->where($map)->order('cretime desc')->find();
-        $result[] = $res;
-        $map = array(
-            'scx'   => 'B#生产线',
-            'state' => 1
-        );
-        $res   = M('yxhb_assay')->where($map)->order('cretime desc')->find();
-        $result[] = $res;
+        // $result = array();
+        // $map = array(
+        //     'scx'   => 'A#生产线',
+        //     'state' => 1
+        // );
+        // $res   = M('yxhb_assay')->where($map)->order('cretime desc')->find();
+        // $result[] = $res;
+        // $map = array(
+        //     'scx'   => 'B#生产线',
+        //     'state' => 1
+        // );
+        //$res   = M('yxhb_assay')->where($map)->order('cretime desc')->find();
+        //$result[] = $res;
+        $result = M('yxhb_assay')->where(array('state' => 1 , 'date' => array('egt','2018-08-01' )))->order('cretime desc')->select();
         $res = array();
         foreach($result as $val){
             $name = array_merge( $this->getType($val['scale']),$this->getType($val['out_scale']));

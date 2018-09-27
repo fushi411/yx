@@ -1329,7 +1329,7 @@
             if (!user_id) return tooltip('请选择收款单位');
             if (fkfs == -1 || !fkfs) return tooltip('请选择收款方式');
             if (bank == -1 || !bank) return tooltip('请选择收款银行');
-            if (!money || money < 0) return tooltip('收款金额不能为空或小于零');
+            if (!money ) return tooltip('收款金额不能为空或小于零');
             // 留言判断
             var reason = $('#reason').val(),
                 ids = $("#sign_id").val() + ",",
