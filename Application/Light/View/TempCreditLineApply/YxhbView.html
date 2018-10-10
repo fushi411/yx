@@ -146,23 +146,25 @@ rows="7"></textarea>
             $('#detail').html(html);
         }
         var val = $(this).val(),html = '';
-         if(val !=0) {
-            if(appflow.length<val && val==2) val=appflow.length;
-            html = app_proHtml(val);
-            $('#app_pro .wk-select__user').eq(0).toggle();
-         }
+         
+        // if(appflow.length<val && val==2) val=appflow.length;
+        html = app_proHtml(val);
+        $('#app_pro .wk-select__user').eq(0).toggle();
+         
         app_pro.html(html);
     });
 
     // 审批流程显示
     function app_proHtml(val){
         var html = '';
-        for(i=0;i<val;i++){
+        
+        for(i=0;i<=val;i++){
+            
             html += "<li class='weui-uploader__file wk-select__user' id='"+appflow[i]['id']+"' style='height:90px;";        
             if(i != 0) html+= "margin-left:8px";
             html += "'><img src='"+appflow[i]['avatar']+"' class='weui-selet__user' style='margin-bottom: 0px;margin-right: 6px;margin-top:10px;'>"+
                              "<span style='margin-right: 6px;font-size: 14px;'>"+appflow[i]['name']+"</span>";
-            if(val == 2 && i<val-1){
+            if(i<=val-1){
                 html+="<span class='glyphicon glyphicon-arrow-right' style='position: relative;top: -2.8em;right: -1.8em;'></span>";
             }                    
             html +=  "</li>";

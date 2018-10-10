@@ -175,5 +175,14 @@ class ApiController extends BaseController {
         $res = $logic->$action();
         $this->ajaxReturn($res);
     }
+    // 费用用款
+    public function CostMoneyApi(){
+        $system = I('system');
+        $mod    = I('modname');
+        $action = I('action');
+        $logic = D(ucfirst($system).$mod ,'Logic');
+        $res = $logic->$action();
+        $this->ajaxReturn($res);
+    }
 
 }

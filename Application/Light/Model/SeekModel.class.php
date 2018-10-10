@@ -112,6 +112,17 @@ class SeekModel extends Model {
                 'submit'     => array('name' => 'tjr','stat' => 2),
                 'copy_field' => 'yxhb_materiel.id as aid,yxhb_materiel.tjr as applyer,yxhb_materiel.sb_date,yxhb_materiel.ku as approve,yxhb_materiel.info as notice,yxhb_materiel.stat'
             ),
+            array(
+                'title'      => '建材费用开支' , 
+                'search'     => '费用开支',
+                'system'     => 'kk' ,
+                'mod_name'   => 'CostMoney',
+                'table_name' => 'kk_feefy',
+                'id'         => 'id' ,
+                'stat'       => 'stat',
+                'submit'     => array('name' => 'npeople','stat' => 5),
+                'copy_field' => 'kk_feefy.id as aid,kk_feefy.npeople as applyer,kk_feefy.jl_date,kk_feefy.nmoney as approve,kk_feefy.ntext as notice,kk_feefy.stat'
+            ),
 
         );
         return $appArr;

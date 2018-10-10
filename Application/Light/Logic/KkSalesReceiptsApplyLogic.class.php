@@ -80,12 +80,10 @@ class KkSalesReceiptsApplyLogic extends Model {
                                     );
         }
         
-        if(!$ysye){
-            list($ysye,$color) = $this->getYsye($res);
-        }
-
+        
+        list($ysye,$color) = $this->getYsye($res);
         $result['content'][] = array('name'=>'应收余额：',
-                                     'value'=> $ysye ,
+                                     'value'=>$ysye ,
                                      'type'=>'date',
                                      'color' => $color
                                     );
@@ -217,8 +215,9 @@ class KkSalesReceiptsApplyLogic extends Model {
                                      'type'=>'number'
                                     );
         }
+        list($ysye,$color) = $this->getYsye($res);
         $result[] = array('name'=>'应收余额：',
-                                     'value'=>number_format($res['ysye'],2,'.',',')."元",
+                                     'value'=>str_replace('&yen;','',$ysye) ,
                                      'type'=>'number'
                                     );
         $result[] = array('name'=>'申请人员：',

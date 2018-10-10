@@ -100,12 +100,13 @@ class KkAppflowprocModel extends Model {
     }
 
     // 审批记录保存
-    public function updateProc($rid, $option, $word)
+    public function updateProc($rid, $option, $word,$img)
     {
         $map['id'] = $rid;
         $map['app_stat'] = 0;
         $data['app_stat'] = $option;
         $data['app_word'] = $word;
+        $data['sign'] = $img;
         $data['approve_time'] = date('Y-m-d H:i:s');
         return $this->where($map)->save($data);
     }
@@ -116,7 +117,7 @@ class KkAppflowprocModel extends Model {
         $map['mod_name'] = $mod_name;
         $map['aid'] = $aid;
         $map['app_stat'] = array('neq', 1);
-        $data['approve_time'] = date('Y-m-d H:i:s');
+        //$data['approve_time'] = date('Y-m-d H:i:s');
         return $this->where($map)->save($data);
     }
 

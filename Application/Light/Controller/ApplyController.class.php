@@ -26,7 +26,7 @@ class ApplyController extends BaseController {
         $this->assign('applyerID', $res['applyerID']);
         $this->assign('stat', $res['stat']);
         $this->assign('mydata', $res['mydata']);
-        
+        $this->assign('imgsrc', $res['imgsrc']);
         // 是否签收
         $qsRes =  M($system.'_appflowtable')->field('pro_mod')->where(array('stage_name' => '签收'))->select();
         $qsArr = array();
@@ -493,6 +493,54 @@ class ApplyController extends BaseController {
         $this->ajaxReturn($res);
     }
     
+    /*
+    * 评论时多图上传
+    */
+    public function upImage() {
+        $uploader = new \Think\Upload\Driver\Local;
+        if(!$uploader){
+            E("不存在上传驱动");
+        }
+        // 生成子目录名
+        $savePath = date('Y-m-d')."/";
+
+        // 生成文件名
+        $img_str = I('post.img');
+        $img_header = substr($img_str, 0, 23);
+        // echo $img_header;exit();
+        if (strpos($img_header, 'png')) {
+            $output_file = uniqid('comment_').'_'.$order.'.png';
+        }else{
+            $output_file = uniqid('comment_').'_'.$order.'.jpg';
+        }
+        //  $base_img是获取到前端传递的src里面的值，也就是我们的数据流文件
+        $base_img = I('post.img');
+        if (strpos($img_header, 'png')) {
+            $base_img = str_replace('data:image/png;base64,', '', $base_img);
+        }else{
+            $base_img = str_replace('data:image/jpeg;base64,', '', $base_img);
+        }
+
+        //  设置文件路径和文件前缀名称
+        $rootPath = "/www/web/default/WE/Public/upload/sign/";
+        /* 检测上传根目录 */
+        if(!$uploader->checkRootPath($rootPath)){
+            $error = $uploader->getError();
+            return false;
+        }
+        /* 检查上传目录 */
+        if(!$uploader->checkSavePath($savePath)){
+            $error = $uploader->getError();
+            return false;
+        }
+        $path = $rootPath.$savePath.$output_file;
+        //  创建将数据流文件写入我们创建的文件内容中
+        file_put_contents($path, base64_decode($base_img));
+        $val['path'] = $path;
+        $val['output_file'] = $savePath.$output_file;
+        $this->ajaxReturn( array('code' => 200,'data' => $val));
+    }
+
     public function ReDescription($data){
         $description = '';
         foreach($data as $k =>$v){

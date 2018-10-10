@@ -5,10 +5,9 @@
                                 <!-- 2W额度显示 -->
                                
                                 <if condition="$content['7']['value'] eq '&yen;20,000.00元'">
-                                    <li >
-                                        <h4 class="weui-media-box__title" style="/*font-weight: 800;*/margin-top: 0px;margin-bottom: 5px;color:grey;">
-                                            无审批人
-                                        </h4>
+                                    <li class='weui-uploader__file wk-select__user' id='{$first.id}' style='height:90px;'>
+                                        <img src={$first.avatar} class='weui-selet__user' style='margin-bottom: 0px;margin-right: 6px;margin-top:10px;'>
+                                        <span style='margin-right: 6px;font-size: 14px;'>{$first.realname}</span>
                                     </li>
                                 </if>
                                 <!-- 2W额度显示 end -->

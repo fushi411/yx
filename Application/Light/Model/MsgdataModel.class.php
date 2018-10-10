@@ -210,18 +210,18 @@ class MsgdataModel extends Model {
             $result['kkSalesReceiptsApply'] = array(
                 'process' => U('Light/Process/ApplyProcess',array('modname'=>'SalesReceiptsApply','system' => 'kk')),
                 'info'    => U('Light/Apply/applyInfo',array('modname'=>'SalesReceiptsApply','system'=>'kk')),
-                'fiexd_copy_id' => 'xly',
-                'copydata' => array(
-                    array('name' =>'许丽颖','url' => 'http://shp.qpic.cn/bizmp/nFsVdIIiaLZsmAv2LEDiaFwmzW1KMfkUIA3IW1c9PibAfaPCICgibpibQNA/'),
-                )
+                // 'fiexd_copy_id' => 'xly',
+                // 'copydata' => array(
+                //     array('name' =>'许丽颖','url' => 'http://shp.qpic.cn/bizmp/nFsVdIIiaLZsmAv2LEDiaFwmzW1KMfkUIA3IW1c9PibAfaPCICgibpibQNA/'),
+                // )
             );  
             $result['yxhbSalesReceiptsApply'] = array(
                 'process' => U('Light/Process/ApplyProcess',array('modname'=>'SalesReceiptsApply','system' => 'yxhb')),
                 'info'    => U('Light/Apply/applyInfo',array('modname'=>'SalesReceiptsApply','system'=>'yxhb')),
-                'fiexd_copy_id' => 'xly',
-                'copydata' => array(
-                    array('name' =>'许丽颖','url' => 'http://shp.qpic.cn/bizmp/nFsVdIIiaLZsmAv2LEDiaFwmzW1KMfkUIA3IW1c9PibAfaPCICgibpibQNA/'),
-                )
+                // 'fiexd_copy_id' => 'xly',
+                // 'copydata' => array(
+                //     array('name' =>'许丽颖','url' => 'http://shp.qpic.cn/bizmp/nFsVdIIiaLZsmAv2LEDiaFwmzW1KMfkUIA3IW1c9PibAfaPCICgibpibQNA/'),
+                // )
             );    
             return $result;   
         }
@@ -325,27 +325,46 @@ class MsgdataModel extends Model {
         return $result;   
     }
 
-        // 其他收入
-        public function AddMoneyQtTz(){
-            $result = array();
-            $result['url'] = array(
-                array('name' => '环保其他收入','url' => U('Light/View/View',array('modname'=>'AddMoneyQt','system' => 'yxhb')),'modname' => 'yxhbAddMoneyQt'),
-                array('name' => '建材其他收入','url' => U('Light/View/View',array('modname'=>'AddMoneyQt','system' => 'kk')),'modname' => 'kkAddMoneyQt'),
-                array('name' => '投资其他收入','url' => U('Light/View/View',array('modname'=>'AddMoneyQtTz','system' => 'kk')),'modname' => 'kkAddMoneyQtTz'),
-            );
-       
-            $result['yxhbAddMoneyQt'] = array(
-                'process' => U('Light/Process/ApplyProcess',array('modname'=>'AddMoneyQt','system' => 'yxhb')),
-                'info'    => U('Light/Apply/applyInfo',array('modname'=>'AddMoneyQt','system'=>'yxhb'))
-            );   
-            $result['kkAddMoneyQt'] = array(
-                'process' => U('Light/Process/ApplyProcess',array('modname'=>'AddMoneyQt','system' => 'kk')),
-                'info'    => U('Light/Apply/applyInfo',array('modname'=>'AddMoneyQt','system'=>'kk'))
-            ); 
-            $result['kkAddMoneyQtTz'] = array(
-                'process' => U('Light/Process/ApplyProcess',array('modname'=>'AddMoneyQtTz','system' => 'kk')),
-                'info'    => U('Light/Apply/applyInfo',array('modname'=>'AddMoneyQtTz','system'=>'kk'))
-            ); 
-            return $result;   
-        }
+    // 其他收入
+    public function AddMoneyQtTz(){
+        $result = array();
+        $result['url'] = array(
+            array('name' => '环保其他收入','url' => U('Light/View/View',array('modname'=>'AddMoneyQt','system' => 'yxhb')),'modname' => 'yxhbAddMoneyQt'),
+            array('name' => '建材其他收入','url' => U('Light/View/View',array('modname'=>'AddMoneyQt','system' => 'kk')),'modname' => 'kkAddMoneyQt'),
+            array('name' => '投资其他收入','url' => U('Light/View/View',array('modname'=>'AddMoneyQtTz','system' => 'kk')),'modname' => 'kkAddMoneyQtTz'),
+        );
+    
+        $result['yxhbAddMoneyQt'] = array(
+            'process' => U('Light/Process/ApplyProcess',array('modname'=>'AddMoneyQt','system' => 'yxhb')),
+            'info'    => U('Light/Apply/applyInfo',array('modname'=>'AddMoneyQt','system'=>'yxhb'))
+        );   
+        $result['kkAddMoneyQt'] = array(
+            'process' => U('Light/Process/ApplyProcess',array('modname'=>'AddMoneyQt','system' => 'kk')),
+            'info'    => U('Light/Apply/applyInfo',array('modname'=>'AddMoneyQt','system'=>'kk'))
+        ); 
+        $result['kkAddMoneyQtTz'] = array(
+            'process' => U('Light/Process/ApplyProcess',array('modname'=>'AddMoneyQtTz','system' => 'kk')),
+            'info'    => U('Light/Apply/applyInfo',array('modname'=>'AddMoneyQtTz','system'=>'kk'))
+        ); 
+        return $result;   
+    }
+
+    // 费用用款
+    public function CostMoney(){
+        $result = array();
+        $result['url'] = array(
+            //array('name' => '环保用款费用','url' => U('Light/View/View',array('modname'=>'CostMoney','system' => 'yxhb')),'modname' => 'yxhbCostMoney'),
+            array('name' => '建材用款费用','url' => U('Light/View/View',array('modname'=>'CostMoney','system' => 'kk')),'modname' => 'kkCostMoney'),
+        );
+   
+        $result['yxhbCostMoney'] = array(
+            'process' => U('Light/Process/ApplyProcess',array('modname'=>'CostMoney','system' => 'yxhb')),
+            'info'    => U('Light/Apply/applyInfo',array('modname'=>'CostMoney','system'=>'yxhb'))
+        );   
+        $result['kkCostMoney'] = array(
+            'process' => U('Light/Process/ApplyProcess',array('modname'=>'CostMoney','system' => 'kk')),
+            'info'    => U('Light/Apply/applyInfo',array('modname'=>'CostMoney','system'=>'kk'))
+        ); 
+        return $result;   
+    }
 }

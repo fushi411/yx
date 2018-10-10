@@ -330,20 +330,20 @@ class KkTempCreditLineApplyLogic extends Model {
         }
 
 
-        if($stat == 2)
-        {
-            $wf = A('WorkFlow');
-            $res = $wf->setWorkFlowSV('TempCreditLineApply', $result, $salesid, $system);
-        }else{ // -- 推送
-            $mod_name = 'TempCreditLineApply';          
-            $res = M($system.'_appflowtable')->field('condition')->where(array('pro_mod'=>$mod_name.'_push'))->find();
-            if(!empty($res)){
-                $pushArr = json_decode($res['condition'],true);
-                // -- 2W额度推送人  
-                $push_id = $pushArr['two'];
-                D($system.'Appcopyto')->copyTo($push_id, $mod_name, $result,2);
-            }
-        };
+        // if($stat == 2)
+        // {
+        $wf = A('WorkFlow');
+        $res = $wf->setWorkFlowSV('TempCreditLineApply', $result, $salesid, $system);
+        // }else{ // -- 推送
+        //     $mod_name = 'TempCreditLineApply';          
+        //     $res = M($system.'_appflowtable')->field('condition')->where(array('pro_mod'=>$mod_name.'_push'))->find();
+        //     if(!empty($res)){
+        //         $pushArr = json_decode($res['condition'],true);
+        //         // -- 2W额度推送人  
+        //         $push_id = $pushArr['two'];
+        //         D($system.'Appcopyto')->copyTo($push_id, $mod_name, $result,2);
+        //     }
+        // };
         return array('code' => 200,'msg' => '提交成功' , 'aid' =>$result);
     }
 

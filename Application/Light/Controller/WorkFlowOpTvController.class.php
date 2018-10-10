@@ -13,6 +13,7 @@ class WorkFlowOpTvController extends BaseController {
 		$copyto_id  = I('post.copyto_id');
 		$option     = I('post.option');
 		$word       = I('post.word');
+		$img       = I('post.signoutput_file');
 		$approve_id = I('post.approve_id');
 		$apply_user = I('post.apply_user');
 		$time       = date("Y-m-d H:i:s",time());
@@ -63,7 +64,7 @@ class WorkFlowOpTvController extends BaseController {
             $flowTable = M($system.'_appflowtable');
             $mod_cname = $flowTable->getFieldByProMod($mod_name, 'pro_name');
 			$title = str_replace('表','',$mod_cname);
-			$StepInfo = D('KkAppflowproc')->getStepInfo($mod_name,$id,session($system."_id"));
+			$StepInfo = D(ucfirst($system).'Appflowproc')->getStepInfo($mod_name,$id,session($system."_id"));
 			$StepStatus = $StepInfo['app_name'];
             $description = "您有新的{$StepStatus}意见：".$per_name."@了你!";
             $url = "http://www.fjyuanxin.com/WE/index.php?m=Light&c=Apply&a=applyInfo&system=".$system."&aid=".$id."&modname=".$mod_name;
@@ -79,7 +80,7 @@ class WorkFlowOpTvController extends BaseController {
 			$optionType = '审批通过';
 		}
     	// if (isWorkFlowUnique($mod_name,$id,$pid,$option,$word)) { --进入下一步流程
-			$wfStatus = $wf->nextWorkFlowTH($mod_name,$id,$pid,$option,$word,$apply_user,$system);
+			$wfStatus = $wf->nextWorkFlowTH($mod_name,$id,$pid,$option,$word,$apply_user,$system,$img);
     	// }
 		
 		
@@ -128,7 +129,7 @@ class WorkFlowOpTvController extends BaseController {
 		
         $receviers   = 'HuangShiQi,wk,';
         // 申请人不推送
-
+		// $per_name = session('name'); // 去除自己
         $res = D(ucfirst($system).$mod_name, 'Logic')->recordContent($id);
         $apply_user = $res['applyerName'];
        
@@ -136,7 +137,7 @@ class WorkFlowOpTvController extends BaseController {
         $resArr =  M($system.'_appflowproc a')
                 ->join($system.'_boss b on b.id=a.per_id')
                 ->field('b.wxid')
-                ->where(array('a.aid' => $id ,'a.mod_name' => $mod_name))
+                ->where(array('a.aid' => $id ,'a.mod_name' => $mod_name)) //,'a.per_name'=>array('neq',$per_name)
                 ->select();               
         
         foreach($resArr as $val){

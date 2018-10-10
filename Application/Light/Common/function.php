@@ -18,7 +18,7 @@
     ->field('a.pro_name,b.id,a.`condition`,b.name,b.avatar,a.stage_id')
     ->join($system.'_boss b on a.per_id = b.id')
     ->where(array('a.pro_mod' => $mod_name, 'a.stat' =>1))
-    ->order('a.stage_id')
+    ->order('a.stage_id,a.date')
     ->select();
     $temp    = array();
     $proInfo = array();

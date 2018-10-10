@@ -558,19 +558,19 @@ var fh_cate = '',fh_wl='';
                     }
                     if(res[1]){
                         $('#qxkh_show').css('color','#333');
-                        app_proHtml(1);
+                        app_proHtml(2);
                     }else{
                         if(cue) cue += "<br />";
                         cue += '授权库号与发货库号不一致!';
                         $('#qxkh_show').css('color','#f12e2e');
-                        app_proHtml(2);
+                        app_proHtml(3);
                     }
                     if(cue) dialog_know(cue);
                 }
             });
         }
         var appflow = {$appflow};
-        app_proHtml(1)
+        app_proHtml(2)
             // 审批流程显示
         function app_proHtml(val){
 

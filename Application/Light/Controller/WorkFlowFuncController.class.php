@@ -559,6 +559,18 @@ class WorkFlowFuncController extends Controller {
         $resArr = $res?array("status"=>"success"):array("status"=>"failure");
         return $resArr;
 	}
+
+	/**
+     * 建材费用开支通过后调用函数
+     * @param  [integre] $aid [记录ID]
+     * @return [array]      [状态]
+     */
+	public function KkCostMoneyEnd($aid)
+    {
+		$res = M('kk_feefy')->where(array('id'=>$aid))->setField('stat', 4);
+        $resArr = $res?array("status"=>"success"):array("status"=>"failure");
+        return $resArr;
+	}
 	
 // -----END------
 }

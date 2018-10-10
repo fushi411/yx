@@ -39,7 +39,7 @@ class WorkFlowController extends BaseController {
         @ option 审批状态：0表示未审批，1表示审批拒绝，2表示审批通过
         @ word 审批意见
     */
-    public function nextWorkFlowTH($flowName,$id,$pid,$option,$word,$applyUser,$system){
+    public function nextWorkFlowTH($flowName,$id,$pid,$option,$word,$applyUser,$system,$img){
       $resArr = array();
       $systemU = ucfirst($system);
       //当前审批流程
@@ -51,7 +51,7 @@ class WorkFlowController extends BaseController {
       //获取下一审批流程(似乎没用了)
       $getNext = $appflowtable->getStepInfo($nowStepArr['pro_id'], $tableStepArr['stage_next']);
       // 更新当前审批记录
-      $is_done2 = $appflowproc->updateProc($nowStepArr['id'], $option, $word);
+      $is_done2 = $appflowproc->updateProc($nowStepArr['id'], $option, $word,$img);
       //申请人ID  
       // $applyUser=iconv('UTF-8', 'GBK', $applyUser);
       // $applyUserid=$this->getUserID($applyUser,$db);   
