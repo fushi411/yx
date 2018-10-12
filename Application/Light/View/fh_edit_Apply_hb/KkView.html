@@ -198,7 +198,8 @@
         </div>
         <div class="weui-cell">
             <div class="weui-cell__bd" id="cnt">
-                <textarea class="weui-textarea" name="reason" id="reason" placeholder="申请理由至少5个字(必填)；" rows="3"></textarea>
+                <textarea class="weui-textarea" name="reason" id="reason" placeholder="请详细说明理由；
+至少5个字(必填)；" rows="3"></textarea>
                 <div class="weui-textarea-counter">
                     <span id="reason_char">0</span>/200</div>
             </div>
@@ -230,9 +231,9 @@
                 minites = [],
                 symbol = [];
 
-            for (var i = 0; i < 100; i++) {
+            for (var i = 0; i < 4; i++) {
                 $date = new Date();
-                $date = $date.setDate($date.getDate() - 99 + i);
+                $date = $date.setDate($date.getDate() - 3 + i);
                 $date = new Date($date);
 
                 var Y = $date.getFullYear(),
@@ -241,7 +242,7 @@
 
                 var hours_item = {};
                 hours_item.label = Y + '-' + M + '-' + D + ' ' + arr_week[$date.getDay()];
-                if (i == 99) {
+                if (i == 3) {
                     hours_item.label = '今天';
                 }
                 hours_item.value = Y + '-' + M + '-' + D;

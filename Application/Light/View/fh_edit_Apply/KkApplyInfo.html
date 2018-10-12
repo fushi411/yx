@@ -29,22 +29,6 @@
 </block>
 <block name="js">
         <script>
-               $.ajax({
-                    type: 'POST',
-                    url: "{:U('Light/Api/fh_edit_Apply_hbApi')}",
-                    dataType: 'json',
-                    data: {
-                        aid:"{$aid}",
-                        system: "{$system}",
-                        modname: 'fh_edit_Apply_hb',
-                        action: 'app_porc',
-                    },
-                    dataType: 'json',
-                    success: function (res) {
-                        if(!res){
-                            $('#app_pro li').eq(1).fadeOut(100);
-                        }
-                    }
-                });
+               
         </script>
     </block>

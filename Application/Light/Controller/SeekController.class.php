@@ -637,9 +637,10 @@ class SeekController extends BaseController
     public function transStat($modname,$stat){
         if($stat == 0) return 0;
         $statArr = array(
-            'CgfkApply' => array('4' =>2 ,'3' => 2 ,'2' => 1),
+            'CgfkApply'   => array('4' =>2 ,'3' => 2 ,'2' => 1),
             'WlCgfkApply' => array('4' =>2 ,'3' => 2 ,'2' => 1),
             'PjCgfkApply' => array('4' =>2 ,'3' => 2 ,'2' => 1),
+            'CostMoney'   => array('5' =>2 ,'4' => 1 ,'2' => 1),
         );
 
         if(!$statArr[$modname]) return 0;

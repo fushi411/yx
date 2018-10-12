@@ -358,7 +358,7 @@ class KkfheditApplyLogic extends Model {
      */
     public function getFhList(){
         $today    = date('Y-m-d',time()+24*3600);
-        $yestoday = date('Y-m-d',time()-100*24*3600);
+        $yestoday = date('Y-m-d',time()-4*24*3600);
         $clientid = I('post.client');
         $id       = I('post.id');
         $page     = I('post.page');

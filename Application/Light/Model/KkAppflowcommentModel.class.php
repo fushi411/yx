@@ -18,7 +18,32 @@ class KkAppflowcommentModel extends Model {
     {
         // 评论名单
         $comment_list = array();
-        $res =  $this->field('id,app_word,time,per_name,per_id,comment_to_id,comment_img,sum(1) as count')->where(array('aid'=>$aid, 'mod_name'=>$mod_name, 'app_stat'=>1,'per_id' =>9999))->group('comment_to_id')->order('time desc')->select();
+        $sql = "SELECT
+                    *,
+                    sum(1) AS count
+                FROM
+                    (
+                        SELECT
+                            id,
+                            app_word,
+                            time,
+                            per_name,
+                            per_id,
+                            comment_to_id,
+                            comment_img
+                        FROM
+                            kk_appflowcomment
+                        WHERE
+                            mod_name = '$mod_name'
+                        AND aid = $aid
+                        AND per_id = 9999
+                        AND app_stat = 1
+                        ORDER BY
+                            time DESC
+                    ) a
+                GROUP BY
+                    comment_to_id";
+        $res =  M()->query($sql);
         $pushArr = array();
         if(!empty($res)){
             foreach($res as $v){

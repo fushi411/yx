@@ -9,6 +9,7 @@ class ApplyController extends BaseController {
         // 判断依据1.管理员、副总、董事长；
         $authArr = array('wk','shh', 'csl', 'ChenBiSong','HuangShiQi');
         $mod_name = I('modname');
+        if($mod_name == 'fh_edit_Apply_hb' || $mod_name == 'fh_edit_Apply') $authArr[]='ShangZuLu';
         $apply_id = I('aid');
         $system = I('system');
         $wxid = session('wxid');
@@ -50,7 +51,7 @@ class ApplyController extends BaseController {
         $this->assign('isApplyUser', $isApplyUser);
 
         //审批全流程
-        $allArr = D($system.'Appflowtable')->getAllProc($mod_name);
+        $allArr = D($system.'Appflowtable')->getAllProc_new($mod_name,$apply_id);
         // dump($allArr);
         $this->assign('first',$allArr['first']);
         $this->assign('title',$allArr['title']);

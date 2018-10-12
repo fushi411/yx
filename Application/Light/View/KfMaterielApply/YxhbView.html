@@ -323,9 +323,9 @@
                 minites.push(minites_item);
             }
 
-            for (var i = 0; i < 31; i++) {
+            for (var i = 0; i < 3; i++) {
                 $date = new Date();
-                $date = $date.setDate($date.getDate() - 30 + i);
+                $date = $date.setDate($date.getDate() - 2 + i);
                 $date = new Date($date);
 
                 var Y = $date.getFullYear(),
@@ -337,7 +337,7 @@
 
                 var symbol_item = {};
                 symbol_item.label = Y + '-' + M + '-' + D + ' ' + arr_week[$date.getDay()];
-                if (i == 30) {
+                if (i == 2) {
                     symbol_item.label = '今天';
                 }
                 symbol_item.value = Y + '-' + M + '-' + D;
