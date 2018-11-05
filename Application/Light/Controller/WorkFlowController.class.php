@@ -283,7 +283,7 @@ class WorkFlowController extends BaseController {
         $flowTable = M($system.'_appflowtable');
         $mod_cname = $flowTable->getFieldByProMod($flowName, 'pro_name');
         $title = $mod_cname;
-        $url = "http://www.fjyuanxin.com/WE/index.php?m=Light&c=Apply&a=applyInfo&system=".$system."&aid=".$id."&modname=".$flowName;
+        $url = "https://www.fjyuanxin.com/WE/index.php?m=Light&c=Apply&a=applyInfo&system=".$system."&aid=".$id."&modname=".$flowName;
         $boss = D($system.'_boss');
         $applyerName = $boss->getusername($applyerid);
         $applyerwxid = $boss->getWXFromID($applyerid);
@@ -350,7 +350,7 @@ class WorkFlowController extends BaseController {
         if( $flowName == 'fh_edit_Apply_hb' ) $system_msg = '环保';
 
         $title = $system_msg.$mod_cname.$subTitle;
-        $url = "http://www.fjyuanxin.com/WE/index.php?m=Light&c=Apply&a=applyInfo&system=".$system."&aid=".$id."&modname=".$flowName;
+        $url = "https://www.fjyuanxin.com/WE/index.php?m=Light&c=Apply&a=applyInfo&system=".$system."&aid=".$id."&modname=".$flowName;
         //crontab(CLI模式)无法正确生产URL
         // if (PHP_SAPI=='cli') {
         //   $detailsURL = str_replace('_PHP_FILE_', '/WE/index.php', $detailsURL);

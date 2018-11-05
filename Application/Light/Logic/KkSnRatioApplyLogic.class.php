@@ -33,6 +33,7 @@ class KkSnRatioApplyLogic extends Model {
         $result = array();
         $hour = str_replace('时','',$res['scxs']);
         $fz   = str_replace('分','',$res['scfz']);
+        $hour = (int)($hour);
         $hour = $hour>9?$hour:'0'.$hour;
         $result['content'][] = array('name'=>'申请单位：',
                                      'value'=>'建材水泥配比通知',
@@ -324,7 +325,7 @@ class KkSnRatioApplyLogic extends Model {
         $descriptionData = $logic->getDescription($apply_id);
      
         $title = '配比通知(签收)';
-        $url = "http://www.fjyuanxin.com/WE/index.php?m=Light&c=Apply&a=applyInfo&system=".$system."&aid=".$apply_id."&modname=".$mod_name;
+        $url = "https://www.fjyuanxin.com/WE/index.php?m=Light&c=Apply&a=applyInfo&system=".$system."&aid=".$apply_id."&modname=".$mod_name;
       
         $applyerName='('.$res['zby'].'提交)';
         $description = "您有一个流程需要签收".$applyerName;

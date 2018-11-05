@@ -62,16 +62,19 @@
         .addbtn:hover{
             color: #b0b0b0;
         }
+        .hide{
+            display: none;
+        }
     </style>
     <input type="hidden" id="ratio" value="ratio">
     <div class="weui-cells weui-cells_form">
-        <div class="weui-cell weui-cell_select weui-cell_select-after">
+        <div class="weui-cell weui-cell_select weui-cell_select-after hide">
             <div class="weui-cell__hd">
                 <label class="weui-label">配比通知&nbsp;&nbsp;
                     <span style="color:red;">*</span>
                 </label>
             </div>
-            <div class="weui-cell__bd">
+            <div class="weui-cell__bd ">
                 <select class="weui-select greyColor" name="type" id='ratio_sel'>
                     <option value='-1' disabled selected style='display:none;'>请选择配比通知</option>
                     <!-- <option value="P.C32.5R">P.C32.5R</option> -->
@@ -81,7 +84,7 @@
                 </select>
             </div>
         </div>
-        <div class="weui-cell weui-cell_select weui-cell_select-after">
+        <div class="weui-cell weui-cell_select weui-cell_select-after hide">
                 <div class="weui-cell__hd">
                     <label class="weui-label">配比详情&nbsp;&nbsp;
                       
@@ -93,13 +96,33 @@
             </div>
         <div class="weui-cell weui-cell_select weui-cell_select-after">
             <div class="weui-cell__hd">
+                <label class="weui-label">生产线路&nbsp;&nbsp;
+                    <span style="color:red;">*</span>
+                </label>
+            </div>
+            <div class="weui-cell__bd ">
+                <select class="weui-select greyColor" name="type" id='scx_sel'>
+                    <option value='-1' disabled selected style='display:none;'>请选择生产线路</option>
+                    <!-- <option value="P.C32.5R">P.C32.5R</option> -->
+                    <option value="A#">A#生产线</option>
+                    <option value="B#">B#生产线</option>
+                </select>
+            </div>
+        </div>
+        <div class="weui-cell weui-cell_select weui-cell_select-after">
+            <div class="weui-cell__hd">
                 <label class="weui-label">生产品种&nbsp;&nbsp;
                     <span style="color:red;">*</span>
                 </label>
             </div>
             <div class="weui-cell__bd">
-                <input class="weui-select peibi " type="text" id="product" readonly maxlength="15" name="custodian"
-                    placeholder="自动填写">
+                <select class="weui-select greyColor" name="type" id='prod_sel'>
+                    <option value='-1' disabled selected style='display:none;'>请选择生产品种</option>
+                    <!-- <option value="P.C32.5R">P.C32.5R</option> -->
+                    <option value="F75">F75</option>
+                    <option value="F85">F85</option>
+                    <option value="S95">S95</option>
+                </select>
             </div>
         </div>
         <div class="weui-cell weui-cell_select weui-cell_select-after">
@@ -280,7 +303,7 @@
 </block>
 <block name='js'>
     <script>
-        var pdArr = ['A线1#', 'A线2#', 'A线3#', 'A线4#', 'A线5#', 'B线1#', 'B线2#', 'B线6#', 'B线7#', 'B线8#'];
+        var pdArr = ['A线1#', 'A线2#', 'A线3#', 'A线4#', 'A线5#','A线磨外','B线1#', 'B线2#', 'B线6#', 'B线7#', 'B线8#','B线磨外'];
         var other_page = $('#other_page'),
             info = [],
             option_arr = [];
@@ -364,7 +387,8 @@
 
         // 页面的打开与关闭
         open_btn.click(function () {
-            if ($('#ratio_sel').val() == -1 || !$('#ratio_sel').val()) return tooltip('请选择配比通知单');
+            if ($('#scx_sel').val() == -1 || !$('#scx_sel').val()) return tooltip('请选择生产线路');
+            if ($('#prod_sel').val() == -1 || !$('#prod_sel').val()) return tooltip('请选择生产品种');
             if (!$('#kh').val()) return tooltip('请选择入库号');
             other_page.fadeIn(200);
         })
@@ -577,12 +601,12 @@
             }
             $('#ratio_sel').html(option);
         }
-        $('#ratio_sel').change(function () {
+        $('#scx_sel').change(function () {
             var i = $(this).val();
-            select = info[i];
+            // select = info[i];
             //console.log(select)
-            option_arr = info[i]['name'];
-            $('#product').val(select['product']);
+            option_arr = ['宝钢水渣','矿渣','矿热炉渣','电厂炉渣','精炼炉渣','石灰石','激发剂','脱硫灰','复合粉'];
+            // $('#product').val(select['product']);
             sb_arr = [];
             materiel = 0;
             $('#param_div').html('<span class=" greyColor">自动填写</span>');
@@ -600,7 +624,7 @@
         function makeThreeOption(idx){
             var start = 0;
             var option = "<option value='-1' disabled selected style='display:none;'>请选择皮带</option>";
-            for (i=0;i<10;i++) {
+            for (i=0;i<pdArr.length;i++) {
                 
                 if($.inArray(start,select_pd)!= -1 ){
                     start++;
@@ -616,7 +640,8 @@
 
             // return tooltip('测试中...稍等2分钟');
             if (!datePicker.val()) return tooltip('请选择生产时间');
-            if ($('#ratio_sel').val() == -1 || !$('#ratio_sel').val()) return tooltip('请选择配比通知单');
+            if ($('#scx_sel').val() == -1 || !$('#scx_sel').val()) return tooltip('请选择生产线路');
+            if ($('#prod_sel').val() == -1 || !$('#prod_sel').val()) return tooltip('请选择生产品种');
             if (!$('#kh').val()) return tooltip('请选择入库号');
             if (sb_arr.length <= 0) return tooltip('请点击配置物料');
             // 备注检测
@@ -629,6 +654,8 @@
                 data: {
                     time: datePicker.val(),
                     select: select,
+                    scx:$('#scx_sel').val(),
+                    prod:$('#prod_sel').val(),
                     kh: $('#kh').val(),
                     sb: sb_arr,
                     notice: notice,

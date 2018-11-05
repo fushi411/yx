@@ -104,7 +104,7 @@ class WorkFlowFuncController extends Controller {
 		return $resArr;
 	}
 	//发货修改
-	public function Yxhbfh_edit_ApplyEnd($aid)
+	public function Yxhbfh_edit_ApplyEnddel($aid)
 	{
 		$xg_date=getDatetimeMk(time()+8*60*60);
 		$sql=new dedesql(false);
@@ -571,6 +571,27 @@ class WorkFlowFuncController extends Controller {
         $resArr = $res?array("status"=>"success"):array("status"=>"failure");
         return $resArr;
 	}
-	
+	/**
+     * 环保退修改通过后调用函数
+     * @param  [integre] $aid [记录ID]
+     * @return [array]      [状态]
+     */
+	public function Yxhbfh_refund_ApplyEnd($aid)
+    {
+		$res = D('Yxhbfh_refund_Apply','Logic')->theEnd($aid);
+        $resArr = $res?array("status"=>"success"):array("status"=>"failure");
+        return $resArr;
+	}
+	/**
+     * 建材退货修改通过后调用函数
+     * @param  [integre] $aid [记录ID]
+     * @return [array]      [状态]
+     */
+	public function Kkfh_refund_ApplyEnd($aid)
+    {
+		$res = D('Kkfh_refund_Apply','Logic')->theEnd($aid);
+        $resArr = $res?array("status"=>"success"):array("status"=>"failure");
+        return $resArr;
+	}
 // -----END------
 }

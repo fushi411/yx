@@ -401,7 +401,25 @@
 <block name="js">
     <script src="__PUBLIC__/assets/js/AmountConversionformat.js"></script>
     <script>
-
+    function placeholderChange(dom,arr_placeholder){
+            var phr = dom.attr('placeholder'),
+                phr_count = arr_placeholder.length;
+            var phr_times = 0;
+            if( phr_count == 1 ){
+                arr_placeholder = [phr];
+                dom.attr('placeholder',arr_placeholder[0]);
+            }else if( phr_count > 1 ){
+                setInterval(function(){
+                    if(phr_times >= phr_count){
+                        phr_times = 0;
+                    }
+                    dom.attr('placeholder',arr_placeholder[phr_times]);
+                    phr_times++;
+                },3500);
+            }
+        }
+        phr_arr = ['名称不一致,填入汇款单位名称','个人转公户需委托函'];
+        placeholderChange($('#user_other_name'),phr_arr);
         var sign_type = '',
             department_id = 0;
         $('#signModal').on('show.bs.modal', function (e) {

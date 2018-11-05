@@ -166,6 +166,9 @@ class SeekController extends BaseController
                 empty($where)?$where = 'and (' : $where .= ' or ';
                 if($v['mod_name'] == 'CgfkApply' ){
                     $where .=" mod_name='{$v['mod_name']}' or mod_name='PjCgfkApply' or mod_name='WlCgfkApply'";
+                }
+                elseif($v['mod_name'] == 'fh_edit_Apply' || $v['mod_name'] == 'fh_edit_Apply_hb'){
+                    $where .=" mod_name='{$v['mod_name']}' or mod_name='fh_refund_Apply' ";
                 }else{
                     $where .=" mod_name='{$v['mod_name']}' ";
                 }
@@ -179,8 +182,8 @@ class SeekController extends BaseController
         }elseif($yxhbCount <1  && $kkCount > 0){
             $where .=' and a.1=2';
         }
-        $yxhbSql = 'SELECT *,1 from yxhb_appflowproc where per_id='.$yxhb_id.' and (app_stat=1 or app_stat=2) and ('.$Mod['yxhb'].')';
-        $kkSql   = 'SELECT *,2 from kk_appflowproc where per_id='.$kk_id.' and (app_stat=1 or app_stat=2) and ('.$Mod['kk'].')';
+        $yxhbSql = 'SELECT *,1 from yxhb_appflowproc where per_id='.$yxhb_id.' and (app_stat=1 or app_stat=2 or app_stat=0) and ('.$Mod['yxhb'].')';
+        $kkSql   = 'SELECT *,2 from kk_appflowproc where per_id='.$kk_id.' and (app_stat=1 or app_stat=2 or app_stat=0) and ('.$Mod['kk'].')';
         $sql     = "select * from ({$yxhbSql} union all {$kkSql}) a where 1=1 {$where} order by time desc limit ".(($page-1)*20).",20";
         $approve = M()->query($sql);   
 
@@ -266,53 +269,9 @@ class SeekController extends BaseController
     }
 
     public function arrayMerge($data){
-        $appArr = array(
-            array( 
-                'title'      => '环保采购付款' , 
-                'search'     => '配件采购付款',
-                'system'     => 'yxhb' ,
-                'mod_name'   => 'PjCgfkApply'          ,
-                'table_name' => 'yxhb_cgfksq'              ,
-                'id'         => 'id',
-                'stat'       => 'stat',
-                'submit'     => array('name' => 'rdy','stat' => 3),
-                'copy_field' => 'yxhb_cgfksq.id as aid,yxhb_cgfksq.rdy as applyer,yxhb_cgfksq.zd_date as date,yxhb_cgfksq.fkje as approve,yxhb_cgfksq.zy as notice,yxhb_cgfksq.stat'
-            ),
-            array( 
-                'title'      => '环保采购付款' , 
-                'search'     => '物流采购付款',
-                'system'     => 'yxhb' ,
-                'mod_name'   => 'WlCgfkApply'          ,
-                'table_name' => 'yxhb_cgfksq'              ,
-                'id'         => 'id',
-                'stat'       => 'stat',
-                'submit'     => array('name' => 'rdy','stat' => 3),
-                'copy_field' => 'yxhb_cgfksq.id as aid,yxhb_cgfksq.rdy as applyer,yxhb_cgfksq.zd_date as date,yxhb_cgfksq.fkje as approve,yxhb_cgfksq.zy as notice,yxhb_cgfksq.stat'
-            ),
-            array( 
-                'title'      => '建材采购付款' , 
-                'search'     => '配件采购付款',
-                'system'     => 'kk'   ,
-                'mod_name'   => 'PjCgfkApply'          ,
-                'table_name' => 'kk_cgfksq'                ,
-                'id'         => 'id' ,
-                'stat'       => 'stat',
-                'submit'     => array('name' => 'rdy','stat' => 3),
-                'copy_field' => 'kk_cgfksq.id as aid,kk_cgfksq.rdy as applyer,kk_cgfksq.zd_date,kk_cgfksq.fkje as approve,kk_cgfksq.zy  as notice,kk_cgfksq.stat'
-            ),
-            array( 
-                'title'      => '建材采购付款' , 
-                'search'     => '物流采购付款',
-                'system'     => 'kk'   ,
-                'mod_name'   => 'WlCgfkApply'          ,
-                'table_name' => 'kk_cgfksq'                ,
-                'id'         => 'id' ,
-                'stat'       => 'stat',
-                'submit'     => array('name' => 'rdy','stat' => 3),
-                'copy_field' => 'kk_cgfksq.id as aid,kk_cgfksq.rdy as applyer,kk_cgfksq.zd_date,kk_cgfksq.fkje as approve,kk_cgfksq.zy  as notice,kk_cgfksq.stat'
-            ),
-        );
-        return array_merge($data,$appArr);
+        $seek =  D('Seek');
+        $tab = $seek->arrayMerge($data);
+        return $tab;
     }
     /**
      * 提交记录
@@ -350,17 +309,18 @@ class SeekController extends BaseController
         $result     = array();
         $searchText = I('post.search');
         $table_info = $this->getAppTable();
+        $table_info = $this->arrayMerge($table_info);
         $submit_sql = 'SELECT * from(';
         if(empty($limit)){
-            $stat = 'stat!=2';
+            
             // sql语句构造
-            $submit_sql .= $this->SubmitSqlMake($searchText,$table_info,$stat);
+            $submit_sql .= $this->SubmitSqlMake($searchText,$table_info);
         }else{
 
             $name = session('name');
             foreach($table_info as $k =>$v){
                 if($k != 0) $submit_sql .= ' UNION all ';
-                $submit_sql .=  " select {$v['copy_field']},{$k} from {$v['table_name']} where {$v['submit']['name']}='{$name}' and {$v['stat']}={$v['submit']['stat']}";
+                $submit_sql .=  " select {$v['copy_field']},{$k} from {$v['table_name']} where {$v['submit']['name']}='{$name}' and {$v['stat']}={$v['submit']['stat']}  {$v['map']} ";
             }
         }
         $submit_sql .=')a ORDER BY date desc';
@@ -376,6 +336,11 @@ class SeekController extends BaseController
             $appStatus =D($table_info[$v[0]]['system'].'Appflowproc')->getWorkFlowStatus($res['modname'], $v['aid']);
             $statRes = $this->transStat($table_info[$v[0]]['mod_name'],$v['stat']);
             $stat = $statRes ? $statRes: $v['stat'];
+            if($res['modname'] == 'fh_refund_Apply' && $appStatus['stat'] == -1) continue;
+            if(!empty($limit)){
+                if($stat == 2 && ($appStatus['stat'] == 1 || $appStatus['stat'] == 2)) continue;
+                if($stat == 3) continue;
+            }
             $arr = array(
                 'system'    => $table_info[$v[0]]['system'],
                 'systemName'=> $table_info[$v[0]]['title'],
@@ -427,10 +392,10 @@ class SeekController extends BaseController
                     if(!$res && $v['system'] != 'yxhb')  $del = ' and 1=-1 '; # 排除环保系统 模块不在搜索方位
                 }elseif($yxhbCount < 1 && $kkCount > 0){
                     $res = $this->searchFind($v['search'],$searchText);
-                    if(!$res && $v['system'] != 'kk')  $del = ' and 1=-1 '; # 排除建材系统 模块不在搜索方位
+                    if(!$res && $v['system'] != 'kk')  $del = ' and 1=-1 '; # 排除建材系统 模块不在搜索方位 and {$v['stat']}!={$v['submit']['stat']}
                 }
             }
-            $submit_sql .=  " select {$v['copy_field']},{$k} from {$v['table_name']} where {$v['submit']['name']}='{$name}' and {$v['stat']}!={$v['submit']['stat']} {$del}";
+            $submit_sql .=  " select {$v['copy_field']},{$k} from {$v['table_name']} where {$v['submit']['name']}='{$name}'  {$v['map']}  {$del}";
         }
 
         return $submit_sql;
@@ -736,6 +701,7 @@ class SeekController extends BaseController
      */
     public function searchTableInfo($system,$mod_name=''){
         $tableArr = $this->getAppTable();
+        $tableArr = $this->arrayMerge($tableArr);
         $result = '';
         foreach($tableArr as $k =>$v){
             if($mod_name == 'WlCgfkApply' || $mod_name == 'PjCgfkApply' ) $mod_name = 'CgfkApply';

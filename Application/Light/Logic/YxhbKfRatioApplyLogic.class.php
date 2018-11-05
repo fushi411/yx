@@ -111,9 +111,14 @@ class YxhbKfRatioApplyLogic extends Model {
             $proportion5 = ceil($data['proportion5']) == $data['proportion5']?ceil($data['proportion5']): $data['proportion5'];
             $html .= "<input class='weui-input' type='text' style='color: black;'  readonly value='{$data['scale5']}：{$proportion5}%'>";
         }
+
         if(!empty($scale[5]) && !empty($scale[5]->name)) {
             $proportion5 = ceil($scale[5]->name) == $scale[5]->name?ceil($scale[5]->name): $scale[5]->name;
             $html .= "<input class='weui-input' type='text' style='color: black;'  readonly value='{$scale[5]->value}：{$scale[5]->name}%'>";
+        }
+        if(!empty($scale[6]) && !empty($scale[6]->name)) {
+            $proportion5 = ceil($scale[6]->name) == $scale[6]->name?ceil($scale[6]->name): $scale[6]->name;
+            $html .= "<input class='weui-input' type='text' style='color: black;'  readonly value='{$scale[6]->value}：{$scale[6]->name}%'>";
         }
         $out_scale = json_decode($data['out_scale']);
         // if(!empty($out_scale[0]->name)) {
@@ -341,7 +346,7 @@ class YxhbKfRatioApplyLogic extends Model {
         $descriptionData = $logic->getDescription($apply_id);
      
         $title = '配比通知(签收)';
-        $url = "http://www.fjyuanxin.com/WE/index.php?m=Light&c=Apply&a=applyInfo&system=".$system."&aid=".$apply_id."&modname=".$mod_name;
+        $url = "https://www.fjyuanxin.com/WE/index.php?m=Light&c=Apply&a=applyInfo&system=".$system."&aid=".$apply_id."&modname=".$mod_name;
       
         $applyerName='('.$res['name'].'提交)';
         $description = "您有一个流程需要签收".$applyerName;

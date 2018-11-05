@@ -69,6 +69,7 @@
             align-items: center;
             justify-content: center;
         }
+        
     </style>
 </head>
 
@@ -429,7 +430,7 @@
                     </div>
                 </block>
                
-                <if condition="$stat neq 0">
+                <if condition="$stat neq 0 ">
                     <block name="apply">
                         <eq name="isApplyer" value="1">
                             <eq name="apply.stat" value="0">
@@ -959,7 +960,7 @@
    });
    $('#btn-qz').click(function(){
         $("#alert_content").text('建议使用横屏签名！');
-        $("#iosDialog_alert").fadeIn(200);
+        $("#iosDialog_alert").show();
         $('#other_page').fadeIn();
     
         // 屏幕大小判断
@@ -1091,7 +1092,7 @@
                     // alert('催审错误！');
                     $("#alert_content").text('催审错误！');
                 }
-                $("#iosDialog_alert").fadeIn(200);
+                $("#iosDialog_alert").show();
                 $dtoast.fadeOut(1000);
             }
         );
@@ -1648,7 +1649,7 @@ var filechooser = document.getElementById("uploaderInput");
                     location.reload();
                 } else {
                     $("#alert_content").text(data.msg);
-                    $("#iosDialog_alert").fadeIn(200);
+                    $("#iosDialog_alert").show();
                 }
                
                 // window.location = "{:U('Light/Apply/seekApply')}";
@@ -1662,7 +1663,7 @@ var filechooser = document.getElementById("uploaderInput");
 
     // Alert close
     function dialog_alert_close() {
-        $("#iosDialog_alert").fadeOut(100);
+        $("#iosDialog_alert").hide();
     }
     $(function () {
         var $selectUser = $("#selectUser");
@@ -1774,7 +1775,7 @@ var filechooser = document.getElementById("uploaderInput");
             if("{$mod_name}" == 'CostMoney' ){
                 if(signoutput_file == ''){
                     $("#alert_content").text('请先签字！');
-                    $("#iosDialog_alert").fadeIn(200);
+                    $("#iosDialog_alert").show();
                     return false;
                 }
             }
@@ -1833,7 +1834,7 @@ var filechooser = document.getElementById("uploaderInput");
             if ({$applyerID} != {$uid}) {
                 // alert("非申请人不可催审！");
                 $("#alert_content").text('非申请人不可催审！');
-                $("#iosDialog_alert").fadeIn(200);
+                $("#iosDialog_alert").show();
                 return false;
             }
             $('#urge_cue').text('');
@@ -1842,15 +1843,15 @@ var filechooser = document.getElementById("uploaderInput");
         // 删除按钮
         $("#btn-delete").on("click", function () {
             if ({$applyerID} != {$uid}) {
-                $("#alert_content").text('非申请人不可撤销！');
-                $("#iosDialog_alert").fadeIn(200);
+                $("#alert_content").html('非申请人不可撤销！');
+                $("#iosDialog_alert").show();
                 //alert("非申请人不可撤销！");
                 return false;
             }
 
             if(!{$isqs} && $('#apply_status .label').eq(0).text() != '审批中' && $('#apply_status .label').eq(0).text() != '会审中'){
                 $("#alert_content").text('审批流程不可撤销！');
-                $("#iosDialog_alert").fadeIn(200);
+                $("#iosDialog_alert").show();
                 //alert("非申请人不可撤销！");
                 return false;
             }
@@ -2106,7 +2107,7 @@ var filechooser = document.getElementById("uploaderInput");
         if($('#apply_status .label').eq(0).text() == '已撤销'){
             //$('#doing').text('该申请已撤销！');
             $("#alert_content").text('该申请已撤销');
-            $("#iosDialog_alert").fadeIn(200);
+            $("#iosDialog_alert").show();
         }         
         
     });

@@ -32,7 +32,7 @@ class YxhbTempCreditLineApplyLogic extends Model {
         $res = $this->record($id);
         $info = $this->getInfo($res['clientid'],$res['date']);
         $result = array();
-        $clientname = M('yxhb_guest2')->field('g_khjc')->where(array('id' => $res['clientid']))->find();
+        $clientname = M('yxhb_guest2')->field('g_name,g_khjc')->where(array('id' => $res['clientid']))->find();
         $result['content'][] = array('name'=>'申请单位：',
                                      'value'=>'环保临时额度申请',
                                      'type'=>'date',
@@ -49,7 +49,7 @@ class YxhbTempCreditLineApplyLogic extends Model {
                                      'color' => 'black'
                                     );
         $result['content'][] = array('name'=>'客户名称：',
-                                     'value'=>$clientname['g_khjc'],
+                                     'value'=>$clientname['g_khjc']?$clientname['g_khjc']:$clientname['g_name'],
                                      'type'=>'string',
                                      'color' => 'black'
                                     ); 
@@ -322,20 +322,20 @@ class YxhbTempCreditLineApplyLogic extends Model {
         }
 
 
-        // if($stat == 2)
-        // {
+        if($stat == 2)
+        {
             $wf = A('WorkFlow');
             $res = $wf->setWorkFlowSV('TempCreditLineApply', $result, $salesid, $system);
-        // }else{ // -- 推送
-        //     $mod_name = 'TempCreditLineApply';          
-        //     $res = M($system.'_appflowtable')->field('condition')->where(array('pro_mod'=>$mod_name.'_push'))->find();
-        //     if(!empty($res)){
-        //         $pushArr = json_decode($res['condition'],true);
-        //         // -- 2W额度推送人  
-        //         $push_id = $pushArr['two'];
-        //         D($system.'Appcopyto')->copyTo($push_id, $mod_name, $result,2);
-        //     }
-        // };
+        }else{ // -- 推送
+            $mod_name = 'TempCreditLineApply';          
+            $res = M($system.'_appflowtable')->field('condition')->where(array('pro_mod'=>$mod_name.'_push'))->find();
+            if(!empty($res)){
+                $pushArr = json_decode($res['condition'],true);
+                // -- 2W额度推送人  
+                $push_id = $pushArr['two'];
+                D($system.'Appcopyto')->copyTo($push_id, $mod_name, $result,2);
+            }
+        };
         return array('code' => 200,'msg' => '提交成功' , 'aid' =>$result);
     }
 

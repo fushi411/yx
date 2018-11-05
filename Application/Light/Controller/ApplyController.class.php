@@ -54,7 +54,7 @@ class ApplyController extends BaseController {
         $allArr = D($system.'Appflowtable')->getAllProc_new($mod_name,$apply_id);
         // dump($allArr);
         $this->assign('first',$allArr['first']);
-        $this->assign('title',$allArr['title']);
+        $this->assign('title',D('seek')->getTitle($mod_name,$system));
         $this->assign('proInfo',$allArr['proInfo']);
 
         //审批内容
@@ -217,7 +217,8 @@ class ApplyController extends BaseController {
         foreach ($tmpRecevierArr as $key => $value) {
             $info = $User->getWXInfo($value);
             if (!empty($info)) {
-                $html .= '<a class="weui-cell weui-cell_access select-comment-user" href="javascript:;" data-id="'.$info['id'].'" data-uid="'.$value['userid'].'" data-type="user" data-img="'.$info['avatar'].'" data-name="'.$info['name'].'" style="text-decoration:none;"><div class="weui-cell__hd"><img src="'.$info['avatar'].'" alt="" style="width:20px;margin-right:5px;display:block"></div><div class="weui-cell__bd"><p style="margin-bottom: 0px;">'.$info['name'].'</p></div><div class="weui-cell__ft"></div></a>';
+                $avatar =$info['avatar']?$info['avatar']:'Public/assets/i/defaul.png';
+                $html .= '<a class="weui-cell weui-cell_access select-comment-user" href="javascript:;" data-id="'.$info['id'].'" data-uid="'.$value['userid'].'" data-type="user" data-img="'.$info['avatar'].'" data-name="'.$info['name'].'" style="text-decoration:none;"><div class="weui-cell__hd"><img src="'.$avatar.'" alt="" style="width:20px;margin-right:5px;display:block"></div><div class="weui-cell__bd"><p style="margin-bottom: 0px;">'.$info['name'].'</p></div><div class="weui-cell__ft"></div></a>';
             }
         }
         unset($value);
@@ -291,7 +292,7 @@ class ApplyController extends BaseController {
             $mod_cname = $flowTable->getFieldByProMod($data['mod_name'], 'pro_name');
             $title = str_replace('表','',$mod_cname) ;
             $description = "您有新的评论：".$per_name."@了你!";
-            $url = "http://www.fjyuanxin.com/WE/index.php?m=Light&c=Apply&a=applyInfo&system=".$system."&aid=".$data['aid']."&modname=".$data['mod_name'];
+            $url = "https://www.fjyuanxin.com/WE/index.php?m=Light&c=Apply&a=applyInfo&system=".$system."&aid=".$data['aid']."&modname=".$data['mod_name'];
             $WeChat = new \Org\Util\WeChat;
             $WeChat->sendCardMessage($recevier,$title,$description,$url,15,$data['mod_name'],$system);
             // - 数据插入
@@ -414,7 +415,7 @@ class ApplyController extends BaseController {
         $title       = '【已撤销推送】';
         $description = $systemName[$system].$mod_cname."({$apply_user}提交)\n撤销理由：".$reason;
         if($system == 'kk' && $mod_name == 'AddMoneyQtTz') $description = '投资'.$mod_cname."({$apply_user}提交)\n撤销理由：".$reason;
-        $url         = "http://www.fjyuanxin.com/WE/index.php?m=Light&c=Apply&a=applyInfo&system=".$system."&aid=".$id."&modname=".$mod_name;
+        $url         = "https://www.fjyuanxin.com/WE/index.php?m=Light&c=Apply&a=applyInfo&system=".$system."&aid=".$id."&modname=".$mod_name;
         $WeChat      = new \Org\Util\WeChat;
         $WeChat->sendCardMessage($temrecevier,$title,$description,$url,15,$mod_name,$system);
 

@@ -118,7 +118,7 @@
                             </label>
                         </div>
                         <div class="weui-cell__bd">
-                            <input class="weui-select peibi scale" type="number" index="熟料" maxlength="15" name="custodian" id="scale1" placeholder="75-85%">
+                            <input class="weui-select peibi scale" type="number" index="熟料" maxlength="15" name="custodian" id="scale1" placeholder="40-70%">
                         </div>
                     </div>
                     <div class="weui-cell weui-cell_select weui-cell_select-after ">
@@ -584,9 +584,9 @@
         $('#scale6').val('');
         $('#scale7').val('');
         if(type == 'P.O42.5'){
-            $('#scale1').attr('placeholder','75 - 85 %');
-            F85[0][1] = 75;
-            F85[0][2] = 85;
+            $('#scale1').attr('placeholder','50 - 90 %');
+            F85[0][1] = 50;
+            F85[0][2] = 90;
 
             $('#scale3').attr('placeholder','5 - 20 %');
             F85[2][1] = 5;
@@ -604,24 +604,24 @@
             F85[6][1] = 15;
             F85[6][2] = 30;
         }else if(type == 'P.S.A32.5'){
-            $('#scale1').attr('placeholder','45 - 60 %');
-            F85[0][1] = 45;
-            F85[0][2] = 60;
+            $('#scale1').attr('placeholder','50 - 90 %');
+            F85[0][1] = 50;
+            F85[0][2] = 90;
 
-            $('#scale3').attr('placeholder','10 - 20 %');
-            F85[2][1] = 10;
-            F85[2][2] = 20;
+            $('#scale3').attr('placeholder','0 - 25 %');
+            F85[2][1] = 0;
+            F85[2][2] = 25;
 
             $('#scale4').attr('placeholder','0 - 20 %');
             F85[3][1] = 0;
             F85[3][2] = 20;
 
-            $('#scale5').attr('placeholder','0 - 10 %');
+            $('#scale5').attr('placeholder','0 - 20 %');
             F85[4][1] = 0;
-            F85[4][2] = 10;
+            F85[4][2] = 20;
 
-            $('#scale7').attr('placeholder','45 - 55 %');
-            F85[6][1] = 45;
+            $('#scale7').attr('placeholder','40 - 55 %');
+            F85[6][1] = 40;
             F85[6][2] = 55;
         }
         $('#scale2').attr('placeholder','4 - 8 %');
@@ -648,8 +648,8 @@
             if (peibi_value != 100) return tooltip('总配置值须为100%，请检查后输入');
             if ($('#kh').val() == -1 || $('#kh').val() == null) return tooltip('请选择补充库号');
             var val =  $('#rksl').val();
-            if($('#type').val() == 'P.S.A32.5' && (val<40 || val>60)) return tooltip('32.5熟料配比范围为40 - 60，请确认后重新输入!');
-            if($('#type').val() == 'P.O42.5' && (val<60 || val>80))   return tooltip('42.5熟料配比范围为60 - 80，请确认后重新输入!');
+            if($('#type').val() == 'P.S.A32.5' && (val<40 || val>60)) return tooltip('32.5入库熟料配比范围为40 - 60，请确认后重新输入!');
+            if($('#type').val() == 'P.O42.5' && (val<60 || val>80))   return tooltip('42.5入库熟料配比范围为40 - 70，请确认后重新输入!');
 
             var scale_1 = $('#scale1').val(),
                 scale_2 = $('#scale2').val(),
@@ -693,11 +693,11 @@
             $('#ycl_content').html(html);
         }
         var F85 = [
-            ['熟料',80,97,1],
+            ['熟料',50,90,1],
             ['石膏'  ,0,5,1],
-            ['石灰石',0,20,1],
+            ['石灰石',0,25,1],
             ['矿粉',0,15,1],
-            ['粉煤灰2' ,0,0.2,1],
+            ['粉煤灰2' ,0,20,1],
             ['物料3'  ,0,100,1],
             ['混合材总量' ,0,0.2,1]
         ];
@@ -738,8 +738,8 @@
                     num3  = Number(hhczl);
                 var val = (num1/(num1+num2)*(100-num3)).toFixed(2);
                 $('#rksl').val(val)
-                if($('#type').val() == 'P.S.A32.5' && (val<40 || val>60)) return tooltip('32.5熟料配比范围为40 - 60，请确认后重新输入!');
-                if($('#type').val() == 'P.O42.5' && (val<60 || val>80))   return tooltip('42.5熟料配比范围为60 - 80，请确认后重新输入!');
+                if($('#type').val() == 'P.S.A32.5' && (val<40 || val>60)) return tooltip('32.5入库熟料配比范围为40 - 60，请确认后重新输入!');
+                if($('#type').val() == 'P.O42.5' && (val<50 || val>90))   return tooltip('42.5入库熟料配比范围为50 - 90，请确认后重新输入!');
             }
         })
         // 取消按钮
@@ -838,8 +838,8 @@
             if (peibi_value != 100) return tooltip('总配置值须为100%，请检查后输入');
 
             var val =  $('#rksl').val();
-            if($('#type').val() == 'P.S.A32.5' && (val<40 || val>60)) return tooltip('32.5熟料配比范围为40 - 60，请确认后重新输入!');
-            if($('#type').val() == 'P.O42.5' && (val<60 || val>80))   return tooltip('42.5熟料配比范围为60 - 80，请确认后重新输入!');
+            if($('#type').val() == 'P.S.A32.5' && (val<40 || val>60)) return tooltip('32.5入库熟料配比范围为40 - 60，请确认后重新输入!');
+            if($('#type').val() == 'P.O42.5' && (val<60 || val>80))   return tooltip('42.5入库熟料配比范围为60 - 80，请确认后重新输入!');
 
             // 留言判断
             var reason = $('#reason').val(),

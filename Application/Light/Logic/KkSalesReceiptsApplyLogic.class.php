@@ -528,7 +528,7 @@ class KkSalesReceiptsApplyLogic extends Model {
         $descriptionData = $logic->getDescription($apply_id);
      
         $title = '销售收款(签收)';
-        $url = "http://www.fjyuanxin.com/WE/index.php?m=Light&c=Apply&a=applyInfo&system=".$system."&aid=".$apply_id."&modname=".$mod_name;
+        $url = "https://www.fjyuanxin.com/WE/index.php?m=Light&c=Apply&a=applyInfo&system=".$system."&aid=".$apply_id."&modname=".$mod_name;
       
         $applyerName='('.$res['name'].'提交)';
         $description = "您有一个流程需要签收".$applyerName;

@@ -153,7 +153,7 @@
             '<h4 class="weui-media-box__title" >'+data[i]['applyer']+'的'+data[i]['title']+'</h4>'+
             '</div>'+
             '<div class="weui-flex__item">';
-            if(data[i]['stat'] == 0){
+            if(data[i]['stat'] == 0 || data[i]['stat'] == 3 ){
                 html+= '<span class="label label-default" style="margin-left: 1em;padding-top: 0.3em;padding-bottom: 0.2em">已撤销</span>'
             }else if(data[i]['stat'] == 2){
                 if(data[i]['apply']['stat']==2){

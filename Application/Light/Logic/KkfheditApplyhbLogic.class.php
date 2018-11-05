@@ -543,7 +543,12 @@ class KkfheditApplyhbLogic extends Model {
         
         if(!$result) return array('code' => 404,'msg' =>'提交失败，请重新尝试！');
         $result = $fhinfo['id'];
-        M('yxhb_fh')->where(array('id' =>$result))->setField('fh_stat4',2);
+        $save_fh = array(
+            'xg_date'     => date('Y-m-d H:i:s',time()),
+            'xg_person' => $user,
+            'fh_stat4' => 2
+        );
+        M('yxhb_fh')->where(array('id' =>$result))->save($save_fh);
         // 判断是否需要品管审核
         $res  = M('yxhb_config_kh_child')->where(array( 'clientid' => $user_id , 'dtime' => array('lt',$fhinfo['fh_date'])))->order('dtime desc')->find();
         $kh   = explode(',',$res['kh']);

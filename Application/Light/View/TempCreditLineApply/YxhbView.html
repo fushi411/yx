@@ -140,14 +140,14 @@ rows="7"></textarea>
     $('#app_pro .wk-select__user').eq(0).toggle();
     // 选择临时额度
     money.change(function () {
+        var val = $(this).val(),html = '';
         if (user_id == 0) {
             tooltip('请选择用户');
             money.val(-1);
             $('#detail').html(html);
         }
-        var val = $(this).val(),html = '';
-         
-        // if(appflow.length<val && val==2) val=appflow.length;
+        
+        if(val==0) return app_pro.html(html);;
         html = app_proHtml(val);
         $('#app_pro .wk-select__user').eq(0).toggle();
          

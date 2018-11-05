@@ -306,7 +306,7 @@ class KkFhfRatioApplyLogic extends Model {
         $descriptionData = $logic->getDescription($apply_id);
      
         $title = '配比通知(签收)';
-        $url = "http://www.fjyuanxin.com/WE/index.php?m=Light&c=Apply&a=applyInfo&system=".$system."&aid=".$apply_id."&modname=".$mod_name;
+        $url = "https://www.fjyuanxin.com/WE/index.php?m=Light&c=Apply&a=applyInfo&system=".$system."&aid=".$apply_id."&modname=".$mod_name;
       
         $applyerName='('.$res['zby'].'提交)';
         $description = "您有一个流程需要签收".$applyerName;

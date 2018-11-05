@@ -148,7 +148,7 @@
                                     </label>
                                 </div>
                                 <div class="weui-cell__bd">
-                                    <input class="weui-select" type="text" name="custodian" id="showDatePicker" readonly placeholder="请选择发货日期" value="" />
+                                    <input class="weui-select" type="text" name="custodian" id="showDatePicker" readonly placeholder="前三天至今天" value="" />
                                 </div>
                             </div>
                         
@@ -199,7 +199,9 @@
         <div class="weui-cell">
             <div class="weui-cell__bd" id="cnt">
                 <textarea class="weui-textarea" name="reason" id="reason" placeholder="请详细说明理由；
-至少5个字(必填)；" rows="3"></textarea>
+至少5个字(必填)；
+严禁因发货余额不足；
+挂其他客户名义开单；" rows="5"></textarea>
                 <div class="weui-textarea-counter">
                     <span id="reason_char">0</span>/200</div>
             </div>

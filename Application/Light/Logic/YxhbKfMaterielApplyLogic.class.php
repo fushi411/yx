@@ -48,19 +48,19 @@ class YxhbKfMaterielApplyLogic extends Model {
                                      'type'=>'date',
                                      'color' => 'black'
                                     );
-        $ratio = M('yxhb_assay')->where('id='.$res['rid'])->find();
-        $no   = str_replace('生产线',' ' ,$ratio['scx']);
-        $no   = $no.date('Ymd H:i',strtotime($ratio['date'])+$ratio['hour']*3600); 
-        $result['content'][] = array('name'=>'配比通知：',
-                                     'value'=>$no ,
+        // $ratio = M('yxhb_assay')->where('id='.$res['rid'])->find();
+        // $no   = str_replace('生产线',' ' ,$ratio['scx']);
+        // $no   = $no.date('Ymd H:i',strtotime($ratio['date'])+$ratio['hour']*3600); 
+        $result['content'][] = array('name'=>'生产线路：',
+                                     'value'=> $res['scx'] ,
                                      'type'=>'string',
                                      'color' => 'black'
                                     );
-        $result['content'][] = array('name'=>'配比详情：',
-                                     'value'=> "<span  onclick=ratioDetail({$res['rid']}) id='ratio_btn_look' style='color: #337ab7;cursor: pointer;'>点击查看详情</span>" ,
-                                     'type'=>'string',
-                                     'color' => 'black'
-                                    );
+        // $result['content'][] = array('name'=>'配比详情：',
+        //                              'value'=> "<span  onclick=ratioDetail({$res['rid']}) id='ratio_btn_look' style='color: #337ab7;cursor: pointer;'>点击查看详情</span>" ,
+        //                              'type'=>'string',
+        //                              'color' => 'black'
+        //                             );
         $result['content'][] = array('name'=>'生产品种：',
                                      'value'=>$res['product'],
                                      'type'=>'number',
@@ -138,11 +138,11 @@ class YxhbKfMaterielApplyLogic extends Model {
                                      'type'=>'date'
                                     );
     
-        $ratio = M('yxhb_assay')->where('id='.$res['rid'])->find();
-        $no   = str_replace('生产线',' ' ,$ratio['scx']);
-        $no   = $no.date('Ymd H:i',strtotime($ratio['date'])+$ratio['hour']*3600); 
-        $result[] = array('name'=>'配比通知：',
-                                     'value'=> $no ,
+        // $ratio = M('yxhb_assay')->where('id='.$res['rid'])->find();
+        // $no   = str_replace('生产线',' ' ,$ratio['scx']);
+        //$no   = $no.date('Ymd H:i',strtotime($ratio['date'])+$ratio['hour']*3600); 
+        $result[] = array('name'=>'生产线路：',
+                                     'value'=>$res['scx']  ,
                                      'type'=>'number'
                                     );
         $result[] = array('name'=>'生产品种：',
@@ -194,7 +194,7 @@ class YxhbKfMaterielApplyLogic extends Model {
             'stat'    => $res['stat'],
         );
         return $result;
-        return $result;
+        
     }
 
     /**
@@ -204,6 +204,8 @@ class YxhbKfMaterielApplyLogic extends Model {
         $user  = session('name');
         $pdate = I('post.time');
         $select= I('post.select');
+        $scx   = I('post.scx');
+        $prod  = I('post.prod');
         $kh    = I('post.kh');
         $sb    = I('post.sb');
         $notice    = I('post.notice');
@@ -215,9 +217,9 @@ class YxhbKfMaterielApplyLogic extends Model {
         if(!M('yxhb_materiel')->autoCheckToken($_POST)) return array('code' => 404,'msg' => '网络延迟，请勿点击提交按钮！');
        
         $addData = array(
-            'rid'           => $select['id'],
+            'rid'           => 0,
             'ku'            => $kh.'#',
-            'product'       => $select['product'],
+            'product'       => $prod,
             'tjr'           => $user,
             'sb_date'       => date('Y-m-d H:i:s',strtotime($pdate)),
             'data'          => json_encode($sb),
@@ -226,7 +228,9 @@ class YxhbKfMaterielApplyLogic extends Model {
             'mod_name'      => $mod_name,
             'pruduct_date'  => $pdate,
             'section'       => $sec,
+            'scx'           => $scx
         ); 
+        // return array('code' => 404,'msg' =>'提交失败，请重新尝试！','data' => $addData);
         $result = M('yxhb_materiel')->add($addData);
         if(!$result) return array('code' => 404,'msg' =>'提交失败，请重新尝试！');
         // 抄送
@@ -318,6 +322,7 @@ class YxhbKfMaterielApplyLogic extends Model {
      * @return string $html 
      */
     public function makeDeatilHtml($data){
+        return 0;
         $no   = str_replace('生产线',' ' ,$data['scx']);
         $no   = $no.date('Ymd H:i',strtotime($data['date'])+$data['hour']*3600); 
         $html = "<input class='weui-input' type='text' style='color: black; font-weight: 700;border-bottom: 1px solid #e5e5e5; '  readonly value='{$no}'>";

@@ -227,29 +227,25 @@ class MsgdataModel extends Model {
         }
     // 发货修改
     public function fh_edit_Apply_hb(){
-        $result = array();
-        $result['url'] = array(
-            array('name' => '环保发货修改','url' => U('Light/View/View',array('modname'=>'fh_edit_Apply_hb','system' => 'kk')),'modname' => 'kkfh_edit_Apply_hb'),
-            array('name' => '建材发货修改','url' => U('Light/View/View',array('modname'=>'fh_edit_Apply','system' => 'kk')),'modname' => 'kkfh_edit_Apply'),
-        );
-   
-        $result['kkfh_edit_Apply_hb'] = array(
-            'process' => U('Light/Process/ApplyProcess',array('modname'=>'fh_edit_Apply_hb','system' => 'kk')),
-            'info'    => U('Light/Apply/applyInfo',array('modname'=>'fh_edit_Apply_hb','system'=>'kk'))
-        );   
-        $result['kkfh_edit_Apply'] = array(
-            'process' => U('Light/Process/ApplyProcess',array('modname'=>'fh_edit_Apply','system' => 'kk')),
-            'info'    => U('Light/Apply/applyInfo',array('modname'=>'fh_edit_Apply','system'=>'kk'))
-        );  
-        return $result;   
+        return $this->fhApply(); 
     }
 
      // 发货修改
      public function fh_edit_Apply(){
+        return $this->fhApply();
+    }
+    // 发货修改
+    public function fh_refund_Apply(){
+        return $this->fhApply();
+    }
+
+    public function fhApply(){
         $result = array();
         $result['url'] = array(
             array('name' => '环保发货修改','url' => U('Light/View/View',array('modname'=>'fh_edit_Apply_hb','system' => 'kk')),'modname' => 'kkfh_edit_Apply_hb'),
             array('name' => '建材发货修改','url' => U('Light/View/View',array('modname'=>'fh_edit_Apply','system' => 'kk')),'modname' => 'kkfh_edit_Apply'),
+            array('name' => '环保退货修改','url' => U('Light/View/View',array('modname'=>'fh_refund_Apply','system' => 'yxhb')),'modname' => 'yxhbfh_refund_Apply'),
+            array('name' => '建材退货修改','url' => U('Light/View/View',array('modname'=>'fh_refund_Apply','system' => 'kk')),'modname' => 'kkfh_refund_Apply'),
         );
    
         $result['kkfh_edit_Apply_hb'] = array(
@@ -260,7 +256,15 @@ class MsgdataModel extends Model {
             'process' => U('Light/Process/ApplyProcess',array('modname'=>'fh_edit_Apply','system' => 'kk')),
             'info'    => U('Light/Apply/applyInfo',array('modname'=>'fh_edit_Apply','system'=>'kk'))
         );  
-        return $result;   
+        $result['yxhbfh_refund_Apply'] = array(
+            'process' => U('Light/Process/ApplyProcess',array('modname'=>'fh_refund_Apply','system' => 'yxhb')),
+            'info'    => U('Light/Apply/applyInfo',array('modname'=>'fh_refund_Apply','system'=>'yxhb'))
+        );
+        $result['kkfh_refund_Apply'] = array(
+            'process' => U('Light/Process/ApplyProcess',array('modname'=>'fh_refund_Apply','system' => 'kk')),
+            'info'    => U('Light/Apply/applyInfo',array('modname'=>'fh_refund_Apply','system'=>'kk'))
+        );
+        return $result;  
     }
 
 
