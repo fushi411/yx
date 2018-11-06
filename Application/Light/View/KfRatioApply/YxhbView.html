@@ -214,12 +214,12 @@
                     <div class="weui-cell weui-cell_select weui-cell_select-after ">
                         <div class="weui-cell__hd">
                             <label class="weui-label">
-                                <span class="font-width">复合粉</span>&nbsp;&nbsp;
+                                <span class="font-width">钢渣粉</span>&nbsp;&nbsp;
                                  
                             </label>
                         </div>
                         <div class="weui-cell__bd">
-                            <input class="weui-select peibi out_scale" type="number" index="复合粉" maxlength="15" name="custodian" id="out_scale1" placeholder="5-20%">
+                            <input class="weui-select peibi out_scale" type="number" index="钢渣粉" maxlength="15" name="custodian" id="out_scale1" placeholder="5-20%">
                         </div>
                     </div>
                 </div>
@@ -630,7 +630,7 @@
             ['石灰石'  ,0,8,1],
             ['激发剂'  ,0,0.2,1],
             ['脱硫灰'  ,0,10,1],
-            ['复合粉'  ,5,20,1],
+            ['钢渣粉'  ,5,20,1],
         ];
    
         // 总配比值计算
@@ -652,7 +652,7 @@
             }
             var count = 0;
             for (var i = 0; i < F85.length; i++) {
-                if ($('.peibi').eq(i).attr('index') == '脱硫灰' || $('.peibi').eq(i).attr('index') == '激发剂' || $('.peibi').eq(i).attr('index') == '复合粉') continue;
+                if ($('.peibi').eq(i).attr('index') == '脱硫灰' || $('.peibi').eq(i).attr('index') == '激发剂' || $('.peibi').eq(i).attr('index') == '钢渣粉') continue;
                 num = $('.peibi').eq(i).val() ? $('.peibi').eq(i).val() : 0;
                 count += parseFloat(num);
             }

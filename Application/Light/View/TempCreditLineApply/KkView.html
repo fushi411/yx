@@ -154,7 +154,7 @@ rows="7"></textarea>
 
     // diog提示
     $('#dialogs').on('click', '.weui-dialog__btn', function () {
-        $(this).parents('.js_dialog').fadeOut(200);
+        $(this).parents('.js_dialog').hide();
     });
 
     // 2w额度显示推送
@@ -319,7 +319,7 @@ rows="7"></textarea>
     function getkk(line,authCode,user_name){
         $.ajax({
             type:'POST',
-            url: "http://www.fjyuanxin.com/sngl/include/getClientCreditApi.php",
+            url: "https://www.fjyuanxin.com/sngl/include/getClientCreditApi.php",
             dataType: 'json',
             data: {
                 name:user_name,
