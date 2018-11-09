@@ -170,7 +170,7 @@ rows="7"></textarea>
         }
         
         if(val==0) return app_pro.html(html);;
-        html = app_proHtml(val);
+        html = app_proHtml(val-1);
         $('#app_pro .wk-select__user').eq(0).toggle();
          
         app_pro.html(html);
@@ -179,7 +179,7 @@ rows="7"></textarea>
     // 审批流程显示
     function app_proHtml(val){
         var html = '';
-        
+        console.log(val);
         for(i=0;i<=val;i++){
             
             html += "<li class='weui-uploader__file wk-select__user' id='"+appflow[i]['id']+"' style='height:90px;";        

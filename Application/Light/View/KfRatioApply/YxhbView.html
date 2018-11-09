@@ -219,7 +219,18 @@
                             </label>
                         </div>
                         <div class="weui-cell__bd">
-                            <input class="weui-select peibi out_scale" type="number" index="钢渣粉" maxlength="15" name="custodian" id="out_scale1" placeholder="5-20%">
+                            <input class="weui-select peibi out_scale" type="number" index="钢渣粉" maxlength="15" name="custodian" id="out_scale1" placeholder="0-20%">
+                        </div>
+                    </div>
+                    <div class="weui-cell weui-cell_select weui-cell_select-after ">
+                        <div class="weui-cell__hd">
+                            <label class="weui-label">
+                                <span class="font-width">复合粉</span>&nbsp;&nbsp;
+                                 
+                            </label>
+                        </div>
+                        <div class="weui-cell__bd">
+                            <input class="weui-select peibi out_scale" type="number" index="复合粉" maxlength="15" name="custodian" id="out_scale2" placeholder="0-20%">
                         </div>
                     </div>
                 </div>
@@ -569,17 +580,13 @@
        
     });
 
-
-
-
-       
-
-
         // 确定按钮
         $('#ratio-agree').click(function () {
-
+           
             if(!getfazhi()) return;
             if (peibi_value != 100) return tooltip('总配置值须为100%，请检查后输入');
+            var flag = outScaleOnlyOne();
+            if(flag) return tooltip('磨外材料至多只能一个');
             var scale_1 = scale1.val(),
                 scale_2 = scale2.val(),
                 scale_3 = scale3.val(),
@@ -589,6 +596,7 @@
                 scale_7 = scale7.val(),
                 out_scale  = $('#out_scale').val();
                 out_scale1 = $('#out_scale1').val();
+                out_scale2 = $('#out_scale2').val();
 
             if (!scale_1 && !scale_2 && !scale_3 && !scale_4 && !scale_5 && !scale_6) return tooltip('请选择至少一种物料');
             scale_array = [];
@@ -601,6 +609,7 @@
             scale_array[6] = { 'name': scale_7 ? scale_7 : null, 'value': scale7.attr('index') };
             out_scale_array[0] = { 'name': out_scale ? out_scale : null, 'value': $('#out_scale').attr('index') };
             out_scale_array[1] = { 'name': out_scale1 ? out_scale1 : null, 'value': $('#out_scale1').attr('index') };
+            out_scale_array[2] = { 'name': out_scale2 ? out_scale2 : null, 'value': $('#out_scale2').attr('index') };
             show_wl();
             $('#other_page').fadeOut(200);
         });
@@ -630,7 +639,8 @@
             ['石灰石'  ,0,8,1],
             ['激发剂'  ,0,0.2,1],
             ['脱硫灰'  ,0,10,1],
-            ['钢渣粉'  ,5,20,1],
+            ['钢渣粉'  ,0,20,1],
+            ['复合粉'  ,0,20,1],
         ];
    
         // 总配比值计算
@@ -640,6 +650,7 @@
                 var idx = $(this).attr('index'),
                     value = $(this).val();
                 F85.forEach(function(item,key){
+                    
                     if(item[0] == idx){
                         if(value<item[1] || value >item[2]){
                             F85[key][3] = 0;
@@ -652,7 +663,7 @@
             }
             var count = 0;
             for (var i = 0; i < F85.length; i++) {
-                if ($('.peibi').eq(i).attr('index') == '脱硫灰' || $('.peibi').eq(i).attr('index') == '激发剂' || $('.peibi').eq(i).attr('index') == '钢渣粉') continue;
+                if ($('.peibi').eq(i).attr('index') == '脱硫灰' || $('.peibi').eq(i).attr('index') == '激发剂' || $('.peibi').eq(i).attr('index') == '钢渣粉'|| $('.peibi').eq(i).attr('index') == '复合粉') continue;
                 num = $('.peibi').eq(i).val() ? $('.peibi').eq(i).val() : 0;
                 count += parseFloat(num);
             }
@@ -665,9 +676,22 @@
             $('#other_page').fadeOut(200);
         });
 
+        $('.out_scale').on('change', function () {
+            var flag = outScaleOnlyOne();
+            if(flag) return tooltip('磨外材料至多只能一个');
+        });
+        function outScaleOnlyOne(){
+            var out_scale  = $('#out_scale').val(),
+                out_scale1 = $('#out_scale1').val(),
+                out_scale2 = $('#out_scale2').val(),
+                count = 0;
+                if(out_scale) count++;
+                if(out_scale1) count++;
+                if(out_scale2) count++;
+                return count>1?1:0;
+        }
         // 原材料配置弹出
         $('#select_ycl').click(function () {
-            
             if ($('#type').val() == -1 || $('#type').val() == null) return tooltip('请选择生产品种');
             if ($('#scx').val() == -1 || $('#scx').val() == null) return tooltip('请选择生产线');
             if ($('#kh').val() == -1 || $('#kh').val() == null) return tooltip('请选择生产库号');

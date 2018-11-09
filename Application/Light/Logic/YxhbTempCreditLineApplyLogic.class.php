@@ -269,11 +269,11 @@ class YxhbTempCreditLineApplyLogic extends Model {
                     ->find();
         
         //  为过审的
-        $app_stat = M($system.'_appflowproc')
-                    ->where(array('aid' =>$res['id'],'mod_name' => 'TempCreditLineApply' ,'app_stat' => 1))
-                    ->find();
-        if(empty($app_stat)){
-            if($res['stat'] == 2 ) return array('code' => 404,'msg' => '已有一条同等额度申请在审批');
+        if($res['stat'] == 2){
+            $app_stat = M($system.'_appflowproc')
+                        ->where(array('aid' =>$res['id'],'mod_name' => 'TempCreditLineApply' ,'app_stat' => 1))
+                        ->find();
+            if(empty($app_stat)) return array('code' => 404,'msg' => '已有一条同等额度申请在审批');
         }
         // 过审的情况 有效期判断
         $day = str_replace('天','',$res['yxq']);
