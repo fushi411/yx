@@ -6,30 +6,22 @@ class TestController extends \Think\Controller {
 
     public function tt(){
         header("Content-type:text/html;charset=utf-8");
-        $system = 'kk';
-        $user_id =553;
-        $money = 2;
-        $lineArr = array(20000,50000,100000);
-
-         // 有效期校验
-         $res     = M($system.'_tempcreditlineconfig')
-                    ->field('date,dtime,stat,yxq')
-                    ->where(array('clientid' => $user_id ,'stat' => array('neq',0),'line' => $lineArr[$money]))
-                    ->order('date desc')
-                    ->find();
-        dump($res);
-        //  为过审的
-        if($res['stat'] == 2){
-            $app_stat = M($system.'_appflowproc')
-                        ->where(array('aid' =>$res['id'],'mod_name' => 'TempCreditLineApply' ,'app_stat' => 1))
-                        ->find();
-                        dump($app_stat);
-            if(empty($app_stat)) return array('code' => 404,'msg' => '已有一条同等额度申请在审批');
+        $data = M('yxhb_tempcreditlineconfig')->field('id,dtime,yxq')->where(array( 'is_del' => 1))->select();
+        foreach($data as $k => $v){
+            $day = str_replace('天','',$v['yxq']);
+            if(strtotime($v['dtime'].' +'.$day.' day')<time()) dump($v['id'].'过期了');
         }
-    
+        $data = M('kk_tempcreditlineconfig')->field('id,dtime,yxq')->where(array( 'is_del' => 1))->select();
+        foreach($data as $k => $v){
+            $day = str_replace('天','',$v['yxq']);
+            if(strtotime($v['dtime'].' +'.$day.' day')<time()) dump($v['id'].'过期了');
+        }
+        D('WxMessage')->autoDeleteSendMessage();
    } 
 
-
+   public function rw(){
+       $this->display("Task/index");
+   }
 
     public function arraySort($arr, $keys, $type = 'asc') {
         $keysvalue = $new_array = array();

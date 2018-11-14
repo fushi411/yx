@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>任务</title>
+    <link href="__PUBLIC__/assets/css/bootstrap.min.css" rel="stylesheet">
+    <!-- 引入 WeUI -->
+    <link rel="stylesheet" href="__PUBLIC__/assets/css/weui.min.css" />
+    <link rel="stylesheet" href="http://at.alicdn.com/t/font_915899_p6lp2doquzb.css">
+    <link rel="stylesheet" href="__PUBLIC__/assets/css/weMain.css?version=201709012" />
+    <link href="__PUBLIC__/assets/css/wc_select2.min.css?version=20170819" rel="stylesheet" />
+    <style type="text/css">
+        .weui-cells:after {
+            border-bottom: 0px solid #fff;
+        }
+
+        .weui-selet__user {
+            width: 2.5em;
+            height: 2.5em;
+            margin-bottom: 5px;
+            margin-right: 16px;
+            border-radius: 5px;
+        }
+
+        .wk-select__user {
+            height: 60px;
+            width: 52px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-right: 6px;
+        }
+        .no-select__user{
+            height: 60px;
+            width: 52px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-right: 6px;
+        }
+        .wk-comment__user {
+            height: 60px;
+            width: 52px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-right: 12px;
+        }
+
+        a:hover {
+            text-decoration: none;
+        }
+
+        label {
+            font-weight: 400;
+            margin-bottom: 0px;
+        }
+
+        .select2-results__option {
+            font-size: 16px;
+        }
+
+        .select2-search__field {
+            line-height: normal;
+        }
+        /* end */
+        .redColor {
+            color: #e64340;
+        }
+        .greenColor {
+            color: #16b517;
+        }
+        .weui-form-preview__value span {
+            display: inline-block;
+            width: 80px;
+            text-align: center;
+        }
+        .font-width{
+            display: inline-block;
+            width: 68px;
+            text-align: right;
+            
+        }
+        .greyColor{
+            color: #757575;
+        }
+        .select2-container--default .select2-selection--multiple .select2-selection__rendered{
+            padding: 0;
+        }
+        .other_page{
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #fff;
+            z-index: 999;
+        }
+        .searchCenter{
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            
+        }
+        .weui-tabbar .weui-tabbar__icon{
+            font-size: 26px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="page tabbar js_show">
+        <div class="page__bd" style="height: 100%;">
+            <div class="weui-tab">
+                <div class="weui-tab__panel">
+
+                </div>
+                <div class="weui-tabbar">
+                    <a href="javascript:;" class="weui-tabbar__item" data-href="">
+                        <span style="display: inline-block;position: relative;">
+                            <i class="weui-tabbar__icon iconfont icon-biaoqian"></i>
+                        </span>
+                        <p class="weui-tabbar__label" style="margin:3px 0 5px 0;">我的待办</p>
+                    </a>
+                    <a href="javascript:;" class="weui-tabbar__item weui-bar__item_on">
+                        <i class="weui-tabbar__icon iconfont icon-wendang"></i>
+                        <p class="weui-tabbar__label" style="margin:3px 0 5px 0; ">任务查看</p>
+                    </a>
+                    <a href="javascript:;" class="weui-tabbar__item">
+                        <i class="weui-tabbar__icon iconfont icon-shezhi"></i>
+                        <p class="weui-tabbar__label" style="margin:3px 0 5px 0; ">配置中心</p>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+<script src="__PUBLIC__/assets/js/jquery-1.11.1.min.js"></script>
+<script src="__PUBLIC__/assets/js/bootstrap.min.js"></script>
+<script src="__PUBLIC__/assets/js/zh-CN.js"></script>
+<script src="https://res.wx.qq.com/open/libs/weuijs/1.1.3/weui.min.js"></script>
+<script src="__PUBLIC__/assets/js/exif.js"></script>
+</body>
+<script type="text/javascript" class="tabbar js_show">
+    $(function(){
+        $('.weui-tabbar__item').on('click', function () {
+            $(this).addClass('weui-bar__item_on').siblings('.weui-bar__item_on').removeClass('weui-bar__item_on');
+            url = $(this).attr('data-href');
+            window.location.href =  url;
+        });
+    });
+   
+</script>
+</html>
