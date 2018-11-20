@@ -1,0 +1,47 @@
+<extend name="Task:index" />
+<block name="content">
+    <style>
+        .nothing{
+            min-width:67%;
+            margin: 0 auto; 
+            color: #999;
+            text-align: center;
+            height: 90%;
+            padding-top: 40%;
+        }
+        .font118{
+            font-size: 66px;
+        }
+        #btn-all {
+            right: 10px;
+            bottom: 70px;
+            position: fixed;
+            text-align: center;
+            z-index: 999;
+        }
+        #topDiv{
+            text-align: center;
+        }
+        .titleLeft{
+            display: inline-block;
+        }
+        .titleRight{
+            display: inline-block;
+        }
+    </style>
+    <div id='topDiv'>
+        <div class="titleLeft">待处理事项</div>
+        <div class="titleRight">已完成事项</div>
+    </div>
+    <div id="btn-all">
+            <a href="javascript:;" class="weui-btn weui-btn_mini weui-btn_primary">添加</a>
+    </div>
+    <div class="nothing">
+            <i class="font118 iconfont icon-fenleiorguangchangorqita"></i>   
+            <h4>暂无代办事项</h4>
+    </div>
+
+</block>
+<block name="js">
+    
+</block>

@@ -9,7 +9,7 @@
     <link href="__PUBLIC__/assets/css/bootstrap.min.css" rel="stylesheet">
     <!-- 引入 WeUI -->
     <link rel="stylesheet" href="__PUBLIC__/assets/css/weui.min.css" />
-    <link rel="stylesheet" href="http://at.alicdn.com/t/font_915899_p6lp2doquzb.css">
+    <link rel="stylesheet" href="http://at.alicdn.com/t/font_915899_lcc1nauh1ak.css">
     <link rel="stylesheet" href="__PUBLIC__/assets/css/weMain.css?version=201709012" />
     <link href="__PUBLIC__/assets/css/wc_select2.min.css?version=20170819" rel="stylesheet" />
     <style type="text/css">
@@ -116,34 +116,32 @@
         <div class="page__bd" style="height: 100%;">
             <div class="weui-tab">
                 <div class="weui-tab__panel">
+                    <block name="content">
 
+                    </block>
                 </div>
                 <div class="weui-tabbar">
-                    <a href="javascript:;" class="weui-tabbar__item" data-href="">
-                        <span style="display: inline-block;position: relative;">
-                            <i class="weui-tabbar__icon iconfont icon-biaoqian"></i>
-                        </span>
-                        <p class="weui-tabbar__label" style="margin:3px 0 5px 0;">我的待办</p>
-                    </a>
-                    <a href="javascript:;" class="weui-tabbar__item weui-bar__item_on">
-                        <i class="weui-tabbar__icon iconfont icon-wendang"></i>
-                        <p class="weui-tabbar__label" style="margin:3px 0 5px 0; ">任务查看</p>
-                    </a>
-                    <a href="javascript:;" class="weui-tabbar__item">
-                        <i class="weui-tabbar__icon iconfont icon-shezhi"></i>
-                        <p class="weui-tabbar__label" style="margin:3px 0 5px 0; ">配置中心</p>
-                    </a>
+                    <volist name="bottom" id="vo">
+                            <a href="javascript:;" class="weui-tabbar__item {$vo.on}" data-href="{$vo.url}">
+                                <span style="display: inline-block;position: relative;">
+                                    <i class="weui-tabbar__icon iconfont {$vo.logo}"></i>
+                                </span>
+                                <p class="weui-tabbar__label" style="margin:3px 0 5px 0;">{$vo.title}</p>
+                            </a>
+                    </volist>
                 </div>
             </div>
         </div>
     </div>
 <script src="__PUBLIC__/assets/js/jquery-1.11.1.min.js"></script>
 <script src="__PUBLIC__/assets/js/bootstrap.min.js"></script>
-<script src="__PUBLIC__/assets/js/zh-CN.js"></script>
 <script src="https://res.wx.qq.com/open/libs/weuijs/1.1.3/weui.min.js"></script>
 <script src="__PUBLIC__/assets/js/exif.js"></script>
 </body>
 <script type="text/javascript" class="tabbar js_show">
+<block name="js">
+
+</block>
     $(function(){
         $('.weui-tabbar__item').on('click', function () {
             $(this).addClass('weui-bar__item_on').siblings('.weui-bar__item_on').removeClass('weui-bar__item_on');

@@ -230,8 +230,10 @@
                     </div>
                     <div class="weui-cell">
                         <div class="weui-uploader__bd">
-                            <ul class="weui-uploader__files" id="uploaderFiles" style="margin-bottom: 0px;float: left;">
-                                <li class="weui-uploader__file imgsrc" src="http://www.fjyuanxin.com/sngl/upload/hp/{$mydata.att_name}"  style="background-image:url(http://www.fjyuanxin.com/sngl/upload/hp/{$mydata.att_name})"></li>
+                            <ul class="weui-uploader__files" id="viewer" style="margin-bottom: 0px;float: left;">
+                                <li class="weui-uploader__file" >
+                                    <img style="width:100%;height:100%;" src="http://www.fjyuanxin.com/sngl/upload/hp/{$mydata.att_name}" data-original="http://www.fjyuanxin.com/sngl/upload/hp/{$mydata.att_name}"  alt="" srcset="">
+                                </li>
                             </ul>
                         </div>
                     </div>
@@ -319,8 +321,14 @@
 </block>
 
 <block name="js">
-    <script>
-        // apply
+        <link rel="stylesheet" href="__PUBLIC__/assets/css/viewer.css" />
+        <script src="__PUBLIC__/assets/js/viewer.js"></script>
+        <script>
+            $(function () {
+                $('#viewer').viewer({
+                    url: 'data-original',
+                });
+            })
          // apply
          $('#ratio-refuse').click(function () {
             $('#other_page').fadeOut(200);
