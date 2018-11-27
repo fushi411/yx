@@ -4,7 +4,9 @@ namespace Light\Controller;
 class TestController extends \Think\Controller {
    
 
-     
+     public function tt(){
+       
+     }
    
     public function arraySort($arr, $keys, $type = 'asc') {
         $keysvalue = $new_array = array();

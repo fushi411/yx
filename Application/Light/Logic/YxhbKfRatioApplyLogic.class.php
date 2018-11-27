@@ -186,7 +186,7 @@ class YxhbKfRatioApplyLogic extends Model {
                                      'type'=>'date'
                                     );
         $result[] = array('name'=>'生产时间：',
-                                     'value'=>$res['date'].' '.$hour.':'.$scfz,
+                                     'value'=> date('m-d H:i',strtotime($res['date'].' '.$hour.':'.$scfz)) ,
                                      'type'=>'date'
                                     );
         $result[] = array('name'=>'生产品种：',

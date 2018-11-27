@@ -585,7 +585,7 @@ class YxhbLkStockApplyLogic extends Model {
                                      'type'=>'date'
                                     );
         $result[] = array('name'=>'申请日期：',
-                                     'value'=>  date('Y-m-d H:i',strtotime($res['date'])+$res['time']*3600) ,
+                                     'value'=>  date('m-d H:i',strtotime($res['date'])+$res['time']*3600) ,
                                      'type'=>'date'
                                     );
         $result[] = array('name'=>'申请人员：',

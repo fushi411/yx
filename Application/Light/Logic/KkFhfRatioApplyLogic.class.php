@@ -147,7 +147,7 @@ class KkFhfRatioApplyLogic extends Model {
                                      'type'=>'date'
                                     );
         $result[] = array('name'=>'生产时间：',
-                                     'value'=>$res['scrq'].' '.$hour.':'.$fz,
+                                     'value'=> date('m-d H:i',strtotime($res['scrq'].' '.$hour.':'.$fz)) ,
                                      'type'=>'date'
                                     );
         $result[] = array('name'=>'生产品种：',

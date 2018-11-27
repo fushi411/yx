@@ -135,7 +135,7 @@ class YxhbCgfkApplyLogic extends Model {
                                      'type'=>'date'
                                     );
         $result[] = array('name'=>'申请日期：',
-                                     'value'=>$res['zd_date'],
+                                     'value'=> date('m-d H:i',strtotime($res['zd_date'])) ,
                                      'type'=>'date'
                                     );
         $result[] = array('name'=>'客户名称：',

@@ -228,7 +228,7 @@ class KkfheditApplyhbLogic extends Model {
                                      'type'=>'date'
                                     );
         $result[] = array('name'=>'申请日期：',
-                                     'value'=>$res['fh_da'],
+                                     'value'=> date('m-d H:i',strtotime($res['fh_da'])) ,
                                      'type'=>'date'
                                     );
         $map  = array('id' => $id);

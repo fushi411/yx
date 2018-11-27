@@ -127,7 +127,7 @@ class KkWlCgfkApplyLogic extends Model {
                                      'type'=>'date'
                                     );
         $result[] = array('name'=>'申请日期：',
-                                     'value'=>$res['zd_date'],
+                                     'value'=> date('m-d H:i',strtotime($res['zd_date'])) ,
                                      'type'=>'date'
                                     );
         $result[] = array('name'=>'客户名称：',
@@ -232,17 +232,19 @@ class KkWlCgfkApplyLogic extends Model {
                     a.g_name AS text
                 FROM
                     kk_wl AS a,
-                    kk_cght AS b
+                    kk_cght AS b,
+                    kk_gys as c
                 WHERE
-                    (a.id = b.ht_wl or  a.id=113 or a.id=112)
+                ( a.id = b.ht_wl)
                 AND b.ht_stat = 2
                 AND a.g_ch = ''
-                
+                AND c.g_name=a.g_name
                 and (a.g_helpword like '%{$word}%' or a.g_name like '%{$word}%')
                 GROUP BY
                     a.id
-                order by 
-                    a.g_name asc";
+                ORDER BY
+                    a.g_name ASC";
+                    
         $res = M()->query($sql);
         return $res;
     }

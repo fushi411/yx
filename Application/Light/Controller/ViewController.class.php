@@ -23,6 +23,7 @@ class ViewController extends BaseController
         $mod_name = I('modname');
         $system = I('system');
         $viewtype = I('viewtype');
+        
         // 审批
         $appflow = GetAppFlow($system,$mod_name);
         // 推送

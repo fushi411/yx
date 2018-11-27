@@ -80,9 +80,9 @@
         }
     </style>
     <ul id='topDiv'>
-        <li class="titleLeft titleDiv onTitle" >待处理事项</li>
-        <li class="titleCenter titleDiv"       data-url="{:U('Light/task/over')}">已完成事项</li>
-        <li class="titleRight titleDiv"        data-url="{:U('Light/task/draftPage')}">草稿</li>
+        <li class="titleLeft titleDiv "         data-url="{:U('Light/task/commission')}">待处理事项</li>
+        <li class="titleCenter titleDiv "       data-url="{:U('Light/task/over')}"      >已完成事项</li>
+        <li class="titleRight titleDiv onTitle" >草稿</li>
         <li style="clear:both;"></li>
     </ul>
     <div id="btn-all">
@@ -90,16 +90,17 @@
     </div>
     <div id="show">
         
-    </div>
-    <div class="no-more" >信息已经到底...</div>
-    <div class="load-more" >点我加载更多...</div>
+        </div>
+        <div class="no-more" >信息已经到底...</div>
+        <div class="load-more" >点我加载更多...</div>
     <div class="nothing">
             <i class="font118 iconfont icon-fenleiorguangchangorqita"></i>   
-            <h4>暂无待处理事项</h4>
+            <h4>暂无草稿</h4>
     </div>
 
 </block>
 <block name="js">
+    
     <script>
         var page = 1;
         var no_more = $('.no-more'),
@@ -109,7 +110,7 @@
         })
         getData();
         function getData(){
-            $.post("{:U('Light/Task/commissionData')}",
+            $.post("{:U('Light/Task/draftData')}",
                 {
                     'page'     : page,
                 }, function (data) {
@@ -139,11 +140,11 @@
                             '<div class="weui-media-box weui-media-box_text">'+
                                     '<h4 class="weui-media-box__title">'+data[i]['title']+'</h4>'+
                                     '<p class="weui-media-box__desc">'+data[i]['content']+'</p>'+
-                                    '<ul class="weui-media-box__info">'+
-                                        //'<li class="weui-media-box__info__meta">'+data[i]['tjr']+'</li>'+
-                                        '<li class="weui-media-box__info__meta">'+data[i]['submittime']+'</li>'+
-                                        '<li class="weui-media-box__info__meta weui-media-box__info__meta_extra">'+data[i]['tjr']+'</li>'+
-                                ' </ul>'+
+                                //     '<ul class="weui-media-box__info">'+
+                                //         //'<li class="weui-media-box__info__meta">'+data[i]['tjr']+'</li>'+
+                                //         '<li class="weui-media-box__info__meta">'+data[i]['submittime']+'</li>'+
+                                //         '<li class="weui-media-box__info__meta weui-media-box__info__meta_extra">'+data[i]['tjr']+'</li>'+
+                                // ' </ul>'+
                                 '</div>'+
                             '</div>'+
                         '</div>';
@@ -152,7 +153,6 @@
         }
         $('#topDiv').on('click','li',function(){
            var url = $(this).attr('data-url');
-         
            if(url){
                window.location.href = url;
            }
@@ -160,9 +160,10 @@
     $('#btn-all').click(function(){
         window.location.href = "{:U('Light/task/makeup')}";
     })
+    
     $('#show').on('click','.weui-panel',function(){
         var idx = $(this).attr('index');
-        window.location.href = "{:U('Light/task/taskLook')}"+'&taskid='+idx;
+        window.location.href = "{:U('Light/task/change')}"+'&taskid='+idx;
     });
     </script>
     

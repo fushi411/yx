@@ -134,7 +134,7 @@ class YxhbKfMaterielApplyLogic extends Model {
                                      'type'=>'date'
                                     );
         $result[] = array('name'=>'生产时间：',
-                                     'value'=>date('Y-m-d',strtotime($res['pruduct_date'])),
+                                     'value'=>date('m-d H:i',strtotime($res['pruduct_date'])),
                                      'type'=>'date'
                                     );
     
@@ -221,12 +221,12 @@ class YxhbKfMaterielApplyLogic extends Model {
             'ku'            => $kh.'#',
             'product'       => $prod,
             'tjr'           => $user,
-            'sb_date'       => date('Y-m-d H:i:s',strtotime($pdate)),
+            'sb_date'       => date('Y-m-d H:i:s',time()),
             'data'          => json_encode($sb),
             'info'          => $notice,
             'stat'          => 2,
             'mod_name'      => $mod_name,
-            'pruduct_date'  => $pdate,
+            'pruduct_date'  => date('Y-m-d H:i:s',strtotime($pdate)),
             'section'       => $sec,
             'scx'           => $scx
         ); 

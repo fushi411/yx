@@ -69,7 +69,11 @@
             align-items: center;
             justify-content: center;
         }
-        
+        @media print{
+                a:after{
+                    content:""!important;
+                }
+            }
     </style>
 </head>
 

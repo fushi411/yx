@@ -371,4 +371,22 @@ class MsgdataModel extends Model {
         ); 
         return $result;   
     }
+    // 生控记录(矿粉)
+    public function kfScjl(){
+        $result = array();
+        $result['url'] = array(
+            array('name' => '生控记录(矿粉)','url' => U('Light/View/View',array('modname'=>'kfScjl','system' => 'yxhb')),'modname' => 'yxhbkfScjl'),
+            //array('name' => '建材用款费用','url' => U('Light/View/View',array('modname'=>'kfScjl','system' => 'kk')),'modname' => 'kkCostMoney'),
+        );
+   
+        $result['yxhbkfScjl'] = array(
+            'process' => U('Light/Process/ApplyProcess',array('modname'=>'kfScjl','system' => 'yxhb')),
+            'info'    => U('Light/Apply/applyInfo',array('modname'=>'kfScjl','system'=>'yxhb'))
+        );   
+        // $result['kkCostMoney'] = array(
+        //     'process' => U('Light/Process/ApplyProcess',array('modname'=>'CostMoney','system' => 'kk')),
+        //     'info'    => U('Light/Apply/applyInfo',array('modname'=>'CostMoney','system'=>'kk'))
+        // ); 
+        return $result;   
+    }
 }

@@ -214,7 +214,7 @@ class YxhbfhrefundApplyLogic extends Model {
                                      'type'=>'date'
                                     );
         $result[] = array('name'=>'申请日期：',
-                                     'value'=>$res['fh_da'],
+                                     'value'=> date('m-d',strtotime($res['fh_da'])) ,
                                      'type'=>'date'
                                     );
         $map  = array('id' => $id);

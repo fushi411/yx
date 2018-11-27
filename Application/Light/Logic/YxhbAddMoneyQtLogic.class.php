@@ -107,6 +107,7 @@ class YxhbAddMoneyQtLogic extends Model {
         $data = M('yxhb_cdhp')->where(array('odh' => $dh  , 'stat' => array('neq',0) ))->find();
         $data['ntext'] = $data['ntext']?$data['ntext']:'无';
         $data['nmoney'] = "&yen;".number_format($data['nmoney'],2,'.',',')."元" ;
+        $data['remaining'] = ceil((strtotime($data['dqda'])-time())/(3600*24)).'天';
         return $data;
     }
     public function getYsye($res){
@@ -205,8 +206,8 @@ class YxhbAddMoneyQtLogic extends Model {
     }
     public function gethpdate($dh ){
         $data = M('yxhb_cdhp')->where(array('odh' => $dh  , 'stat' => array('neq',0) ))->find();
-        $days = (strtotime($data['dqda'])-strtotime($data['kpda']))/(3600*24);
-        return $days.'天';
+        $days = (strtotime($data['dqda'])-time())/(3600*24);
+        return ceil($days).'天';
     }
 
     /**

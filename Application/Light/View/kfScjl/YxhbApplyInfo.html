@@ -23,13 +23,12 @@
 <block name="content_body">
     <volist name="content" id="val">
         <p class="weui-media-box__desc weui-flex">
-            <span style="display: inline-block; ">{$val.name}</span>
-            <span class="weui-flex__item" id="{$val.id}" style="color:{$val.color} ">
+            <span style="display: inline-block; width: 100px;text-align: right;">{$val.name}</span>
+            <span class="weui-flex__item" style="color:{$val.color} ">
                 {$val.value}
             </span>
         </p>
     </volist>
-    
 </block>
 
 <block name="work_flow">
@@ -116,161 +115,6 @@
             </div>
         </div>
     </div>
-    <div class="other_page" id="other_page" style="display: none;    
-                                                    position: fixed;
-                                                    left: 0;
-                                                    top: 0;
-                                                    height: 100%;
-                                                    width: 100%;
-                                                    z-index: 999;">
-        <div class="container">
-            
-            <div class="page js_show">
-                <h3 class="titleTab" style="text-align: center">汇票详情</h3>
-                <div class="weui-cells weui-cells_form">
-                    <div class="weui-cell weui-cell_select weui-cell_select-after">
-                        <div class="weui-cell__hd">
-                            <label class="weui-label">收票日期&nbsp;&nbsp;
-                                
-                            </label>
-                        </div>
-                        <div class="weui-cell__bd">
-                            <input class="weui-select" type="text" name="custodian"  readonly value="{$mydata.spda}" />
-                        </div>
-                    </div>
-                    <div class="weui-cell weui-cell_select weui-cell_select-after">
-                        <div class="weui-cell__hd">
-                            <label class="weui-label">开票日期&nbsp;&nbsp;
-                               
-                            </label>
-                        </div>
-                        <div class="weui-cell__bd">
-                            <input class="weui-select" type="text" name="custodian" readonly value="{$mydata.kpda}" />
-                        </div>
-                    </div>
-                    <div class="weui-cell weui-cell_select weui-cell_select-after">
-                        <div class="weui-cell__hd">
-                            <label class="weui-label">到期日期&nbsp;&nbsp;
-                               
-                            </label>
-                        </div>
-                        <div class="weui-cell__bd">
-                            <input class="weui-select" type="text" name="custodian"  readonly value="{$mydata.dqda}" />
-                        </div>
-                    </div>
-                    <div class="weui-cell weui-cell_select weui-cell_select-after">
-                        <div class="weui-cell__hd">
-                            <label class="weui-label">剩余天数&nbsp;&nbsp;
-                               
-                            </label>
-                        </div>
-                        <div class="weui-cell__bd">
-                            <input class="weui-select" type="text" name="custodian"  readonly value="{$mydata.remaining}" />
-                        </div>
-                    </div>
-                </div>
-                <div class="weui-cells weui-cells_form">
-                    <div class="weui-cell weui-cell_select weui-cell_select-after ">
-                        <div class="weui-cell__hd">
-                            <label class="weui-label">
-                                <span class="font-width">汇票号码</span>&nbsp;&nbsp;
-                               
-                            </label>
-                        </div>
-                        <div class="weui-cell__bd">
-                            <input class="weui-select peibi scale" type="text"   value="{$mydata.hphm}"  >
-                        </div>
-                    </div>
-                </div>
-
-                <div class="weui-cells weui-cells_form">
-                    <div class="weui-cell weui-cell_select weui-cell_select-after">
-                        <div class="weui-cell__hd">
-                            <label class="weui-label">汇票媒介&nbsp;&nbsp;
-                            </label>
-                        </div>
-                        <div class="weui-cell__bd">
-                            <input class="weui-select" type="text" name="custodian"  readonly value="{$mydata.mj}" />
-                        </div>
-                    </div>
-                    <div class="weui-cell weui-cell_select weui-cell_select-after">
-                        <div class="weui-cell__hd">
-                            <label class="weui-label">汇票性质&nbsp;&nbsp;
-                            </label>
-                        </div>
-                        <div class="weui-cell__bd">
-                            <input class="weui-select" type="text" name="custodian"  readonly value="{$mydata.xz}" />
-                        </div>
-                    </div>
-                    <div class="weui-cell weui-cell_select weui-cell_select-after">
-                        <div class="weui-cell__hd">
-                            <label class="weui-label">开票银行&nbsp;&nbsp;
-                            </label>
-                        </div>
-                        <div class="weui-cell__bd">
-                            <input class="weui-select" type="text" name="custodian"   value="{$mydata.kpyh}" />
-                        </div>
-                    </div>
-                    <div class="weui-cell weui-cell_select weui-cell_select-after">
-                        <div class="weui-cell__hd">
-                            <label class="weui-label">出票金额&nbsp;&nbsp;
-                                <span style="color:red;">*</span>
-                            </label>
-                        </div>
-                        <div class="weui-cell__bd">
-                            <div class="weui-select">{$mydata.nmoney}</div>
-                        </div>
-                    </div>
-                    <div class="weui-cell weui-cell_select weui-cell_select-after">
-                            <div class="weui-cell__hd">
-                                <label class="weui-label">背书情况&nbsp;&nbsp;
-                                </label>
-                            </div>
-                            <div class="weui-cell__bd">
-                                <input class="weui-select" type="number" name="custodian" readonly value="{$mydata.bsqk}" />
-                            </div>
-                        </div>
-                </div>
-                <div class="weui-cells weui-cells_form">
-
-                    <div class="weui-cell">
-                        <div class="weui-cell__hd">
-                            <label class="weui-label">附件上传&nbsp;&nbsp;
-                            </label>
-                        </div>
-                    </div>
-                    <div class="weui-cell">
-                        <div class="weui-uploader__bd">
-                            <ul class="weui-uploader__files" id="viewer" style="margin-bottom: 0px;float: left;">
-                                <li class="weui-uploader__file" >
-                                    <img style="width:100%;height:100%;" src="https://www.fjyuanxin.com/yxhb/upload/hp/{$mydata.att_name}" data-original="https://www.fjyuanxin.com/yxhb/upload/hp/{$mydata.att_name}"  alt="" srcset="">
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="weui-cells weui-cells_form">
-                    <div class="weui-cell">
-                        <div class="weui-cell__hd">
-                            <label class="weui-label">相关说明&nbsp;&nbsp;
-                            </label>
-                        </div>
-                    </div>
-                    <div class="weui-cell">
-                        <div class="weui-cell__bd" id="cnt">
-                            <textarea class="weui-textarea" name="reason"readonly rows="2">{$mydata.ntext}</textarea>
-                            <div class="weui-textarea-counter">
-                                <span id="reason_char">0</span>/200</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="button-sp-area" style="margin-bottom: 20px;display: flex;flex-direction: row;width: 100%;justify-content: space-around;align-items: baseline;">
-                    <a href="javascript:;" id="ratio-refuse" class="weui-btn weui-btn_warn" style="width: 40%;margin-top: 20px;">光闭</a>
-                </div>
-            </div>
-        </div>
-    </div>
 </block>
 
 
@@ -329,28 +173,11 @@
             </eq>
         </eq>
     </eq>
-    
 </block>
 
 <block name="js">
-    <link rel="stylesheet" href="__PUBLIC__/assets/css/viewer.css" />
-    <script src="__PUBLIC__/assets/js/viewer.js"></script>
     <script>
-        $(function () {
-            $('#viewer').viewer({
-                url: 'data-original',
-            });
-        })
         // apply
-        $('#ratio-refuse').click(function () {
-            $('#other_page').fadeOut(200);
-        });
-
-        // 点击汇票按钮跳出汇票页面
-        $('#btnhp').click(function () {
-            $('#other_page').fadeIn(200);
-        });
-
         $("#apply-area").on("click", "#apply-agree-qs,#apply-refuse-qs", function () {
             $('#loadingToast').fadeIn(100);
             var type = $(this).attr("id");
@@ -405,6 +232,5 @@
                 }
             });
         });
-        
     </script>
 </block>

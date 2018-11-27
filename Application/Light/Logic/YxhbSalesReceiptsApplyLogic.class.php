@@ -125,6 +125,7 @@ class YxhbSalesReceiptsApplyLogic extends Model {
         $data = M('yxhb_cdhp')->where(array('odh' => $dh  , 'stat' => array('neq',0) ))->find();
         $data['ntext'] = $data['ntext']?$data['ntext']:'无';
         $data['nmoney'] = "&yen;".number_format($data['nmoney'],2,'.',',')."元" ;
+        $data['remaining'] = ceil((strtotime($data['dqda'])-time())/(3600*24)).'天';
         return $data;
     }
     public function getYsye($res){
@@ -182,7 +183,7 @@ class YxhbSalesReceiptsApplyLogic extends Model {
                                      'type'=>'date'
                                     );
         $result[] = array('name'=>'收款日期：',
-                                     'value'=>$res['sj_date'],
+                                     'value'=> date('m-d',strtotime($res['sj_date'])) ,
                                      'type'=>'date'
                                     );
         $dtg  = M('yxhb_dtg')->where(array('dh' => $res['dh']))->find();
@@ -229,8 +230,8 @@ class YxhbSalesReceiptsApplyLogic extends Model {
     }
     public function gethpdate($dh ){
         $data = M('yxhb_cdhp')->where(array('odh' => $dh  , 'stat' => array('neq',0) ))->find();
-        $days = (strtotime($data['dqda'])-strtotime($data['kpda']))/(3600*24);
-        return $days.'天';
+        $days = (strtotime($data['dqda'])-time())/(3600*24);
+        return ceil($days).'天';
     }
 
 

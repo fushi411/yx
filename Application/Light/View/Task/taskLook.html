@@ -134,9 +134,9 @@
                         </label>
                     </div>
                     <div class="weui-cell__bd">
-                        <select class="weui-select" name="type" id='mod'>
+                        <select class="weui-select" name="type" disabled="disabled"  id='mod'>
                             <option value='-1' disabled selected style='display:none;'>请选择模块类型</option>
-                            
+
                         </select>
                     </div>
                 </div>
@@ -150,9 +150,9 @@
                         </label>
                     </div>
                     <div class="weui-cell__bd">
-                        <select class="weui-select" name="type" id='modTwo'>
+                        <select class="weui-select" name="type" disabled="disabled"  id='modTwo'>
                             <option value='-1' disabled selected style='display:none;'>请选择二级类型</option>
-                            
+
                         </select>
                     </div>
                 </div>
@@ -166,9 +166,9 @@
                         </label>
                     </div>
                     <div class="weui-cell__bd">
-                        <select class="weui-select" name="type" id='modThree'>
+                        <select class="weui-select" name="type" disabled="disabled"  id='modThree'>
                             <option value='-1' disabled selected style='display:none;'>请选择模块类型</option>
-                            
+
                         </select>
                     </div>
                 </div>
@@ -182,7 +182,7 @@
                         </label>
                     </div>
                     <div class="weui-cell__bd">
-                        <select class="weui-select" name="type" id='func'>
+                        <select class="weui-select" name="type" disabled="disabled"  id='func'>
                             <option value='-1' disabled selected style='display:none;'>请选择功能定位</option>
                             <option value="7">修改</option>
                             <option value="8">优化</option>
@@ -200,7 +200,7 @@
                 </div>
                 <div class="weui-cell">
                     <div class="weui-cell__bd">
-                        <input class="weui-input" type="text" id='title' placeholder="请输入需求标题">
+                        <input class="weui-input" type="text" disabled="disabled"  id='title' value="{$data.title}" placeholder="请输入需求标题">
                     </div>
                 </div>
             </div>
@@ -213,7 +213,7 @@
                 </div>
                 <div class="weui-cell">
                     <div class="weui-cell__bd">
-                        <textarea class="weui-textarea" name="reason" id="content" placeholder="请输入需求描述" rows="5"></textarea>
+                        <textarea class="weui-textarea" name="reason"   id="content" placeholder="请输入需求描述" rows="5">{$data.content}</textarea>
                     </div>
                 </div>
             </div>
@@ -238,10 +238,11 @@
                                                 <img src="{$vo.url}" class='weui-selet__user' style='margin-bottom: 0px;margin-right: 6px;margin-top:10px;'>
                                             </if>
                                             <span style='margin-right: 6px;font-size: 14px;'> {$vo.name}</span>
+                                           
                                         </li>
                                     </volist>
                                 </ul>
-                                <div class="weui-uploader__input-box" style="width: 2.5em;height: 2.5em;margin-right: 0px;margin-bottom: 0px;margin-top:10px;">
+                                <div class="weui-uploader__input-box" style="display:none;width: 2.5em;height: 2.5em;margin-right: 0px;margin-bottom: 0px;margin-top:10px;">
                                     <input id="uploaderInput" class="weui-uploader__input open_model" type="button"
                                         name="copyto" readonly />
                                     <!--data-toggle="modal" data-target="#myModal" -->
@@ -252,12 +253,10 @@
                     </div>
                 </div>
             </div>
-            <div class="weui-btn-area">
-                <input type="hidden" name="file_names" id="file_names">
-                <a class="weui-btn weui-btn_primary" href="javascript:" id="submit">提交</a>
-            </div>
+            
             <div class="button-sp-area" id="apply-area" style="margin-bottom: 20px;display: flex;flex-direction: row;width: 100%;justify-content: space-around;align-items: baseline;">
-                <a href="javascript:;" id="apply-agree" class="weui-btn" style="width: 40%;background-color: #a5aba5;">草稿</a>
+                <input type="hidden" name="file_names" id="file_names">
+                <a class="weui-btn weui-btn_primary" href="javascript:" style="width: 40%;background-color: #a5aba5;" id="submit">提交审核</a>
                 <a href="javascript:;" id="apply-refuse" class="weui-btn weui-btn_warn" style="width: 40%;">取消</a>
             </div>
         </div>
@@ -346,12 +345,42 @@
         hash = $("meta[name='__hash__']").attr('content'),
         dataMsg = '';
     var $toast = $('#toast');
+    // 多级联动初始化
+    $(function () {
+
+        if ("{$data.mod}") {
+            if ({$data.mod}) {
+                mod.val("{$data.mod}");
+            }
+            $.post("{:U('Light/Task/getTwoData')}",
+                {
+                    'mod': "{$data.mod}",
+                }, function (data) {
+                    makeModTwo(data.data[0]);
+                    var html = "<option value='-1' disabled selected style='display:none;'>请选择三级类型</option>";
+                    modThree.html(html);
+                    dataMsg = data.data[1];
+                    if ({$data.modtwo}) {
+                        modTwo.val("{$data.modtwo}");
+                        makeModThree("{$data.modtwo}");
+                        if ({$data.modthree}) {
+                            modThree.val({$data.modthree});
+                        }
+                    }
+                }
+            );
+        }
+
+
+
+    });
     // 取消后 返回 我的需求
     $('#apply-refuse').click(function () {
         window.location.href = "{:U('light/Task/commission')}";
     });
     // 提交
     $('#submit').click(function () {
+        return alert('暂未开发');
         var $mod = mod.val(),
             $modTwo = modTwo.val(),
             $modThree = modThree.val(),
@@ -360,24 +389,25 @@
             $content = content.val(),
             $user = user.val();
 
-        if ( !$mod)      return tooltip('请选择模块类型');
-        if ( !$modTwo)   return tooltip('请选择二级类型');
-        if ( !$modThree) return tooltip('请选择三级类型');
-        if ( !$func)     return tooltip('请选择需求功能');
-        if ( !$title)    return tooltip('请选择需求标题');
-        if ( !$content)  return tooltip('请选择需求描述');
-        if ( !$user)     return tooltip('请选择参与人员');
+        if (!$mod) return tooltip('请选择模块类型');
+        if (!$modTwo) return tooltip('请选择二级类型');
+        if (!$modThree) return tooltip('请选择三级类型');
+        if (!$func) return tooltip('请选择需求功能');
+        if (!$title) return tooltip('请选择需求标题');
+        if (!$content) return tooltip('请选择需求描述');
+        if (!$user) return tooltip('请选择参与人员');
 
-        $.post("{:U('Light/Task/func_to_build')}",
+        $.post("{:U('Light/Task/func_to_build_save')}",
             {
-                'mod'     : mod.val(),
-                'modTwo'  : modTwo.val(),
+                'id':"{$data.id}",
+                'mod': mod.val(),
+                'modTwo': modTwo.val(),
                 'modThree': modThree.val(),
-                'func'    : func.val(),
-                'title'   : title.val(),
-                'content' : content.val(),
-                'user'    : user.val(),
-                __hash__  : hash
+                'func': func.val(),
+                'title': title.val(),
+                'content': content.val(),
+                'user': user.val(),
+                __hash__: hash
             }, function (data) {
                 if (data.code != 200) {
                     tooltip(data.msg);
@@ -386,7 +416,7 @@
                     setTimeout(function () {
                         window.location.href = "{:U('light/Task/commission')}";
                     }, 2000);
-                    
+
                 }
             }
         );
@@ -400,17 +430,18 @@
             $title = title.val(),
             $content = content.val(),
             $user = user.val();
-        if ( !$title && !$content) return tooltip('标题和内容不能为空');
-        $.post("{:U('Light/Task/draft')}",
+        if (!$title && !$content) return tooltip('标题和内容不能为空');
+        $.post("{:U('Light/Task/draftSave')}",
             {
-                'mod'     : mod.val(),
-                'modTwo'  : modTwo.val(),
+                'id':"{$data.id}",
+                'mod': mod.val(),
+                'modTwo': modTwo.val(),
                 'modThree': modThree.val(),
-                'func'    : func.val(),
-                'title'   : title.val(),
-                'content' : content.val(),
-                'user'    : user.val(),
-                __hash__  : hash
+                'func': func.val(),
+                'title': title.val(),
+                'content': content.val(),
+                'user': user.val(),
+                __hash__: hash
             }, function (data) {
                 if (data.code != 200) {
                     tooltip(data.msg);
@@ -419,16 +450,16 @@
                     setTimeout(function () {
                         window.location.href = "{:U('light/Task/draftPage')}";
                     }, 2000);
-                    
+
                 }
             }
         );
     });
 
-    $('#mod').change(function(){
+    $('#mod').change(function () {
         $.post("{:U('Light/Task/getTwoData')}",
             {
-                'mod'     : $(this).val(),
+                'mod': $(this).val(),
             }, function (data) {
                 makeModTwo(data.data[0]);
                 var html = "<option value='-1' disabled selected style='display:none;'>请选择三级类型</option>";
@@ -437,22 +468,22 @@
             }
         );
     });
-    modTwo.change(function(){
+    modTwo.change(function () {
         makeModThree($(this).val());
     });
 
-    function makeModThree(index){
+    function makeModThree(index) {
         var html = "<option value='-1' disabled selected style='display:none;'>请选择三级类型</option>";
-        for(i=0;i<dataMsg[index].length;i++){
-            html += '<option value="'+dataMsg[index][i].id+'">'+dataMsg[index][i].name+'</option>';
+        for (i = 0; i < dataMsg[index].length; i++) {
+            html += '<option value="' + dataMsg[index][i].id + '">' + dataMsg[index][i].name + '</option>';
         }
         modThree.html(html);
     }
 
-    function makeModTwo(data){
+    function makeModTwo(data) {
         var html = "<option value='-1' disabled selected style='display:none;'>请选择二级类型</option>";
-        for(i=0;i<data.length;i++){
-            html += '<option value="'+data[i].id+'">'+data[i].name+'</option>';
+        for (i = 0; i < data.length; i++) {
+            html += '<option value="' + data[i].id + '">' + data[i].name + '</option>';
         }
         modTwo.html(html);
     }
@@ -460,24 +491,28 @@
 
     // 正式提交
     $.post("{:U('Light/Task/getMod')}",
-            {
-                'type'     : 1,
-            }, function (data) {
-                makeMod(data.data);
+        {
+            'type': 1,
+        }, function (data) {
+            makeMod(data.data);
         }
     );
 
-    function makeMod(data){
+    function makeMod(data) {
         var html = '';
-        for(i=0;i<data[0].length;i++){
-            html += '<option value="'+data[0][i].id+'">'+data[0][i].name+'</option>';
+        for (i = 0; i < data[0].length; i++) {
+            html += '<option value="' + data[0][i].id + '">' + data[0][i].name + '</option>';
         }
         mod.append(html);
         var html = "<option value='-1' disabled selected style='display:none;'>请选择功能定位</option>";
-        for(i=0;i<data[1].length;i++){
-            html += '<option value="'+data[1][i].id+'">'+data[1][i].name+'</option>';
+        for (i = 0; i < data[1].length; i++) {
+            html += '<option value="' + data[1][i].id + '">' + data[1][i].name + '</option>';
         }
         func.html(html);
+        if ({$data.function}) {
+            func.val("{$data.function}");
+        }
+
     }
 
     // 错误提示
@@ -603,6 +638,9 @@
     }
     // 抄送搜索
     $(function () {
+        $.each($("textarea"), function(i, n){
+            $(n).css("height", n.scrollHeight + "px");
+        })
         var $searchBar = $('#searchBar'),
             $searchResult = $('#searchResult'),
             $searchText = $('#searchText'),
@@ -666,10 +704,10 @@
                     $('#searchResult').empty();
                     // console.log(data);
                     if (data == '') {
-                        console.log(1);
+
                         $('#searchResult').append(noresult);
                     } else {
-                        console.log(2);
+
                         $('#searchResult').append(data);
                         // console.log(data.pid);
                         $("#pre-level").attr("data-pid", 17);

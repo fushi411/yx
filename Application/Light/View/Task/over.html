@@ -80,22 +80,20 @@
         }
     </style>
     <ul id='topDiv'>
-        <li class="titleLeft titleDiv onTitle" >待处理事项</li>
-        <li class="titleCenter titleDiv"       data-url="{:U('Light/task/over')}">已完成事项</li>
+        <li class="titleLeft titleDiv "        data-url="{:U('Light/task/commission')}">待处理事项</li>
+        <li class="titleCenter titleDiv onTitle"       >已完成事项</li>
         <li class="titleRight titleDiv"        data-url="{:U('Light/task/draftPage')}">草稿</li>
         <li style="clear:both;"></li>
     </ul>
-    <div id="btn-all">
-            <a href="javascript:;" class="weui-btn weui-btn_mini weui-btn_primary">添加</a>
-    </div>
+    
     <div id="show">
         
-    </div>
-    <div class="no-more" >信息已经到底...</div>
-    <div class="load-more" >点我加载更多...</div>
+        </div>
+        <div class="no-more" >信息已经到底...</div>
+        <div class="load-more" >点我加载更多...</div>
     <div class="nothing">
             <i class="font118 iconfont icon-fenleiorguangchangorqita"></i>   
-            <h4>暂无待处理事项</h4>
+            <h4>暂无已完成事项</h4>
     </div>
 
 </block>
@@ -109,7 +107,7 @@
         })
         getData();
         function getData(){
-            $.post("{:U('Light/Task/commissionData')}",
+            $.post("{:U('Light/Task/overData')}",
                 {
                     'page'     : page,
                 }, function (data) {
@@ -152,7 +150,6 @@
         }
         $('#topDiv').on('click','li',function(){
            var url = $(this).attr('data-url');
-         
            if(url){
                window.location.href = url;
            }
@@ -160,10 +157,6 @@
     $('#btn-all').click(function(){
         window.location.href = "{:U('Light/task/makeup')}";
     })
-    $('#show').on('click','.weui-panel',function(){
-        var idx = $(this).attr('index');
-        window.location.href = "{:U('Light/task/taskLook')}"+'&taskid='+idx;
-    });
     </script>
     
 </block>

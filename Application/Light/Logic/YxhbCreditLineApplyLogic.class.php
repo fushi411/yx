@@ -98,8 +98,12 @@ class YxhbCreditLineApplyLogic extends Model {
         }
         $info = $this->getInfo($res['clientid'],$date);
         $clientname = M('yxhb_guest2')->field('g_khjc')->where(array('id' => $res['clientid']))->find();
+        $result[] = array('name'=>'提交时间：',
+                                     'value'=> date('m-d H:i',strtotime($res['dtime'])),
+                                     'type'=>'date'
+                                    );
         $result[] = array('name'=>'申请日期：',
-                                     'value'=>$res['date'],
+                                     'value'=> date('m-d',strtotime($res['date'])),
                                      'type'=>'date'
                                     );
         $result[] = array('name'=>'客户名称：',

@@ -119,7 +119,7 @@ class KkCreditLineApplyLogic extends Model {
                                      'type'=>'date'
                                     );
         $result[] = array('name'=>'申请日期：',
-                                     'value'=>$res['date'],
+                                     'value'=> date('m-d H:i',strtotime($res['date'])) ,
                                      'type'=>'date'
                                     );
         $result[] = array('name'=>'客户名称：',
