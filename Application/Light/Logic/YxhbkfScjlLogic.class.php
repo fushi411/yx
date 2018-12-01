@@ -62,7 +62,7 @@ class YxhbkfScjlLogic extends Model {
                                      'color' => 'black'
                                     );
         $result['content'][] = array('name'=>'45μm：',
-                                     'value'=> $res['xd'],
+                                     'value'=> $res['xd']?$res['xd']:'无',
                                      'type'=>'number',
                                      'color' => 'black'
                                     );
@@ -102,15 +102,22 @@ class YxhbkfScjlLogic extends Model {
             'rmshssf'  => '石灰石',
         );
         $flag = 0;
-        $html = "<input class='weui-input' type='text' style='color: black; font-weight: 700;border-bottom: 1px solid #e5e5e5; '  readonly value='磨内'>";
+        $html = "<input class='weui-input' type='text' style='color: black; font-weight: 700;border-bottom: 1px solid #e5e5e5; '  readonly value='磨内(单位:%)'>";
         foreach( $tempArr as $k => $v){
             if($data[$k] == 0 || $data[$k] == 99999 ) continue;
             $value = $v.':'.number_format($data[$k],2,'.',',').'%';
             $html .= "<input class='weui-input' type='text' style='color: black;'  readonly value='$value'>";
             $flag = 1;
         }
-        $html .= "<input class='weui-input' type='text' style='color: black; font-weight: 700;border-bottom: 1px solid #e5e5e5; '  readonly value='成品'>";
-        $html .= "<input class='weui-input' type='text' style='color: black;'  readonly value='成品水份:{$data["cpsf"]}'>";
+        $cpsf = $data["cpsf"] ?$data["cpsf"].'%':'';
+        $qtwlsf = $data["qtwlsf"]?$data["qtwlsf"].'%':'';
+
+        if( $cpsf !=0 || $qtwlsf != 0){
+            $html .= "<input class='weui-input' type='text' style='color: black; font-weight: 700;border-bottom: 1px solid #e5e5e5; '  readonly value='成品(单位:%)'>";
+        }
+        if($qtwlsf != 0 ) $html .= "<input class='weui-input' type='text' style='color: black;'  readonly value='煤水份:{$qtwlsf}'>";
+        if($cpsf != 0)   $html .= "<input class='weui-input' type='text' style='color: black;'  readonly value='成品水份:{$cpsf}'>";
+       
         return array($flag,$html);
     }
      /**
@@ -295,13 +302,16 @@ class YxhbkfScjlLogic extends Model {
         // 防止重复提交
         if(!M('yxhb_gckz')->autoCheckToken($_POST)) return array('code' => 404,'msg' => '网络延迟，请勿点击提交按钮！');
         $add = $map;
-        $add['STAT'] = 2;
+        $add['STAT'] = 1;
         $add['xd']   = $xd;
         $add['bbmj'] = $bb;
         $add['bz']   = $text;
         $add['jyry']   = session('name');
         $add['jlsj'] = date('Y-m-d H:i:s',time());
-        $add['cpsf'] = $cpsf[0]['name'];
+        if(!empty($cpsf)){
+            $add['cpsf'] = $cpsf[1]['name'];
+            $add['qtwlsf'] = $cpsf[0]['name'];
+        }
         $sfData = $this->sfDataMake($sf);
         $add = array_merge($add,$sfData);
         $result = M('yxhb_gckz')->add($add);
@@ -312,35 +322,35 @@ class YxhbkfScjlLogic extends Model {
             // 发送抄送消息
             D('YxhbAppcopyto')->copyTo($copyto_id,'kfScjl', $result);
         }
-        $sign_id   = I('post.sign');
-        $sign_arr  = explode(',',$sign_id);
-        $sign_arr  = array_filter($sign_arr);// 去空
-        $sign_arr  = array_unique($sign_arr); // 去重
+        // $sign_id   = I('post.sign');
+        // $sign_arr  = explode(',',$sign_id);
+        // $sign_arr  = array_filter($sign_arr);// 去空
+        // $sign_arr  = array_unique($sign_arr); // 去重
         // 签收通知
-        $all_arr = array();
-        foreach($sign_arr as $val){
-            $per_name = M('yxhb_boss')->where(array('wxid'=>$val))->Field('name,id')->find();
-            $data = array(
-                'pro_id'        => 31,
-                'aid'           => $result,
-                'per_name'      => $per_name['name'],
-                'per_id'        => $per_name['id'],
-                'app_stat'      => 0,
-                'app_stage'     => 1,
-                'app_word'      => '',
-                'time'          => date('Y-m-d H:i',time()),
-                'approve_time'  => '0000-00-00 00:00:00',
-                'mod_name'      => 'kfScjl',
-                'app_name'      => '签收',
-                'apply_user'    => '',
-                'apply_user_id' => 0, 
-                'urge'          => 0,
-            );
-            $all_arr[]=$data;
-        }
-        $boss_id = implode('|',$sign_arr);
-        M('yxhb_appflowproc')->addAll($all_arr);
-        $this->sendMessage($result,$boss_id);
+        // $all_arr = array();
+        // foreach($sign_arr as $val){
+        //     $per_name = M('yxhb_boss')->where(array('wxid'=>$val))->Field('name,id')->find();
+        //     $data = array(
+        //         'pro_id'        => 31,
+        //         'aid'           => $result,
+        //         'per_name'      => $per_name['name'],
+        //         'per_id'        => $per_name['id'],
+        //         'app_stat'      => 0,
+        //         'app_stage'     => 1,
+        //         'app_word'      => '',
+        //         'time'          => date('Y-m-d H:i',time()),
+        //         'approve_time'  => '0000-00-00 00:00:00',
+        //         'mod_name'      => 'kfScjl',
+        //         'app_name'      => '签收',
+        //         'apply_user'    => '',
+        //         'apply_user_id' => 0, 
+        //         'urge'          => 0,
+        //     );
+        //     $all_arr[]=$data;
+        // }
+        // $boss_id = implode('|',$sign_arr);
+        // M('yxhb_appflowproc')->addAll($all_arr);
+        // $this->sendMessage($result,$boss_id);
         return array('code' => 200,'msg' => '提交成功' , 'aid' =>$result);
         
     }

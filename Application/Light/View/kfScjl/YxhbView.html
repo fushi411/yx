@@ -128,7 +128,7 @@
     <div class="other_page" id="other_page" style="display: none;">
         <div class="container">
             <div class="page js_show">
-                <h3 class="titleTab" style="text-align: center">原料配比</h3>
+                <h3 class="titleTab" style="text-align: center">原料水份</h3>
                 <div class="weui-cells__title">磨内(单位:%)</div>
                 <div class="weui-cells weui-cells_form">
                     <div class="weui-cell weui-cell_select weui-cell_select-after ">
@@ -204,8 +204,19 @@
                         </div>
                     </div>
                 </div>
-                <div class="weui-cells__title">成品(单位:%)</div>
+                <div class="weui-cells__title">其他(单位:%)</div>
                 <div class="weui-cells weui-cells_form">
+                    <div class="weui-cell weui-cell_select weui-cell_select-after ">
+                        <div class="weui-cell__hd">
+                            <label class="weui-label">
+                                <span class="font-width">煤</span>&nbsp;&nbsp;
+                                    
+                            </label>
+                        </div>
+                        <div class="weui-cell__bd">
+                            <input class="weui-select peibi scale out_scale" type="number" index="煤" maxlength="15" name="custodian" id="out_scale1" placeholder="0-100%">
+                        </div>
+                    </div>
                     <div class="weui-cell weui-cell_select weui-cell_select-after ">
                         <div class="weui-cell__hd">
                             <label class="weui-label">
@@ -214,8 +225,9 @@
                             </label>
                         </div>
                         <div class="weui-cell__bd">
-                            <input class="weui-select peibi scale out_scale" type="number" index="成品" maxlength="15" name="custodian" id="out_scale" placeholder="0-1">
+                            <input class="weui-select peibi scale out_scale" type="number" index="成品" maxlength="15" name="custodian" id="out_scale" placeholder="0-1%">
                         </div>
+
                     </div>
                 </div>
 
@@ -239,17 +251,17 @@
                     <div class="weui-uploader__bd">
                         <ul class="weui-uploader__files" id="selectSign" style="margin-bottom: 0px;">
                             <li class="weui-uploader__file" style="min-height:80px;" >
-                                <div class="user_show">
+                                <!-- <div class="user_show">
 
                                 </div>
                                 <div class="box_div">
                                     <div class="weui-uploader__input-box" style="width: 2.5em;height: 2.5em;margin-right: 0px;margin-bottom: 0px;margin-top:10px;">
                                             <input id="signInput" class="weui-uploader__input open_sign_model" index="9" type="button" name="sign" readonly />
-                                            <!--data-toggle="modal" data-target="#myModal" -->
+                                            
                                             
                                         </div>
                                     <span style="margin-right: 6px;font-size: 14px;">生产部</span>
-                                </div>
+                                </div> -->
                             </li>
                         </ul>
                         <input type="hidden" name="sign_id" id="sign_id" value="">
@@ -258,7 +270,6 @@
             </div>
         </div>
     </div>
-
 </block>
 <block name="other">
     <div class="modal fade" id="signModal" tabindex="-1" role="dialog" aria-labelledby="signModalLabel" aria-hidden="true" width="100%">
@@ -338,7 +349,14 @@
         // 日期插件
         $params_time = getQueryString('datetime');
         if($params_time){
-            datePicker.val(the_date+' '+getNowDateTime()+":30");
+            var param_time = new Date(($params_time-8*3600)*1000);
+            var year=param_time.getFullYear(); 
+            var month=param_time.getMonth()+1; 
+            var date=param_time.getDate(); 
+            var hour=param_time.getHours(); 
+            hour = hour>9? hour:'0'+hour;
+            var param_data =  year+"-"+month+"-"+date; 
+            datePicker.val(param_data+' '+hour+":30");
         }else{
             datePicker.val(null);
         }
@@ -499,6 +517,7 @@
             ['电厂炉渣',0,100,1],
             ['精炼炉渣',0,100,1],
             ['石灰石'  ,0,100,1],
+            ['煤'  ,0,100,1],
             ['成品'  ,0,1,1],
             
         ];
@@ -522,6 +541,7 @@
                scale_5 = scale5.val(),
                scale_6 = scale6.val();
                out_scale  = $('#out_scale').val();
+               out_scale1 = $('#out_scale1').val();
            if (!scale_1 && !scale_2 && !scale_3 && !scale_4 && !scale_5 && !scale_6) return tooltip('请选择至少一种物料');
            scale_array = [];
            scale_array[0] = { 'name': scale_1 ? scale_1 : null, 'value': scale1.attr('index') };
@@ -531,21 +551,22 @@
            scale_array[4] = { 'name': scale_5 ? scale_5 : null, 'value': scale5.attr('index') };
            scale_array[5] = { 'name': scale_6 ? scale_6 : null, 'value': scale6.attr('index') };
            out_scale_array[0] = { 'name': out_scale ? out_scale : null, 'value': $('#out_scale').attr('index') };
+           out_scale_array[1] = { 'name': out_scale1 ? out_scale1 : null, 'value': $('#out_scale1').attr('index') };
            show_wl();
            $('#other_page').fadeOut(200);
        });
         // 水份添加的显示
         function show_wl() {
             $('#ycl_content').empty();
-            var html = '<div style="padding: 3px 0 0 0;border-bottom: 1px solid #e5e5e5; "><strong >磨内</strong></div>';
+            var html = '<div style="padding: 3px 0 0 0;border-bottom: 1px solid #e5e5e5; "><strong >磨内(单位:%)</strong></div>';
             for (i = 0; i < scale_array.length; i++) {
                 if (scale_array[i].name == null) continue;
                 html += '<div style="padding: 3px 0 0 10px;"><span class="" >' + scale_array[i].value + '</span>：' + scale_array[i].name + '%</div>';
             }
             for (i = 0; i < out_scale_array.length; i++) {
                 if (out_scale_array[i].name == null) continue;
-                if(i == 0)html += '<div style="padding: 3px 0 0 0;border-bottom: 1px solid #e5e5e5; "><strong>成品</strong></div>';
-                html += '<div style="padding: 3px 0 0 10px;"><span class="" >' + out_scale_array[i].value + '</span>：' + out_scale_array[i].name + '</div>';
+                if(i == 0)html += '<div style="padding: 3px 0 0 0;border-bottom: 1px solid #e5e5e5; "><strong>其他(单位:%)</strong></div>';
+                html += '<div style="padding: 3px 0 0 10px;"><span class="" >' + out_scale_array[i].value + '</span>：' + out_scale_array[i].name + '%</div>';
             }
             $('#param_div').remove();
             $('#ycl_content').html(html);
@@ -576,18 +597,18 @@
                 if(xdVal > 20 || xdVal < 0) return tooltip('细度范围为0-20');
             } 
             if(bbVal > 600 || bbVal < 300)  return tooltip('比表范围为300-600');
-            var reason = $('#reason').val(),
-                ids = $("#sign_id").val() + ",",
-                old_ids_arr = ids.split(","),
-                flag = 1;
-            for (let i = 0; i < old_ids_arr.length; i++) {
-                if (old_ids_arr[i] != '') flag = 0;
-            }
-            if (flag) return tooltip('请选择签收人');
+            var reason = $('#reason').val();
+            //     ids = $("#sign_id").val() + ",",
+            //     old_ids_arr = ids.split(","),
+            //     flag = 1;
+            // for (let i = 0; i < old_ids_arr.length; i++) {
+            //     if (old_ids_arr[i] != '') flag = 0;
+            // }
+            // if (flag) return tooltip('请选择签收人');
 
-            str = $selectSign.eq(0).text();
-            str = str.replace(/\s+/g,"");
-            if (str == 0) return tooltip('请选择生产部签收人');
+            // str = $selectSign.eq(0).text();
+            // str = str.replace(/\s+/g,"");
+            // if (str == 0) return tooltip('请选择生产部签收人');
 
             // 提交数据
             toast.fadeIn(200);
@@ -596,7 +617,7 @@
                 url: "{:U('Light/Api/kfScjlApi')}",
                 dataType: 'json',
                 data: {
-                    sign: ids,
+                   // sign: ids,
                     scale: scale_array,
                     type: $('#type').val(),
                     scx: $('#scx').val(),
@@ -633,7 +654,7 @@
                 url: "{:U('Light/Api/kfScjlApi')}",
                 dataType: 'json',
                 data: {
-                    sign: ids,
+                    //sign: ids,
                     scale: scale_array,
                     type: $('#type').val(),
                     scx: $('#scx').val(),

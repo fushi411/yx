@@ -26,3 +26,40 @@
         </eq>
     </div>
 </block>
+<block name='js'>
+    <style>
+            #btn-all {
+                right: 10px;
+                bottom: 70px;
+                position: fixed;
+                text-align: center;
+                z-index: 999;
+            }
+            
+        </style>
+        <div id="btn-all" style="display: none;">
+                <a href="javascript:;" class="weui-btn weui-btn_mini weui-btn_primary">打印</a>
+        </div>
+        <script>
+            var sys = getQueryString('systempath');
+            if( $('#apply_status .label').eq(0).text() == '已通过' && sys == 'yxhb' ){
+                $('#btn-all').show();
+            }
+            $('#btn-all').click(function(){
+                if(sys != 'yxhb') return false;
+                bfhtml= window.document.body.innerHTML
+                html = $('.weui-panel').eq(0).html();
+                html += $('.weui-panel').eq(1).html();
+                html += $('.weui-panel').eq(2).html();
+                window.document.body.innerHTML=html;
+                window.print();
+                window.document.body.innerHTML=bfhtml;
+            })
+
+            function getQueryString(name) { 
+                var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i"); 
+                var r = window.location.search.substr(1).match(reg); 
+                if (r != null) return unescape(r[2]); return null; 
+            } 
+        </script>
+</block>
