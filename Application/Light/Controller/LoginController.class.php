@@ -207,6 +207,8 @@ class LoginController extends \Think\Controller {
             $receviers = "wk|HuangShiQi|".$boss;
             break;
         }
+        $comment_list = D($system.'Appflowcomment')->autoMessageNumber($flowName, $id,$boss);
+        $description .= "\n系统发起的第{$comment_list}次催审";
         $agentid = 15;
         $WeChat = new \Org\Util\WeChat;
         $info = $WeChat->sendCardMessage($receviers,$title,$description,$url,$agentid,$flowName,$system);
@@ -317,6 +319,8 @@ class LoginController extends \Think\Controller {
             $description = "您有一个流程需要签收".$applyerName;
             break;
         }
+        $comment_list = D($system.'Appflowcomment')->autoMessageNumber($flowName, $id,$boss);
+        $description .= "\n系统发起的第{$comment_list}次催收";
         $agentid = 15;
         $WeChat = new \Org\Util\WeChat;
         
@@ -331,9 +335,9 @@ class LoginController extends \Think\Controller {
 
     // 微信用户信息回去
     public function getWxInfo(){
-        
         if(get_client_ip(0) != '0.0.0.0') return '无权限操作';
-        $userInfo = A('Apply')->getAllUser($id); 
+        M('wx_info')->save(array('stat',0));
+        $userInfo = $this->getAllUser($id); 
         $userList = array();
         foreach( $userInfo as $val ){
             // 简称获取
@@ -361,6 +365,21 @@ class LoginController extends \Think\Controller {
             );
         }
         M('wx_info')->addAll($userList);
+    }
+
+    protected function getAllUser($id){
+        $result = array();
+        $Dept = D('department');
+        $DeptInfo = $Dept->getWXDeptInfo();
+        $childDeptInfo = $Dept->getChildDept($DeptInfo, $id);
+        if (empty($childDeptInfo)) {
+            $result = array_merge($result,$Dept->getWXDeptUserInfo($id));
+        } else {
+            foreach($childDeptInfo as $val){
+                $result = array_merge($result,$this->getAllUser($val['id']));
+            }
+        }
+        return $result;
     }
    
 }

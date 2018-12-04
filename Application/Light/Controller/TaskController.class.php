@@ -231,7 +231,7 @@ class TaskController extends \Think\Controller {
         $user    = I('post.user');
         $user    = trim($user,',');
 
-        if( !$mod ||!$modTwo ||!$modThree ||!$user || !$title || !$content){
+        if( !$user || !$title || !$content){
             $this->ajaxReturn(array('code' => 404,'msg' => '请认真检查填入内容'));
         } 
         if(!M('yx_task')->autoCheckToken($_POST)) $this->ajaxReturn(array('code' => 404,'msg' => '请勿点击草稿按钮'));
@@ -308,10 +308,11 @@ class TaskController extends \Think\Controller {
                 'a.part' => array('like',"%{$wxid}%")
             )
         );
-        $field = "a.id,b.`name` as func,a.part,c.`name` as modone,a.createtime,a.submittime,a.tjr,a.content,a.title";
+        //b.`name` as func,c.`name` as modone,
+        $field = "a.id,a.part,a.createtime,a.submittime,a.tjr,a.content,a.title";
         $data = M('yx_task a')
-                ->join("yx_task_fuc b on a.`function` = b.id")
-                ->join("yx_task_mod c on a.`mod` = c.id")
+                // ->join("yx_task_fuc b on a.`function` = b.id")
+                // ->join("yx_task_mod c on a.`mod` = c.id")
                 ->field($field)
                 ->where($map)
                 ->order('a.submittime DESC')

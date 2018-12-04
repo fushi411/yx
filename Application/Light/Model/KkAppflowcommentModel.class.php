@@ -105,5 +105,23 @@ class KkAppflowcommentModel extends Model {
 
         return list_sort_by($comment_list,'time','desc');
     }
-
+    /**
+     * 获取自动催收，自动催审条数
+     * @param  string $modname 流程名
+     * @param  int    $aid 记录ID
+     * @param  string $comment_to_id 推送人
+     * @return array   摘要数组
+     */
+    public function autoMessageNumber($mod_name, $aid,$comment_to_id){
+        $map = array(
+            'mod_name'      => $mod_name,
+            'aid'           => $aid,
+            'per_id'        => 9999,
+            'app_stat'      => 1,
+            'comment_to_id' => $comment_to_id
+        );
+        
+        $res =  $this->where($map)->count();
+        return $res+1;
+    }
 }

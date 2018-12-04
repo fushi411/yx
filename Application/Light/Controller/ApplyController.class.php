@@ -7,9 +7,13 @@ class ApplyController extends BaseController {
 
     public function applyInfo(){
         // 判断依据1.管理员、副总、董事长；
-        $authArr = array('wk','shh', 'csl', 'ChenBiSong','HuangShiQi');
+        //$authArr = array('wk','shh', 'csl', 'ChenBiSong','HuangShiQi');
         $mod_name = I('modname');
-        if($mod_name == 'fh_edit_Apply_hb' || $mod_name == 'fh_edit_Apply') $authArr[]='ShangZuLu';
+        $detailAuthArr =  D('YxDetailAuth')->getAuthArray($mod_name);
+        $authArr = $detailAuthArr[0];
+        $delete = $detailAuthArr[1];
+        //if($mod_name == 'fh_edit_Apply_hb' || $mod_name == 'fh_edit_Apply') $authArr[]='ShangZuLu';
+        $this->assign('delete',$delete);
         $apply_id = I('aid');
         $system = I('system');
         $wxid = session('wxid');

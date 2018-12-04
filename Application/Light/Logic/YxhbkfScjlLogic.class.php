@@ -322,7 +322,26 @@ class YxhbkfScjlLogic extends Model {
             // 发送抄送消息
             D('YxhbAppcopyto')->copyTo($copyto_id,'kfScjl', $result);
         }
-        // $sign_id   = I('post.sign');
+        // 报警接口
+        $name = session('wxid');
+        $post_data = array(
+            'user_name' => $name,
+            'auth'      => data_auth_sign($name),
+            'date'      => date('Y-m-d',strtotime($datetime)),
+            'loginip'   => get_client_ip(0),
+            'scpz'      => $type,
+            'cpsf'      => $cpsf[1]['name'],
+            'scsj'      => date('H:i:s',strtotime($datetime)),
+            'id'        => $result,
+            'xd'        => $xd,
+            'scx'       => $scx.'生产线',
+          );
+        $res = send_post('http://www.fjyuanxin.com/sngl/AlarmInfoApi.php', $post_data);
+        return array('code' => 200,'msg' => '提交成功' , 'aid' =>$result);
+        
+    }
+
+     // $sign_id   = I('post.sign');
         // $sign_arr  = explode(',',$sign_id);
         // $sign_arr  = array_filter($sign_arr);// 去空
         // $sign_arr  = array_unique($sign_arr); // 去重
@@ -351,9 +370,6 @@ class YxhbkfScjlLogic extends Model {
         // $boss_id = implode('|',$sign_arr);
         // M('yxhb_appflowproc')->addAll($all_arr);
         // $this->sendMessage($result,$boss_id);
-        return array('code' => 200,'msg' => '提交成功' , 'aid' =>$result);
-        
-    }
     /**
      * 通知信息发送
      * @
