@@ -309,8 +309,8 @@ class YxhbkfScjlLogic extends Model {
         $add['jyry']   = session('name');
         $add['jlsj'] = date('Y-m-d H:i:s',time());
         if(!empty($cpsf)){
-            $add['cpsf'] = $cpsf[1]['name'];
-            $add['qtwlsf'] = $cpsf[0]['name'];
+            $add['cpsf'] = $cpsf[0]['name'];
+            $add['qtwlsf'] = $cpsf[1]['name'];
         }
         $sfData = $this->sfDataMake($sf);
         $add = array_merge($add,$sfData);

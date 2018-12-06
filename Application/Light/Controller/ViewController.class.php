@@ -19,20 +19,21 @@ class ViewController extends BaseController
     }
 
     public function view(){
+        // 个别特殊模块页面
+        $special_page = I('get.special');
         // 系统和模块决定
         $mod_name = I('modname');
         $system = I('system');
         $viewtype = I('viewtype');
-        
         // 审批
         $appflow = GetAppFlow($system,$mod_name);
         // 推送
         $push = GetPush($system,$mod_name);
-        
+
         $this -> assign('system', $system);
         $this -> assign('modname', $mod_name);
         $this -> assign('push',$push['data']);
-        
+
         $appflow = $this->appflowJson($appflow,$mod_name);
         $this -> assign('appflow',$appflow);
         $this -> assign('info',$this->PageArr);
@@ -42,11 +43,14 @@ class ViewController extends BaseController
         $this -> assign('today',$this->today);
 
         $this -> assign('title',$this->PageArr['title']);
-        
-        $this -> display($mod_name.'/'.ucfirst($system).$viewtype.'View');
-
+        if( $special_page){
+            $this->display($mod_name.'/'.$special_page);
+        }else{
+            $this -> display($mod_name.'/'.ucfirst($system).$viewtype.'View');
+        }
     }
-
+     
+    
     /**
      * 审批流程转化成json格式字符串
      * @param  array   $appflow 审批数组

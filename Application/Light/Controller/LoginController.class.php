@@ -303,7 +303,7 @@ class LoginController extends \Think\Controller {
         $boss = D($system.'_boss')->getWXFromID($pid);
         $h    = intval(date('G'));
         $receviers = $boss;
-        if($h > 8 && $h < 19) $receviers = "HuangShiQi|".$boss;
+        //if($h > 8 && $h < 19) $receviers = "HuangShiQi|".$boss;
         
         switch ($type) {
           case 'pass':

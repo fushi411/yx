@@ -244,7 +244,6 @@ class KkWlCgfkApplyLogic extends Model {
                     a.id
                 ORDER BY
                     a.g_name ASC";
-                    
         $res = M()->query($sql);
         return $res;
     }

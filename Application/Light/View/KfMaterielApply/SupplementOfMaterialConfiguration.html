@@ -1,0 +1,276 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>材料补录</title>
+    <link href="__PUBLIC__/assets/css/bootstrap.min.css" rel="stylesheet">
+    <!-- 引入 WeUI -->
+    <link rel="stylesheet" href="__PUBLIC__/assets/css/weui.min.css" />
+    <link rel="stylesheet" href="__PUBLIC__/assets/css/weMain.css?version=201709012" />
+    <link href="__PUBLIC__/assets/css/wc_select2.min.css?version=20170819" rel="stylesheet" />
+    <style type="text/css">
+        .weui-cells:after {
+            border-bottom: 0px solid #fff;
+        }
+
+        .weui-selet__user {
+            width: 2.5em;
+            height: 2.5em;
+            margin-bottom: 5px;
+            margin-right: 16px;
+            border-radius: 5px;
+        }
+
+        .wk-select__user {
+            height: 60px;
+            width: 52px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-right: 6px;
+        }
+
+        .no-select__user {
+            height: 60px;
+            width: 52px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-right: 6px;
+        }
+
+        .wk-comment__user {
+            height: 60px;
+            width: 52px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-right: 12px;
+        }
+
+        a:hover {
+            text-decoration: none;
+        }
+
+        label {
+            font-weight: 400;
+            margin-bottom: 0px;
+        }
+
+        .select2-results__option {
+            font-size: 16px;
+        }
+
+        .select2-search__field {
+            line-height: normal;
+        }
+
+        /* end */
+        .redColor {
+            color: #e64340;
+        }
+
+        .greenColor {
+            color: #16b517;
+        }
+
+        .weui-form-preview__value span {
+            display: inline-block;
+            width: 80px;
+            text-align: center;
+        }
+
+        .font-width {
+            display: inline-block;
+            width: 68px;
+            text-align: right;
+
+        }
+
+        .greyColor {
+            color: #757575;
+        }
+
+        .select2-container--default .select2-selection--multiple .select2-selection__rendered {
+            padding: 0;
+        }
+
+        .other_page {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #fff;
+            z-index: 999;
+        }
+
+        .searchCenter {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="dialog_materiel">
+        <div class="js_dialog" id="iosDialog_materiel" style="display: none;">
+            <div class="weui-mask"></div>
+            <div class="weui-dialog">
+                <div class="weui-dialog__hd">
+                    <div class="weui-cell weui-cell_select weui-cell_select-after" style="background-color: #fff;font-size: 16px;">
+                        <div class="weui-cell__hd">
+                            <label class="weui-label">皮带选择&nbsp;&nbsp;
+                                <span style="color:red;">*</span>
+                            </label>
+                        </div>
+                        <div class="weui-cell__bd">
+                            <select class="weui-select" name="type" id="three_pd_name">
+                                <option value='-1' disabled selected style='display:none;'>请选择皮带</option>
+                                <option value=1>1#</option>
+                                <option value=2>2#</option>
+                                <option value=3>3#</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="weui-cell weui-cell_select weui-cell_select-after" style="background-color: #fff;font-size: 16px;">
+                        <div class="weui-cell__hd">
+                            <label class="weui-label">物料名称&nbsp;&nbsp;
+                                <span style="color:red;">*</span>
+                            </label>
+                        </div>
+                        <div class="weui-cell__bd">
+                            <select class="weui-select  typename" name="type">
+                                <option value='-1' disabled selected style='display:none;'>请选择材料</option>
+                                <option value=1>1#</option>
+                                <option value=2>2#</option>
+                                <option value=3>3#</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div id="more_materiel" style="display: none;">
+                        <div class="weui-cell weui-cell_select weui-cell_select-after" style="background-color: #fff;font-size: 16px;">
+                            <div class="weui-cell__hd">
+                                <label class="weui-label">物料名称&nbsp;&nbsp;
+                                    <span style="color:red;">*</span>
+                                </label>
+                            </div>
+                            <div class="weui-cell__bd">
+                                <select class="weui-select  typename" name="type">
+                                    <option value='-1' disabled selected style='display:none;'>请选择材料</option>
+                                    <option value=1>1#</option>
+                                    <option value=2>2#</option>
+                                    <option value=3>3#</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="weui-cell weui-cell_select weui-cell_select-after " style="background-color: #fff;font-size: 16px;">
+                            <div class="weui-cell__hd">
+                                <label class="weui-label">分配比例&nbsp;&nbsp;
+                                    <span style="color:red;">*</span>
+                                </label>
+                            </div>
+                            <div class="weui-cell__bd weui-flex">
+                                <input class="weui-select peibi scale" style="text-align:center;padding: 0;width: 45px;"
+                                    type="number" maxlength="15" name="custodian" value="1" placeholder="1">
+                                <span style="padding-top: 7px;">比 </span>
+                                <input class="weui-select peibi scale" style="text-align:center;" type="number"
+                                    maxlength="15" name="custodian" value="1" placeholder="1">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="weui-cells__title" style="text-align:left;"><span id='materiel_add' style="background-color: #fff;"
+                            class="weui-btn weui-btn_mini greenColor weui-btn_default ">添加物料</span></div>
+                </div>
+                <div class="weui-dialog__ft">
+                    <a href="javascript:;" id="materiel_cancel" class="weui-dialog__btn weui-dialog__btn_default">取消</a>
+                    <a href="javascript:;" id="materiel_sure" class="weui-dialog__btn weui-dialog__btn_primary">确认</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="other_page" id="other_page">
+        <div class="container">
+            <div class="page js_show ">
+                <h3 class="titleTab" style="text-align: center">物料配置补录</h3>
+                <div id='pd_show'>
+
+                </div>
+                <div class="button-sp-area" style="margin-bottom: 20px;display: flex;flex-direction: row;width: 100%;justify-content: space-around;align-items: baseline;">
+                    
+                    <span id="ratio-agree" class="weui-btn weui-btn_primary" style="width: 90%">确定</span>
+                </div>
+                <div class="weui-cells__title">注意事项</div>
+                <!-- <div class="weui-cells__title">各个中心主管及以上职位的申请抄送</div> -->
+                <div class="weui-cells" style="margin-top:0px;">
+                    <div class="weui-cell">
+                        <div class="weui-cell__bd">
+                            <div class="weui-uploader">
+                                <div class="weui-uploader__bd" style="height: 60px;">
+                                    <div style="color: #f12e2e;">可选物料为对应配比通知设定物料<br />同一皮带称如有两种物料需分配比例</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</body>
+<script src="__PUBLIC__/assets/js/jquery-1.11.1.min.js"></script>
+<script src="__PUBLIC__/assets/js/bootstrap.min.js"></script>
+<script src="__PUBLIC__/assets/js/select2.min.js"></script>
+<script src="__PUBLIC__/assets/js/zh-CN.js"></script>
+<script src="https://res.wx.qq.com/open/libs/weuijs/1.1.3/weui.min.js"></script>
+<script src="__PUBLIC__/assets/js/exif.js"></script>
+<script src="__PUBLIC__/assets/js/base64_js.js"></script>
+<script>
+
+    
+    var pdArr = ['A线1#', 'A线2#', 'A线3#', 'A线4#', 'A线5#','A线磨外','B线1#', 'B线2#', 'B线6#', 'B线7#', 'B线8#','B线磨外'];
+    var b = new Base64();
+    var params = getQueryString('pd');
+        params = b.decode(params);
+        params = params.split(',');
+        
+    pd_show();
+    function pd_show() {
+        var html = '',
+            $display = '',
+            pdname = '';
+        for (i = 0; i < pdArr.length; i++) {
+            if (i == 0) {
+                html += '<div class="weui-panel__hd" style="color: #333;font-size: 18px;font-weight: 800;background-color: #f8f8f8;padding-top: 8px;padding-bottom: 4px;">皮带秤</div>';
+            }
+            $display = 'display:none;';
+            pdname = pdArr[i].replace('线','-');
+            if( params.indexOf(pdname) != -1 ) $display = '';
+            html += '<div class="weui-cell er_show" style="'+$display+'background-color: rgb(255, 255, 255);">' +
+                '<div class="weui-cell__hd"><label class="weui-label" style="text-align: center;" >' + pdArr[i] + '&nbsp;&nbsp;</label></div>' +
+                '<div class="weui-cell__hd">' +
+                '<div class="ycl_content">' +
+                '</div>' +
+                '</div>' +
+                '<div class="weui-cell__hd" style="position:  absolute;right: 28px;"><span class="weui-icon-cancel"></span></div>' +
+                '</div>'
+        }
+        $('#pd_show').html(html);
+    }
+
+    // 获取URL参数
+    function getQueryString(name) { 
+            var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i"); 
+            var r = window.location.search.substr(1).match(reg); 
+            if (r != null) return unescape(r[2]); return null; 
+    } 
+</script>
+
+</html>
