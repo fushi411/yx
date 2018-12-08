@@ -9,7 +9,7 @@
         <!-- <div id="data_show"> -->
             <div class="weui-cell weui-cell_select weui-cell_select-after">
                 <div class="weui-cell__hd">
-                    <label class="weui-label">汽运公司&nbsp;&nbsp;
+                    <label class="weui-label">运输公司&nbsp;&nbsp;
                             <span style="color:red;">*</span>
                     </label>
                 </div>
@@ -398,10 +398,34 @@ rows="3"></textarea>
                 if(htbhArr[i].ht_wl != user_id) continue;
                 optionStr += '<option selected=""  value="'+htbhArr[i].ht_dh+'">'+htbhArr[i].ht_dh+'</option>'; 
             }
+            if(!optionStr) return getHyht(user_id);
             optionStr += '<option value="-1" disabled selected style="display:none;">请选择合同编号</option>';
             htbh.html(optionStr);
         }
-
+        // 获取海运合同
+        function getHyht(id){
+            $.ajax({
+                type:'POST',
+                url: "{:U('Light/Api/WlCgfkApplyApi')}", //&system=yxhb&modname=CgfkApply&action=getCustomerList
+                dataType: 'json',
+                data: {
+                    system:"{$system}",
+                    modname:'WlCgfkApply',
+                    action:'getHyht',
+                    user_id:id,
+                },
+                dataType: 'json',
+                success: function (res) {
+                    var optionStr = '';
+                    for(i=0;i<res.length;i++){
+                        optionStr += '<option selected="" index='+res[i]['ht_dh']+' value="'+i+'">'+res[i]['ht_dh']+'</option>'; 
+                    }
+                    optionStr += '<option value="-1" disabled selected style="display:none;">请选择银行账号</option>';
+                    
+                    htbh.html(optionStr);
+                }
+            });
+        }
         accout.change(function(){
             var index = $(this).val();
             makeOption();

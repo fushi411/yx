@@ -100,6 +100,7 @@ class YxhbkfScjlLogic extends Model {
             'rmcxpzsf' => '电厂炉渣',
             'rmzlzsf'  => '精炼炉渣',
             'rmshssf'  => '石灰石',
+            'rmtwzsf'  => '铜尾渣'
         );
         $flag = 0;
         $html = "<input class='weui-input' type='text' style='color: black; font-weight: 700;border-bottom: 1px solid #e5e5e5; '  readonly value='磨内(单位:%)'>";
@@ -408,6 +409,7 @@ class YxhbkfScjlLogic extends Model {
             '电厂炉渣' => 'rmcxpzsf',
             '精炼炉渣' => 'rmzlzsf',
             '石灰石'   => 'rmshssf',
+            '铜尾渣'   => 'rmtwzsf',
         );
         $res = array();
         foreach($sfData as $v){

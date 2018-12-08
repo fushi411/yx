@@ -203,6 +203,18 @@
                                 id="scale6" placeholder="0-100%">
                         </div>
                     </div>
+                    <div class="weui-cell weui-cell_select weui-cell_select-after ">
+                        <div class="weui-cell__hd">
+                            <label class="weui-label">
+                                <span class="font-width">铜尾渣</span>&nbsp;&nbsp;
+
+                            </label>
+                        </div>
+                        <div class="weui-cell__bd">
+                            <input class="weui-select peibi scale" type="number" index="铜尾渣" maxlength="15" name="custodian"
+                                id="scale7" placeholder="0-100%">
+                        </div>
+                    </div>
                 </div>
                 <div class="weui-cells__title">其他(单位:%)</div>
                 <div class="weui-cells weui-cells_form">
@@ -338,6 +350,7 @@
             scale4 = $('#scale4'),
             scale5 = $('#scale5'),
             scale6 = $('#scale6'),
+            scale7 = $('#scale7'),
             scale_array = [],
             out_scale_array = [],
             xd     = $('#xd'),
@@ -540,6 +553,7 @@
                scale_4 = scale4.val(),
                scale_5 = scale5.val(),
                scale_6 = scale6.val();
+               scale_7 = scale7.val();
                out_scale  = $('#out_scale').val();
                out_scale1 = $('#out_scale1').val();
            if (!scale_1 && !scale_2 && !scale_3 && !scale_4 && !scale_5 && !scale_6) return tooltip('请选择至少一种物料');
@@ -550,6 +564,7 @@
            scale_array[3] = { 'name': scale_4 ? scale_4 : null, 'value': scale4.attr('index') };
            scale_array[4] = { 'name': scale_5 ? scale_5 : null, 'value': scale5.attr('index') };
            scale_array[5] = { 'name': scale_6 ? scale_6 : null, 'value': scale6.attr('index') };
+           scale_array[6] = { 'name': scale_7 ? scale_7 : null, 'value': scale7.attr('index') };
            out_scale_array[0] = { 'name': out_scale ? out_scale : null, 'value': $('#out_scale').attr('index') };
            out_scale_array[1] = { 'name': out_scale1 ? out_scale1 : null, 'value': $('#out_scale1').attr('index') };
            show_wl();

@@ -33,6 +33,9 @@ class YxhbCgfkApplyLogic extends Model {
         $result = array();
         if($res['fylx'] == 1){
             $clientname = M('yxhb_gys')->field('g_name')->where(array('id' => $res['gys']))->find();
+            $suffix = "(汽运)";
+            if($res['htlx'] == '海运') $suffix = "(海运)";
+            $clientname['g_name'] .= $suffix;
         }elseif($res['fylx'] == 2 || $res['fylx'] == 7){
             $clientname = M('yxhb_wl')->field('g_name')->where(array('id' => $res['gys']))->find();
         }elseif($res['fylx'] == 6){
@@ -127,6 +130,7 @@ class YxhbCgfkApplyLogic extends Model {
             
         }elseif($res['fylx'] == 2 || $res['fylx'] == 7){
             $clientname = M('yxhb_wl')->field('g_name')->where(array('id' => $res['gys']))->find();
+
         }elseif($res['fylx'] == 6){
             $clientname = array( 'g_name' => $res['pjs']);
         }
@@ -225,30 +229,40 @@ class YxhbCgfkApplyLogic extends Model {
                 order by 
                     g_name asc";
         $res = M()->query($sql);
-        return $res;
-    }
-
-    /**
-     * 获取采购付款 供应商信息
-     */
-    public function getWlCustomerList(){
-
-        $word = I('math');
+        $res = $this->addSuffix($res,'(汽运)');
         $sql = "SELECT
-                    a.id AS id,
-                    g_name AS text
+                    a.id as id,
+                    a.g_name as text
                 FROM
-                    yxhb_wl AS a,
-                    yxhb_cght AS b
+                    yxhb_gys as a,
+                    yxhb_cght_dz AS b
                 WHERE
-                    a.id = b.ht_wl AND b.ht_stat=2 AND g_ch = '' and (a.g_helpword like '%{$word}%' or a.g_name like '%{$word}%')
+                    a.id=b.ht_gys
+                AND b.ht_stat = 2
+                and (a.g_helpword like '%{$word}%' or a.g_name like '%{$word}%')
                 GROUP BY
                     a.id
                 ORDER BY
-                    g_name ASC";
-        $res = M()->query($sql);
+                    a.g_name ASC";
+            $hyres = M()->query($sql);
+            $hyres = $this->addSuffix($hyres,'(海运)');
+            $res = array_merge($res,$hyres);
         return $res;
     }
+
+      /**
+     * 添加尾缀
+     */ 
+    public function addSuffix($data,$suffix){
+        if(!is_array($data)) return;
+        $temp = array();
+        foreach($data as $k=>$v){
+            $v['text'] .= $suffix;
+            $temp[] = $v;
+        }
+        return $temp;
+    }
+
 
     /**
      * 单号获取
@@ -276,10 +290,12 @@ class YxhbCgfkApplyLogic extends Model {
         $val   = $this->cgfkValidata();
         $ysye  = I('post.ysye');
         $bank  = I('post.type');
+        $is_hy = I('post.is_hy');
         $gyszh = I('post.gyszh');
         $copyto_id = I('post.copyto_id');
         if(!$val['bool']) return $val;
         list($user_id, $notice,$money,$system) = $val['data'];
+       
         // 重复提交
         if(!M('yxhb_cgfksq')->autoCheckToken($_POST)) return array('code' => 404,'msg' => '网络延迟，请勿点击提交按钮！');
         $addData = array(
@@ -301,10 +317,10 @@ class YxhbCgfkApplyLogic extends Model {
             'gyszh'   => $gyszh,
             'date'    => date('Y-m-d H:i:s',time()),
             'fylx'    => 1,
-            'htlx'    => '汽运',
+            'htlx'    => $is_hy,
             'yfye'    =>  $ysye
         ); 
-
+       
         $result = M('yxhb_cgfksq')->add($addData);
         if(!$result) return array('code' => 404,'msg' =>'提交失败，请重新尝试！');
         // 抄送
@@ -322,61 +338,6 @@ class YxhbCgfkApplyLogic extends Model {
 
     }
 
-    /**
-     * 物流采购付款提交 
-     */
-    public function wlsubmit(){
-        $today = date('Y-m-d',time());
-        $user  = session('name');
-        $val   = $this->cgfkValidata();
-        $ysye  = I('post.ysye');
-        $bank  = I('post.type');
-        $gyszh = I('post.gyszh');
-        $htbh  = I('post.htbh');
-        $copyto_id = I('post.copyto_id');
-        if(!$val['bool']) return $val;
-        list($user_id, $notice,$money,$system) = $val['data'];
-        // 重复提交
-        if(!M('yxhb_cgfksq')->autoCheckToken($_POST)) return array('code' => 404,'msg' => '网络延迟，请勿点击提交按钮！');
-        $addData = array(
-            'dh'      => $this->getDhId(),
-            'zd_date' => $today,
-            'fkje'    => $money,
-            'gys'     => $user_id,
-            'zy'      => $notice,
-            'clmc'    => '',
-            'fkfs'    => $bank,
-            'rdy'     => $user,
-            'bm'      => 1,
-            'stat'    => 3,
-            'sqr'     => $user,
-            'clgg'    => '无',
-            'htbh'    => $htbh,
-            'cwbz'    => '',
-            'jjyy'    => '',
-            'gyszh'   => $gyszh,
-            'date'    => date('Y-m-d H:i:s',time()),
-            'fylx'    => 2,
-            'htlx'    => '汽运',
-            'yfye'    =>  0
-        ); 
-
-        $result = M('yxhb_cgfksq')->add($addData);
-        if(!$result) return array('code' => 404,'msg' =>'提交失败，请重新尝试！');
-        // 抄送
-        $copyto_id = trim($copyto_id,',');
-        if (!empty($copyto_id)) {
-            // 发送抄送消息
-            D('YxhbAppcopyto')->copyTo($copyto_id,'CgfkApply', $result);
-        }
-        
-        $wf = A('WorkFlow');
-        $salesid = session('yxhb_id');
-        $res = $wf->setWorkFlowSV('CgfkApply', $result, $salesid, 'yxhb');
-
-        return array('code' => 200,'msg' => '提交成功' , 'aid' =>$result);
-
-    }
     /**
      * 采购付款提交信息校验
      */
@@ -437,5 +398,18 @@ class YxhbCgfkApplyLogic extends Model {
         $data = M()->query($sql);
         return $data;
     }
+
+      /**
+     * 合同信息获取
+     */
+    public function getHyht(){
+        $gys   = I('post.user_id'); 
+        $wlht = M('yxhb_cght_dz')
+                ->field('ht_dh')
+                ->where("ht_gys={$gys}")
+                ->select();
+        return $wlht;
+    }
+
 
 }

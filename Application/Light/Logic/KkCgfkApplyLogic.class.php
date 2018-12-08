@@ -33,6 +33,9 @@ class KkCgfkApplyLogic extends Model {
         $result = array();
         if($res['fylx'] == 1 || $res['fylx'] == 4){
             $clientname = M('kk_gys')->field('g_name')->where(array('id' => $res['gys']))->find();
+            $suffix = "(汽运)";
+            if($res['htlx'] == '海运') $suffix = "(海运)";
+            $clientname['g_name'] .= $suffix;
         }elseif($res['fylx'] == 2 || $res['fylx'] == 7){
             $clientname = M('kk_wl')->field('g_name')->where(array('id' => $res['gys']))->find();
         }elseif($res['fylx'] == 6){
@@ -228,7 +231,38 @@ class KkCgfkApplyLogic extends Model {
                     g_name asc";
         //$sql = " SELECT a.id as id,g_name as text FROM kk_gys a where g_type='码头' ORDER BY g_name ASC";
         $res = M()->query($sql);
+        $res = $this->addSuffix($res,'(汽运)');
+        $sql = "SELECT
+                    a.id as id,
+                    a.g_name as text
+                FROM
+                    kk_gys as a,
+                    kk_cght_dz AS b
+                WHERE
+                    a.id=b.ht_gys
+                AND b.ht_stat = 2
+                and (a.g_helpword like '%{$word}%' or a.g_name like '%{$word}%')
+                GROUP BY
+                    a.id
+                ORDER BY
+                    a.g_name ASC";
+            $hyres = M()->query($sql);
+            $hyres = $this->addSuffix($hyres,'(海运)');
+            $res = array_merge($res,$hyres);
         return $res;
+    }
+
+      /**
+     * 添加尾缀
+     */ 
+    public function addSuffix($data,$suffix){
+        if(!is_array($data)) return;
+        $temp = array();
+        foreach($data as $k=>$v){
+            $v['text'] .= $suffix;
+            $temp[] = $v;
+        }
+        return $temp;
     }
 
     /**
@@ -283,11 +317,13 @@ class KkCgfkApplyLogic extends Model {
         $ysye  = I('post.ysye');
         $bank  = I('post.type');
         $gyszh = I('post.gyszh');
+        $is_hy = I('post.is_hy');
         $copyto_id = I('post.copyto_id');
         if(!$val['bool']) return $val;
         list($user_id, $notice,$money,$system) = $val['data'];
         // 重复提交
-     
+       
+      
         if(!M('kk_cgfksq')->autoCheckToken($_POST)) return array('code' => 404,'msg' => '网络延迟，请勿点击提交按钮！');
         $addData = array(
             'dh'      => $this->getDhId(),
@@ -308,8 +344,8 @@ class KkCgfkApplyLogic extends Model {
             'gyszh'   => $gyszh,
             'date'    => date('Y-m-d H:i:s',time()),
             'fylx'    => 1,
-            'htlx'    => '汽运',
-            'yfye'    =>  $ysye
+            'htlx'    => $is_hy,
+            'yfye'    => $ysye
         ); 
         
         $result = M('kk_cgfksq')->add($addData);

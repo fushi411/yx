@@ -78,7 +78,7 @@ class MsgdataModel extends Model {
             'info'    => U('Light/Apply/applyInfo',array('modname'=>'WlCgfkApply','system'=>'yxhb')),
            
         );   
-        $result['wlkkWlCgfkApply'] = array(
+        $result['kkWlCgfkApply'] = array(
             'process' => U('Light/Process/ApplyProcess',array('modname'=>'WlCgfkApply','system' => 'kk')),
             'info'    => U('Light/Apply/applyInfo',array('modname'=>'WlCgfkApply','system'=>'kk')),
             

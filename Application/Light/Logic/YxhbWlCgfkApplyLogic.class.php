@@ -35,7 +35,10 @@ class YxhbWlCgfkApplyLogic extends Model {
             $clientname = M('yxhb_gys')->field('g_name')->where(array('id' => $res['gys']))->find();
             
         }elseif($res['fylx'] == 2 || $res['fylx'] == 7){
-            $clientname = M('yxhb_wl')->field('g_name')->where(array('id' => $res['gys']))->find();
+            $clientname = M('yxhb_wl')->field('g_name,g_ch')->where(array('id' => $res['gys']))->find();
+            $type = "(汽运)";
+            if($clientname['g_ch']) $type = "(海运)";
+            $clientname['g_name'] = $clientname['g_name'].$type;
         }elseif($res['fylx'] == 6){
             $clientname = array( 'g_name' => $res['pjs']);
         }
@@ -119,7 +122,10 @@ class YxhbWlCgfkApplyLogic extends Model {
             $clientname = M('yxhb_gys')->field('g_name')->where(array('id' => $res['gys']))->find();
             
         }elseif($res['fylx'] == 2 || $res['fylx'] == 7){
-            $clientname = M('yxhb_wl')->field('g_name')->where(array('id' => $res['gys']))->find();
+            $clientname = M('yxhb_wl')->field('g_name,g_ch')->where(array('id' => $res['gys']))->find();
+            $type = "(汽运)";
+            if($clientname['g_ch']) $type = "(海运)";
+            $clientname['g_name'] = $clientname['g_name'].$type;
         }elseif($res['fylx'] == 6){
             $clientname = array( 'g_name' => $res['pjs']);
         }
@@ -185,7 +191,7 @@ class YxhbWlCgfkApplyLogic extends Model {
         }elseif($res['fylx'] == 2 || $res['fylx'] == 7){
             $name = M('yxhb_wl')->field('g_name')->where(array('id' => $res['gys']))->find();
             $modname = 'WlCgfkApply';
-            $title = '汽运公司';
+            $title = '运输公司';
         }elseif($res['fylx'] == 6){
             $name = array( 'g_name' => $res['pjs']);
             $modname = 'PjCgfkApply';
@@ -224,7 +230,12 @@ class YxhbWlCgfkApplyLogic extends Model {
         return $id.$count;
     }
 
-
+    // 判断汽运还是海运
+    public function judgeTransportation($id){
+        $res = M('yxhb_wl')->where("id={$id}")->find();
+        if($res['g_ch']) return true;
+        return false;
+    }
 
     /**
      * 物流采购付款提交 
@@ -241,8 +252,15 @@ class YxhbWlCgfkApplyLogic extends Model {
         if(!$val['bool']) return $val;
         list($user_id, $notice,$money,$system) = $val['data'];
         // 重复提交
+
         if(!M('yxhb_cgfksq')->autoCheckToken($_POST)) return array('code' => 404,'msg' => '网络延迟，请勿点击提交按钮！');
-       
+        $is_hy = $this->judgeTransportation($user_id);
+        $fylx = 7;
+        $htlx = '汽运';
+        if($is_hy) {
+            $fylx=2;
+            $htlx = '海运';
+        }
         $addData = array(
             'dh'      => $this->getDhId(),
             'zd_date' => $today,
@@ -261,8 +279,8 @@ class YxhbWlCgfkApplyLogic extends Model {
             'jjyy'    => '',
             'gyszh'   => $gyszh,
             'date'    => date('Y-m-d H:i:s',time()),
-            'fylx'    => 7,
-            'htlx'    => '汽运',
+            'fylx'    => $fylx,
+            'htlx'    => $htlx,
             'yfye'    =>  0
         ); 
 
@@ -325,7 +343,40 @@ class YxhbWlCgfkApplyLogic extends Model {
                 ORDER BY
                     a.g_name ASC";
         $res = M()->query($sql);
+        $res = $this->addSuffix($res,'(汽运)');
+        $sql = "SELECT
+                    b.id as id,
+                    b.g_name as text
+                FROM
+                    yxhb_gys as a,
+                    yxhb_wl AS b,
+                    yxhb_cght_yf AS c
+                WHERE
+                    b.id = c.ht_gys
+                and a.id=b.gid
+                AND c.ht_stat = 2
+                AND g_ch != ''
+                and (a.g_helpword like '%{$word}%' or a.g_name like '%{$word}%')
+                GROUP BY
+                    b.id
+                ORDER BY
+                    b.g_name ASC";
+            $hyres = M()->query($sql);
+            $hyres = $this->addSuffix($hyres,'(海运)');
+            $res = array_merge($res,$hyres);
         return $res;
+    }
+      /**
+     * 添加尾缀
+     */ 
+    public function addSuffix($data,$suffix){
+        if(!is_array($data)) return;
+        $temp = array();
+        foreach($data as $k=>$v){
+            $v['text'] .= $suffix;
+            $temp[] = $v;
+        }
+        return $temp;
     }
     /**
      * 获取环保应收余额
@@ -369,5 +420,18 @@ class YxhbWlCgfkApplyLogic extends Model {
         $data = M()->query($sql);
         return $data;
     }
+
+    /**
+     * 合同信息获取
+     */
+    public function getHyht(){
+        $gys   = I('post.user_id'); 
+        $wlht = M('yxhb_cght_yf ')
+                ->field('ht_dh')
+                ->where("ht_gys={$gys}")
+                ->select();
+        return $wlht;
+    }
+
 
 }

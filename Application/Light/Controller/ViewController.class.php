@@ -2,7 +2,7 @@
 namespace Light\Controller;
 use Think\Controller;
 
-class ViewController extends BaseController
+class ViewController  extends BaseController
 {
     private $today = null;
     private $PageArr = '';

@@ -172,7 +172,8 @@ rows="3"></textarea>
         gyszh    = 0,
         user_id  = '',
         ysyeVal  = 0,
-        type     = 0;
+        type     = 0,
+        is_hy    = '';
 
         bank.toggle();
 
@@ -252,6 +253,8 @@ rows="3"></textarea>
                 selectArr.text =  selectArr.text.replace(/责任/, "");
                 selectArr.text =  selectArr.text.replace(/公司/, "");
             }
+            is_hy = '汽运';
+            if(selectArr.text.indexOf('(海运)') != -1) is_hy = '海运';
             $('.select2-selection__choice').text(selectArr.text);
             getSupplyPayment();
         });
@@ -387,6 +390,7 @@ rows="3"></textarea>
                     money: money.val(),
                     copyto_id:$("#copyto_id").val(),
                     ysye:ysyeVal,
+                    is_hy:is_hy,
                     type:$('#type').val(),
                     system:"{$system}",
                     modname:'CgfkApply',

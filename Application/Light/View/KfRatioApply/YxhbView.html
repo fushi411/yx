@@ -150,7 +150,7 @@
                             </label>
                         </div>
                         <div class="weui-cell__bd">
-                            <input class="weui-select peibi scale" type="number" index="电厂炉渣" maxlength="15" name="custodian" id="scale4" placeholder="0-30%">
+                            <input class="weui-select peibi scale" type="number" index="电厂炉渣" maxlength="15" name="custodian" id="scale4" placeholder="0-60%">
                         </div>
                     </div>
                     <div class="weui-cell weui-cell_select weui-cell_select-after ">
@@ -175,6 +175,17 @@
                             <input class="weui-select peibi scale" type="number" index="石灰石" maxlength="15" name="custodian" id="scale6" placeholder="0-8%">
                         </div>
                     </div>
+                    <div class="weui-cell weui-cell_select weui-cell_select-after ">
+                        <div class="weui-cell__hd">
+                            <label class="weui-label">
+                                <span class="font-width">铜尾渣</span>&nbsp;&nbsp;
+                                 
+                            </label>
+                        </div>
+                        <div class="weui-cell__bd">
+                            <input class="weui-select peibi scale" type="number" index="铜尾渣" maxlength="15" name="custodian" id="scale7" placeholder="0-10%">
+                        </div>
+                    </div>
                     <div class="weui-cell">
                         <div class="weui-cell__hd">
                             <label class="weui-label">
@@ -194,7 +205,7 @@
                             </label>
                         </div>
                         <div class="weui-cell__bd">
-                            <input class="weui-select peibi scale" type="number" index="激发剂" maxlength="15" name="custodian" id="scale7" placeholder="0-0.2%">
+                            <input class="weui-select peibi scale" type="number" index="激发剂" maxlength="15" name="custodian" id="scale8" placeholder="0-0.2%">
                         </div>
                     </div>
                 </div>
@@ -215,7 +226,6 @@
                         <div class="weui-cell__hd">
                             <label class="weui-label">
                                 <span class="font-width">钢渣粉</span>&nbsp;&nbsp;
-                                 
                             </label>
                         </div>
                         <div class="weui-cell__bd">
@@ -231,6 +241,17 @@
                         </div>
                         <div class="weui-cell__bd">
                             <input class="weui-select peibi out_scale" type="number" index="复合粉" maxlength="15" name="custodian" id="out_scale2" placeholder="0-20%">
+                        </div>
+                    </div>
+                    <div class="weui-cell weui-cell_select weui-cell_select-after ">
+                        <div class="weui-cell__hd">
+                            <label class="weui-label">
+                                <span class="font-width">95矿粉</span>&nbsp;&nbsp;
+                                 
+                            </label>
+                        </div>
+                        <div class="weui-cell__bd">
+                            <input class="weui-select peibi out_scale" type="number" index="95矿粉" maxlength="15" name="custodian" id="out_scale3" placeholder="0-20%">
                         </div>
                     </div>
                 </div>
@@ -532,6 +553,7 @@
             scale5 = $('#scale5'),
             scale6 = $('#scale6'),
             scale7 = $('#scale7'),
+            scale8 = $('#scale8'),
             scale_array = [],
             out_scale_array = [],
             peibi_value = 0,
@@ -594,9 +616,11 @@
                 scale_5 = scale5.val(),
                 scale_6 = scale6.val(),
                 scale_7 = scale7.val(),
+                scale_8 = scale8.val(),
                 out_scale  = $('#out_scale').val();
                 out_scale1 = $('#out_scale1').val();
                 out_scale2 = $('#out_scale2').val();
+                out_scale3 = $('#out_scale3').val();
 
             if (!scale_1 && !scale_2 && !scale_3 && !scale_4 && !scale_5 && !scale_6) return tooltip('请选择至少一种物料');
             scale_array = [];
@@ -607,9 +631,11 @@
             scale_array[4] = { 'name': scale_5 ? scale_5 : null, 'value': scale5.attr('index') };
             scale_array[5] = { 'name': scale_6 ? scale_6 : null, 'value': scale6.attr('index') };
             scale_array[6] = { 'name': scale_7 ? scale_7 : null, 'value': scale7.attr('index') };
+            scale_array[7] = { 'name': scale_8 ? scale_8 : null, 'value': scale8.attr('index') };
             out_scale_array[0] = { 'name': out_scale ? out_scale : null, 'value': $('#out_scale').attr('index') };
             out_scale_array[1] = { 'name': out_scale1 ? out_scale1 : null, 'value': $('#out_scale1').attr('index') };
             out_scale_array[2] = { 'name': out_scale2 ? out_scale2 : null, 'value': $('#out_scale2').attr('index') };
+            out_scale_array[3] = { 'name': out_scale3 ? out_scale3 : null, 'value': $('#out_scale3').attr('index') };
             show_wl();
             $('#other_page').fadeOut(200);
         });
@@ -622,9 +648,11 @@
                 if (scale_array[i].name == null) continue;
                 html += '<div style="padding: 3px 0 0 10px;"><span class="" >' + scale_array[i].value + '</span>：' + scale_array[i].name + '%</div>';
             }
+            var out_scale_count = 0;
             for (i = 0; i < out_scale_array.length; i++) {
                 if (out_scale_array[i].name == null) continue;
-                if(i == 0)html += '<div style="padding: 3px 0 0 0;border-bottom: 1px solid #e5e5e5; "><strong>磨外</strong></div>';
+                if(out_scale_count == 0)html += '<div style="padding: 3px 0 0 0;border-bottom: 1px solid #e5e5e5; "><strong>磨外</strong></div>';
+                out_scale_count++;
                 html += '<div style="padding: 3px 0 0 10px;"><span class="" >' + out_scale_array[i].value + '</span>：' + out_scale_array[i].name + '%</div>';
             }
             
@@ -637,33 +665,35 @@
             ['电厂炉渣',0,30,1],
             ['精炼炉渣',0,15,1],
             ['石灰石'  ,0,8,1],
+            ['铜尾渣'  ,0,8,1],
             ['激发剂'  ,0,0.2,1],
             ['脱硫灰'  ,0,10,1],
             ['钢渣粉'  ,0,20,1],
             ['复合粉'  ,0,20,1],
+            ['95矿粉'  ,0,20,1],
         ];
    
         // 总配比值计算
         $('#other_page').on('change', '.peibi', function () {
             // 提示
-            if($('#type').val() == 'F85'){
-                var idx = $(this).attr('index'),
-                    value = $(this).val();
-                F85.forEach(function(item,key){
-                    
-                    if(item[0] == idx){
-                        if(value<item[1] || value >item[2]){
-                            F85[key][3] = 0;
-                            return tooltip(idx+'的阀值为'+item[1]+'-'+item[2]+'%'); 
-                        } else{
-                            F85[key][3] = 1;
-                        }
+            
+            var idx = $(this).attr('index'),
+                value = $(this).val();
+            F85.forEach(function(item,key){
+                
+                if(item[0] == idx){
+                    if(value<item[1] || value >item[2]){
+                        F85[key][3] = 0;
+                        return tooltip(idx+'的阀值为'+item[1]+'-'+item[2]+'%'); 
+                    } else{
+                        F85[key][3] = 1;
                     }
-                });
-            }
+                }
+            });
+            
             var count = 0;
             for (var i = 0; i < F85.length; i++) {
-                if ($('.peibi').eq(i).attr('index') == '脱硫灰' || $('.peibi').eq(i).attr('index') == '激发剂' || $('.peibi').eq(i).attr('index') == '钢渣粉'|| $('.peibi').eq(i).attr('index') == '复合粉') continue;
+                if ($('.peibi').eq(i).attr('index') == '脱硫灰' || $('.peibi').eq(i).attr('index') == '激发剂' || $('.peibi').eq(i).attr('index') == '钢渣粉'|| $('.peibi').eq(i).attr('index') == '复合粉' || $('.peibi').eq(i).attr('index') == '95矿粉') continue;
                 num = $('.peibi').eq(i).val() ? $('.peibi').eq(i).val() : 0;
                 count += parseFloat(num);
             }
@@ -684,10 +714,12 @@
             var out_scale  = $('#out_scale').val(),
                 out_scale1 = $('#out_scale1').val(),
                 out_scale2 = $('#out_scale2').val(),
+                out_scale3 = $('#out_scale3').val(),
                 count = 0;
                 if(out_scale) count++;
                 if(out_scale1) count++;
                 if(out_scale2) count++;
+                if(out_scale3) count++;
                 return count>1?1:0;
         }
         // 原材料配置弹出

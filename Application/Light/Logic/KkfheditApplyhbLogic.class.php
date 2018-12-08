@@ -527,7 +527,7 @@ class KkfheditApplyhbLogic extends Model {
             'fh_stat4'    => 2,
             'fh_stat2'    => $fhinfo['fh_stat2'],
             'fh_wlname'   => $fhinfo['fh_wlname'],
-            'fh_flag'     => $fhinfo['fh_flag'],
+            'fh_flag'     => 1,
             'fh_bid'      => $fhinfo['fh_bid'],
             'fh_pass'     => $fhinfo['fh_pass'],//
             'fh_passtime' => $fhinfo['fh_passtime'],//
