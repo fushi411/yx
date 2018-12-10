@@ -71,6 +71,11 @@ class YxhbSalesReceiptsApplyLogic extends Model {
                                      'type'=>'date',
                                      'color' => 'black'
                                     );
+        $result['content'][] = array('name'=>'本月累计：',
+                                     'value'=> "&yen;".number_format($this->getTheMonthRec($dtg['gid'],$res['sj_date']),2,'.',',')."元",
+                                     'type'=>'date',
+                                     'color' => 'black'
+                                    );
         if($res['nfkfs'] == 3){
             $result['content'][] = array('name' => '汇票详情：',
                                         'value' => '点击查看汇票',
@@ -214,6 +219,10 @@ class YxhbSalesReceiptsApplyLogic extends Model {
                                      'type'=>'number'
                                     );
         }
+        $result[] = array('name'=>'本月累计：',
+                                     'value'=>number_format($this->getTheMonthRec($dtg['gid'],$res['sj_date']),2,'.',',')."元",
+                                     'type'=>'number'
+                                    );
         $result[] = array('name'=>'应收余额：',
                                      'value'=>number_format($res['ysye'],2,'.',',')."元",
                                      'type'=>'number'
@@ -227,6 +236,33 @@ class YxhbSalesReceiptsApplyLogic extends Model {
                                      'type'=>'text'
                                     );
         return $result;
+    }
+
+    /**
+     * 获取当月累计销售收款
+     * @param integer $id 用户id
+     * @param date   $date 时间
+     * @return string   收款格式
+     */
+    public function getTheMonthRec($id,$date){
+        if(!$id) return 0;
+        $beginDate = date('Y-m-01',strtotime($date));
+        $endDate   = date('Y-m-01',strtotime("$date +1 month"));
+        $map       = array(
+            'b.gid'     => $id,
+            'a.stat'    => 1,
+            'a.sj_date' => array(
+                            array('egt',$beginDate),
+                            array('lt',$endDate),
+                            'and'
+                        ),
+        );
+        $data = M('yxhb_feexs as a')
+                ->join('yxhb_dtg as b on a.dh=b.dh')
+                ->field('sum(a.nmoney) as money')
+                ->where($map)
+                ->find();
+        return $data['money'];
     }
     public function gethpdate($dh ){
         $data = M('yxhb_cdhp')->where(array('odh' => $dh  , 'stat' => array('neq',0) ))->find();

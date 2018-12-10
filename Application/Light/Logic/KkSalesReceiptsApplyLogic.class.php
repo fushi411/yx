@@ -71,6 +71,11 @@ class KkSalesReceiptsApplyLogic extends Model {
                                      'type'=>'date',
                                      'color' => 'black'
                                     );
+        $result['content'][] = array('name'=>'本月累计：',
+                                     'value'=> "&yen;".number_format($this->getTheMonthRec($dtg['gid'],$res['sj_date']),2,'.',',')."元",
+                                     'type'=>'date',
+                                     'color' => 'black'
+                                    );
         if($res['nfkfs'] == 3){
             $result['content'][] = array('name' => '汇票详情：',
                                         'value' => '点击查看汇票',
@@ -210,6 +215,7 @@ class KkSalesReceiptsApplyLogic extends Model {
                                      'value'=>$skfsArr[$res['nfkfs']],
                                      'type'=>'number'
                                     );
+        
         if($res['nfkfs'] == 3 && $res['stat'] == 1){
             $result[] = array('name'=>'剩余期限：',
                                      'value'=>$this->gethpdate($res['dh']),
@@ -217,6 +223,10 @@ class KkSalesReceiptsApplyLogic extends Model {
                                     );
         }
         list($ysye,$color) = $this->getYsye($res);
+        $result[] = array('name'=>'本月累计：',
+                                     'value'=>number_format($this->getTheMonthRec($dtg['gid'],$res['sj_date']),2,'.',',')."元",
+                                     'type'=>'number'
+                                    );
         $result[] = array('name'=>'应收余额：',
                                      'value'=>str_replace('&yen;','',$ysye) ,
                                      'type'=>'number'
@@ -231,6 +241,34 @@ class KkSalesReceiptsApplyLogic extends Model {
                                     );
         return $result;
     }
+
+    /**
+     * 获取当月累计销售收款
+     * @param integer $id 用户id
+     * @param date   $date 时间
+     * @return string   收款格式
+     */
+    public function getTheMonthRec($id,$date){
+        if(!$id) return 0;
+        $beginDate = date('Y-m-01',strtotime($date));
+        $endDate   = date('Y-m-01',strtotime("$date +1 month"));
+        $map       = array(
+            'b.gid'     => $id,
+            'a.stat'    => 1,
+            'a.sj_date' => array(
+                            array('egt',$beginDate),
+                            array('lt',$endDate),
+                            'and'
+                        ),
+        );
+        $data = M('kk_feexs as a')
+                ->join('kk_dtg as b on a.dh=b.dh')
+                ->field('sum(a.nmoney) as money')
+                ->where($map)
+                ->find();
+        return $data['money'];
+    }
+
     public function gethpdate($dh ){
         $data = M('kk_cdhp')->where(array('odh' => $dh  , 'stat' => array('neq',0) ))->find();
         $days = (strtotime($data['dqda'])-time())/(3600*24);

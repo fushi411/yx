@@ -7,7 +7,10 @@ class TestController extends \Think\Controller {
     public function Sign()
     {
         header('Content-Type: text/html; charset=utf-8');
-        
+        $system = 'yxhb';
+        $mod_name = 'KfMaterielAmend';
+        $push = GetPush($system,$mod_name);
+        dump($push);
     }
 
     /**

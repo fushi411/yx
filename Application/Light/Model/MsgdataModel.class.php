@@ -389,4 +389,18 @@ class MsgdataModel extends Model {
         // ); 
         return $result;   
     }
+       // 生控记录(矿粉)
+    public function KfMaterielAmend(){
+        $result = array();
+        $result['url'] = array(
+            array('name' => '矿粉物料补录','url' => U('Light/View/View',array('modname'=>'KfMaterielAmend','system' => 'yxhb')),'modname' => 'yxhbKfMaterielAmend'),
+        );
+        $result['yxhbKfMaterielAmend'] = array(
+            'process' => U('Light/Process/ApplyProcess',array('modname'=>'KfMaterielAmend','system' => 'yxhb')),
+            'info'    => U('Light/Apply/applyInfo',array('modname'=>'KfMaterielAmend','system'=>'yxhb'))
+        );   
+      
+        return $result;   
+    }
+
 }

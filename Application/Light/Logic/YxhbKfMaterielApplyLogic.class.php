@@ -18,7 +18,10 @@ class YxhbKfMaterielApplyLogic extends Model {
      */
     public function record($id)
     {
-        $map = array('id' => $id);
+        $map = array(
+            'id'   => $id,
+            'type' => 1
+        );
         return $this->field(true)->where($map)->find();
     }
 
