@@ -190,7 +190,7 @@
     <div id="dialog_materiel">
         <div class="js_dialog" id="iosDialog_materiel" style="display: none;">
             <div class="weui-mask"></div>
-            <div class="weui-dialog">
+            <div class="weui-dialog" style="line-height: 1.1;">
                 <div class="weui-dialog__hd">
                     <div class="weui-cell weui-cell_select weui-cell_select-after" style="background-color: #fff;font-size: 16px;">
                         <div class="weui-cell__hd">
@@ -238,21 +238,44 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="weui-cell weui-cell_select weui-cell_select-after " style="background-color: #fff;font-size: 16px;">
+                        <div class="weui-cell weui-cell_select weui-cell_select-after" style="background-color: #fff;font-size: 16px;">
                             <div class="weui-cell__hd">
-                                <label class="weui-label">分配比例&nbsp;&nbsp;
+                                <label class="weui-label">物料名称&nbsp;&nbsp;
                                     <span style="color:red;">*</span>
                                 </label>
                             </div>
-                            <div class="weui-cell__bd weui-flex" >
-                                <input class="weui-select peibi scale" style="text-align:center;padding: 0;width: 45px;" type="number" maxlength="15" name="custodian" value="1" placeholder="1">
-                                <span style="padding-top: 7px;">比 </span>
-                                <input class="weui-select peibi scale" style="text-align:center;" type="number" maxlength="15" name="custodian" value="1" placeholder="1">
+                            <div class="weui-cell__bd">
+                                <select class="weui-select  typename" name="type">
+                                    <option value='-1' disabled selected style='display:none;'>请选择材料</option>
+                                    <option value=1>1#</option>
+                                    <option value=2>2#</option>
+                                    <option value=3>3#</option>
+                                </select>
                             </div>
                         </div>
+                        <div class="weui-cell weui-cell_select weui-cell_select-after " style="background-color: #fff;font-size: 16px;">
+                            <div class="weui-cell__hd">
+                                <label class="weui-label" style="margin: 10px 0;">分配比例&nbsp;&nbsp;
+                                    <span style="color:red;">*</span>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="weui-cell weui-cell_select weui-cell_select-after " style="background-color: #fff;font-size: 16px;">
+                            <div class="weui-cell__bd weui-flex" >
+                                <input class="weui-select peibi scale" style="text-align:center;padding: 0;" type="number" maxlength="15" name="custodian" value="1" placeholder="1">
+                                <span style="padding-top: 12px;">: </span>
+                                <input class="weui-select peibi scale" style="text-align:center;padding: 0;" type="number" maxlength="15" name="custodian" value="1" placeholder="1">
+                                <span style="padding-top: 12px;">: </span>
+                                <input class="weui-select peibi scale" style="text-align:center;padding: 0;" type="number" maxlength="15" name="custodian" value="1" placeholder="1">
+                            </div>
+                        </div>
+
                     </div>
 
-                    <div class="weui-cells__title" style="text-align:left;"><span id='materiel_add' style="background-color: #fff;" class="weui-btn weui-btn_mini greenColor weui-btn_default ">添加物料</span></div>
+                    <div class="weui-cells__title" style="text-align:left;">
+                        <span id='materiel_add' style="background-color: #fff;" class="weui-btn weui-btn_mini greenColor weui-btn_default ">添加物料</span>
+                        <span id='materiel_del' style="background-color: #fff;" class="weui-btn weui-btn_mini redColor weui-btn_default ">删除物料</span>
+                    </div>
                 </div>
                 <div class="weui-dialog__ft">
                     <a href="javascript:;" id="materiel_cancel" class="weui-dialog__btn weui-dialog__btn_default">取消</a>
@@ -320,60 +343,79 @@
         var label = "生产时间&nbsp;&nbsp;<span style='color:red;'>*</span>";
         the_date = datePicker.val();
         var arr_week = new Array("星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六");
-        datePicker.val(null);
+        $params_time = getQueryString('datetime');
+
+        if($params_time){
+            var param_time = new Date(($params_time-8*3600)*1000);
+            var year=param_time.getFullYear(); 
+            var month=param_time.getMonth()+1; 
+            var date=param_time.getDate(); 
+            var hour=param_time.getHours(); 
+            var minites = param_time.getMinutes();
+            hour = hour>9? hour:'0'+hour;
+            minites = minites>9?minites:'0'+minites;
+            var param_data =  year+"-"+month+"-"+date; 
+            datePicker.val(param_data+' '+hour+":"+minites);
+            function ratioTime() {}
+        }else{
+            datePicker.val(null);
+            function ratioTime() {
+                // 日期选择
+                var hours = [],
+                    minites = [],
+                    symbol = [];
+
+                for (var i = 0; i < 24; i++) {
+                    var hours_item = {};
+                    hours_item.label = ('' + i).length === 1 ? '0' + i : '' + i;
+                    hours_item.value = i;
+                    hours.push(hours_item);
+                }
+                
+                for( i = 0;i<(60/5) ;i++){
+                    var minites_item = {};
+                    var temp_label   = i*5;
+
+                    if(i*5<10) temp_label = 0+''+temp_label;
+                    minites_item.label = temp_label;
+                    minites_item.value = temp_label;
+                    minites.push(minites_item);
+                }
+
+                for (var i = 0; i < 3; i++) {
+                    $date = new Date();
+                    $date = $date.setDate($date.getDate() - 2 + i);
+                    $date = new Date($date);
+
+                    var Y = $date.getFullYear(),
+                        M = $date.getMonth() + 1,
+                        D = $date.getDate();
+
+                    M = M > 9 ? M : '0' + M;
+                    D = D > 9 ? D : '0' + D;
+
+                    var symbol_item = {};
+                    symbol_item.label = Y + '-' + M + '-' + D + ' ' + arr_week[$date.getDay()];
+                    if (i == 2) {
+                        symbol_item.label = '今天';
+                    }
+                    symbol_item.value = Y + '-' + M + '-' + D;
+                    symbol.push(symbol_item);
+                }
+
+                weui.picker(symbol, hours, minites, {
+                    defaultValue: [the_date, $date.getHours() + 1, 0],
+                    onConfirm: function (result) {
+                        pickerValue(result);
+                    }
+                });
+            }
+        }
+
         datePicker.attr('placeholder', '请选择生产时间');
         $('.weui-label').eq(1).html(label);
-        function ratioTime() {
-            // 日期选择
-            var hours = [],
-                minites = [],
-                symbol = [];
-
-            for (var i = 0; i < 24; i++) {
-                var hours_item = {};
-                hours_item.label = ('' + i).length === 1 ? '0' + i : '' + i;
-                hours_item.value = i;
-                hours.push(hours_item);
-            }
-            
-            for( i = 0;i<(60/5) ;i++){
-                var minites_item = {};
-                var temp_label   = i*5;
-
-                if(i*5<10) temp_label = 0+''+temp_label;
-                minites_item.label = temp_label;
-                minites_item.value = temp_label;
-                minites.push(minites_item);
-            }
-
-            for (var i = 0; i < 3; i++) {
-                $date = new Date();
-                $date = $date.setDate($date.getDate() - 2 + i);
-                $date = new Date($date);
-
-                var Y = $date.getFullYear(),
-                    M = $date.getMonth() + 1,
-                    D = $date.getDate();
-
-                M = M > 9 ? M : '0' + M;
-                D = D > 9 ? D : '0' + D;
-
-                var symbol_item = {};
-                symbol_item.label = Y + '-' + M + '-' + D + ' ' + arr_week[$date.getDay()];
-                if (i == 2) {
-                    symbol_item.label = '今天';
-                }
-                symbol_item.value = Y + '-' + M + '-' + D;
-                symbol.push(symbol_item);
-            }
-
-            weui.picker(symbol, hours, minites, {
-                defaultValue: [the_date, $date.getHours() + 1, 0],
-                onConfirm: function (result) {
-                    pickerValue(result);
-                }
-            });
-        }
+        
+        
 
         // 日历填充
         function pickerValue(dateArr) {
@@ -430,7 +472,7 @@
             $('#param_div').html(html);
 
         });
-
+        var wlxs = 0;         //物料显示
         // 二级显示3级
         $('#pd_show').on('click', '.addbtn', function () {
             var idx = $(this).attr('index');
@@ -440,7 +482,7 @@
             $('#iosDialog_materiel').fadeIn();
             $('.scale').val(1).attr('readonly', true);
             maketypename();
-           
+            wlxs = 0;
         });
 
         // 页面的展示
@@ -479,14 +521,26 @@
             $('.ycl_content').eq(pd).html(str);
             $('#iosDialog_materiel').fadeOut(200);
         });
-       
+        // 添加 
         $('#materiel_add').click(function () {
-            if ($(this).text() == '添加物料') {
-                materiel_add();
-            } else {
-                materiel_cancel();
-            }
+            $('#more_materiel').fadeIn();
+           
+            $('.scale').removeAttr('readonly');
+            $('.scale').eq(1).val(1);
+            $('#materiel_add').removeClass('greenColor').addClass('redColor');
         });
+
+
+ 
+        // 删除
+        $('#materiel_add').click(function () {
+            $('#more_materiel').fadeOut(200);
+            $('#materiel_add').text('添加物料');
+            $('.typename').eq(1).val(-1);
+            $('.scale').val(1).attr('readonly', true);
+            $('#materiel_add').removeClass('redColor').addClass('greenColor');
+        });
+        
         $('#three_pd_name').change(function(){
             var value = $(this).val(),
                 mn    = ['宝钢水渣','矿渣','矿热炉渣','电厂炉渣','精炼炉渣','石灰石','铜尾渣'],
@@ -515,22 +569,7 @@
             }
             
         });
-        // 添加 
-        function materiel_add() {
-            $('#more_materiel').fadeIn();
-            $('#materiel_add').text('删除物料');
-            $('.scale').removeAttr('readonly');
-            $('.scale').eq(1).val(1);
-            $('#materiel_add').removeClass('greenColor').addClass('redColor');
-        }
-        // 删除
-        function materiel_cancel() {
-            $('#more_materiel').fadeOut(200);
-            $('#materiel_add').text('添加物料');
-            $('.typename').eq(1).val(-1);
-            $('.scale').val(1).attr('readonly', true);
-            $('#materiel_add').removeClass('redColor').addClass('greenColor');
-        }
+       
 
          pd_show();
         function pd_show() {

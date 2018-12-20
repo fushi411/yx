@@ -74,9 +74,9 @@
     <div id="dialog_materiel">
         <div class="js_dialog" id="iosDialog_materiel" style="display: none;">
             <div class="weui-mask"></div>
-            <div class="weui-dialog">
+            <div class="weui-dialog" style="font-size: 18px;">
                 <div class="weui-dialog__hd">
-                    <div class="weui-cell weui-cell_select weui-cell_select-after" style="background-color: #fff;font-size: 16px;">
+                    <div class="weui-cell weui-cell_select weui-cell_select-after" style="background-color: #fff;">
                         <div class="weui-cell__hd">
                             <label class="weui-label">皮带选择&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                                 
@@ -91,7 +91,7 @@
                             </select>
                         </div>
                     </div>
-                    <div class="weui-cell weui-cell_select weui-cell_select-after" style="background-color: #fff;font-size: 16px;">
+                    <div class="weui-cell weui-cell_select weui-cell_select-after" style="background-color: #fff;">
                         <div class="weui-cell__hd">
                             <label class="weui-label">物料名称&nbsp;&nbsp;
                                 <span style="color:red;">*</span>
@@ -107,7 +107,7 @@
                         </div>
                     </div>
                     <div id="more_materiel" style="display: none;">
-                        <div class="weui-cell weui-cell_select weui-cell_select-after" style="background-color: #fff;font-size: 16px;">
+                        <div class="weui-cell weui-cell_select weui-cell_select-after" style="background-color: #fff;">
                             <div class="weui-cell__hd">
                                 <label class="weui-label">物料名称&nbsp;&nbsp;
                                     <span style="color:red;">*</span>
@@ -122,7 +122,7 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="weui-cell weui-cell_select weui-cell_select-after " style="background-color: #fff;font-size: 16px;">
+                        <div class="weui-cell weui-cell_select weui-cell_select-after " style="background-color: #fff;">
                             <div class="weui-cell__hd">
                                 <label class="weui-label">分配比例&nbsp;&nbsp;
                                     <span style="color:red;">*</span>
@@ -158,6 +158,7 @@
 </block>
 <block name="Process"></block>
 <block name="copyto"></block>
+<block name="pushto"></block>
 <block name="submit">
     <div class="weui-btn-area">
         <input type="hidden" name="file_names" id="file_names">
@@ -190,8 +191,8 @@
         var params      = getQueryString('pd');
         var placeholder = "<span class='addbtn'>点击选择物料</span>",
             sb_arr      = [],
-            start       = getQueryString('start'),
-            end         = getQueryString('end');
+            start       = getQueryString('start')-8*3600,
+            end         = getQueryString('end')-8*3600;
         if (params) {
             params = b.decode(params);
             params = params.split(',');

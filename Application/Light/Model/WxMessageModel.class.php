@@ -36,10 +36,10 @@ class WxMessageModel extends Model {
             'id' => $id
         );
         $data = M('yx_task')->where($map)->find();
-        $recevier = str_replace('|',',',$data['part']);
+        $recevier = str_replace(',','|',$data['part']);
         $title = '任务排单';
         $description = $data['tjr'].'向您派发了一条任务';
-        $url = 'https://www.fjyuanxin.com/WE/index.php?m=Light&c=task&a=detail&taskid='.$data['id'];
+        $url = 'https://www.fjyuanxin.com/WE/index.php?m=Light&c=task&a=taskLook&taskid='.$data['id'];
         $sender = session('wxid');
         $system = 'yxhb';
         $this->wx->sendCardMessage($recevier,$title,$description,$url,15,$sender,$system);

@@ -286,8 +286,34 @@
                     <input type="hidden" name="file_names" id="file_names">
                     <a class="weui-btn weui-btn_primary" href="javascript:" id="submit">提交</a>
                 </div>
+
             </block>
             <!-- 提交 end -->
+            <block name='attention'>
+                <if condition=" (empty($atten)) and (!$CueConfig)">
+                    
+                    <div id="attention" style="display:none">
+
+                    <else>
+                    <div id="attention" >
+                </if>
+                    <div class="weui-cells__title">注意事项  
+                        <a href="{:U('Light/Config/Dispenser',array('robot'=>'attention','system' => $system ,'modname' => $modname))}"><span style="color: #f12e2e">（点击配置）</span></a>
+                     </div>
+                    <!-- <div class="weui-cells__title">各个中心主管及以上职位的申请抄送</div> -->
+                    <div class="weui-cells" style="margin-top:0px;">
+                        <div class="weui-cell">
+                            <div class="weui-cell__bd">
+                                <div class="weui-uploader">
+                                    <div class="weui-uploader__bd" >
+                                        <div id="attentionContent" style="font-size: 15px;color: #f12e2e;white-space: pre-wrap;">{$atten.content}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </block>
             
         </div>
     </div>
@@ -384,7 +410,13 @@
 <script src="__PUBLIC__/assets/js/exif.js"></script>
 </body>
 <script>
- 
+    if(window.name != "bencalie"){
+        location.reload();
+        window.name = "bencalie";
+    }
+    else{
+        window.name = "";
+    }
  
     
     $('input').attr('autocomplete','off');

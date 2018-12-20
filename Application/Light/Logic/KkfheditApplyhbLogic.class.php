@@ -64,7 +64,12 @@ class KkfheditApplyhbLogic extends Model {
                                      'value'=> date('Y-m-d H:i',strtotime($res['fh_date'])),
                                      'type'=>'string',
                                      'color' => 'black'
-                                    );                                
+                                    );        
+        $result['content'][] = array('name'=>'超期详情：',
+                                     'value'=> $res['overdue']==1?'超期':'未超期',
+                                     'type'=>'string',
+                                     'color' => $res['overdue']==1?'red':'black'
+                                    );                          
 
         
         $result['content'][] = array('name'  => '发货详情：',
@@ -188,7 +193,8 @@ class KkfheditApplyhbLogic extends Model {
             'fh_passtime'   => $res['fh_passtime'],
             'del_reason'    => '',
             'fh_stat5'      => 0,
-            'xg_person'     => $res['xg_person']
+            'xg_person'     => $res['xg_person'],
+            'overdue'       => $res['overdue']
         ); 
         M('yxhb_fh')->add($addData);
         $this->AutomaticRenewalTwoMonth($id);
@@ -355,12 +361,18 @@ class KkfheditApplyhbLogic extends Model {
      * 获取采购付款 供应商信息
      */
     public function getFhList(){
-        $today    = date('Y-m-d',time()+24*3600);
-        $yestoday = date('Y-m-d',time()-4*24*3600);
+        $days     = I('post.days')?I('post.days'):4;
+        if($days != 4){
+            $today    = date('Y-m-d',time()-3*24*3600);
+        }else{
+            $today    = date('Y-m-d',time()+24*3600);
+        }
+        $yestoday = date('Y-m-d',time()-$days*24*3600);
         $clientid = I('post.client');
         $id       = I('post.id');
         $time     = I('post.date');
         $page     = I('post.page');
+        $carNum   = I('post.carNum');
         $page     = $page?$page:1;
         if($time) $time = date('Y-m-d',strtotime($time));
         $complex  = array(
@@ -377,8 +389,9 @@ class KkfheditApplyhbLogic extends Model {
         if($clientid) $where['fh_client'] = $clientid; 
         if($id)       $where['id']        = $id; 
         if($time)     $where['fh_da']     = $time;
+        if($carNum)   $where['fh_carnum']     = array('like',"%{$carNum}%");
         $data = M('yxhb_fh')->where($where)->order('fh_date DESC')->limit((($page-1)*20).",20")->select();
-       
+        
         $data = $this->fhInfo($data);
         return $data;
     }
@@ -496,7 +509,9 @@ class KkfheditApplyhbLogic extends Model {
         if(!$user_id) return array('code' => 404,'msg' => '请选择客户名称');
         // 重复提交
         if(!M('yxhb_fhxg')->autoCheckToken($_POST)) return array('code' => 404,'msg' => '网络延迟，请勿点击提交按钮！');
-        $count = M('yxhb_fhxg')->where(array('fh_num' => $fhinfo['fh_num']))->find();
+        $count      = M('yxhb_fhxg')->where(array('fh_num' => $fhinfo['fh_num']))->find();
+        $today_date = date('Y-m-d',time()-72*3600);
+        $overdue    = $fhinfo['fh_da'] >= $today_date?0:1;
         $addData = array(
             'fh_num'      => $fhinfo['fh_num'],
             'fh_client'   => $user_id,
@@ -532,7 +547,8 @@ class KkfheditApplyhbLogic extends Model {
             'fh_pass'     => $fhinfo['fh_pass'],//
             'fh_passtime' => $fhinfo['fh_passtime'],//
             'xg_reason'   => $text,//
-            'xg_person'   => $user
+            'xg_person'   => $user,
+            'overdue'     => $overdue
         ); 
      
         if(empty($count)){

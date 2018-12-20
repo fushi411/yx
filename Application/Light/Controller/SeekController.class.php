@@ -351,8 +351,8 @@ class SeekController  extends BaseController
                 'title2'    => $res['title2'],
                 'titlename' => $res['title'],
                 'name'      => $res['name'],
-                'approve'   => $v['approve'],
-                'notice'    => $v['notice'],
+                'approve'   => iconv('gbk','UTF-8',$v['approve']),
+                'notice'    => $v['notice']?$v['notice']:'无',
                 'apply'     => $appStatus
             );
             $result[] = $arr;
@@ -408,8 +408,8 @@ class SeekController  extends BaseController
                 'title2'    => $res['title2'],
                 'titlename' => $res['title'],
                 'name'      => $res['name'],
-                'approve'   => $v['approve'],
-                'notice'    => $v['notice'],
+                'approve'   => iconv('gbk','UTF-8',$v['approve']),
+                'notice'    => $v['notice']?$v['notice']:'无',
                 'apply'     => $appStatus
             );
             $result[] = $arr;
@@ -450,7 +450,7 @@ class SeekController  extends BaseController
                     if(!$res && $v['system'] != 'kk')  $del = ' and 1=-1 '; # 排除建材系统 模块不在搜索方位 and {$v['stat']}!={$v['submit']['stat']}
                 }
             }
-            $submit_sql .=  " select {$v['copy_field']},{$k} from {$v['table_name']} where {$v['submit']['name']}='{$name}'  {$v['map']}  {$del}";
+            $submit_sql .=  " select {$v['copy_field']},{$k} from {$v['table_name']} where {$v['submit']['name']}='{$name}' and {$v['stat']}!={$v['submit']['stat']} {$v['map']}  {$del}";
         }
 
         return $submit_sql;

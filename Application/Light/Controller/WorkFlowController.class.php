@@ -293,19 +293,19 @@ class WorkFlowController extends BaseController {
         switch ($type) {
           case 'pass':
             $description = "已审批通过";
-            $receviers = "wk|HuangShiQi|".$applyerwxid;
+            $receviers = "wk|HuangShiQi|WangTongJin|".$applyerwxid;
             break;
           case 'refuse':
             $description = "被拒绝";
-            $receviers = "wk|HuangShiQi|".$applyerwxid;
+            $receviers = "wk|HuangShiQi|WangTongJin|".$applyerwxid;
             break;
           case 'other':
             $description = "需要处理";
-            $receviers = "wk|HuangShiQi|".$prowxid;
+            $receviers = "wk|HuangShiQi|WangTongJin|".$prowxid;
             break;          
           default:
             $description = "需要审批";
-            $receviers = "wk|HuangShiQi|".$prowxid;
+            $receviers = "wk|HuangShiQi|WangTongJin|".$prowxid;
             break;
         }
         $title = str_replace('表','',$title);
@@ -369,19 +369,19 @@ class WorkFlowController extends BaseController {
         switch ($type) {
           case 'pass':
             $description = "您有一个流程已审批通过".$applyerName;
-            $receviers = "wk|HuangShiQi|".$boss;
+            $receviers = "wk|HuangShiQi|WangTongJin|".$boss;
             break;
           case 'refuse':
             $description = "您有一个流程被拒绝".$applyerName;
-            $receviers = "wk|HuangShiQi|".$boss;
+            $receviers = "wk|HuangShiQi|WangTongJin|".$boss;
             break;
           case 'other':
             $description = "您有一个流程需要处理".$applyerName;
-            $receviers = "wk|HuangShiQi|".$boss;
+            $receviers = "wk|HuangShiQi|WangTongJin|".$boss;
             break;          
           default:
             $description = "您有一个流程需要审批".$applyerName;
-            $receviers = "wk|HuangShiQi|".$boss;
+            $receviers = "wk|HuangShiQi|WangTongJin|".$boss;
             break;
         }
         if(!empty($reason)){

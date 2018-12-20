@@ -62,4 +62,50 @@ class YxDetailAuthModel extends Model
         }
         return array($res,$flag);
     }   
+
+    /**
+     *  设置注意事项以及相关说明 校验设置权限
+     *  @return boolean
+     */
+    public function CueAuthCheck(){
+        $wxid = session('wxid');
+        $auth = $this->GetDetaiAuth();
+        return in_array($wxid,$auth)?true:false;
+    }
+
+
+    /**
+     * 获取全部权限人员
+     * @return array $authArray;
+     */
+    public function GetDetaiAuth(){
+        $map  = array(
+            'mod'  => 'all',
+            'type' => 1,
+            'stat' => 1,
+        ); 
+        $data = $this->field('wxid')->where($map)->select();
+        $authArray = array();
+        foreach( $data as $v){
+            $authArray[] = $v['wxid'];
+        }
+        return $authArray;
+    }
+
+        /**
+     * 获取是有效配置
+     * @param string $system
+     * @param string $modname
+     * @return array
+     */
+    public function ActiveAttention($system,$modname){
+        $map = array(
+            'system' => $system,
+            'mod'    => $modname,
+            'stat'   => 1
+        );
+        $data = M('yx_config_attention')->where($map)->find();
+        return $data;
+    }
+    
 }

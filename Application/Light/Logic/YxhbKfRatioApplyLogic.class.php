@@ -120,6 +120,10 @@ class YxhbKfRatioApplyLogic extends Model {
             $proportion5 = ceil($scale[6]->name) == $scale[6]->name?ceil($scale[6]->name): $scale[6]->name;
             $html .= "<input class='weui-input' type='text' style='color: black;'  readonly value='{$scale[6]->value}：{$scale[6]->name}%'>";
         }
+        if(!empty($scale[7]) && !empty($scale[7]->name)) {
+            $proportion5 = ceil($scale[7]->name) == $scale[7]->name?ceil($scale[7]->name): $scale[7]->name;
+            $html .= "<input class='weui-input' type='text' style='color: black;'  readonly value='{$scale[7]->value}：{$scale[7]->name}%'>";
+        }
         $out_scale = json_decode($data['out_scale']);
         // if(!empty($out_scale[0]->name)) {
         //     $html .= "<input class='weui-input' type='text' style='color: black; font-weight: 700;border-bottom: 1px solid #e5e5e5; '  readonly value='磨外'>";

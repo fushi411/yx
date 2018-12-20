@@ -89,6 +89,16 @@
         </div>
         <div class="weui-cell ">
             <div class="weui-cell__hd">
+                <label class="weui-label">超期详情&nbsp;&nbsp;
+                </label>
+            </div>
+            <div class="weui-cell__bd">
+                <input class="weui-input " type="text" id="isOverdue" name="custodian" readonly placeholder="自动填写" />
+                
+            </div>
+        </div>
+        <div class="weui-cell ">
+            <div class="weui-cell__hd">
                 <label class="weui-label">
                     <span class="font-width">发货详情</span>&nbsp;&nbsp;
                 </label>
@@ -151,7 +161,15 @@
                                     <input class="weui-select" type="text" name="custodian" id="showDatePicker" readonly placeholder="前三天至今天" value="" />
                                 </div>
                             </div>
-                        
+                            <div class="weui-cell weui-cell_select weui-cell_select-after ">
+                                <div class="weui-cell__hd">
+                                    <label class="weui-label" >&nbsp;&nbsp;
+                                    </label>
+                                </div>
+                                <div class="weui-cell__bd" style="padding: 7px 0;">
+                                    <div id='overdue' class="btn btn-info btn-sm" >超期提交</div>
+                                </div>
+                            </div>
                   
                     <div class="weui-cell weui-cell_select weui-cell_select-after">
                             <div class="weui-cell__hd">
@@ -167,13 +185,14 @@
                     </div>
                     <div class="weui-cell weui-cell_select weui-cell_select-after ">
                         <div class="weui-cell__hd">
-                            <label class="weui-label" style="color:#999;">承运车号&nbsp;&nbsp;
+                            <label class="weui-label" >承运车号&nbsp;&nbsp;
                             </label>
                         </div>
                         <div class="weui-cell__bd">
-                            <input class="weui-select peibi scale" type="text" name="user_other_name" id="user_other_name" placeholder="暂未开通">
+                            <input class="weui-select peibi scale" type="text" name="carNum" id="carNum" placeholder="请输入承运车号">
                         </div>
                     </div>
+                    
                 </div>
                 <div class="weui-cells weui-cells_form" id="order_select" style="margin-top: 0;min-height: 101%">
 
@@ -217,11 +236,31 @@
     <script src="__PUBLIC__/assets/js/AmountConversionformat.js"></script>
     <!-- <script src="__PUBLIC__/assets/js/vconsole.min.js"></script> -->
     <script>
-        var page = 1,
-            fhinfo = [],
-            user_id = '';
-        var no_more = $('.no-more'),
-            load_more = $('.load-more');
+        var page      = 1,
+            fhinfo    = [],
+            user_id   = '';
+        var no_more   = $('.no-more'),
+            load_more = $('.load-more'),
+            overdue   = $('#overdue'),
+            days      = 4;
+
+        overdue.click(function(){
+            $('#showDatePicker').val('');
+            if($(this).text() == '超期提交'){
+                $(this).text('正常提交');
+                $(this).removeClass('btn-info').addClass('btn-success');
+                $('#showDatePicker').attr('placeholder','前100天至三天前');
+                days      = 101;
+            }else{
+                $(this).text('超期提交');
+                $(this).removeClass('btn-success').addClass('btn-info');
+                $('#showDatePicker').attr('placeholder','前三天至今天');
+                days      = 4;
+            }
+            $('#order_searchResult').html('');
+            page = 1;
+            getFhList();
+        });
         load_more.click(function () {
             getFhList();
         })
@@ -233,9 +272,9 @@
                 minites = [],
                 symbol = [];
 
-            for (var i = 0; i < 4; i++) {
+            for (var i = 0; i < days; i++) {
                 $date = new Date();
-                $date = $date.setDate($date.getDate() - 3 + i);
+                $date = $date.setDate($date.getDate() - (days-1) + i);
                 $date = new Date($date);
 
                 var Y = $date.getFullYear(),
@@ -244,7 +283,7 @@
 
                 var hours_item = {};
                 hours_item.label = Y + '-' + M + '-' + D + ' ' + arr_week[$date.getDay()];
-                if (i == 3) {
+                if (i == (days-1)) {
                     hours_item.label = '今天';
                 }
                 hours_item.value = Y + '-' + M + '-' + D;
@@ -269,6 +308,12 @@
             page = 1;
             getFhList();
         });
+
+        $('#carNum').change(function(){
+            $('#order_searchResult').html('');
+            page = 1;
+            getFhList();
+        });
         // 获取发货记录
         getFhList();
         function getFhList() {
@@ -277,13 +322,15 @@
                 url: "{:U('Light/Api/fh_edit_Apply_hbApi')}",
                 dataType: 'json',
                 data: {
-                    date:$('#showDatePicker').val(),
-                    system: "{$system}",
-                    modname: 'fh_edit_Apply_hb',
-                    action: 'getFhList',
-                    client: user_id,
-                    page: page,
-                    __hash__: hash
+                    date     : $('#showDatePicker').val(),
+                    system   : "{$system}",
+                    modname  : 'fh_edit_Apply_hb',
+                    action   : 'getFhList',
+                    carNum   : $('#carNum').val(),
+                    days     : days,
+                    client   : user_id,
+                    page     : page,
+                    __hash__ : hash
                 },
                 dataType: 'json',
                 success: function (res) {
@@ -360,6 +407,7 @@
                 text = text.replace(/责任/, "");
                 text = text.replace(/公司/, "");
             } 
+
             if(clickInfo['fh_bzfs'] == '编织袋') $bzfs = '袋' ;
             else if(clickInfo['fh_bzfs'] == '散装') $bzfs = '散';
             var html = '<div  "><span class="" >提货单号</span>：' + clickInfo['fh_num'] + '</div>';
@@ -373,8 +421,28 @@
             $('#khmc').val(text);
             strlength = clickInfo['fh_date'].length;
             $('#fhrq').val( clickInfo['fh_date'].substring(0,strlength-3));
+            // 超期判断
+            var threedays = getThreeDay();
+            
+            if(threedays<=clickInfo['fh_da']){
+                $('#isOverdue').val('未超期');
+            }else{
+                $('#isOverdue').css('color','red');
+                $('#isOverdue').val('超期');
+            }
         }
+        // 获取三天前的时间
+        function getThreeDay(){
+                $date = new Date();
+                $date = $date.setDate($date.getDate() - 4);
+                $date = new Date($date);
 
+                var Y = $date.getFullYear(),
+                    M = $date.getMonth() + 1,
+                    D = $date.getDate();
+
+                return Y + '-' + M + '-' + D + ' 00:00:00';
+        }
         var clickInfo = '';
         // 显示
         div_show();

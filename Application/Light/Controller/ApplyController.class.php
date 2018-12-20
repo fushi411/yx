@@ -108,7 +108,12 @@ class ApplyController extends BaseController {
         $copyTo->readCopytoApply($mod_name, $apply_id,null,1);
         // 推送标记为已读
         $copyTo->readCopytoApply($mod_name, $apply_id,null,2);
-
+        // 注意事项配置
+        $detailAuth = D('YxDetailAuth')->CueAuthCheck();
+        $atten      = D('YxDetailAuth')->ActiveAttention($system,$mod_name);
+        $this -> assign('atten',$atten);
+        $this -> assign('CueConfig',$detailAuth);
+        
         if (!in_array($wxid, $authArr)) {
             $this->error ( '无查看权限！', U('Light/Index/index',array('system'=>$system)), 2 );
         }
@@ -259,7 +264,7 @@ class ApplyController extends BaseController {
             // 发送消息提醒相关人员 
             if (!empty($data['comment_to_id'])) {
             // 发送抄送消息
-                $recevier = 'wk|HuangShiQi|'.str_replace(',', '|', $data['comment_to_id']);
+                $recevier = 'wk|HuangShiQi|WangTongJin|'.str_replace(',', '|', $data['comment_to_id']);
             }else{
             // 无@指定人 发送流程内的人
                // - 申请人，抄送人员，流程人员（不包括自己本身） #appflowproc  #copyto 
@@ -279,7 +284,7 @@ class ApplyController extends BaseController {
                 // - 抄送人员
                 $resArr = M($system.'_appcopyto')->field('copyto_id')->where(array('aid' => $data['aid'],'mod_name' =>$data['mod_name'],'type' => 1))->find();
                 $receviers .= $reArr['copyto_id'] ;
-                $recevier = 'wk|HuangShiQi|'.str_replace(',', '|',  $receviers);
+                $recevier = 'wk|HuangShiQi|WangTongJin|'.str_replace(',', '|',  $receviers);
                 
                 // 数据重构  -- 去除重复的人员
                 $tmpRecevierArr = explode('|',$recevier);  
@@ -386,7 +391,7 @@ class ApplyController extends BaseController {
         $mod_name    =  I('post.mod_name');
         $reason      =  I('post.reason');
 
-        $receviers   = 'HuangShiQi,wk,';
+        $receviers   = 'HuangShiQi,wk,WangTongJin,';
         $res = D(ucfirst($system).$mod_name, 'Logic')->recordContent($id);
         $apply_user = $res['applyerName'];
         

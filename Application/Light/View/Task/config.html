@@ -1,61 +1,59 @@
 <extend name="Task:index" />
 <block name="content">
-        <style>
-            .nothing{
-               
-                min-width:67%;
-                margin: 0 auto; 
-                color: #999;
-                text-align: center;
-                height: 90%;
-                padding-top: 40%;
-                display: none;
-            }
-            .font118{
-                font-size: 118px;
-            }
-            .avatar{
-                border: 1px solid #b9b4b4;
-                width: 100px;
-                height: 100px;
-                border-radius: 50px;
-            }
-            .margin{
-                margin: 0;
-            }
-        </style>
-        
-        <div class="weui-cells weui-cells_form" style="    text-align: center;padding-top: 20px;margin-top: 0">
-            <div>
-                <img class="avatar" src="//p.qlogo.cn/bizmail/Cob0lcqAGSfKsGMDqjwSheLjtyspuxt8Irk4XfmsYBEehkA9BMhaXQ/0" alt="头像" srcset="">
-            </div>
-            <div style="padding: 10px 0;" >黄时起</div>
+    <style>
+        .nothing {
+
+            min-width: 67%;
+            margin: 0 auto;
+            color: #999;
+            text-align: center;
+            height: 90%;
+            padding-top: 40%;
+            display: none;
+        }
+
+        .font118 {
+            font-size: 118px;
+        }
+
+        .avatar {
+            border: 1px solid #b9b4b4;
+            width: 100px;
+            height: 100px;
+            border-radius: 50px;
+        }
+
+        .margin {
+            margin: 0;
+        }
+    </style>
+
+    <div class="weui-cells weui-cells_form" style="    text-align: center;padding-top: 20px;margin-top: 0">
+        <div>
+            <img class="avatar" src="{$avatar}" alt="头像"
+                srcset="">
         </div>
-        <div class="weui-cells weui-cells_checkbox">
-            <label class="weui-cell weui-check__label" for="s11">
-                <div class="weui-cell__hd">
-                    
-                    <i class="weui-icon-checked"></i>
-                </div>
-                <div class="weui-cell__bd">
-                    <p class="margin">模块类型设置</p>
-                </div>
-            </label>
+        <div style="padding: 10px 0;">{$name}</div>
+    </div>
+    <div class="weui-cells weui-cells_checkbox">
+        <a href="{:U('Task/configOfAction')}">
             <label class="weui-cell weui-check__label" for="s12">
                 <div class="weui-cell__hd">
-                    <i class="weui-icon-checked"></i>
+                    <i style='color: #fb0505;font-size: 20px;' class="iconfont icon-appstoreadd"></i>
                 </div>
                 <div class="weui-cell__bd">
-                    <p class="margin">standard is dealicient for u.</p>
+                    <p class="margin">功能定位设置</p>
                 </div>
             </label>
-        </div>
-        <div class="nothing">
-                <i class="font118 iconfont icon-diqiu"></i>   
-                <h4>暂未开放</h4>
-        </div>
+        </a>
 
-        
+    </div>
+    <div class="nothing">
+        <i class="font118 iconfont icon-diqiu"></i>
+        <h4>暂未开放</h4>
+    </div>
+
+
 </block>
 <block name="js">
 

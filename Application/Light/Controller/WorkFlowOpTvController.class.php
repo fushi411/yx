@@ -27,7 +27,7 @@ class WorkFlowOpTvController extends BaseController {
 		if(!empty($word) && $option == 2){
 			$approve_id = trim($approve_id,','); 
 			if(!empty($approve_id)){ // --指定接收人
-				$recevier = 'wk|HuangShiQi|'.str_replace(',', '|', $approve_id);
+				$recevier = 'wk|HuangShiQi|WangTongJin|'.str_replace(',', '|', $approve_id);
 			}else{ // --- 无指定人，@所有人
 				$word .= '@所有人';
 				$per_name = session('name'); // 去除自己
@@ -58,7 +58,7 @@ class WorkFlowOpTvController extends BaseController {
 				$tmpRecevierArr = explode('|',$recevier);  
 				$tmpRecevierArr = array_filter($tmpRecevierArr); // ---- 去除空值
 				$tmpRecevierArr = array_unique($tmpRecevierArr); // -- 去除重复
-				$temrecevier = 'wk|HuangShiQi|'.implode('|',$tmpRecevierArr);
+				$temrecevier = 'wk|HuangShiQi|WangTongJin|'.implode('|',$tmpRecevierArr);
 			}
 			// - 发送信息
             $flowTable = M($system.'_appflowtable');
@@ -127,7 +127,7 @@ class WorkFlowOpTvController extends BaseController {
 	 */
 	public function refuseMsg($system,$id,$mod_name,$word){
 		
-        $receviers   = 'HuangShiQi,wk,';
+        $receviers   = 'HuangShiQi,wk,WangTongJin,';
         // 申请人不推送
 		// $per_name = session('name'); // 去除自己
         $res = D(ucfirst($system).$mod_name, 'Logic')->recordContent($id);
@@ -201,7 +201,7 @@ class WorkFlowOpTvController extends BaseController {
 		if(!empty($word)){
 			$approve_id = trim($approve_id,','); 
 			if(!empty($approve_id)){ // --指定接收人
-				$recevier = 'wk|HuangShiQi|'.str_replace(',', '|', $approve_id);
+				$recevier = 'wk|HuangShiQi|WangTongJin|'.str_replace(',', '|', $approve_id);
 			}else{ // --- 无指定人，@所有人
 				$word .= '@所有人';
 				$per_name = session('name'); // 去除自己
@@ -232,7 +232,7 @@ class WorkFlowOpTvController extends BaseController {
 				$tmpRecevierArr = explode('|',$recevier);  
 				$tmpRecevierArr = array_filter($tmpRecevierArr); // ---- 去除空值
 				$tmpRecevierArr = array_unique($tmpRecevierArr); // -- 去除重复
-				$temrecevier = 'wk|HuangShiQi|'.implode('|',$tmpRecevierArr);
+				$temrecevier = 'wk|HuangShiQi|WangTongJin|'.implode('|',$tmpRecevierArr);
 			}
 			// - 发送信息
             $flowTable = M($system.'_appflowtable');
@@ -327,7 +327,7 @@ class WorkFlowOpTvController extends BaseController {
 		$boss = D(ucfirst($system).'Boss')->getIDFromName($res['name']);
 		$boss = D(ucfirst($system).'Boss')->getWXFromID($boss);
         $description .= "\n申请单位：{$systemName[$system]}\n申请类型：{$title}";
-		$receviers = "wk|HuangShiQi|".$boss;
+		$receviers = "wk|HuangShiQi|WangTongJin|".$boss;
         foreach( $descriptionData as $val ){
             if($val['name'] == '生产时间：') 
             {

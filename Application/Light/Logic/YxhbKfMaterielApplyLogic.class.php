@@ -106,8 +106,16 @@ class YxhbKfMaterielApplyLogic extends Model {
             if(count($v['data']) == 1){
                 $html .= "<input class='weui-input' type='text' style='color: black;padding: 3px 0 0 10px;'  readonly value='{$v['data'][0]['name']}'>";
             }else{
-                $html .= "<input class='weui-input' type='text' style='color: black;padding: 3px 0 0 10px;'  readonly value='{$v['data'][0]['name']}：{$v['data'][1]['name']}'>";
-                $html .= "<input class='weui-input' type='text' style='color: black;padding: 3px 0 0 10px;'  readonly value='分配比例：{$v['data'][0]['value']}比{$v['data'][1]['value']}'>";
+                $name = '';
+                $bili = '';
+                foreach($v['data'] as $vData){
+                    $name .= $vData['name'].':';
+                    $bili .= $vData['value'].':';
+                }
+                $name = trim($name,':');
+                $bili = trim($bili,':');
+                $html .= "<input class='weui-input' type='text' style='color: black;padding: 3px 0 0 10px;'  readonly value='{$name}'>";
+                $html .= "<input class='weui-input' type='text' style='color: black;padding: 3px 0 0 10px;'  readonly value='分配比例：{$bili}'>";
             }
         }
         return $html;
@@ -197,7 +205,6 @@ class YxhbKfMaterielApplyLogic extends Model {
             'stat'    => $res['stat'],
         );
         return $result;
-        
     }
 
     /**

@@ -1,0 +1,108 @@
+<extend name="Task:index" />
+<block name="content">
+    <style>
+        .nothing {
+
+            min-width: 67%;
+            margin: 0 auto;
+            color: #999;
+            text-align: center;
+            height: 90%;
+            padding-top: 40%;
+            display: none;
+        }
+
+        .font118 {
+            font-size: 118px;
+        }
+
+        .avatar {
+            border: 1px solid #b9b4b4;
+            width: 100px;
+            height: 100px;
+            border-radius: 50px;
+        }
+
+        .margin {
+            margin: 0;
+        }
+
+        .addbtn {
+            color: #4b4b4b;
+        }
+
+        .addbtn:hover {
+            color: #b0b0b0;
+        }
+        .mask{
+            position: fixed;
+            z-index: 1000;
+            top: 0;
+            right: 0;
+            left: 0;
+            bottom: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(19, 18, 18, 0.5);
+        }
+        .dialogcontent{
+            position: fixed;
+            z-index: 1200;
+            width: 80%; 
+            top: 50%;
+            left: 50%;
+            -webkit-transform: translate(-50%, -50%);
+            transform: translate(-50%, -50%);
+            background-color: #FFFFFF;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+    </style>
+    <h3 class="titleTab" style="text-align: center">功能作用配置</h3>
+    <div id="pd_show">
+        <div class="weui-panel__hd" style="color: #333;font-size: 18px;font-weight: 800;background-color: #f8f8f8;padding-top: 8px;padding-bottom: 4px;">功能列表
+            <span class="glyphicon glyphicon-plus addbtn" index="1" aria-hidden="true" style="float:  right;margin-right:  20px;"></span>
+        </div>
+
+        <volist name="action" id="vo">
+            <div class="weui-cell er_show" style="background-color: rgb(255, 255, 255);">
+                <div class="weui-cell__hd"><label class="weui-label" style="text-align: center;font-size: 16px;">{$vo.name}&nbsp;&nbsp;</label></div>
+                <div class="weui-cell__hd" style="position:  absolute;right: 28px;"><span style="font-size: 25px;color: #6f6363;"
+                        index="{$vo.name}" class="iconfont icon-xiugai"></span></div>
+            </div>
+        </volist>
+    </div>
+    <div id="dialogs">
+
+        <!--BEGIN dialog4-->
+        <div class="js_dialog" id="androidDialog2" style="display: none;">
+            <div class="mask"></div>
+            <div class="dialogcontent">
+                <div>
+                    <div class="dialogContentBody">
+                        <div class="dialogContentTitle">123</div>
+                        <input class="dialogContentBtn" placeholder="请输入功能名称" value="123">
+                    </div>
+                </div>
+                <div>
+
+                </div>
+            </div>
+        </div>
+        <!--END dialog4-->
+    </div>
+</block>
+<block name="js">
+    <script>
+
+        $(function () {
+            var $androidDialog2 = $('#androidDialog2');
+
+            $('.addbtn').on('click', function () {
+                $androidDialog2.fadeIn();
+            });
+
+            
+        });
+    </script>
+</block>

@@ -23,13 +23,14 @@ class ViewController  extends BaseController
         $special_page = I('get.special');
         // 系统和模块决定
         $mod_name = I('modname');
-        $system = I('system');
+        $system   = I('system');
         $viewtype = I('viewtype');
         // 审批
-        $appflow = GetAppFlow($system,$mod_name);
+        $appflow  = GetAppFlow($system,$mod_name);
         // 推送
-        $push = GetPush($system,$mod_name);
-
+        $push       = GetPush($system,$mod_name);
+        $detailAuth = D('YxDetailAuth')->CueAuthCheck();
+        $atten      = D('YxDetailAuth')->ActiveAttention($system,$mod_name);
         $this -> assign('system', $system);
         $this -> assign('modname', $mod_name);
         $this -> assign('push',$push['data']);
@@ -41,8 +42,9 @@ class ViewController  extends BaseController
         $this -> assign('fixed',$this->PageArr[$viewtype.$system.$mod_name]);
 
         $this -> assign('today',$this->today);
-
         $this -> assign('title',$this->PageArr['title']);
+        $this -> assign('atten',$atten);
+        $this -> assign('CueConfig',$detailAuth);
         if( $special_page){
             $this->display($mod_name.'/'.$special_page);
         }else{
@@ -61,5 +63,12 @@ class ViewController  extends BaseController
         $modArr = array('TempCreditLineApply','fh_edit_Apply_hb','fh_edit_Apply');
         return in_array($mod,$modArr) ? json_encode($appflow) : $appflow;
     }
+
+    // 提示页面
+    public function cue(){
+        $id = I('get.cueid');
+        $this->display('Cue/index');
+    }
+
 
 }
