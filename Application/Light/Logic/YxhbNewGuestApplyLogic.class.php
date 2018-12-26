@@ -8,9 +8,9 @@ use  Vendor\Overtrue\Pinyin\Pinyin;
  * @author 
  */
 
-class KkNewGuestApplyLogic extends Model {
+class YxhbNewGuestApplyLogic extends Model {
     // 实际表名
-    protected $trueTableName = 'kk_newguest';
+    protected $trueTableName = 'yxhb_newguest';
 
     /**
      * 记录内容
@@ -34,7 +34,7 @@ class KkNewGuestApplyLogic extends Model {
         $res = $this->record($id);
         $result = array();
         $result['content'][] = array('name'=>'申请单位：',
-            'value'=>'建材新增备案客户',
+            'value'=>'环保新增备案客户',
             'type'=>'date',
             'color' => 'black'
         );
@@ -54,7 +54,6 @@ class KkNewGuestApplyLogic extends Model {
             'color' => 'black'
         );
 
-
         $result['content'][] = array('name'=>'联系人员：',
             'value'=>$res['contacts'],
             'type'=>'string',
@@ -73,7 +72,7 @@ class KkNewGuestApplyLogic extends Model {
             'color' => 'black'
         );
         $result['imgsrc'] = '';
-        $result['applyerID'] =  D('KkBoss')->getIDFromName($res['sales']);       //申请人的id
+        $result['applyerID'] =  D('YxhbBoss')->getIDFromName($res['sales']);       //申请人的id
         $result['applyerName'] = $res['sales'];                                 //申请人的姓名
         $result['stat'] = $res['stat'];
         return $result;
@@ -108,8 +107,8 @@ class KkNewGuestApplyLogic extends Model {
             'type'=>'date'
         );
 
-        $result[] = array('name'=>'备案名称：',
-            'value'=>$res['name'],
+        $result[] = array('name'=>'备案产品：',
+            'value'=>$res['product'],
             'type'=>'string'
         );
 
@@ -170,7 +169,7 @@ class KkNewGuestApplyLogic extends Model {
      */
     public function addNewGuest(){
         $name = I('post.name');
-        $product = '水泥';
+        $product = '矿粉';
         $contacts = I('post.contacts');
         $telephone = I('post.telephone');
         $info = I('post.info');
@@ -183,37 +182,37 @@ class KkNewGuestApplyLogic extends Model {
         $helpword = $py->abbr($name);
         $sub_time = date("Y-m-d H:i:s",time());
         $res = array(
-            'name'=>$name,                      //备案名称
-            'salesid'=>$salesid,                //申请者的id
+            'name'=>$name,
+            'salesid'=>$salesid,
             'clientvalue'=>'',
-            'date'=>$date,                      //申请日期
-            'product'=>$product,                //产品
-            'telephone'=>$telephone,            //电话
+            'date'=>$date,
+            'product'=>$product,
+            'telephone'=>$telephone,
             'addr'=>'',
-            'sales'=>$sales,                    //申请者姓名
-            'dtime'=>$sub_time,                 //提交时间
-            'helpword'=>$helpword,              //拼音
+            'sales'=>$sales,
+            'dtime'=>$sub_time,
+            'helpword'=>$helpword,
             'stat'=>2,
             'area'=>'',
-            'info'=>$info,                      //相关说明
+            'info'=>$info,
             'notice'=>'',
-            'contacts'=>$contacts,              //联系人
+            'contacts'=>$contacts,
             'edittime'=>'0000-00-00 00:00:00',
-            'stat2'=>1,                         //1代表未转为合同客户的备案客户，2表示已经转为合同客户
+            'stat2'=>1,
             'stat3'=>1,
         );
         //$_POST    提交数据的方式为post
-        if(!M('kk_newguest')->autoCheckToken($_POST)) return array('code' => 404,'msg' => '网络延迟，请勿点击提交按钮！');    //在Model.class.php中，自动表单令牌验证
-        $result = M('kk_newguest')->add($res);
+        if(!M('yxhb_newguest')->autoCheckToken($_POST)) return array('code' => 404,'msg' => '网络延迟，请勿点击提交按钮！');    //在Model.class.php中，自动表单令牌验证
+        $result = M('yxhb_newguest')->add($res);
 
         if(!$result) return array('code' => 404,'msg' =>'提交失败，请重新尝试！');
         // 抄送
         $copyto_id = trim($copyto_id,',');      //移除字符串两侧的空白字符及','
         if (!empty($copyto_id)) {
-            D('KkAppcopyto')->copyTo($copyto_id,'NewGuestApply', $result);
+            D('YxhbAppcopyto')->copyTo($copyto_id,'NewGuestApply', $result);
         }
         $wf = A('WorkFlow');    //调用控制器
-        $res = $wf->setWorkFlowSV('NewGuestApply',$result, $salesid, 'kk');
+        $res = $wf->setWorkFlowSV('NewGuestApply',$result, $salesid, 'yxhb');
         return array('code' => 200,'msg' => '提交成功' , 'aid' =>$result);
     }
 
@@ -224,7 +223,7 @@ class KkNewGuestApplyLogic extends Model {
             'name' => $name,
             'stat'=>2
         );
-        $data = M('kk_newguest')->where($map)->find();
+        $data = M('yxhb_newguest')->where($map)->find();
         if(empty($data)) return true;
         return false;
     }

@@ -1,0 +1,314 @@
+<extend name="Apply:applyBase" />
+<!-- 去除不可选择日期 -->
+<block name="disable_date"></block>
+<!-- 去除可选择日期 -->
+
+<block name="content_body">
+    <div class="weui-cells">
+        <block>
+            <div class="weui-cell weui-cell_select weui-cell_select-after">
+                <div class="weui-cell__hd">
+                    <label class="weui-label">备案客户&nbsp;&nbsp;
+                    </label>
+                </div>
+                <div class="weui-cell__bd" id='alter_div'>
+                    <select class="weui-select" name="user_name[]" id="user_name" multiple="multiple" style="width: 95%;" data-placeholder="有效备案客户">
+                    </select>
+                </div>
+            </div>
+        </block >
+    </div>
+    <!--  备案信息 END -->
+    <div class="weui-cells" id="content1">
+        <div class="weui-cell ">
+            <div class="weui-cell__hd">
+                <label class="weui-label">客户名称&nbsp;&nbsp;
+                    <span style="color:red;">*</span>
+                </label>
+            </div>
+            <div class="weui-cell__bd">
+                <input id="name" name="name" class="weui-input" type="text" placeholder="完整公司名称或真实姓名" maxlength="15" >
+            </div>
+        </div>
+        <!--  备案名称 END -->
+        <div class="weui-cell ">
+            <div class="weui-cell__hd">
+                <label class="weui-label" >客户类型&nbsp;&nbsp;
+                    <span style="color:red;">*</span>
+                </label>
+            </div>
+            <div class="weui-cell__bd">
+                <select id="g_khlx" name="g_khlx" class="weui-input greyColor" onchange="check_select()">
+                    <option value="-1" selected="selected" class="reference_color" disabled style='display:none;'>请选择客户类型</option>
+                    <option value="经销商">经销商</option>
+                    <option value="直供单位">直供单位</option>
+                </select>
+            </div>
+        </div>
+        <!--  客户类型 END -->
+        <div class="weui-cell ">
+            <div class="weui-cell__hd">
+                <label class="weui-label"><span id="select_peo">联系人员</span>&nbsp;&nbsp;
+                    <span style="color:red;">*</span>
+                </label>
+            </div>
+            <div class="weui-cell__bd">
+                <input id="contacts" name="contacts" class="weui-input" type="text" placeholder="真实姓名" >
+            </div>
+        </div>
+        <!--  联系人 END -->
+        <div class="weui-cell ">
+            <div class="weui-cell__hd">
+                <label class="weui-label">联系电话&nbsp;&nbsp;
+                    <span style="color:red;">*</span>
+                </label>
+            </div>
+            <div class="weui-cell__bd">
+                <input id="telephone" name="telephone" class="weui-input" type="number" placeholder="请输入联系电话"  required="">
+            </div>
+        </div>
+        <!--  联系电话 END -->
+    </div>
+    <div class="weui-cells">
+        <block>
+            <div class="weui-cell ">
+                <div class="weui-cell__hd">
+                    <label class="weui-label" >开票方式&nbsp;&nbsp;
+                        <span style="color:red;">*</span>
+                    </label>
+                </div>
+                <div class="weui-cell__bd">
+                    <select id="ht_kpfs" name="ht_kpfs" class="weui-input greyColor" onchange="ht_kpfs()">
+                        <option value="-1" selected="selected" class="weui-select" disabled style='display:none;'>请选择开票方式</option>
+                        <option value="出厂票价">出厂票价</option>
+                        <option value="送到票价">送到票价</option>
+                    </select>
+                </div>
+            </div>
+            <!--  开票方式 END -->
+            <div class="weui-cell ">
+                <div class="weui-cell__hd">
+                    <label class="weui-label" >结算方式&nbsp;&nbsp;
+                        <span style="color:red;">*</span>
+                    </label>
+                </div>
+                <div class="weui-cell__bd">
+                    <select id="ht_sljsfs" name="ht_sljsfs" class="weui-input greyColor" onchange="ht_sljsfs()">
+                        <option value="-1" selected="selected" class="reference_color" disabled style='display:none;'>请选择结算方式</option>
+                        <option value="对方数量">对方数量</option>
+                        <option value="我方数量">我方数量</option>
+                    </select>
+                </div>
+            </div>
+            <!--  数量结算 END -->
+        </block >
+        <!--  备案信息 END -->
+    </div>
+    <div class="weui-cells">
+        <block>
+            <div class="weui-cell">
+                <div class="weui-cell__hd">
+                    <label class="weui-label">相关说明&nbsp;&nbsp;
+                        <span style="color:red;">*</span>
+                    </label>
+                </div>
+            </div>
+            <div class="weui-cell">
+                <div class="weui-cell__bd" id="wordCount">
+                    <textarea class="weui-textarea" name="info" id="info" placeholder="请输入相关说明(至少5个字);" rows="3"></textarea>
+                    <div class="weui-textarea-counter">
+                        <span id="reason_char">0</span>/200
+                    </div>
+                </div>
+            </div>
+        </block >
+        <!--  备案信息 END -->
+    </div>
+</block>
+
+<block name="js">
+<script type="text/javascript">
+    $(function(){
+        /**
+         * keyup         统计备注的字数，截取前200个字符
+         * len           备注的长度
+         */
+        $("#info").keyup(function(){
+            var len = $(this).val().length;
+            if(len > 199){
+                $(this).val($(this).val().substring(0,200));
+                $("#reason_char").text(200);
+            }else{
+                $("#reason_char").text(len);
+            }
+        });
+
+        var user_id = 0;
+            //app_pro = $('#app_pro');    //审批流程
+        // 用户选择
+        function formatRepo(repo) { return repo.text; }
+        function formatRepoSelection(repo) { return repo.text }
+
+        $("#user_name").select2({
+            ajax: {
+                url: "{:U('Light/Api/Contract_guest_ApplyApi')}"+"&system=kk&modname=Contract_guest_Apply&action=getCustomerList",
+                dataType: 'json',
+                delay: 350,
+                data: function (params) {
+                    $('#alter_div input').eq(0).attr('placeholder', '请选择客户或拼音缩写');
+                    return {
+                        math: params.term,
+                    };
+                },
+                processResults: function (data) {
+                    return {
+                        results: data
+                    };
+                },
+                cache: true
+            },
+            escapeMarkup: function (markup) { return markup; },
+            minimumInputLength: 0,
+            minimumResultsForSearch: 9,
+            // allowClear: true,
+            language: "zh-CN",
+            templateResult: formatRepo,
+            templateSelection: formatRepoSelection
+        });
+        $('#alter_div').on('blur','input',function(){
+            if(!user_id) $('#alter_div input').eq(0).attr('placeholder','有效备案客户');
+        })
+        // select2 点击触发
+        $("#user_name").on("select2:selecting", function (e) {
+            $('.select2-selection__choice__remove').click();
+            var selectArr = e.params.args.data;
+            getTempInfo(selectArr.id,selectArr.text);
+            $('.select2-selection__choice').text(selectArr.text);
+            user_id = selectArr.id;
+        });
+        $("#user_name").on("select2:unselecting", function (e) {
+            //app_pro.html('');
+            $('.color').val('');
+            user_id = 0;
+        });
+
+
+
+
+    });
+
+    /**
+     * check_isbeian      检测提交的信息是否来自备案客户
+     * checkItem          检测填写的内容是否有空缺的函数
+     * telCheck           电话号码正则
+     * check_name         名字正则验证，只能输入中文
+     * check_select       根据客户类型改变联系人
+     * ht_kpfs            选择开票方式后改变字体颜色
+     * ht_sljsfs          选择结算方式后改变字体颜色
+     * submit_data        验证通过后提交数据
+     */
+
+    var check_isbeian = '';
+
+    $('#submit').on('click',function(){
+        checkItem();
+    })
+
+
+    function checkItem() {
+        var name = $('#name').val();                           //客户名称
+        var g_khlx = $('#g_khlx').val();                     //客户类型
+        var contacts = $('#contacts').val();                //联系人员
+        var telephone = $('#telephone').val();             //联系电话
+        var info = $('#info').val();                      //相关说明
+        var time = $('#showDatePicker').val();           //申请日期
+        var copyto_id = $("#copyto_id").val();          //抄送的姓名（拼音）
+        var ht_kpfs = $("#ht_kpfs").val();             //开票方式
+        var ht_sljsfs = $("#ht_sljsfs").val();        //结算方式
+
+        if(name=='') return tooltip('请输入客户名称');
+        if(g_khlx==null) return tooltip('请选择客户类型');
+        if(contacts=='') return tooltip('请输入联系人员');
+        if(!check_name(contacts)) return tooltip('联系人员格式有误，请修改!');
+        if(!telCheck(telephone)) return tooltip('电话号码的格式有误，请修改!');
+        if (ht_kpfs==null) return tooltip('请选择开票方式!');
+        if (ht_sljsfs==null) return tooltip('选择数量结算方式!');
+        if (info=='') return tooltip('请输入相关说明!');
+
+        if (info.length<5) return tooltip('字数不够!');
+        // 数据提交
+        submit_data(name,g_khlx,contacts,telephone,ht_kpfs,ht_sljsfs,info,time,copyto_id,check_isbeian);
+    }
+
+    function telCheck(telephone) {
+        var reg = /^(0|86|17951)?(13[0-9]|15[012356789]|166|17[3678]|18[0-9]|14[57])[0-9]{8}$/;
+        var res = reg.test(telephone)
+        return res;
+    }
+
+    function check_name(true_name) {
+        var reg = /^[\u4e00-\u9fa5]/;
+        var res = reg.test(true_name)
+        return res;
+    }
+
+    function check_select() {
+        $("#g_khlx").attr('style','color:black');
+    }
+
+    function ht_kpfs(){
+        $("#ht_kpfs").attr('style','color:black');
+    }
+
+    function ht_sljsfs(){
+        $("#ht_sljsfs").attr('style','color:black');
+    }
+
+
+
+    function submit_data(name,g_khlx,contacts,telephone,ht_kpfs,ht_sljsfs,info,time,copyto_id,check_isbeian) {
+        toastfadeIn(200,'数据加载中');
+        $.ajax({
+            type:'post',
+            url: "{:U('Light/Api/Contract_guest_ApplyApi')}"+"&system=kk&modname=Contract_guest_Apply&action=add",
+            data:{'name':name,'g_khlx':g_khlx,'contacts':contacts,'telephone':telephone,'ht_kpfs':ht_kpfs,'ht_sljsfs':ht_sljsfs,'info':info,'time':time,'copyto_id':copyto_id, '__hash__': hash,'check_isbeian':check_isbeian},
+            dataType: 'json',
+            success: function (res) {
+                toast.fadeOut(200);
+                if (res.code == 200){
+                    window.location.href = "{$fixed['info']}"+"&aid="+res.aid;
+                }else{
+                    tooltip(res.msg);
+                }
+            }
+        })
+    }
+
+    function getTempInfo(user_id) {
+        toastfadeIn(200,'数据加载中');
+        $.ajax({
+            type:'post',
+            url: "{:U('Light/Api/Contract_guest_ApplyApi')}" + "&system=kk&modname=Contract_guest_Apply&action=getCustomerInfo",
+            dataType: 'json',
+            data: {
+                'user_id': user_id
+            },
+            dataType: 'json',
+            success: function (res) {
+                toast.fadeOut(200);
+                if (res.code != 200) {
+                    tooltip('请重新刷新页面！')
+                } else {
+                    $('#name').val(res.data.name);
+                    $('#telephone').val(res.data.telephone);
+                    $('#contacts').val(res.data.contacts);
+                    $('#info').val(res.data.info);
+                    check_isbeian = res.data.id;
+                }
+            }
+        })
+    }
+
+
+</script>
+</block>

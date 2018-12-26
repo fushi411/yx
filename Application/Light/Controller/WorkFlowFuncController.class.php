@@ -593,5 +593,99 @@ class WorkFlowFuncController extends Controller {
         $resArr = $res?array("status"=>"success"):array("status"=>"failure");
         return $resArr;
 	}
+	/**
+     * 建材备案客户修改通过后调用函数
+     * @param  [integre] $aid [记录ID]
+     * @return [array]      [状态]
+     */
+	public function KkNewGuestApplyEnd($aid)
+    {
+		$res = M('kk_newguest')->where(array('id'=>$aid))->setField('stat', 1);
+        $resArr = $res?array("status"=>"success"):array("status"=>"failure");
+        return $resArr;
+	}
+	/**
+     * 环保备案客户修改通过后调用函数
+     * @param  [integre] $aid [记录ID]
+     * @return [array]      [状态]
+     */
+	public function YxhbNewGuestApplyEnd($aid)
+    {
+		$res = M('yxhb_newguest')->where(array('id'=>$aid))->setField('stat', 1);
+        $resArr = $res?array("status"=>"success"):array("status"=>"failure");
+        return $resArr;
+	}
+    /**
+     * 建材新增总客户修改通过后调用函数
+     * @param  [integre] $aid [记录ID]
+     * @return [array]      [状态]
+     */
+    public function KkContract_guest_ApplyEnd($aid)
+    {
+        $id = M('kk_guest2')->field('g_beian')->where(array('id'=>$aid))->find();
+        $data['stat'] = 1;
+        $data['stat2'] = 2;
+        if(!empty($id))  $res = M('kk_newguest')->where(array('id'=>$id['g_beian']))->data($data)->save();
+        $res = M('kk_guest2')->where(array('id'=>$aid))->setField('g_stat3', 1);
+
+        //修改子客户状态
+        $map = array(
+            'reid'=>$aid,
+            'id'=>$aid+1,
+        );
+        $res2 = M('kk_guest2')->where($map)->setField('g_stat3', 1);
+
+        $resArr = $res?array("status"=>"success"):array("status"=>"failure");
+        return $resArr;
+    }
+    /**
+     * 环保新增总客户修改通过后调用函数
+     * @param  [integre] $aid [记录ID]
+     * @return [array]      [状态]
+     */
+    public function YxhbContract_guest_ApplyEnd($aid)
+    {
+        $id = M('yxhb_guest2')->field('g_beian')->where(array('id'=>$aid))->find();
+        $data['stat'] = 1;
+        $data['stat2'] = 2;
+        if(!empty($id))  $res = M('yxhb_newguest')->where(array('id'=>$id['g_beian']))->data($data)->save();
+        $res = M('yxhb_guest2')->where(array('id'=>$aid))->setField('g_stat3', 1);
+
+        //修改子客户状态
+        $map = array(
+            'reid'=>$aid,
+            'id'=>$aid+1,
+        );
+        $res2 = M('yxhb_guest2')->where($map)->setField('g_stat3', 1);
+
+        $resArr = $res?array("status"=>"success"):array("status"=>"failure");
+        return $resArr;
+    }
+
+    /**
+     * 建材新增子客户修改通过后调用函数
+     * @param  [integre] $aid [记录ID]
+     * @return [array]      [状态]
+     */
+    public function KkContract_guest_Apply2End($aid)
+    {
+        $res = M('kk_guest2')->where(array('id'=>$aid))->setField('g_stat3', 1);
+        $resArr = $res?array("status"=>"success"):array("status"=>"failure");
+        return $resArr;
+    }
+
+    /**
+     * 环保新增子客户修改通过后调用函数
+     * @param  [integre] $aid [记录ID]
+     * @return [array]      [状态]
+     */
+    public function YxhbContract_guest_Apply2End($aid)
+    {
+        $res = M('yxhb_guest2')->where(array('id'=>$aid))->setField('g_stat3', 1);
+        $resArr = $res?array("status"=>"success"):array("status"=>"failure");
+        return $resArr;
+    }
+
+
 // -----END------
 }

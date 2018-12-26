@@ -124,6 +124,9 @@ class YxhbAppcopytoModel extends Model {
             $cpid = implode(',',$recevierArr);
             $title = str_replace('表','',$mod_cname);
             $title    = str_replace('申请','',$title);
+            $title    = str_replace('审批','',$title);
+            $title    = str_replace('环保','',$title);
+            $title    = str_replace('建材','',$title);
             $qsRes =  M('yxhb_appflowtable')->field('pro_mod')->where(array('stage_name' => '签收'))->select();
             $qsArr = array();
             foreach($qsRes as $val){

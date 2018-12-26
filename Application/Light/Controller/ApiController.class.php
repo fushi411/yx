@@ -215,4 +215,34 @@ class ApiController extends BaseController {
         $this->ajaxReturn($res);
     }
 
+    // 新增备案客户
+    public function NewGuestApplyApi(){
+        $system = I('get.system');
+        $mod    = I('get.modname');
+        $action = I('get.action');
+        $logic = D(ucfirst($system).$mod ,'Logic');
+        $res = $logic->$action();
+        $this->ajaxReturn($res);
+    }
+
+    // 新增总客户
+    public function Contract_guest_ApplyApi(){
+        $system = I('get.system');
+        $mod    = I('get.modname');
+        $action = I('get.action');
+        $logic = D(ucfirst($system).$mod ,'Logic');
+        $res = $logic->$action();
+        $this->ajaxReturn($res);
+    }
+
+    // 新增子客户
+    public function Contract_guest_Apply2Api(){
+        $system = I('get.system');
+        $mod    = I('get.modname');
+        $action = I('get.action');
+        $logic = D(ucfirst($system).$mod ,'Logic');
+        $res = $logic->$action();
+        $this->ajaxReturn($res);
+    }
+
 }

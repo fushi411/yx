@@ -200,9 +200,13 @@ class YxhbKfMaterielAmendLogic extends Model {
             $temp['pruduct_date'] = $endtime;
             $this->add($temp);
         }
+
+       
         if(!$result) return array('code' => 404,'msg' =>'提交失败，请重新尝试！');
         // 抄送
+   
         return array('code' => 200,'msg' => '提交成功' , 'aid' =>$result);
+
     }
 
     // 获取物料配置 

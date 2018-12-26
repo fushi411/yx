@@ -75,6 +75,11 @@ class YxhbKfMaterielApplyLogic extends Model {
                                      'type'=>'string',
                                      'color' => 'black'
                                     );
+        $result['content'][] = array('name'=>'开启双线：',
+                                     'value'=> $this->makeDoubleScx($res['pruduct_date']),
+                                     'type'=>'text',
+                                     'color' => 'black'
+                                    );
         $html = $this->makeHtml($res['data']);
         $result['content'][] = array('name'=>'配置详情：',
                                      'value'=>$html,
@@ -93,7 +98,18 @@ class YxhbKfMaterielApplyLogic extends Model {
         $result['stat'] = $res['stat'];
         return $result;
     }
-
+    /**
+     * 获取开启双线html
+     * @param  datetime $date
+     * @return string   $res
+     * https://www.fjyuanxin.com/WE/index.php?m=&&m=Light&c=View&a=View&modname=KfMaterielApply&system=yxhb&systempath=sngl&datetime=1545768000
+     */
+    public function makeDoubleScx($date){
+        $date = strtotime($date)+8*3600;
+        $url  = U('View/View',array('modname' => 'KfMaterielApply','system' => 'yxhb','datetime' => $date));
+        $html = " <a href='{$url}'> <span style='color: #337ab7;cursor: pointer;'>点击配置双线</span></a>";
+        return $html;
+    }
     /**
      * 发货详情html生成
      * @param array   $data 配比数据

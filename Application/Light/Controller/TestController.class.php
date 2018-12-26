@@ -8,8 +8,7 @@ class TestController extends \Think\Controller {
     {
        
         header('Content-Type: text/html; charset=utf-8');
-        $id = 39;
-        D('WxMessage','Model')->taskSendMessage($id);
+        
     }
  
  /**

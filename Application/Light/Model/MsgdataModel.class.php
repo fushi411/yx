@@ -389,18 +389,74 @@ class MsgdataModel extends Model {
         // ); 
         return $result;   
     }
-       // 生控记录(矿粉)
+    // 生控记录(矿粉)
     public function KfMaterielAmend(){
         $result = array();
         $result['url'] = array(
             array('name' => '矿粉物料补录','url' => U('Light/View/View',array('modname'=>'KfMaterielAmend','system' => 'yxhb')),'modname' => 'yxhbKfMaterielAmend'),
+           
         );
+   
         $result['yxhbKfMaterielAmend'] = array(
             'process' => U('Light/Process/ApplyProcess',array('modname'=>'KfMaterielAmend','system' => 'yxhb')),
             'info'    => U('Light/Apply/applyInfo',array('modname'=>'KfMaterielAmend','system'=>'yxhb'))
         );   
       
         return $result;   
+    }
+
+    // 新增客户申请
+    public function GuestApply(){
+        $result = array();
+        $result['url'] = array(
+            array('name' => '环保新增总客户'  ,'url' => U('Light/View/View',array('modname'=>'Contract_guest_Apply','system' => 'yxhb')),'modname' => 'yxhbContract_guest_Apply'),
+            array('name' => '建材新增总客户'  ,'url' => U('Light/View/View',array('modname'=>'Contract_guest_Apply','system' => 'kk')),'modname' => 'kkContract_guest_Apply'),
+            array('name' => '环保新增子客户'  ,'url' => U('Light/View/View',array('modname'=>'Contract_guest_Apply2','system' => 'yxhb')),'modname' => 'yxhbContract_guest_Apply2'),
+            array('name' => '建材新增子客户'  ,'url' => U('Light/View/View',array('modname'=>'Contract_guest_Apply2','system' => 'kk')),'modname' => 'kkContract_guest_Apply2'),
+            array('name' => '环保新增备案客户'  ,'url' => U('Light/View/View',array('modname'=>'NewGuestApply','system' => 'yxhb')),'modname' => 'yxhbNewGuestApply'),
+            array('name' => '建材新增备案客户'  ,'url' => U('Light/View/View',array('modname'=>'NewGuestApply','system' => 'kk')),'modname' => 'kkNewGuestApply'),
+        );
+
+        $result['kkContract_guest_Apply'] = array(
+            'process' => U('Light/Process/ApplyProcess',array('modname'=>'Contract_guest_Apply','system' => 'kk')),
+            'info'    => U('Light/Apply/applyInfo',array('modname'=>'Contract_guest_Apply','system'=>'kk'))
+        );
+        $result['kkContract_guest_Apply2'] = array(
+            'process' => U('Light/Process/ApplyProcess',array('modname'=>'Contract_guest_Apply2','system' => 'kk')),
+            'info'    => U('Light/Apply/applyInfo',array('modname'=>'Contract_guest_Apply2','system'=>'kk'))
+        );
+        $result['yxhbContract_guest_Apply'] = array(
+            'process' => U('Light/Process/ApplyProcess',array('modname'=>'Contract_guest_Apply','system' => 'yxhb')),
+            'info'    => U('Light/Apply/applyInfo',array('modname'=>'Contract_guest_Apply','system'=>'yxhb'))
+        );
+        $result['yxhbContract_guest_Apply2'] = array(
+            'process' => U('Light/Process/ApplyProcess',array('modname'=>'Contract_guest_Apply2','system' => 'yxhb')),
+            'info'    => U('Light/Apply/applyInfo',array('modname'=>'Contract_guest_Apply2','system'=>'yxhb'))
+        );
+        $result['yxhbNewGuestApply'] = array(
+            'process' => U('Light/Process/ApplyProcess',array('modname'=>'NewGuestApply','system' => 'yxhb')),
+            'info'    => U('Light/Apply/applyInfo',array('modname'=>'NewGuestApply','system'=>'yxhb'))
+        );
+        $result['kkNewGuestApply'] = array(
+            'process' => U('Light/Process/ApplyProcess',array('modname'=>'NewGuestApply','system' => 'kk')),
+            'info'    => U('Light/Apply/applyInfo',array('modname'=>'NewGuestApply','system'=>'kk'))
+        );
+
+        return $result;
+    }
+    // 新增备案客户
+    public function NewGuestApply(){
+        return $this->GuestApply();
+    }
+    
+    // 新增合同总客户
+    public function Contract_guest_Apply(){
+        return $this->GuestApply();
+    }
+
+    // 新增合同子客户
+    public function Contract_guest_Apply2(){
+        return $this->GuestApply();
     }
 
 }

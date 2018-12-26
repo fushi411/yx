@@ -166,7 +166,7 @@ class YxhbfhrefundApplyLogic extends Model {
             'fh_stat'       => $res['fh_stat'],
             'fh_stat2'      => 0,
             'fh_stat4'      => 2,
-            'fh_flag'       => $res['fh_flag'],
+            'fh_flag'       => 3,
             'fh_stat_sh'    => $fh['fh_stat_sh'],
             'fh_wlname'     => $res['fh_wlname'],
             'fh_bid'        => $res['fh_bid'],
