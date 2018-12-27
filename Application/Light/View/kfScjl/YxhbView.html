@@ -467,12 +467,14 @@
         //获取下方信息
         function getProductInfo(datetime){
             if(!datetime) return false;
+            wlid = getQueryString('wlid');
             toast.fadeIn(200);
             $.ajax({
                 type: 'POST',
                 url: "{:U('Light/Api/kfScjlApi')}", //&system=yxhb&modname=CgfkApply&action=getCustomerList
                 dataType: 'json',
                 data: {
+                    wlid: wlid,
                     time: datetime,
                     system: "{$system}",
                     modname: 'kfScjl',

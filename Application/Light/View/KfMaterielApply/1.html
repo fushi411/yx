@@ -1,124 +1,44 @@
 <extend name="Apply:base" />
 
-<block name="show_title">
-    <div style="display: flex;flex-direction: row;align-items: center;margin-bottom: 1em;">
-        <img class="weui-media-box__thumb" src="{$avatar}" index="{$stat}" i="{$apply.stat}" alt="" style="border-radius: 5px;width: 2.5em;height: 2.5em;margin-right: 1em;">
-        <h4 class="weui-media-box__title" style="font-weight: 800;font-size:20px;">{$applyer}的{$title|str_replace="表",'',###}</h4>
-        <eq name="stat" value="1">
-            <span class="label label-success" style="margin-left: 1em;padding-top: 0.3em;padding-bottom: 0.2em">已通过</span>
-        </eq>
-        <eq name="stat" value="2">
-            <eq name="apply.stat" value="2">
-                <span class="label label-success" style="margin-left: 1em;padding-top: 0.3em;padding-bottom: 0.2em">已通过</span>
-            </eq>
-            <eq name="apply.stat" value="1">
-                <span class="label label-danger" style="margin-left: 1em;padding-top: 0.3em;padding-bottom: 0.2em">已退审</span>
-            </eq>
-            <eq name="apply.stat" value="0">
-                    <eq name="isSigning" value='会审'>
-                            <span class="label label-primary" style="margin-left: 1em;padding-top: 0.3em;padding-bottom: 0.2em">会审中</span>
-                        <else/>
-                            <span class="label label-primary" style="margin-left: 1em;padding-top: 0.3em;padding-bottom: 0.2em">审批中</span>
-                    </eq>
-            </eq>
-        </eq>
-        <eq name="stat" value="3">
-            <span class="label label-default" style="margin-left: 1em;padding-top: 0.3em;padding-bottom: 0.2em">已撤销</span>
-        </eq>
-    </div>
-</block>
-<block name="apply">
-        <eq name="isApplyer" value="1">
-            <eq name="apply.stat" value="0">
-                <div class="weui-panel" style="margin-top: 0px;">
-                    <div class="weui-panel__hd" style="font-size: 16px;background-color: #f8f8f8;color:black;padding-top: 10px;">{$stepStatus}意见</div>
-                    <div class="weui-panel__bd">
-                        <div class="weui-cell">
-                            <div class="weui-cell__bd">
-                                <textarea class="weui-textarea" placeholder="请输入{$stepStatus}意见;
-{$stepStatus}意见可@指定人;
-无指定默认@所有人（含抄送）;" rows="3" id="comment" style="font-size: 1.2em"></textarea>
-                                <div class="weui-textarea-counter">
-                                    <!-- 指定@ -->
-                                    <div class="weui-tabbar" style="position: initial;">
-                                        <a href="#" class="weui-tabbar__item" style="text-decoration: none;">
-                                            <p class="weui-tabbar__label" style="font-size: 15px;color:black;" id="btn-sp">
-                                                <span class="glyphicon" aria-hidden="true" style="margin-right: 5px;"></span>
-                                                @ 指定人
-                                            </p>
-                                        </a>
-                                        <a href="#" class="weui-tabbar__item" id="btn-qz-div" style=" text-decoration: none;">
-                                            <p class="weui-tabbar__label" style="font-size: 15px;color:black;" id="btn-qz">
-                                                <span class="glyphicon glyphicon-pencil" aria-hidden="true" style="margin-right: 5px;"></span> 
-                                                签字
-                                            </p>  
-                                        </a>
-                                        <a href="#" class="weui-tabbar__item" id="btn-yl-div"  style="display: none;text-decoration: none;">
-                                            <p class="weui-tabbar__label" style="font-size: 15px;color:#1aad19;" id="btn-yl">
-                                                <span class="glyphicon glyphicon-paperclip" aria-hidden="true" style="margin-right: 5px;"></span> 
-                                                已签字（点击预览）
-                                            </p>  
-                                        </a>
-                                    </div>
-                                    <div class="page js_show" id="approve_at" style="position: relative;display: none;">
-                                        <div class="page__bd">
-                                            <div class="weui-cells" id="" style="margin-top: 5px;margin-bottom: 5px;">
-                                                <div class="weui-uploader">
-                                                    <div class="weui-uploader__bd" style="margin-right: 0px;margin-bottom: 0px;padding-top: 12px;">
-                                                        <ul class="weui-uploader__files" id="selectapprovetUser" style="margin-bottom: 0px;">
-                                                        </ul>
-                                                        <input type="hidden" name="approve_to_id" id="approve_to_id">
-                                                    </div>
-                                                </div>
-                                            </div>
-            
-                                            <div class="weui-cells searchbar-result" id="approveSearchResult" style="margin-top: 0px;">
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <!-- end   指定@ -->
-                                </div>
-                            </div>
-                            
-                        </div>
-                        <div class="button-sp-area" id="apply-area" style="margin-bottom: 20px;display: flex;flex-direction: row;width: 100%;justify-content: space-around;align-items: baseline;">
-                            <a href="javascript:;" id="apply-agree" class="weui-btn weui-btn_primary" style="width: 40%">同意</a>
-                            <a href="javascript:;" id="apply-refuse" class="weui-btn weui-btn_warn" style="width: 40%;">退审</a>
-                            <!-- <a href="javascript:;" class="weui-btn weui-btn_default">转审</a> -->
-                            
-                            <input type="hidden" name="apply_user" id="apply_user" value="{$applyerID}">
-                        </div>
-                        <div class="button-sp-area" style="margin-bottom: 20px;display: flex;flex-direction: row;width: 100%;justify-content: space-around;align-items: baseline;">
-                            <button id="apply-change" class="weui-btn weui-btn_primary" style="width: 90%">转审</button>
-                        </div>
-                        <div class="weui-cells__title">注意事项</div>
-                        <!-- <div class="weui-cells__title">各个中心主管及以上职位的申请抄送</div> -->
-                        <div class="weui-cells" style="margin-top:0px;">
-                            <div class="weui-cell">
-                                <div class="weui-cell__bd">
-                                    <div class="weui-uploader">
-                                        <div class="weui-uploader__bd" style="min-height: 50px;">
-                                             <div  style="color: #f12e2e;">点击同意后5分钟内可撤回</div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+
+<!-- 去除不可选择日期 end-->
+<block name="work_flow">
+    <div class="weui-panel" style="margin-top: 0px;">
+        <div class="weui-panel__hd" style="font-size: 16px;background-color: #f8f8f8;color:black;padding-top: 10px;">审批流程
+            <a href="{:U('Light/Process/ApplyProcess',array('modname'=>$mod_name,'system'=>$system))}">（查看可视化流程）</a> 
+        </div>
+        <div class="weui-cells" style="margin-top:0px;">
+            <div class="weui-cell">
+                <div class="weui-cell__bd">
+                    <div class="weui-uploader">
+                        <div class="weui-uploader__bd" style="height: 85px;">
+                            <ul class="weui-uploader__files" id="app_pro" style="margin-bottom: 0px;">
+                               
+                            <block name="process">
+                                <volist name="proInfo" id="vo">
+                                   
+                                    <li class='weui-uploader__file wk-select__user' id='{$vo.id}' style='height:90px;margin-left:8px'>
+                                        <if condition="$vo.avatar eq ''">
+                                            <img src='Public/assets/i/defaul.png' class='weui-selet__user' style='margin-bottom: 0px;margin-right: 6px;margin-top:10px;'>
+                                            <else/>
+                                            <img src={$vo.avatar} class='weui-selet__user' style='margin-bottom: 0px;margin-right: 6px;margin-top:10px;'>
+                                        </if>
+                                        <span style='margin-right: 6px;font-size: 14px;'>{$vo.realname}</span>
+                                        <if condition="$vo.proc eq 1">
+                                                <span class="glyphicon glyphicon-arrow-right" style="position: relative;top: -2.8em;right: 2.0em;"></span>
+                                        </if>
+                                        <if condition="$vo.proc eq 2">
+                                                <span style="border-radius: 3px;position: relative;top: -2.5em;right: 2.2em;width: 6px;height: 6px;background-color: #333333"></span>       
+                                        </if>
+                                    </li>
+                                   
+                                </volist>
+                            </block>
+                            </ul>
                         </div>
                     </div>
                 </div>
-            </eq>
-        </eq>
-    </block>
-
-
-<block name="js">
-        <link rel="stylesheet" href="__PUBLIC__/assets/css/viewer.css" />
-        <script src="__PUBLIC__/assets/js/viewer.js"></script>
-        <script src="__PUBLIC__/assets/js/vconsole.min.js"></script>
-        <script>
-              
-            $('#viewer').viewer({
-                url: 'data-original',
-            });
-        </script>
-    </block>
+            </div>
+        </div>
+    </div>
+</block>

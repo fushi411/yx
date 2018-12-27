@@ -8,7 +8,7 @@ class TestController extends \Think\Controller {
     {
        
         header('Content-Type: text/html; charset=utf-8');
-        
+       
     }
  
  /**

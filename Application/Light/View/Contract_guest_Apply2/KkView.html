@@ -201,8 +201,20 @@
         });
         var user_id = 0;
         // 用户选择
-        function formatRepo(repo) { return repo.text; }
-        function formatRepoSelection(repo) { return repo.text }
+        function formatRepo(repo) {
+            if(repo.text.substr(repo.text.length-2,2)=='-总'){
+                return repo.text;
+            }else{
+                return repo.text+"-总";
+            }
+        }
+        function formatRepoSelection(repo) {
+            if(repo.text.substr(repo.text.length-2,2)=='-总'){
+                return repo.text;
+            }else{
+                return repo.text+"-总";
+            }
+        }
 
         $("#user_name").select2({
             ajax: {

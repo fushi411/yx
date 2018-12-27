@@ -62,8 +62,10 @@ class WorkFlowOpTvController extends BaseController {
 			}
 			// - 发送信息
             $flowTable = M($system.'_appflowtable');
-            $mod_cname = $flowTable->getFieldByProMod($mod_name, 'pro_name');
-			$title = str_replace('表','',$mod_cname);
+			$mod_cname = $flowTable->getFieldByProMod($mod_name, 'pro_name');
+			$systemName = array('kk'=>'建材', 'yxhb'=>'环保');
+
+			$title = $systemName[$system].str_replace('表','',$mod_cname);
 			$StepInfo = D(ucfirst($system).'Appflowproc')->getStepInfo($mod_name,$id,session($system."_id"));
 			$StepStatus = $StepInfo['app_name'];
             $description = "您有新的{$StepStatus}意见：".$per_name."@了你!";

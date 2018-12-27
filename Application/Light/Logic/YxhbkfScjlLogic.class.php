@@ -228,9 +228,15 @@ class YxhbkfScjlLogic extends Model {
     */
     public function  getProductInfo(){
         $datetime = I('post.time');
-        $map = array(
-            'pruduct_date' => array('elt',$datetime),
-        );
+        $wlid     = I('post.wlid');
+        $map      = array();
+        if($wlid){
+            $map['id'] = $wlid;
+        }else{
+            $map['pruduct_date'] = array('elt',$datetime);
+        }
+        
+
         $field = 'ku,product,scx';
         $res = M('yxhb_materiel')->field($field)->where($map)->order('pruduct_date desc')->find();
         return $res;

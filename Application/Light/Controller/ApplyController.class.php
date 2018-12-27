@@ -297,12 +297,13 @@ class ApplyController extends BaseController {
                 $data['app_word'].='@所有人';
             }
             // - 发送信息
-            $flowTable = M($system.'_appflowtable');
-            $mod_cname = $flowTable->getFieldByProMod($data['mod_name'], 'pro_name');
-            $title = str_replace('表','',$mod_cname) ;
+            $flowTable   = M($system.'_appflowtable');
+            $mod_cname   = $flowTable->getFieldByProMod($data['mod_name'], 'pro_name');
+            $systemName  = array('kk'=>'建材', 'yxhb'=>'环保');
+            $title       = $systemName[$system].str_replace('表','',$mod_cname) ;
             $description = "您有新的评论：".$per_name."@了你!";
-            $url = "https://www.fjyuanxin.com/WE/index.php?m=Light&c=Apply&a=applyInfo&system=".$system."&aid=".$data['aid']."&modname=".$data['mod_name'];
-            $WeChat = new \Org\Util\WeChat;
+            $url         = "https://www.fjyuanxin.com/WE/index.php?m=Light&c=Apply&a=applyInfo&system=".$system."&aid=".$data['aid']."&modname=".$data['mod_name'];
+            $WeChat      = new \Org\Util\WeChat;
             $WeChat->sendCardMessage($recevier,$title,$description,$url,15,$data['mod_name'],$system);
             // - 数据插入
 

@@ -417,6 +417,7 @@
                 html += '<div  "><span class="" >我方重量</span>：' + clickInfo['fh_zl'] + '</div>';
                 html += '<div  "><span class="" >承运车号</span>：' + clickInfo['fh_carnum'] + '</div>';
                 html += '<div  "><span class="" >运输方式</span>：' + clickInfo['fh_wlfs'] + '</div>';
+                html += '<div  "><span class="" >开票人员</span>：' + clickInfo['fh_kpy'] + '</div>';
             $('#ycl_content').html(html);
             $('#khmc').val(text);
             strlength = clickInfo['fh_date'].length;
@@ -629,19 +630,19 @@ var fh_cate = '',fh_wl='';
                     }
                     if(res[1]){
                         $('#qxkh_show').css('color','#333');
-                        app_proHtml(2);
+                        app_proHtml(1);
                     }else{
                         if(cue) cue += "<br />";
                         cue += '授权库号与发货库号不一致!';
                         $('#qxkh_show').css('color','#f12e2e');
-                        app_proHtml(3);
+                        app_proHtml(2);
                     }
                     if(cue) dialog_know(cue);
                 }
             });
         }
         var appflow = {$appflow};
-        app_proHtml(2)
+        app_proHtml(1)
             // 审批流程显示
         function app_proHtml(val){
 

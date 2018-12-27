@@ -128,7 +128,8 @@ class KkfheditApplyLogic extends Model {
                   <input class='weui-input' type='text' style='color: black;'  readonly value='产品编号：{$data['fh_snbh']}'>
                   <input class='weui-input' type='text' style='color: black;'  readonly value='我方重量：{$data['fh_zl']}'> 
                   <input class='weui-input' type='text' style='color: black;'  readonly value='承运车号：{$data['fh_carnum']}'> 
-                  <input class='weui-input' type='text' style='color: black;'  readonly value='运输方式：{$wlfs['fh_wlfs']}'>";
+                  <input class='weui-input' type='text' style='color: black;'  readonly value='运输方式：{$wlfs['fh_wlfs']}'>
+                  <input class='weui-input' type='text' style='color: black;'  readonly value='开票人员：{$wlfs['fh_kpy']}'>";
         return $html;
     } 
 

@@ -1884,9 +1884,9 @@ var filechooser = document.getElementById("uploaderInput");
                     return false;
                 }
             }
-            
-            if(!{$isqs} && $('#apply_status .label').eq(0).text() != '审批中' && $('#apply_status .label').eq(0).text() != '会审中'){
-                $("#alert_content").text('审批流程不可撤销！');
+            // !{$isqs} &&
+            if( $('#apply_status .label').eq(0).text() == '已撤销'){
+                $("#alert_content").text('已撤销不可撤销！');
                 $("#iosDialog_alert").show();
                 //alert("非申请人不可撤销！");
                 return false;

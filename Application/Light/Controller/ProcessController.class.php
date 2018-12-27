@@ -120,11 +120,11 @@ class ProcessController extends Controller
         $temp = array();
         $temp[] = array(
             'title' => '授权库号一致审批流程',
-            'count' => 1
+            'count' => 0
         );
         $temp[] = array(
             'title' => '授权库号不一致审批流程',
-            'count' => 2
+            'count' => 1
         );
         return $temp;
     }
@@ -156,11 +156,11 @@ class ProcessController extends Controller
         $temp = array();
         $temp[] = array(
             'title' => '授权库号一致审批流程',
-            'count' => 1
+            'count' => 0
         );
         $temp[] = array(
             'title' => '授权库号不一致审批流程',
-            'count' => 2
+            'count' => 1
         );
         return $temp;
     }
