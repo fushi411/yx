@@ -336,7 +336,7 @@ class LoginController extends \Think\Controller {
     // 微信用户信息回去
     public function getWxInfo(){
         if(get_client_ip(0) != '0.0.0.0') return '无权限操作';
-        M('wx_info')->save(array('stat',0));
+        M('wx_info')->where('stat=1')->save(array('stat'=>0));
         $userInfo = $this->getAllUser($id); 
         $userList = array();
         foreach( $userInfo as $val ){

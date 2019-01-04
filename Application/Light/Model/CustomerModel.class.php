@@ -697,10 +697,11 @@ class CustomerModel extends Model
         $date = $date ==''?$this->today:$date;
 
         $tempClient = array('20000','50000','100000');
+        $daysArray  = array(3,5,7);
         $data = array();
         foreach($tempClient as $k=>$v){
             $where = array(
-                "date_format(date,'%Y-%m')" => date("Y-m", strtotime($date)),
+                "DATEDIFF('{$date}',date)" => array('lt',$daysArray[$k]),
                 'stat' => 1,
                 'line' => $v,
                 'clientid' => $client_id

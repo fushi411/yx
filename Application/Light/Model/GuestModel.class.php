@@ -115,4 +115,61 @@ class GuestModel extends Model {
         return $id;
     }
 
+    /**
+     * 获取建材备案总客户 
+     * @param string 客户名或客户简称
+     * @param array  备案客户
+     */
+    public function getKkrecordUser($keyWord){
+        $field = 'id,g_xmmc,g_name as text';
+        $map   = array(
+            'reid'    => 0,
+            'g_stat3' => 1
+        );
+        $where = array(
+            'g_name'     => array('like',"%{$keyWord}%"),
+            'g_helpword' => array('like',"%{$keyWord}%"),
+            '_logic'     => 'or'
+        );
+        $map['_complex'] = $where;
+        $data = M('kk_guest2')->field($field)->where($map)->order('g_name ASC')->select();
+        $data = $this->addTailAffix($data);
+        return $data;
+    }
+
+     /**
+     * 获取建材备案总客户 
+     * @param string 客户名或客户简称
+     * @param array  备案客户
+     */
+    public function getYxhbrecordUser($keyWord){
+        $field = 'id,g_xmmc,g_name as text';
+        $map   = array(
+            'reid'    => 0,
+            'g_stat3' => 1
+        );
+        $where = array(
+            'g_name'     => array('like',"%{$keyWord}%"),
+            'g_helpword' => array('like',"%{$keyWord}%"),
+            '_logic'     => 'or'
+        );
+        $map['_complex'] = $where;
+        $data = M('yxhb_guest2')->field($field)->where($map)->order('g_name ASC')->select();
+        $data = $this->addTailAffix($data);
+        return $data;
+    }
+
+    // 给备案总客户 添加尾缀
+    public function addTailAffix($data){
+        $tailAffix = '-总';
+        $temp      = array();
+        foreach($data as $key => $val){
+            // 检查简称
+            if($val['g_xmmc']) $val['g_xmmc'] .= $tailAffix;
+            // 检查是否带尾缀
+            if(strpos($val['text'],$tailAffix) === false) $val['text'] .= $tailAffix;
+            $temp[]       = $val;
+        }
+        return $temp;
+    }
 }

@@ -245,4 +245,14 @@ class ApiController extends BaseController {
         $this->ajaxReturn($res);
     }
 
+    // 新增子客户
+    public function ContractApplyApi(){
+        $system = I('system');
+        $mod    = I('modname');
+        $action = I('action');
+        $logic = D(ucfirst($system).$mod ,'Logic');
+        $res = $logic->$action();
+        $this->ajaxReturn($res);
+    }
+
 }

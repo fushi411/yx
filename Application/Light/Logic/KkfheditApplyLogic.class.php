@@ -109,7 +109,14 @@ class KkfheditApplyLogic extends Model {
                                      'color' => 'black'
                                     );
         if($res['xg_person']) $res['fh_kpy'] = $res['xg_person'];
-        $result['imgsrc'] = '';
+        $img  = M('kk_fh_image')->where(array('fh_id' => $res['fh_num']))->find();
+        $imgsrc = explode('|', $img['url']) ;
+        $image = array();
+        $imgsrc = array_filter($imgsrc);
+        foreach ($imgsrc as $key => $value) {
+            $image[] = 'http://www.fjyuanxin.com/WE/Public/upload/fh/'.$value;
+        }
+        $result['imgsrc'] = $image;
         $result['applyerID'] =  D('KkBoss')->getIDFromName($res['fh_kpy']);
         $result['applyerName'] = $res['fh_kpy'];
         $result['stat'] = $this->getStat($id);
@@ -512,11 +519,13 @@ class KkfheditApplyLogic extends Model {
         $user_id    = I('post.user_id');
         $copyto_id  = I('post.copyto_id');
         $fh_wl      = I('post.fh_wl');
+        $file_names = I('post.file_names');
         // 简单校验
         if(!$user_id) return array('code' => 404,'msg' => '请选择客户名称');
         // 重复提交
         if(!M('kk_fhxg')->autoCheckToken($_POST)) return array('code' => 404,'msg' => '网络延迟，请勿点击提交按钮！');
         $count      = M('kk_fhxg')->where(array('fh_num' => $fhinfo['fh_num']))->find();
+        $img_count  = M('kk_fh_image')->where(array('fh_id' => $fhinfo['fh_num']))->find();
         $today_date = date('Y-m-d',time()-72*3600);
         $overdue    = $fhinfo['fh_da'] >= $today_date?0:1;
         $addData = array(
@@ -563,6 +572,15 @@ class KkfheditApplyLogic extends Model {
         }else{
             $result = M('kk_fhxg')->where(array('fh_num' => $fhinfo['fh_num']))->save($addData);
         }
+        $image = array(
+            'fh_id' => $fhinfo['fh_num'],
+            'url'   => $file_names,
+        );
+        if(empty($img_count)){
+            $result = M('kk_fh_image')->add($image);
+        }else{
+            $result = M('kk_fh_image')->where(array('fh_id' => $fhinfo['fh_num']))->save($image);
+        }
         if(!$result) return array('code' => 404,'msg' =>'提交失败，请重新尝试！');
         $result = $fhinfo['id'];
         $save_fh = array(
@@ -604,4 +622,55 @@ class KkfheditApplyLogic extends Model {
         $res    = M($system.'_fhxg_pg')->where($map)->find();
         return empty($res)?0:1;
     }
+
+    /**
+     * 附件上传
+     */
+    public function fjsc(){
+        $uploader = new \Think\Upload\Driver\Local;
+        if(!$uploader){
+            E("不存在上传驱动");
+        }
+        // 生成子目录名
+        $savePath = date('Y-m-d')."/";
+
+        // 生成文件名
+        $img_str = I('post.imagefile');
+        $order = I('post.order');
+        $img_header = substr($img_str, 0, 23);
+        // echo $img_header;exit();
+        if (strpos($img_header, 'png')) {
+            $output_file = uniqid('comment_').'_'.$order.'.png';
+        }else{
+            $output_file = uniqid('comment_').'_'.$order.'.jpg';
+        }
+        //  $base_img是获取到前端传递的src里面的值，也就是我们的数据流文件
+        $base_img = I('post.imagefile');
+        if (strpos($img_header, 'png')) {
+            $base_img = str_replace('data:image/png;base64,', '', $base_img);
+        }else{
+            $base_img = str_replace('data:image/jpeg;base64,', '', $base_img);
+        }
+
+        //  设置文件路径和文件前缀名称
+        $rootPath = "/www/web/default/WE/Public/upload/fh/";
+        /* 检测上传根目录 */
+        if(!$uploader->checkRootPath($rootPath)){
+            $error = $uploader->getError();
+            return $error;
+        }
+        /* 检查上传目录 */
+        if(!$uploader->checkSavePath($savePath)){
+            $error = $uploader->getError();
+            return $error;
+        }
+        $path = $rootPath.$savePath.$output_file;
+        //  创建将数据流文件写入我们创建的文件内容中
+        file_put_contents($path, base64_decode($base_img));
+        $val['path'] = $path;
+        $val['output_file'] = $savePath.$output_file;
+        $res[] = $val;
+        return $res;
+    }
+
 }

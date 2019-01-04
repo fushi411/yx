@@ -28,63 +28,92 @@ class KkContractguestApply2Logic extends Model {
         return $this->trueTableName;
     }
 
+    //详情
     public function recordContent($id)
     {
         $res = $this->record($id);
+        $newres = $this->getsjkh($id);    //上级客户名称
+        $res2 = $this->getzkhlist($id);   //子客户名称列表
+        $html = $this->getEjHtml($res2);
         $result = array();
-        $result['content'][] = array('name'=>'申请单位：',
+        $result['content'][] = array(
+            'name'=>'系统类型：',
             'value'=>'建材新增子客户',
             'type'=>'date',
             'color' => 'black'
         );
-        $result['content'][] = array('name'=>'提交时间：',
-            'value'=> date('m-d H:i',strtotime($res['g_dtime'])) ,
-            'type'=>'date',
-            'color' => 'black'
-        );
-        $result['content'][] = array('name'=>'申请日期：',
+        $result['content'][] = array(
+            'name'=>'申请日期：',
             'value'=>$res['g_date'],
             'type'=>'date',
             'color' => 'black'
         );
+        $result['content'][] = array(
+            'name'=>'提交时间：',
+            'value'=> date('m-d H:i',strtotime($res['g_dtime'])) ,
+            'type'=>'date',
+            'color' => 'black'
+        );
 
-        $result['content'][] = array('name'=>'客户名称：',
+        $result['content'][] = array(
+            'name'=>'上级客户：',
+            'value'=>$newres['g_name'],
+            'type'=>'date',
+            'color' => 'black'
+        );
+
+        $result['content'][] = array(
+            'name'=>'二级详情：',
+            'value'=>$html,
+            'type'=>'date',
+            'color' => 'black'
+        );
+
+
+        $result['content'][] = array(
+            'name'=>'客户名称：',
             'value'=>$res['g_name'],
             'type'=>'string',
             'color' => 'black'
         );
 
-        $result['content'][] = array('name'=>'客户类型：',
+        $result['content'][] = array(
+            'name'=>'客户类型：',
             'value'=>$res['g_khlx'],
             'type'=>'string',
             'color' => 'black'
         );
 
-        $result['content'][] = array('name'=>'联系人员：',
+        $result['content'][] = array(
+            'name'=>'联系人员：',
             'value'=>$res['g_man'],
             'type'=>'string',
             'color' => 'black'
         );
 
-        $result['content'][] = array('name'=>'联系电话：',
+        $result['content'][] = array(
+            'name'=>'联系电话：',
             'value'=>$res['g_phone'],
             'type'=>'string',
             'color' => 'black'
         );
 
-        $result['content'][] = array('name'=>'开票方式：',
+        $result['content'][] = array(
+            'name'=>'开票方式：',
             'value'=>$res['g_kpfs'],
             'type'=>'string',
             'color' => 'black'
         );
 
-        $result['content'][] = array('name'=>'结算方式：',
+        $result['content'][] = array(
+            'name'=>'结算方式：',
             'value'=>$res['g_jsfs'],
             'type'=>'string',
             'color' => 'black'
         );
 
-        $result['content'][] = array('name'=>'相关说明：',
+        $result['content'][] = array(
+            'name'=>'相关说明：',
             'value'=>$res['g_xmmc'],
             'type'=>'text',
             'color' => 'black'
@@ -94,6 +123,18 @@ class KkContractguestApply2Logic extends Model {
         $result['applyerName'] = $res['sales'];                                 //申请人的姓名
         $result['stat'] = $res['g_stat3'];
         return $result;
+    }
+
+    /**
+     * 二级详情html生成
+     * @param array   $data
+     * @return string $html
+     */
+    public function getEjHtml($data){
+        foreach ($data as $key=>$val){
+            $html .= "<input class='weui-input' type='text' style='color: black;'  readonly value='{$val['g_name']}'>";
+        }
+        return $html;
     }
 
     /**
@@ -114,13 +155,26 @@ class KkContractguestApply2Logic extends Model {
      */
     public function getDescription($id){
         $res = $this->record($id);
+        $newres = $this->getsjkh($id);    //上级客户名称
+        $res2 = $this->getzkhlist($id);   //子客户名称列表
+        $html = $this->getEjHtml($res2);
         $result = array();
+        $result[] = array('name'=>'申请日期：',
+            'value'=> date('m-d H:i',strtotime($res['g_date'])) ,
+            'type'=>'date'
+        );
         $result[] = array('name'=>'提交时间：',
             'value'=> date('m-d H:i',strtotime($res['g_dtime'])) ,
             'type'=>'date'
         );
-        $result[] = array('name'=>'申请日期：',
-            'value'=> date('m-d H:i',strtotime($res['g_date'])) ,
+
+        $result[] = array('name'=>'上级客户：',
+            'value'=>$newres['g_name'] ,
+            'type'=>'date'
+        );
+
+        $result[] = array('name'=>'二级详情：',
+            'value'=>$html,
             'type'=>'date'
         );
 
@@ -182,12 +236,12 @@ class KkContractguestApply2Logic extends Model {
         $result = array(
             'sales'   => $res['sales'],         //申请人的姓名
             'title2'  => '客户类型',
-            'approve' => iconv('gbk','UTF-8',$res['g_khlx']),
+            'approve' => $res['g_khlx'],
             'notice'  => $res['g_xmmc'],
             'date'    => $res['g_date'],
             'title'   => '客户名称',
             'name'    => $res['g_name'],
-            'modname' => 'Contract_guest_Apply',
+            'modname' => 'Contract_guest_Apply2',
             'stat'    => $res['g_stat3']
         );
         return $result;
@@ -202,9 +256,6 @@ class KkContractguestApply2Logic extends Model {
      */
     public function getCustomerList(){
         $data = I('math');
-        //$like = $data?"where helpword like '%{$data}%' or name like '%{$data}%'":'';
-        //$sql = "select id,g_name as text,g_khjc as jc from (select a.id as id,g_name,g_helpword,g_khjc FROM kk_guest2 as a,kk_ht as b where a.id=b.ht_khmc and ht_stday<='{$today}' and ht_enday>='{$today}' and ht_stat=2 and reid=0 group by ht_khmc UNION select id,g_name,g_helpword,g_khjc FROM kk_guest2 where id=any(select a.reid as id FROM kk_guest2 as a,kk_ht as b where a.id=b.ht_khmc and reid!= 0 and ht_stday<='{$today}' and ht_enday>='{$today}' and ht_stat=2  group by ht_khmc)) as t {$like} order by g_name ASC";
-       // $res = M()->query($sql);
         $map1 = array(
             'reid'=>0,
             'g_stat3'=>1
@@ -346,7 +397,6 @@ class KkContractguestApply2Logic extends Model {
         //$sql = "SELECT `id`,`ht_sljsfs`,`ht_kpfs`,`ht_khmc` FROM `kk_ht` WHERE `ht_stat` = 2 AND  (unix_timestamp(ht_date) >= unix_timestamp('2018-01-01 00:00:00'))";
         $sql = "SELECT `id`,`ht_sljsfs`,`ht_kpfs`,`ht_khmc` FROM `kk_ht` WHERE `ht_stat` = 2";
         $res = M('kk_ht')->query($sql);;
-//        if (empty($res)) return array('code' => 404,'msg' => '请重新刷新页面！');
         //修改子客户的数据
         foreach ($res as $key=>$val){
             $map = array(
@@ -372,7 +422,89 @@ class KkContractguestApply2Logic extends Model {
         }
     }
 
+    //建材总客户审批通过后调用的方法
+    public function add2($aid){
+        $map = array(
+            'id'=>$aid,
+        );
+        $data = M('kk_guest2')->where($map)->find();
+        unset($data['id']);
+        $data['reid'] = $aid;
+        $sub_time = date("Y-m-d H:i:s",time());
+        $data['g_dtime'] = $sub_time;
 
+        $result = M('kk_guest2')->add($data);
+
+        //审批记录表 增加审批记录
+        $map2 = array(
+            'aid'=>$aid,
+            'app_name'=>'审批',
+            'mod_name'=>'Contract_guest_Apply',
+        );
+        $data2 = M('kk_appflowproc')->where($map2)->find();
+        unset($data2['id']);
+        $data2['mod_name'] = 'Contract_guest_Apply2';
+        $data2['aid'] = $result;
+        $result2 = M('kk_appflowproc')->add($data2);
+
+    }
+
+    //获取总客户的名称
+    public function getname(){
+        $aid = I('post.id');
+        $map = array(
+            'id'=>$aid
+        );
+        $res = M('kk_guest2')->field('g_name')->where($map)->find();
+        if(empty($res)) return array('code' => 404,'msg' =>'获取数据，请重新尝试！');
+        return array('code' => 200,'msg' => '获取数据成功' , 'data' =>$res);
+    }
+
+    //获取上级客户名称
+    public function getsjkh($id){
+        $map1 = array(
+            'id'=>$id,
+        );
+        $res1 = M('kk_guest2')->field('reid')->where($map1)->find();
+        $map2 = array(
+            'id'=>$res1['reid'],
+        );
+        $res2 = M('kk_guest2')->field('g_name')->where($map2)->find();
+        return $res2;
+    }
+
+    //获取子客户列表信息
+    public function getzkhlist($id){
+        $map1 = array(
+            'id'=>$id,
+        );
+        $res1 = M('kk_guest2')->field('reid')->where($map1)->find();
+        $map2 = array(
+            'reid'=>$res1['reid'],
+            'g_stat3'=>1
+        );
+        $res2 = M('kk_guest2')->field('g_name')->where($map2)->select();
+        if(empty($res2)){
+            $res2 = array(
+                1=>array(
+                    'g_name'=>'无子客户',
+                )
+            );
+        }
+        return $res2;
+    }
+
+    // 重名验证
+    public function checkNameIsSet(){
+        $name = I('post.name');
+        $map = array(
+            'g_name' => $name,
+            'g_stat3'=>1
+        );
+        $data = M('kk_guest2')->where($map)->find();
+        if(empty($data)) return true;
+        return false;
+    }
 
     
 }

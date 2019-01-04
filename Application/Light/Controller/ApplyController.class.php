@@ -167,7 +167,7 @@ class ApplyController extends BaseController {
         );
 
         $id = 1;
-        $userInfoList  = M('wx_info')->where($where)->field('wxid as id,name,avatar')->select();
+        $userInfoList  = M('wx_info')->where($where)->field('wxid as id,name,avatar')->group('wxid')->select();
         $Dept          = D('department');
         $childDeptHtml = $Dept->genDeptUserHtml($userInfoList);
         $this->ajaxReturn($childDeptHtml);

@@ -182,7 +182,7 @@ class KkContractguestApplyLogic extends Model {
         $result = array(
             'sales'   => $res['sales'],         //申请人的姓名
             'title2'  => '客户类型',
-            'approve' => iconv('gbk','UTF-8',$res['g_khlx']),
+            'approve' => $res['g_khlx'],
             'notice'  => $res['g_xmmc'],
             'date'    => $res['g_date'],
             'title'   => '客户名称',
@@ -295,47 +295,6 @@ class KkContractguestApplyLogic extends Model {
         $result = M('kk_guest2')->add($res);
         if(!$result) return array('code' => 404,'msg' =>'提交失败，请重新尝试！');
 
-        //添加子客户
-        $res2 = array(
-            'g_name'=>$g_name,           //客户名称
-            'g_xmmc'=>$g_xmmc,           //相关说明
-            'g_man'=>$g_man,             //联系人员
-            'g_ctlman'=>$g_man,
-            'g_khjc'=>'',                //客户简称
-            'g_address'=>'',
-            'g_phone'=>$g_phone,          //电话
-            'g_qq'=>'',
-            'g_bank'=>'',
-            'g_card'=>'',
-            'g_group'=>0,
-            'g_people'=>'',
-            'g_helpword'=>$g_helpword,
-            'g_dtime'=>$sub_time,       //提交时间
-            'g_qy'=>'',
-            'g_ye'=>0,                  //余额
-            'g_khlx'=>$g_khlx,          //客户类型
-            'g_ed'=>0,
-            'reid'=>$result,                  //0代表总客户，其他代表是这个数字的二级客户
-            'g_stat'=>0,
-            'g_flag'=>0,
-            'salesid'=>$salesid,        //申请人的id
-            'sales'=>$sales,            //申请人的姓名
-            'g_jltime'=>$sub_time,
-            'g_xgtime'=>'0000-00-00 00:00:00',  //修改时间
-            'g_method'=>1,
-            'g_supply'=>0,              //供应商（0代表自己，其他数字代表供应商）
-            'g_stat3'=>5,               //新增为2；审批通过为1；冻结为3;冻结转删除为4；删除为5；
-            'g_date'=>$g_date,          //申请日期
-            'g_stat4'=>0,
-            'g_kpfs'=>$g_kpfs,          //开票方式
-            'g_jsfs'=>$g_sljs,          //结算方式
-            'g_beian'=>$check_isbeian,   //是否来自备案，备案客户的ID，空代表不是，其他数值代表是
-        );
-        $result2 = M('kk_guest2')->add($res2);
-        if(!$result2){
-            $res = M('kk_guest2')->where(array('id'=>$result))->setField('g_stat3', 5);
-            return array('code' => 404,'msg' =>'提交失败，请重新尝试！');
-        }
         // 抄送
         $copyto_id = trim($copyto_id,',');      //移除字符串两侧的空白字符及','
         if (!empty($copyto_id)) {

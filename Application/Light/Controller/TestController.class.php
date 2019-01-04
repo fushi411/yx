@@ -8,6 +8,7 @@ class TestController extends \Think\Controller {
     {
        
         header('Content-Type: text/html; charset=utf-8');
+        // iconv('gbk','UTF-8',$v['approve']),
        
     }
  
@@ -20,13 +21,15 @@ class TestController extends \Think\Controller {
     public function transStat($modname,$stat){
         if($stat == 0) return 0;
         $statArr = array(
-            'CgfkApply'   => array('4' =>2 ,'3' => 2 ,'2' => 1),
-            'WlCgfkApply' => array('4' =>2 ,'3' => 2 ,'2' => 1),
-            'PjCgfkApply' => array('4' =>2 ,'3' => 2 ,'2' => 1),
-            'CostMoney'   => array('5' =>2 ,'4' => 1 ,'2' => 1),
+            'CgfkApply'               => array('4' =>2 ,'3' => 2 ,'2' => 1),
+            'WlCgfkApply'             => array('4' =>2 ,'3' => 2 ,'2' => 1),
+            'PjCgfkApply'             => array('4' =>2 ,'3' => 2 ,'2' => 1),
+            'CostMoney'               => array('5' =>2 ,'4' => 1 ,'2' => 1),
+            'Contract_guest_Apply'    => array('2' =>2 ,'1' => 1 ,'5' => 0, '4' => 0 , '3' => 1),
+            'Contract_guest_Apply2'   => array('2' =>2 ,'1' => 1 ,'5' => 0, '4' => 0 , '3' => 1),
         );
 
-        if(!$statArr[$modname]) return 0;
+        if(!$statArr[$modname]) return 'false';
         return $statArr[$modname][$stat];
     }
 

@@ -194,9 +194,10 @@ class SeekController  extends BaseController
             // $res = M($tableInfo['table_name'])->field($tableInfo['copy_field'])->where(array($tableInfo['id'] => $v['aid']))->find();
 
             $res = D(ucfirst($system).$v['mod_name'], 'Logic')->sealNeedContent($v['aid']);
+            if( empty($res['sales']) ) continue;
             $appStatus =D($system.'Appflowproc')->getWorkFlowStatus($res['modname'], $v['aid']);
             $statRes   = $this->transStat($v['mod_name'],$res['stat']);
-            $stat      = $statRes ? $statRes: $res['stat'];
+            $stat      = $statRes !== 'false' ? $statRes: $res['stat'];
             $arr = array(
                 'system'    => $system,
                 'systemName'=> $systemName[$system],
@@ -243,10 +244,11 @@ class SeekController  extends BaseController
        
         // 数据重构
         foreach($sub as $k => $v){
+            if( empty($v['applyer']) ) continue;
             $res       = D(ucfirst($tab[$v[0]]['system']).$tab[$v[0]]['mod_name'], 'Logic')->sealNeedContent($v['aid']);
             $appStatus = D($tab[$v[0]]['system'].'Appflowproc')->getWorkFlowStatus($res['modname'], $v['aid']);
             $statRes   = $this->transStat($res['modname'],$v['stat']);
-            $stat      = $statRes ? $statRes: $v['stat'];
+            $stat      = $statRes !== 'false' ? $statRes: $v['stat'];
             $arr = array(
                 'system'    => $tab[$v[0]]['system'],
                 'systemName'=> $tab[$v[0]]['title'],
@@ -259,7 +261,7 @@ class SeekController  extends BaseController
                 'stat'      => $stat,
                 'titlename' => $res['title'],
                 'name'      => $res['name'],
-                'approve'   => $v['approve'],
+                'approve'   => iconv('gbk','UTF-8',$v['approve']),
                 'notice'    => $v['notice'],
                 'apply'     => $appStatus
             );
@@ -330,11 +332,13 @@ class SeekController  extends BaseController
         $sub = M()->query($submit_sql);
         // 数据重构
         foreach($sub as $k => $v){
+            if( empty($v['applyer']) ) continue;
             $res       = D(ucfirst($table_info[$v[0]]['system']).$table_info[$v[0]]['mod_name'], 'Logic')->sealNeedContent($v['aid']);
             $appStatus =D($table_info[$v[0]]['system'].'Appflowproc')->getWorkFlowStatus($res['modname'], $v['aid']);
             $statRes = $this->transStat($table_info[$v[0]]['mod_name'],$v['stat']);
-            $stat = $statRes ? $statRes: $v['stat'];
-            if($res['modname'] == 'fh_refund_Apply' && $appStatus['stat'] == -1) continue;
+            $stat = $statRes !== 'false' ? $statRes: $v['stat'];
+            if(($res['modname'] == 'fh_refund_Apply' || $res['modname'] == 'Contract_guest_Apply2' ) && $appStatus['stat'] == -1) continue;
+            
             if(!empty($limit)){
                 if($stat == 2 && ($appStatus['stat'] == 1 || $appStatus['stat'] == 2)) continue;
                 if($stat == 3) continue;
@@ -360,62 +364,6 @@ class SeekController  extends BaseController
         return $result;  
     }
 
-    public function mySubmitDataForTest($limit=''){
-        $page       = I('post.page_num');
-        $page       = $page?$page:1;
-        $result     = array();
-        $searchText = I('post.search');
-        $table_info = $this->getAppTable();
-        $table_info = $this->arrayMerge($table_info);
-        $submit_sql = 'SELECT * from(';
-        if(empty($limit)){
-            // sql语句构造
-            $submit_sql .= $this->SubmitSqlMake($searchText,$table_info);
-        }else{
-            $name = session('name');
-            foreach($table_info as $k =>$v){
-                if($k != 0) $submit_sql .= ' UNION all ';
-                $submit_sql .=  " select {$v['copy_field']},{$k} from {$v['table_name']} where {$v['submit']['name']}='{$name}' and {$v['stat']}={$v['submit']['stat']}  {$v['map']} ";
-            }
-        }
-        $submit_sql .=')a ORDER BY date desc';
-        
-        if(empty($limit)){
-            $submit_sql .= ' LIMIT '.(($page-1)*20).',20';
-        }
-       dump($submit_sql);
-        $sub = M()->query($submit_sql);
-        // 数据重构
-        foreach($sub as $k => $v){
-            $res       = D(ucfirst($table_info[$v[0]]['system']).$table_info[$v[0]]['mod_name'], 'Logic')->sealNeedContent($v['aid']);
-            $appStatus =D($table_info[$v[0]]['system'].'Appflowproc')->getWorkFlowStatus($res['modname'], $v['aid']);
-            $statRes = $this->transStat($table_info[$v[0]]['mod_name'],$v['stat']);
-            $stat = $statRes ? $statRes: $v['stat'];
-            if($res['modname'] == 'fh_refund_Apply' && $appStatus['stat'] == -1) continue;
-            if(!empty($limit)){
-                if($stat == 2 && ($appStatus['stat'] == 1 || $appStatus['stat'] == 2)) continue;
-                if($stat == 3) continue;
-            }
-            $arr = array(
-                'system'    => $table_info[$v[0]]['system'],
-                'systemName'=> $table_info[$v[0]]['title'],
-                'mod_name'  => $res['modname'],
-                'title'     => $table_info[$v[0]]['title'],
-                'aid'       => $v['aid'],
-                'date'      => date('m/d',strtotime($v['date'])),
-                'applyer'   => $v['applyer'],
-                'stat'      => $stat,
-                'title2'    => $res['title2'],
-                'titlename' => $res['title'],
-                'name'      => $res['name'],
-                'approve'   => iconv('gbk','UTF-8',$v['approve']),
-                'notice'    => $v['notice']?$v['notice']:'无',
-                'apply'     => $appStatus
-            );
-            $result[] = $arr;
-        }
-        return $result;  
-    }
     /**
      * 我提交的 sql 构造
      * @param string $searchText 搜索文字
@@ -553,9 +501,10 @@ class SeekController  extends BaseController
             // $res = M($tableInfo['table_name'])->field($tableInfo['copy_field'])->where(array($tableInfo['id'] => $v['aid']))->find();
 
             $res = D(ucfirst($system).$v['mod_name'], 'Logic')->sealNeedContent($v['aid']);
+            if( empty($res['sales']) ) continue;
             $appStatus =D($system.'Appflowproc')->getWorkFlowStatus($res['modname'], $v['aid']);
             $statRes = $this->transStat($v['mod_name'],$res['stat']);
-            $stat = $statRes ? $statRes: $res['stat'];
+            $stat = $statRes !== 'false' ? $statRes: $res['stat'];
             $arr = array(
                 'system'    => $system,
                 'systemName'=> $systemName[$system],
@@ -622,9 +571,10 @@ class SeekController  extends BaseController
             // $res = M($tableInfo['table_name'])->field($tableInfo['copy_field'])->where(array($tableInfo['id'] => $v['aid']))->find();
 
             $res = D(ucfirst($system).$v['mod_name'], 'Logic')->sealNeedContent($v['aid']);
+            if( empty($res['sales']) ) continue;
             $appStatus =D($system.'Appflowproc')->getWorkFlowStatus($res['modname'], $v['aid']);
             $statRes = $this->transStat($v['mod_name'],$res['stat']);
-            $stat = $statRes ? $statRes: $res['stat'];
+            $stat = $statRes !== 'false' ? $statRes: $res['stat'];
             $arr = array(
                 'system'    => $system,
                 'systemName'=> $systemName[$system],
@@ -657,13 +607,15 @@ class SeekController  extends BaseController
     public function transStat($modname,$stat){
         if($stat == 0) return 0;
         $statArr = array(
-            'CgfkApply'   => array('4' =>2 ,'3' => 2 ,'2' => 1),
-            'WlCgfkApply' => array('4' =>2 ,'3' => 2 ,'2' => 1),
-            'PjCgfkApply' => array('4' =>2 ,'3' => 2 ,'2' => 1),
-            'CostMoney'   => array('5' =>2 ,'4' => 1 ,'2' => 1),
+            'CgfkApply'               => array('4' =>2 ,'3' => 2 ,'2' => 1),
+            'WlCgfkApply'             => array('4' =>2 ,'3' => 2 ,'2' => 1),
+            'PjCgfkApply'             => array('4' =>2 ,'3' => 2 ,'2' => 1),
+            'CostMoney'               => array('5' =>2 ,'4' => 1 ,'2' => 1),
+            'Contract_guest_Apply'    => array('2' =>2 ,'1' => 1 ,'5' => 0, '4' => 0 , '3' => 1),
+            'Contract_guest_Apply2'   => array('2' =>2 ,'1' => 1 ,'5' => 0, '4' => 0 , '3' => 1),
         );
 
-        if(!$statArr[$modname]) return 0;
+        if(!$statArr[$modname]) return 'false';
         return $statArr[$modname][$stat];
     }
     /**
@@ -682,9 +634,10 @@ class SeekController  extends BaseController
            // $res = M($tableInfo['table_name'])->field($tableInfo['copy_field'])->where(array($tableInfo['id'] => $v['aid']))->find();
 
             $res = D(ucfirst($system).$v['mod_name'], 'Logic')->sealNeedContent($v['aid']);
+            if( empty($res['sales']) ) continue;
             $appStatus =D($system.'Appflowproc')->getWorkFlowStatus($res['modname'], $v['aid']);
             $statRes = $this->transStat($v['mod_name'],$res['stat']);
-            $stat = $statRes ? $statRes: $res['stat'];
+            $stat = $statRes !== 'false' ? $statRes: $res['stat'];
             $arr = array(
                 'system'    => $system,
                 'systemName'=> $systemName[$system],

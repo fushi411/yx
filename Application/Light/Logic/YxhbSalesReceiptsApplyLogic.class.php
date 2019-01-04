@@ -517,6 +517,7 @@ class YxhbSalesReceiptsApplyLogic extends Model {
 		);
         //return array('code' => 404,'msg' => '测试中，请稍等',$feeData);
         $user_other_name = I('post.user_other_name');
+        $user_other_name = $user_other_name ?$user_other_name:$this->getGuest($user);
 		$dtgData = array(
 			'dh'  => $dh,
 			'gid' => $user,
@@ -575,7 +576,14 @@ class YxhbSalesReceiptsApplyLogic extends Model {
         if($res < 99)  return "{$db}0{$num}";
         return "{$db}{$num}";
     }
+ /**
+     * 获取客户名
+     */
+    public function getGuest($id){
 
+        $user = M('yxhb_guest2')->where(array('id' => $id))->find();
+        return $user['g_name'];
+    }
     /**
      * 通知信息发送
      */

@@ -182,12 +182,12 @@ class YxhbContractguestApply2Logic extends Model {
         $result = array(
             'sales'   => $res['sales'],         //申请人的姓名
             'title2'  => '客户类型',
-            'approve' => iconv('gbk','UTF-8',$res['g_khlx']),
+            'approve' => $res['g_khlx'],
             'notice'  => $res['g_xmmc'],
             'date'    => $res['g_date'],
             'title'   => '客户名称',
             'name'    => $res['g_name'],
-            'modname' => 'Contract_guest_Apply',
+            'modname' => 'Contract_guest_Apply2',
             'stat'    => $res['g_stat3']
         );
         return $result;
@@ -337,6 +337,61 @@ class YxhbContractguestApply2Logic extends Model {
     }
 
 
+    //建材合同客户的开票方式、结算方式转存到客户表中
+    public function getdata(){
+        //$sql = "SELECT `id`,`ht_sljsfs`,`ht_kpfs`,`ht_khmc` FROM `kk_ht` WHERE `ht_stat` = 2 AND  (unix_timestamp(ht_date) >= unix_timestamp('2018-01-01 00:00:00'))";
+        $sql = "SELECT `id`,`ht_sljsfs`,`ht_kpfs`,`ht_khmc` FROM `yxhb_ht` WHERE `ht_stat` = 2";
+        $res = M('yxhb_ht')->query($sql);;
+        //修改子客户的数据
+        foreach ($res as $key=>$val){
+            $map = array(
+                'id'=>$val['ht_khmc'],
+                'g_stat3'=>1,
+//                'reid'!=0,
+            );
+            $data['g_kpfs'] = $val['ht_kpfs'];
+            $data['g_jsfs'] = $val['ht_sljsfs'];
+            $res = M('yxhb_guest2')->where($map)->data($data)->save();
+
+            $map2 = array(
+                'id'=>$val['ht_khmc'],
+            );
+            $reid = M('yxhb_guest2')->field('reid')->where($map2)->find();
+            $map3 = array(
+                'id'=>$reid['reid'],
+                'g_stat3'=>1,
+                'reid'=> 0,
+            );
+            $res2 = M('yxhb_guest2')->where($map3)->data($data)->save();
+
+        }
+    }
+
+    //建材总客户审批通过后调用的方法
+    public function add2($aid){
+        $map = array(
+            'id'=>$aid,
+        );
+        $data = M('yxhb_guest2')->where($map)->find();
+        unset($data['id']);
+        $data['reid'] = $aid;
+        $sub_time = date("Y-m-d H:i:s",time());
+        $data['g_dtime'] = $sub_time;
+
+        $result = M('yxhb_guest2')->add($data);
+
+        //审批记录表 增加审批记录
+        $map2 = array(
+            'aid'=>$result,
+            'app_name'=>'审批',
+            'mod_name'=>'Contract_guest_Apply',
+        );
+        $data2 = M('yxhb_appflowproc')->where($map2)->find();
+        unset($data2['id']);
+        $data2['mod_name'] = 'Contract_guest_Apply2';
+        $result2 = M('yxhb_appflowproc')->add($data2);
+
+    }
 
     
 }

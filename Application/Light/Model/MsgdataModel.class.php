@@ -459,4 +459,23 @@ class MsgdataModel extends Model {
         return $this->GuestApply();
     }
 
+    // 生控记录(矿粉)
+    public function  ContractApply(){
+        $result = array();
+        $result['url'] = array(
+            array('name' => '环保新增合同价格','url' => U('Light/View/View',array('modname'=>'ContractApply','system' => 'yxhb')),'modname' => 'yxhbContractApply'),
+            array('name' => '建材新增合同价格','url' => U('Light/View/View',array('modname'=>'ContractApply','system' => 'kk')),'modname' => 'kkContractApply'),
+        );
+    
+        $result['yxhbContractApply'] = array(
+            'process' => U('Light/Process/ApplyProcess',array('modname'=>'ContractApply','system' => 'yxhb')),
+            'info'    => U('Light/Apply/applyInfo',array('modname'=>'ContractApply','system'=>'yxhb'))
+        );   
+        $result['kkContractApply'] = array(
+            'process' => U('Light/Process/ApplyProcess',array('modname'=>'ContractApply','system' => 'kk')),
+            'info'    => U('Light/Apply/applyInfo',array('modname'=>'ContractApply','system'=>'kk'))
+        ); 
+        return $result;   
+    }
+
 }
