@@ -54,7 +54,7 @@
                 </label>
             </div>
             <div class="weui-cell__bd">
-                <input id="name" name="name" class="weui-input" type="text" placeholder="完整公司名称或真实姓名" maxlength="15" >
+                <input id="name" name="name" class="weui-input" type="text" placeholder="完整公司名称或真实姓名" maxlength="15" onblur="checkNameIsSet()">
             </div>
         </div>
         <!--  备案名称 END -->
@@ -99,7 +99,7 @@
                 <div class="weui-cell__bd">
                     <input id="ht_kpfs" name="ht_kpfs" class="weui-input" type="text" placeholder="自动填写" readonly>
                     <select id="kpfs" name="kpfs" class="weui-input greyColor" onchange="kpfs()" style="display: none">
-                        <option value="-1" selected="selected" class="weui-select" disabled>请选择开票方式</option>
+                        <option value="-1" id="kpfs_1" selected="selected" class="weui-select" disabled style='display:none;'>请选择开票方式</option>
                         <option value="出厂票价">出厂票价</option>
                         <option value="送到票价">送到票价</option>
                     </select>
@@ -146,41 +146,6 @@
     </div>
     <!--<button onclick="getdata()">数据转存</button>-->
     <button class="btn btn-info btn-xs" data-toggle="modal" data-target="#myModal" id="showModal" style="display: none"></button>
-    <!--模态框-->
-    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="false">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    <h4 class="modal-title">子客户信息</h4>
-                </div>
-                <div class="modal-body" >
-                    <div class="weui-cell ">
-                        <div class="weui-cell__hd">
-                            <label class="weui-label">客户名称&nbsp;&nbsp;
-                            </label>
-                        </div>
-                        <div class="weui-cell__bd">
-                            <input id="_name" name="_name" class="weui-input" type="text" >
-                        </div>
-                    </div>
-                    <div class="weui-cell ">
-                        <div class="weui-cell__hd">
-                            <label class="weui-label">客户类型&nbsp;&nbsp;
-                            </label>
-                        </div>
-                        <div class="weui-cell__bd">
-                            <input id="_khlx" name="_khlx" class="weui-input" type="text" >
-                        </div>
-                    </div>
-
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-                </div>
-            </div><!-- /.modal-content -->
-        </div><!-- /.modal-dialog -->
-    </div><!-- /.modal -->
 </block>
 
 <block name="js">
@@ -199,6 +164,55 @@
                 $("#reason_char").text(len);
             }
         });
+
+        ispc();
+    });
+
+    //判断是否从pc端点击进入页面的
+    function ispc() {
+        var id = getQueryString("id");
+        if(id != null){
+            getname(id);
+            getTempInfo(id);
+        }else{
+            sszkh();
+        }
+    }
+
+    // 获取URL参数
+    function getQueryString(name) {
+        var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
+        var r = window.location.search.substr(1).match(reg);
+        if (r != null) return unescape(r[2]); return null;
+    }
+
+    //获取总客户的名称
+    function getname(id) {
+        $.ajax({
+            type:'post',
+            url: "{:U('Light/Api/Contract_guest_Apply2Api')}" + "&system=yxhb&modname=Contract_guest_Apply2&action=getname",
+            data: {
+                'id':id,
+            },
+            dataType: 'json',
+            success: function (res) {
+                if (res.code != 200) {
+                    tooltip('请重新刷新页面！')
+                } else {
+                    if (res.data.g_name.substr(res.data.g_name.length-2,2)=='-总'){
+                        var html = `<input id="user_name" name="user_name" class="weui-input" type="text"  required="" readonly value="`+res.data.g_name+`">`;
+                    }else{
+                        var html = `<input id="user_name" name="user_name" class="weui-input" type="text"  required="" readonly value="`+res.data.g_name+`-总">`;
+                    }
+                    $("#alter_div").html(html);
+                    $("#alter_div").attr('style','height:45px;line-height:45px;');
+                }
+            }
+        })
+    }
+
+    //总客户搜索
+    function sszkh() {
         var user_id = 0;
         // 用户选择
         function formatRepo(repo) {
@@ -249,7 +263,7 @@
         $("#user_name").on("select2:selecting", function (e) {
             $('.select2-selection__choice__remove').click();
             var selectArr = e.params.args.data;
-            getTempInfo(selectArr.id,selectArr.text);
+            getTempInfo(selectArr.id);
             $('.select2-selection__choice').text(selectArr.text);
             user_id = selectArr.id;
         });
@@ -257,9 +271,7 @@
             $('.color').val('');
             user_id = 0;
         });
-
-
-    });
+    }
 
     /**
      * check_kpfs         检测开票方式从数据库中获取到是否为空
@@ -270,6 +282,8 @@
      * getzkh             获取子客户列表信息
      * showzkh            显示子客户列表
      * select_zkh         选择具体某个子客户
+     * check_isset        备案客户名是否已存在的标志位
+     * checkNameIsSet     验证新增第二子客户名称是否已存在
      */
 
     var check_isbeian = '';
@@ -303,6 +317,7 @@
         }
 
         if(name=='') return tooltip('请输入客户名称');
+        if(!check_isset) return tooltip('客户名称已存在，请调整后申请!');
         if (info=='') return tooltip('请输入相关说明!');
 
         if (info.length<5) return tooltip('字数不够!');
@@ -347,6 +362,7 @@
                 } else {
                     $('#telephone').val(res.data.g_phone);
                     $('#contacts').val(res.data.g_man);
+                    //把黑色去掉
                     $("#kpfs").attr('style','');
                     $("#jsfs").attr('style','');
                     if(res.data.g_jsfs == ''){
@@ -463,6 +479,21 @@
                    console.log(res.data);
 
                 }
+            }
+        })
+    }
+
+    var check_isset = true;
+    function checkNameIsSet() {
+        var name = $('#name').val();
+        $.ajax({
+            type:'post',
+            url: "{:U('Light/Api/Contract_guest_Apply2Api')}"+"&system=yxhb&modname=Contract_guest_Apply2&action=checkNameIsSet",
+            data:{'name':name},
+            dataType: 'json',
+            success: function (res) {
+                check_isset = res;
+                if (res == false) return tooltip('客户名称已存在，请调整后申请!');
             }
         })
     }

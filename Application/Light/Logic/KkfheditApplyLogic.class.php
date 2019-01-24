@@ -103,7 +103,7 @@ class KkfheditApplyLogic extends Model {
                                      'color' => $color
                                     ); 
 
-        $result['content'][] = array('name'=>'申请理由：',
+        $result['content'][] = array('name'=>'相关说明：',
                                      'value'=>$res['xg_reason'],
                                      'type'=>'text',
                                      'color' => 'black'
@@ -298,7 +298,7 @@ class KkfheditApplyLogic extends Model {
                                      'value'=>$wlfs['ht_wlfs'] ,
                                      'type'=>'string'
                                     );
-        $result[] = array('name'=>'申请理由：',
+        $result[] = array('name'=>'相关说明：',
                                      'value'=>$res['xg_reason'],
                                      'type'=>'text'
                                     );
@@ -583,6 +583,7 @@ class KkfheditApplyLogic extends Model {
         }
         if(!$result) return array('code' => 404,'msg' =>'提交失败，请重新尝试！');
         $result = $fhinfo['id'];
+        M('kk_appflowproc')->where(array( 'mod_name' => 'fh_edit_Apply','aid' => $result ))->save(array( 'mod_name' => 'fh_edit_Apply__delete' ));
         $save_fh = array(
             'xg_date'     => date('Y-m-d H:i:s',time()),
             'xg_person' => $user,

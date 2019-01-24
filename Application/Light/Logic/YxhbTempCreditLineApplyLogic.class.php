@@ -90,7 +90,7 @@ class YxhbTempCreditLineApplyLogic extends Model {
                                      'type'=>'string',
                                      'color' => 'black'
                                     );   
-        $result['content'][] = array('name'=>'申请理由：',
+        $result['content'][] = array('name'=>'相关说明：',
                                      'value'=>$res['notice'],
                                      'type'=>'string',
                                      'color' => 'black'
@@ -169,7 +169,7 @@ class YxhbTempCreditLineApplyLogic extends Model {
                                      'value'=>$res['sales'],
                                      'type'=>'string'
                                     );
-        $result[] = array('name'=>'申请理由：',
+        $result[] = array('name'=>'相关说明：',
                                      'value'=>$res['notice'],
                                      'type'=>'text'
                                     );
@@ -251,7 +251,7 @@ class YxhbTempCreditLineApplyLogic extends Model {
         if($user_id=='' || $reason=='' || $money=='')  return array('code' => 404,'msg' => '请刷新页面，重新提交');
         
         // 字数校验
-        if(strlen($reason)<5 ||strlen($reason)>200)  return array('code' => 404,'msg' => '申请理由不能少于5个字，且不能多于200字');
+        if(strlen($reason)<5 ||strlen($reason)>200)  return array('code' => 404,'msg' => '相关说明不能少于5个字，且不能多于200字');
         // 次数校验
         $model = D('Customer');
         $timeArr = array(5,3,1);

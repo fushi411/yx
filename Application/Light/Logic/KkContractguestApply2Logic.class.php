@@ -28,7 +28,7 @@ class KkContractguestApply2Logic extends Model {
         return $this->trueTableName;
     }
 
-    //详情
+    //详情(点击查看之后显示)
     public function recordContent($id)
     {
         $res = $this->record($id);
@@ -42,15 +42,17 @@ class KkContractguestApply2Logic extends Model {
             'type'=>'date',
             'color' => 'black'
         );
-        $result['content'][] = array(
-            'name'=>'申请日期：',
-            'value'=>$res['g_date'],
-            'type'=>'date',
-            'color' => 'black'
-        );
+
         $result['content'][] = array(
             'name'=>'提交时间：',
             'value'=> date('m-d H:i',strtotime($res['g_dtime'])) ,
+            'type'=>'date',
+            'color' => 'black'
+        );
+
+        $result['content'][] = array(
+            'name'=>'申请日期：',
+            'value'=>$res['g_date'],
             'type'=>'date',
             'color' => 'black'
         );
@@ -69,7 +71,6 @@ class KkContractguestApply2Logic extends Model {
             'color' => 'black'
         );
 
-
         $result['content'][] = array(
             'name'=>'客户名称：',
             'value'=>$res['g_name'],
@@ -77,6 +78,7 @@ class KkContractguestApply2Logic extends Model {
             'color' => 'black'
         );
 
+        empty($res['g_khlx'])?$res['g_khlx']="无":$res['g_khlx'];
         $result['content'][] = array(
             'name'=>'客户类型：',
             'value'=>$res['g_khlx'],
@@ -84,6 +86,7 @@ class KkContractguestApply2Logic extends Model {
             'color' => 'black'
         );
 
+        empty($res['g_man'])?$res['g_man']="无":$res['g_man'];
         $result['content'][] = array(
             'name'=>'联系人员：',
             'value'=>$res['g_man'],
@@ -91,6 +94,7 @@ class KkContractguestApply2Logic extends Model {
             'color' => 'black'
         );
 
+        empty($res['g_phone'])?$res['g_phone']="无":$res['g_phone'];
         $result['content'][] = array(
             'name'=>'联系电话：',
             'value'=>$res['g_phone'],
@@ -118,6 +122,13 @@ class KkContractguestApply2Logic extends Model {
             'type'=>'text',
             'color' => 'black'
         );
+
+//        foreach ($result as $val){
+//            if (empty($val['value'])){
+//                $val['value'] = '无';
+//            }
+//        }
+
         $result['imgsrc'] = '';
         $result['applyerID'] =  D('KkBoss')->getIDFromName($res['sales']);       //申请人的id
         $result['applyerName'] = $res['sales'];                                 //申请人的姓名
@@ -126,7 +137,7 @@ class KkContractguestApply2Logic extends Model {
     }
 
     /**
-     * 二级详情html生成
+     * 二级详情html生成   不包括刚审批通过的子客户
      * @param array   $data
      * @return string $html
      */
@@ -138,9 +149,8 @@ class KkContractguestApply2Logic extends Model {
     }
 
     /**
-     * 删除记录
+     * 撤銷申請調用的方法
      * @param  integer $id 记录ID
-     * @return integer     影响行数
      */
     public function delRecord($id)
     {
@@ -153,62 +163,79 @@ class KkContractguestApply2Logic extends Model {
      * @param  integer $id 记录ID
      * @return array       记录数组
      */
+    //审批助手显示
     public function getDescription($id){
         $res = $this->record($id);
         $newres = $this->getsjkh($id);    //上级客户名称
-        $res2 = $this->getzkhlist($id);   //子客户名称列表
-        $html = $this->getEjHtml($res2);
+//        $res2 = $this->getzkhlist($id);   //子客户名称列表
+//        $html = $this->getEjHtml($res2);
         $result = array();
-        $result[] = array('name'=>'申请日期：',
-            'value'=> date('m-d H:i',strtotime($res['g_date'])) ,
-            'type'=>'date'
-        );
-        $result[] = array('name'=>'提交时间：',
+
+        $result[] = array(
+            'name'=>'提交时间：',
             'value'=> date('m-d H:i',strtotime($res['g_dtime'])) ,
             'type'=>'date'
         );
 
-        $result[] = array('name'=>'上级客户：',
+        $result[] = array(
+            'name'=>'申请日期：',
+            'value'=> $res['g_date'] ,
+            'type'=>'date'
+        );
+
+        $result[] = array(
+            'name'=>'上级客户：',
             'value'=>$newres['g_name'] ,
             'type'=>'date'
         );
 
-        $result[] = array('name'=>'二级详情：',
-            'value'=>$html,
-            'type'=>'date'
-        );
+//        $result[] = array(
+//            'name'=>'二级详情：',
+//            'value'=>$html,
+//            'type'=>'date'
+//        );
 
-        $result[] = array('name'=>'客户名称：',
+        $result[] = array(
+            'name'=>'客户名称：',
             'value'=>$res['g_name'],
             'type'=>'string'
         );
 
-        $result[] = array('name'=>'客户类型：',
+        empty($res['g_khlx'])?$res['g_khlx']="无":$res['g_khlx'];
+        $result[] = array(
+            'name'=>'客户类型：',
             'value'=>$res['g_khlx'],
             'type'=>'string'
         );
 
-        $result[] = array('name'=>'联系人员：',
+        empty($res['g_man'])?$res['g_man']="无":$res['g_man'];
+        $result[] = array(
+            'name'=>'联系人员：',
             'value'=>$res['g_man'],
             'type'=>'string'
         );
 
-        $result[] = array('name'=>'联系电话：',
+        empty($res['g_phone'])?$res['g_phone']="无":$res['g_phone'];
+        $result[] = array(
+            'name'=>'联系电话：',
             'value'=>$res['g_phone'],
             'type'=>'string'
         );
 
-        $result[] = array('name'=>'开票方式：',
+        $result[] = array(
+            'name'=>'开票方式：',
             'value'=>$res['g_kpfs'],
             'type'=>'string'
         );
 
-        $result[] = array('name'=>'结算方式：',
+        $result[] = array(
+            'name'=>'结算方式：',
             'value'=>$res['g_jsfs'],
             'type'=>'string'
         );
 
-        $result[] = array('name'=>'相关说明：',
+        $result[] = array(
+            'name'=>'相关说明：',
             'value'=>$res['g_xmmc'],
             'type'=>'text'
         );
@@ -484,14 +511,17 @@ class KkContractguestApply2Logic extends Model {
             'g_stat3'=>1
         );
         $res2 = M('kk_guest2')->field('g_name')->where($map2)->select();
-        if(empty($res2)){
-            $res2 = array(
+        $num = count($res2,COUNT_NORMAL);
+        if($num == 1 || empty($res2)){
+            $data = array(
                 1=>array(
                     'g_name'=>'无子客户',
                 )
             );
+        }else{
+            $data = M('kk_guest2')->field('g_name')->where($map2)->where(array('limit'=>$num-1))->select();
         }
-        return $res2;
+        return $data;
     }
 
     // 重名验证

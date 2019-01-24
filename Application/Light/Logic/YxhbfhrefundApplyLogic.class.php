@@ -80,7 +80,7 @@ class YxhbfhrefundApplyLogic extends Model {
                                      'color' => 'black'
                                     );
                         
-        $result['content'][] = array('name'=>'申请理由：',
+        $result['content'][] = array('name'=>'相关说明：',
                                      'value'=>$res['xg_reason'],
                                      'type'=>'text',
                                      'color' => 'black'
@@ -254,7 +254,7 @@ class YxhbfhrefundApplyLogic extends Model {
                                      'type'=>'string'
                                     );
         
-        $result[] = array('name'=>'申请理由：',
+        $result[] = array('name'=>'相关说明：',
                                      'value'=>$res['xg_reason'],
                                      'type'=>'text'
                                     );

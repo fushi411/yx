@@ -73,7 +73,7 @@ class YxhbCreditLineApplyLogic extends Model {
                                      'color' => 'black'
                                     );
 
-        $result['content'][] = array('name'=>'申请理由：',
+        $result['content'][] = array('name'=>'相关说明：',
                                      'value'=>$res['notice'],
                                      'type'=>'text',
                                      'color' => 'black'
@@ -130,7 +130,7 @@ class YxhbCreditLineApplyLogic extends Model {
                                      'value'=>$res['sales'],
                                      'type'=>'string'
                                     );
-        $result[] = array('name'=>'申请理由：',
+        $result[] = array('name'=>'相关说明：',
                                      'value'=>$res['notice'],
                                      'type'=>'text'
                                     );
@@ -237,7 +237,7 @@ class YxhbCreditLineApplyLogic extends Model {
         // 申请金额校验
         if($money=='' || $money<0 ) return array('code' => 404,'msg' => '申请金额不能为空，且不能为负数！');
         // 字数校验
-        if(strlen($reason)<5 ||strlen($reason)>200) return array('code' => 404,'msg' => '申请理由不能少于5个字，且不能多于200字！');
+        if(strlen($reason)<5 ||strlen($reason)>200) return array('code' => 404,'msg' => '相关说明不能少于5个字，且不能多于200字！');
         $model = D('Customer');
 
         $clientname = $model->getClientname($user_id,'yxhb');

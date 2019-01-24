@@ -87,7 +87,7 @@ class SeekModel extends Model {
         return $result;
     }
     /**
-     * 获取标题所需的标题
+     * 不带系统 模块名
      * @param  string $mod 模块名
      * @param  string $sy  系统
      * @return string $title 标题
@@ -100,6 +100,22 @@ class SeekModel extends Model {
         );
         $data = M('yx_config_title')->field('mod_show_name')->where($map)->find();
         $title = $data['mod_show_name'];
+        return $title;
+    }
+
+    /**
+     * 带系统 模块名
+     * @param  string $mod 模块名
+     * @param  string $sy  系统
+     * @return string $title 标题
+     */
+    public function getModname($mod,$sy){
+        $map = array(
+            'mod_system' => $sy,
+            'name'       => $mod,
+        );
+        $data = M('yx_config_title')->field('mod_title')->where($map)->find();
+        $title = $data['mod_title'];
         return $title;
     }
 }

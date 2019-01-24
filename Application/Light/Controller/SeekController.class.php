@@ -323,7 +323,7 @@ class SeekController  extends BaseController
                 $submit_sql .=  " select {$v['copy_field']},{$k} from {$v['table_name']} where {$v['submit']['name']}='{$name}' and {$v['stat']}={$v['submit']['stat']}  {$v['map']} ";
             }
         }
-        $submit_sql .=')a ORDER BY date desc';
+        $submit_sql .=')a GROUP BY aid,`0` ORDER BY date desc';
         
         if(empty($limit)){
             $submit_sql .= ' LIMIT '.(($page-1)*20).',20';
@@ -613,6 +613,7 @@ class SeekController  extends BaseController
             'CostMoney'               => array('5' =>2 ,'4' => 1 ,'2' => 1),
             'Contract_guest_Apply'    => array('2' =>2 ,'1' => 1 ,'5' => 0, '4' => 0 , '3' => 1),
             'Contract_guest_Apply2'   => array('2' =>2 ,'1' => 1 ,'5' => 0, '4' => 0 , '3' => 1),
+            'ContractApply'           => array(0 => 0, 1 => 2,2 => 1,3 => 2),
         );
 
         if(!$statArr[$modname]) return 'false';

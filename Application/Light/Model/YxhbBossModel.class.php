@@ -138,6 +138,10 @@ class YxhbBossModel extends Model {
         return $this->where(array('id'=>$id))->getField('wxid');
     }
 
+    public function getNameFromID($id){
+        return $this->where(array('id'=>$id))->getField('name');
+    }
+
     public function getIDFromName($name){
         return $this->where(array('name'=>$name))->getField('id');
     }

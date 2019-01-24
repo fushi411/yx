@@ -93,7 +93,7 @@ class YxhbPjCgfkApplyLogic extends Model {
                                      'type'=>'string',
                                      'color' => 'black'
                                     );                                    
-        $result['content'][] = array('name'=>'申请理由：',
+        $result['content'][] = array('name'=>'相关说明：',
                                      'value'=>$res['zy'],
                                      'type'=>'text',
                                      'color' => 'black'
@@ -160,7 +160,7 @@ class YxhbPjCgfkApplyLogic extends Model {
                                      'value'=>$res['rdy'],
                                      'type'=>'string'
                                     );
-        $result[] = array('name'=>'申请理由：',
+        $result[] = array('name'=>'相关说明：',
                                      'value'=>$res['zy'],
                                      'type'=>'text'
                                     );

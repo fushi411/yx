@@ -78,7 +78,7 @@ class KkSnMaterielApplyLogic extends Model {
                                      'type'=>'string',
                                      'color' => 'black'
                                     );    
-        $result['content'][] = array('name'=>'申请理由：',
+        $result['content'][] = array('name'=>'相关说明：',
                                      'value'=>$res['info'],
                                      'type'=>'text',
                                      'color' => 'black'
@@ -155,7 +155,7 @@ class KkSnMaterielApplyLogic extends Model {
                                      'value'=>$res['tjr'],
                                      'type'=>'string'
                                     );
-        $result[] = array('name'=>'申请理由：',
+        $result[] = array('name'=>'相关说明：',
                                      'value'=>$res['info'],
                                      'type'=>'text'
                                     );

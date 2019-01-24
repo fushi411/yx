@@ -28,11 +28,12 @@ class KkContractguestApplyLogic extends Model {
         return $this->trueTableName;
     }
 
+    //详情(点击查看之后显示)
     public function recordContent($id)
     {
         $res = $this->record($id);
         $result = array();
-        $result['content'][] = array('name'=>'申请单位：',
+        $result['content'][] = array('name'=>'系统类型：',
             'value'=>'建材新增总客户',
             'type'=>'date',
             'color' => 'black'
@@ -42,6 +43,7 @@ class KkContractguestApplyLogic extends Model {
             'type'=>'date',
             'color' => 'black'
         );
+
         $result['content'][] = array('name'=>'申请日期：',
             'value'=>$res['g_date'],
             'type'=>'date',
@@ -112,6 +114,7 @@ class KkContractguestApplyLogic extends Model {
      * @param  integer $id 记录ID
      * @return array       记录数组
      */
+    //审批助手显示
     public function getDescription($id){
         $res = $this->record($id);
         $result = array();
@@ -120,7 +123,7 @@ class KkContractguestApplyLogic extends Model {
             'type'=>'date'
         );
         $result[] = array('name'=>'申请日期：',
-            'value'=> date('m-d H:i',strtotime($res['g_date'])) ,
+            'value'=> $res['g_date'] ,
             'type'=>'date'
         );
 

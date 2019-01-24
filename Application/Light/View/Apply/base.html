@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="__PUBLIC__/assets/css/weui.min.css" />
     <link rel="stylesheet" href="__PUBLIC__/assets/css/weMain.css?version=201709012" />
     <link rel="stylesheet" href="__PUBLIC__/assets/css/viewer.css" />
+    <link rel="stylesheet" href="//at.alicdn.com/t/font_915899_6e03l1mub3m.css" />
     <style type="text/css">
   .weui-cells:after {
             border-bottom: 0px solid #fff;
@@ -162,37 +163,40 @@
                         </div>
                     </if>      
 
-                    <block name="table"></block>            
+                    <block name="table"></block>      
+                          
                 <block name="work_flow">
                     <div class="weui-panel" style="margin-top: 0px;">
                         <div class="weui-panel__hd" style="font-size: 16px;background-color: #f8f8f8;color:black;padding-top: 10px;">审批流程
-                            <a href="{:U('Light/Process/ApplyProcess',array('modname'=>$mod_name,'system'=>$system))}">（查看可视化流程）</a> 
+                            <a href="{:U('Light/Process/ApplyProcess',array('modname'=>$mod_name,'system'=>$system))}">
+                                <i class="iconfont icon-chakan" style="vertical-align: middle;" ></i>
+                            </a> 
                         </div>
                         <div class="weui-cells" style="margin-top:0px;">
                             <div class="weui-cell">
                                 <div class="weui-cell__bd">
                                     <div class="weui-uploader">
-                                        <div class="weui-uploader__bd" style="height: 85px;">
+                                        <div class="weui-uploader__bd" style="height: 70px;">
                                             <ul class="weui-uploader__files" id="app_pro" style="margin-bottom: 0px;">
                                                
                                             <block name="process">
                                                 <volist name="proInfo" id="vo">
                                                     <if condition="$vo.id eq $first['id']">
-                                                        <li class='weui-uploader__file wk-select__user' id='{$first.id}' style='height:90px;'>
+                                                        <li class='weui-uploader__file wk-select__user' id='{$first.id}' style='min-height:70px;width: 45px; margin-bottom: 0;margin-right: 0'>
                                                     <else/>
-                                                        <li class='weui-uploader__file wk-select__user' id='{$vo.id}' style='height:90px;margin-left:8px'>
+                                                        <li class='weui-uploader__file wk-select__user' id='{$vo.id}' style='min-height:70px;width: 45px; margin-bottom: 0;margin-right: 0;margin-left:8px'>
                                                     </if>
                                                     <if condition="$vo.avatar eq ''">
-                                                        <img src='Public/assets/i/defaul.png' class='weui-selet__user' style='margin-bottom: 0px;margin-right: 6px;margin-top:10px;'>
+                                                        <img src='Public/assets/i/defaul.png' class='weui-selet__user' style='margin-right: 6px;margin-top:10px; width: 2em; height: 2em;'>
                                                         <else/>
-                                                        <img src={$vo.avatar} class='weui-selet__user' style='margin-bottom: 0px;margin-right: 6px;margin-top:10px;'>
+                                                        <img src={$vo.avatar} class='weui-selet__user' style='margin-right: 6px;margin-top:10px; width: 2em; height: 2em;'>
                                                     </if>
-                                                    <span style='margin-right: 6px;font-size: 14px;'>{$vo.realname}</span>
+                                                    <span style='margin-right: 6px;font-size: 12px;'>{$vo.realname}</span>
                                                     <if condition="$vo.proc eq 1">
-                                                            <span class="glyphicon glyphicon-arrow-right" style="position: relative;top: -2.8em;right: 2.0em;"></span>
+                                                            <span class="glyphicon glyphicon-arrow-right" style="position: relative;top: -3.3em;right: 2em;font-size: 14px;"></span>
                                                     </if>
                                                     <if condition="$vo.proc eq 2">
-                                                            <span style="border-radius: 3px;position: relative;top: -2.5em;right: 2.2em;width: 6px;height: 6px;background-color: #333333"></span>       
+                                                            <span style="border-radius: 3px;position: relative;top: -2.3em;right: 1.7em;width: 5px;height: 5px;background-color: #333333"></span>       
                                                     </if>
                                                     </li>
                                                 </volist>
@@ -278,9 +282,9 @@
                     <div class="weui-panel" style="margin-top: 0px;">
                         <div class="weui-panel__hd" style="font-size: 16px;background-color: #f8f8f8;color:black;padding-top: 10px;">抄送<span style="color: #f12e2e">（点击+手动添加抄送人）</span></div>
                         <div class="weui-panel__bd" >
-                            <div class="weui-media-box weui-media-box_small-appmsg" style="padding-bottom: 10px;">
+                            <div class="weui-media-box weui-media-box_small-appmsg" >
                                 <div class="weui-cells" style="margin-top:0px;">
-                                    <div class="weui-cell" style="padding-top: 5px;padding-bottom: 5px;border-bottom: 1px solid #f8f8f8;">
+                                    <div class="weui-cell" style="padding-top: 3px;padding-bottom: 1px;">
                                         <div class="weui-cell__bd">
                                             <div class="weui-uploader">
                                                 <div class="weui-uploader__bd">
@@ -293,32 +297,30 @@
                                                             </li>
                                                             <else/>
                                                             <volist name="already_cp" id="acp">
-                                                                <li class="weui-uploader__file wk-select__css" id="{$acp.id}"  style="height: 130px; box-sizing: border-box;display:flex; flex-direction:column; justify-content:center;">
+                                                                <li class="weui-uploader__file wk-select__css" id="{$acp.id}"  style='min-height:70px;width: 45px;margin-right: 0;margin-bottom: 0;'>
                                                                     <if condition="in_array($acp['id'],$fixed_id)">
-                                                                        <span style="margin-right: 6px;font-size: 14px;">[固定]</span>
+                                                                        <span style="margin-right: 6px;font-size: 12px;">[固定]</span>
                                                                         <else/>
-                                                                        <span style="margin-right: 6px;font-size: 14px;">[手动]</span>
+                                                                        <span style="margin-right: 6px;font-size: 12px;">[手动]</span>
                                                                     </if>
                                                                     <if condition="$acp.url eq ''">
-                                                                        <img src="__PUBLIC__/i/defaul.png" class="weui-selet__user" style="margin-bottom: 0px;margin-right: 6px;" />
+                                                                        <img src="__PUBLIC__/i/defaul.png" class="weui-selet__user" style="margin-right: 6px;margin-top:3px;width: 2em; height: 2em;" />
                                                                         <else/>
-                                                                        <img src="{$acp.url}" class="weui-selet__user" style="margin-bottom: 0px;margin-right: 6px;" />
+                                                                        <img src="{$acp.url}" class="weui-selet__user" style="margin-right: 6px;margin-top:3px;width: 2em; height: 2em;" />
                                                                     </if>
-                                                                    <span style="margin-right: 6px;font-size: 14px;">{$acp.name}</span>
+                                                                    <span style="margin-right: 6px;font-size: 12px;">{$acp.name}</span>
                                                                     <if condition="in_array($acp['id'],$readedArr)">
-                                                                        <span style="margin-right: 6px;font-size: 14px;color: green;">[已读]</span>
+                                                                        <span style="margin-right: 6px;font-size: 12px;color: green;">[已读]</span>
                                                                         <else/>
-                                                                        <span style="margin-right: 6px;font-size: 14px;color: red;">[未读]</span>
+                                                                        <span style="margin-right: 6px;font-size: 12px;color: red;">[未读]</span>
                                                                     </if>
                                                                 </li>
                                                             </volist>
                                                         </if>
                                                     </ul>
-                                                    
-
                                                     <eq name="isApplyer" value="1">
                                                         <if condition="$apply.state == 0">
-                                                            <div class="weui-uploader__input-box" style="width: 2.5em;height: 2.5em;margin-right: 0px;margin-bottom: 0px;margin-top:20px;">
+                                                            <div class="weui-uploader__input-box" style="width: 2.5em;height: 2.5em;margin: 10px 0 10px 0;">
                                                                 <input id="uploaderInput1" class="weui-uploader__input" type="button" name="copyto" data-toggle="modal" data-target="#myModal" readonly />
                                                                 <input type="hidden" name="copyto_id" id="copyto_id">
                                                             </div>    
@@ -337,18 +339,23 @@
                 </block>
                 <block name="push">
                         <div class="weui-panel" style="margin-top: 0px;">
-                            <div class="weui-panel__hd" style="font-size: 16px;background-color: #f8f8f8;color:black;padding-top: 10px;">推送名单<a href="{:U('Light/Process/PushProcess',array('system' => $system,'modname'=>$mod_name))}">（查看可视化名单）</a></div>
+                            <div class="weui-panel__hd" style="font-size: 16px;background-color: #f8f8f8;color:black;padding-top: 10px;">推送名单
+                                <a href="{:U('Light/Process/PushProcess',array('system' => $system,'modname'=>$mod_name))}">
+                                    <i class="iconfont icon-chakan" style="vertical-align: middle;" ></i>
+                                </a>
+                                <span style="color: #f12e2e;">（审批通过后群发推送人）</span>
+                            </div>
                             <div class="weui-panel__bd">
-                                <div class="weui-media-box weui-media-box_small-appmsg" style="padding-bottom: 10px;">
+                                <div class="weui-media-box weui-media-box_small-appmsg" >
                                     <div class="weui-cells" style="margin-top:0px;">
-                                        <div class="weui-cell" style="padding-top: 5px;padding-bottom: 5px;border-bottom: 1px solid #f8f8f8;">
+                                        <div class="weui-cell" style="padding-top: 3px;padding-bottom: 1px;">
                                             <div class="weui-cell__bd">
                                                 <div class="weui-uploader">
                                                     <div class="weui-uploader__bd" >
                                                         <ul class="weui-uploader__files" style="margin-bottom: 0px;" >
                                                             <if condition="empty($already_cpPush)">
                                                                     <volist name="push" id="vo">
-                                                                        <li class='weui-uploader__file wk-select__user' style='min-height:70px;width: 45px;margin-right: 0;margin-bottom: 0;'>
+                                                                        <li class='weui-uploader__file wk-select__user' style='min-height:70px;height:88px;width: 45px;margin-right: 0;margin-bottom: 0;'>
                                                                         <if condition="$vo.avatar eq ''">
                                                                             <img src="Public/assets/i/defaul.png" class='weui-selet__user' style='margin-right: 6px;margin-top:10px;width: 2em; height: 2em;'>
                                                                             <else/>
@@ -359,7 +366,7 @@
                                                                     </volist>
                                                                     <else/>
                                                                     <volist name="already_cpPush" id="acp">
-                                                                        <li class="weui-uploader__file wk-select__css" id="{$acp.id}" style='min-height:70px;width: 45px;margin-right: 0;margin-bottom: 0;'>
+                                                                        <li class="weui-uploader__file wk-select__css" id="{$acp.id}" style='min-height:70px;height:88px;width: 45px;margin-right: 0;margin-bottom: 0;'>
                                                                             <if condition="$acp.url eq ''">
                                                                                 <img src="__PUBLIC__/i/defaul.png" class="weui-selet__user" style="margin-right: 6px;margin-top:10px;width: 2em; height: 2em;" />
                                                                                 <else/>
@@ -388,7 +395,7 @@
                                                         </eq> 
                                                         
                                                     </div>
-                                                    <div class="weui-cells__title" style="display:block;padding-left: 0"><span style="color: #f12e2e">（审批通过后群发推送人）</span></div>
+                                                    
                                                 </div>
                                             </div>
                                         </div>
@@ -543,7 +550,9 @@
                             <div id="attention" >
                         </if>
                             <div class="weui-cells__title">注意事项  
-                                <a href="{:U('Light/Config/Dispenser',array('robot'=>'attention','system' => $system ,'modname' => $mod_name))}"><span style="color: #f12e2e">（点击配置）</span></a>
+                                <a href="{:U('Light/Config/Dispenser',array('robot'=>'attention','system' => $system ,'modname' => $mod_name))}">
+                                    <i class="iconfont icon-xiugai" style="vertical-align: middle;" ></i>
+                                </a>
                              </div>
                             <!-- <div class="weui-cells__title">各个中心主管及以上职位的申请抄送</div> -->
                             <div class="weui-cells" style="margin-top:0px;">

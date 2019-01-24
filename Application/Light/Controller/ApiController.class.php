@@ -255,4 +255,16 @@ class ApiController extends BaseController {
         $this->ajaxReturn($res);
     }
 
+    // 发货删除
+    public function fh_del_ApplyApi(){
+        $system = I('system');
+        $mod    = I('modname');
+        $action = I('action');
+        $logic = D(ucfirst($system).$mod ,'Logic');
+        $res = $logic->$action();
+        $this->ajaxReturn($res);
+    }
+
+
+
 }

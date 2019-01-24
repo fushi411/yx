@@ -60,14 +60,34 @@
     <div class="weui-cells" id="content1">
         <div class="weui-cell weui-cell_select weui-cell_select-after">
             <div class="weui-cell__hd">
+                <label class="weui-label">申请类型&nbsp;&nbsp;
+                        <span style="color:red;">*</span>
+                </label>
+            </div>
+            <div class="weui-cell__bd">
+                <select class="weui-select greyColor" name="type" id='sqlx'>
+                    <option value='-1' disabled selected style='display:none;'>请选择申请类型</option>
+                    <option value="1">报销费用</option>
+                    <option value="0">用款费用</option>
+                </select>
+            </div>
+        </div>
+        <div class="weui-cell weui-cell_select weui-cell_select-after">
+            <div class="weui-cell__hd">
                 <label class="weui-label">费用类型&nbsp;&nbsp;
                         <span style="color:red;">*</span>
                 </label>
             </div>
             <div class="weui-cell__bd">
                 <select class="weui-select greyColor" name="type" id='fylx'>
+                    <option value='-1' disabled selected style='display:none;'>请选择费用类型</option>
                     <option value="56">PVC项目费用</option>
                 </select>
+                <if condition="$CueConfig">
+                    <a href="{:U('Light/Config/Dispenser',array('robot'=>'fylx','system' => $system ,'modname' => $modname))}">
+                        <i class="iconfont icon-xiugai" style="font-size: 18px;vertical-align: middle;position: absolute;top: 0.6em;right: 0.5em;z-index: 200;"></i>
+                    </a>
+                </if>
             </div>
         </div>
         <div class="weui-cell weui-cell_select weui-cell_select-after">
@@ -83,37 +103,8 @@
                 </select>
             </div>
         </div>
-       
-        
-        <!-- <div class="weui-cell weui-cell_select weui-cell_select-after">
-            <div class="weui-cell__hd">
-                <label class="weui-label">用款部门&nbsp;&nbsp;
-                        <span style="color:red;">*</span>
-                </label>
-            </div>
-            <div class="weui-cell__bd">
-                <select class="weui-select greyColor" name="type" id='bm'>
-                    <option value='-1' disabled selected style='display:none;'>请选择用款部门</option>
-                    <option value="建设银行">建设银行</option>
-                    
-                </select>
-            </div>
-        </div> -->
     </div>
     <div class="weui-cells">
-        
-       
-        <!-- <div class="weui-cell ">
-            <div class="weui-cell__hd">
-                <label class="weui-label">用款人员&nbsp;&nbsp;
-                        <span style="color:red;">*</span>
-                </label>
-            </div>
-            <div class="weui-cell__bd">
-                <input class="weui-input " type="text" id="ykry" name="custodian"  placeholder="请输入用款人员" />
-                
-            </div>
-        </div> -->
         <div class="weui-cell ">
             <div class="weui-cell__hd">
                 <label class="weui-label">用款金额&nbsp;&nbsp;
@@ -133,7 +124,7 @@
             <div class="weui-cell__bd greyColor" id="show_cap">自动填写
             </div>
         </div>
-        <div class="weui-cell ">
+        <div class="weui-cell sqlx">
             <div class="weui-cell__hd">
                 <label class="weui-label">收款单位&nbsp;&nbsp;
                         <span style="color:red;">*</span>
@@ -144,7 +135,7 @@
                 
             </div>
         </div>
-        <div class="weui-cell ">
+        <div class="weui-cell sqlx">
             <div class="weui-cell__hd">
                 <label class="weui-label">收款账号&nbsp;&nbsp;
                         <span style="color:red;">*</span>
@@ -155,7 +146,7 @@
                 
             </div>
         </div>
-        <div class="weui-cell ">
+        <div class="weui-cell sqlx">
             <div class="weui-cell__hd">
                 <label class="weui-label">开户银行&nbsp;&nbsp;
                         <span style="color:red;">*</span>
@@ -188,22 +179,7 @@
             </div>
         </div>
     </div>
-    <div class="weui-cells weui-cells_form">
-        <div class="weui-cell">
-            <div class="weui-cell__hd">
-                <label class="weui-label">用款用途&nbsp;&nbsp;
-                        <span style="color:red;">*</span>
-                </label>
-            </div>
-        </div>
-        <div class="weui-cell">
-            <div class="weui-cell__bd" id="cnt">
-                <textarea class="weui-textarea" name="reason" id="reason" placeholder="用款用途至少5个字(必填)；" rows="3"></textarea>
-                <div class="weui-textarea-counter">
-                    <span id="reason_char">0</span>/200</div>
-            </div>
-        </div>
-    </div>
+   
     <input type="hidden" id="ratio" value="ratio">
     
 </block>
@@ -270,7 +246,27 @@ var label = "所属月份&nbsp;&nbsp;<span style='color:red;'>*</span>",
     //         var val = dateArr[1] + '月';
     //         $('#showDatePicker').val(val);
     //     }
-        
+        getProHtml();
+        function getProHtml(){
+            $.ajax({
+                type: 'POST',
+                url: "{:U('Light/Api/CostMoneyApi')}",
+                dataType: 'json',
+                data: {
+                    fylx   : $('#fylx').val(),
+                    system : "{$system}",
+                    modname: 'CostMoney',
+                    action : 'getProHtml',
+                },
+                dataType: 'json',
+                success: function (res) {
+                    $('#app_pro').html(res);
+                }
+            });
+        }
+        $('#fylx').change(function(){
+            getProHtml();
+        }),
         // 获取显示的参数 用款部门，付款方式等
         getSomeData();
         function getSomeData(){
@@ -294,7 +290,7 @@ var label = "所属月份&nbsp;&nbsp;<span style='color:red;'>*</span>",
         function makeHtml(data){
             //makeoption(data.bm,$('#bm'),'用款部门');
             makeoption(data.fkfs,$('#fkfs'),'付款方式');
-            //makeoption(data.fylx,$('#fylx'),'费用类型');
+            makeoption(data.fylx,$('#fylx'),'费用类型');
 
         }
         function makeoption(data,dom,text){
@@ -744,6 +740,17 @@ var label = "所属月份&nbsp;&nbsp;<span style='color:red;'>*</span>",
             }
         };
     }
+    $('#sqlx').change(function(){
+        if($(this).val() == 1){
+            $('.sqlx').hide();
+        }else{
+            $('.sqlx').show();
+            $('#skzh').val('');
+            $('#khyh').val('');
+            $('#skdw').val('');
+        }
+    });
+    
     $('#submit').click(function () {
             var datetime = $('#showDatePicker').val(),
                 fylx = $('#fylx').val(),
@@ -752,15 +759,18 @@ var label = "所属月份&nbsp;&nbsp;<span style='color:red;'>*</span>",
                 khyh = $('#khyh').val(),
                 skdw = $('#skdw').val(),
                 ykje = $('#ykje').val(),
+                sqlx = $('#sqlx').val(),
                 file_names = $('#file_names').val();
             
             if (fylx == -1 || !fylx) return tooltip('请选择费用类型');
             if (fkfs == -1 || !fkfs) return tooltip('请选择付款方式');
            
             if (!ykje || ykje<=0 ) return tooltip('用款金额不能为空或小于零');
-            if (!skdw ) return tooltip('请输入收款单位');
-            if (!skzh ) return tooltip('请输入收款账号');
-            if (!khyh ) return tooltip('请输入开户银行');
+            if(sqlx != 1){
+                if (!skdw ) return tooltip('请输入收款单位');
+                if (!skzh ) return tooltip('请输入收款账号');
+                if (!khyh ) return tooltip('请输入开户银行');
+            }
             if (!file_names ) return tooltip('至少上传一张图片');
             var reason = $('#reason').val();
             if(reason.length<5) return tooltip('用款用途不能少于5个字');

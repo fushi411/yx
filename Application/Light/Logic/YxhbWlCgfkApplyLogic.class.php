@@ -31,9 +31,8 @@ class YxhbWlCgfkApplyLogic extends Model {
     {
         $res = $this->record($id);
         $result = array();
-        if($res['fylx'] == 1){
+        if($res['fylx'] == 1 || $res['fylx'] == 4){
             $clientname = M('yxhb_gys')->field('g_name')->where(array('id' => $res['gys']))->find();
-            
         }elseif($res['fylx'] == 2 || $res['fylx'] == 7){
             $clientname = M('yxhb_wl')->field('g_name,g_ch')->where(array('id' => $res['gys']))->find();
             $type = "(汽运)";
@@ -87,7 +86,7 @@ class YxhbWlCgfkApplyLogic extends Model {
                                      'type'=>'string',
                                      'color' => 'black'
                                     );    
-        $result['content'][] = array('name'=>'申请理由：',
+        $result['content'][] = array('name'=>'相关说明：',
                                      'value'=>$res['zy'],
                                      'type'=>'text',
                                      'color' => 'black'
@@ -118,7 +117,7 @@ class YxhbWlCgfkApplyLogic extends Model {
     public function getDescription($id){
         $res = $this->record($id);
         $result = array();
-        if($res['fylx'] == 1){
+        if($res['fylx'] == 1 || $res['fylx'] == 4){
             $clientname = M('yxhb_gys')->field('g_name')->where(array('id' => $res['gys']))->find();
             
         }elseif($res['fylx'] == 2 || $res['fylx'] == 7){
@@ -160,7 +159,7 @@ class YxhbWlCgfkApplyLogic extends Model {
                                      'value'=>$res['rdy'],
                                      'type'=>'string'
                                     );
-        $result[] = array('name'=>'申请理由：',
+        $result[] = array('name'=>'相关说明：',
                                      'value'=>$res['zy'],
                                      'type'=>'text'
                                     );
@@ -184,10 +183,10 @@ class YxhbWlCgfkApplyLogic extends Model {
      */
     public function sealNeedContent($id){
         $res    = $this->record($id);
-        if($res['fylx'] == 1){
+        if($res['fylx'] == 1 || $res['fylx'] == 4){
             $name = M('yxhb_gys')->field('g_name')->where(array('id' => $res['gys']))->find();
             $modname = 'CgfkApply';
-            $title = '供货单位';
+            $title = $res['fylx'] == 1?'供货单位':'运输公司';
         }elseif($res['fylx'] == 2 || $res['fylx'] == 7){
             $name = M('yxhb_wl')->field('g_name')->where(array('id' => $res['gys']))->find();
             $modname = 'WlCgfkApply';
@@ -247,6 +246,9 @@ class YxhbWlCgfkApplyLogic extends Model {
         $ysye  = I('post.ysye');
         $bank  = I('post.type');
         $gyszh = I('post.gyszh');
+        $g_name= I('post.g_name');
+        
+        
         $htbh  = I('post.htbh');
         $copyto_id = I('post.copyto_id');
         if(!$val['bool']) return $val;
@@ -261,6 +263,7 @@ class YxhbWlCgfkApplyLogic extends Model {
             $fylx=2;
             $htlx = '海运';
         }
+        if(strpos($g_name,'(码头)') !== false) $fylx = 4;
         $addData = array(
             'dh'      => $this->getDhId(),
             'zd_date' => $today,
@@ -283,7 +286,6 @@ class YxhbWlCgfkApplyLogic extends Model {
             'htlx'    => $htlx,
             'yfye'    =>  0
         ); 
-
         $result = M('yxhb_cgfksq')->add($addData);
         if(!$result) return array('code' => 404,'msg' =>'提交失败，请重新尝试！');
         // 抄送
@@ -361,9 +363,24 @@ class YxhbWlCgfkApplyLogic extends Model {
                     b.id
                 ORDER BY
                     b.g_name ASC";
-            $hyres = M()->query($sql);
-            $hyres = $this->addSuffix($hyres,'(海运)');
-            $res = array_merge($res,$hyres);
+        $hyres = M()->query($sql);
+        $hyres = $this->addSuffix($hyres,'(海运)');
+        $res = array_merge($res,$hyres);
+        $sql = "SELECT
+                    a.id as id,
+                    a.g_name as text
+                FROM
+                    yxhb_gys a
+                INNER JOIN yxhb_cght_qt b ON a.id = b.ht_gys
+                WHERE
+                    b.ht_stat = 2
+                AND a.g_type = '码头'
+                and (a.g_helpword like '%{$word}%' or a.g_name like '%{$word}%')
+                GROUP BY
+                    a.id";
+        $mtres = M()->query($sql);
+        $mtres = $this->addSuffix($mtres,'(码头)');
+        $res = array_merge($res,$mtres);
         return $res;
     }
       /**
@@ -397,14 +414,26 @@ class YxhbWlCgfkApplyLogic extends Model {
      * 获取银行账号信息
      */
     public function bankInfo(){
-        $gys   = I('post.user_id'); 
-        $type  = I('post.type');
-        $where = array(
+        $gys    = I('post.user_id'); 
+        $g_name = I('post.g_name');
+        $type   = I('post.type');
+        $is_mt  = true;
+        if(strpos($g_name,'(码头)') === false) $is_mt = false;
+        $where  = array(
             'bank_stat' => 1,
-            'bank_wl'  => $gys,
             'bank_lx'   => $type
         );
-        $data  = M('yxhb_bankwl')->field('bank_wl,bank_zhmc,bank_account,bank_khh,bank_lx,id')->where($where)->select();
+        if($is_mt){
+            $where['bank_gys'] = $gys;
+            $table             = 'yxhb_bankgys';
+            $field             = 'bank_gys,bank_zhmc,bank_account,bank_khh,bank_lx,id';
+        }else{
+            $where['bank_wl'] = $gys;
+            $table            = 'yxhb_bankwl';
+            $field             = 'bank_wl,bank_zhmc,bank_account,bank_khh,bank_lx,id';
+        }
+         
+        $data  = M($table)->field($field)->where($where)->select();
         foreach($data as $k => $v){
             $account = $v['bank_account'];
             $data[$k]['bank_account'] = substr($account,0,4).'****'.substr($account,-4);
@@ -425,8 +454,11 @@ class YxhbWlCgfkApplyLogic extends Model {
      * 合同信息获取
      */
     public function getHyht(){
-        $gys   = I('post.user_id'); 
-        $wlht = M('yxhb_cght_yf ')
+        $gys    = I('post.user_id'); 
+        $g_name = I('post.g_name');
+        $table  = 'yxhb_cght_qt';
+        if(strpos($g_name,'(码头)') === false) $table = 'yxhb_cght_yf';
+        $wlht = M($table)
                 ->field('ht_dh')
                 ->where("ht_gys={$gys}")
                 ->select();

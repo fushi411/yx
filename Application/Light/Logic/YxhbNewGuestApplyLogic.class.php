@@ -28,12 +28,12 @@ class YxhbNewGuestApplyLogic extends Model {
         return $this->trueTableName;
     }
 
-    //显示在审批中
+    //详情(点击查看之后显示)
     public function recordContent($id)
     {
         $res = $this->record($id);
         $result = array();
-        $result['content'][] = array('name'=>'申请单位：',
+        $result['content'][] = array('name'=>'系统类型：',
             'value'=>'环保新增备案客户',
             'type'=>'date',
             'color' => 'black'
@@ -94,6 +94,7 @@ class YxhbNewGuestApplyLogic extends Model {
      * @param  integer $id 记录ID
      * @return array       记录数组
      */
+    //审批助手显示
     public function getDescription($id){
         $res = $this->record($id);
         $result = array();
@@ -102,8 +103,9 @@ class YxhbNewGuestApplyLogic extends Model {
             'value'=> date('m-d H:i',strtotime($res['dtime'])) ,
             'type'=>'date'
         );
+
         $result[] = array('name'=>'申请日期：',
-            'value'=> date('m-d H:i',strtotime($res['date'])) ,
+            'value'=> $res['date'] ,
             'type'=>'date'
         );
 

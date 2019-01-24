@@ -17,22 +17,7 @@ class WorkFlowFuncController extends Controller {
 		return array("status"=>"error");
 	}
 
-	/**
-	* 合同审批通过后调用函数
-	* @param  [integre] $aid [合同记录父ID]
-	* @return [array]      [状态]
-	*/
-	public function YxhbContractApplyEnd($aid)
-	{
-		$updateQuery="update #@__ht set ht_stat=2 where ht_stat=1 and pid=$aid";
-		$res = $this->db->ExecuteNoneQuery($updateQuery);
-		if ($res) {
-	  		$resArr = array("status"=>"success");
-		} else {
-	  		$resArr = array("status"=>"failure");
-		}
-		return $resArr;
-	}
+	
 	/**
 	* 销售日计划审批通过后调用函数
 	* @param  [integre] $aid [记录ID]
@@ -572,6 +557,17 @@ class WorkFlowFuncController extends Controller {
         return $resArr;
 	}
 	/**
+     * 建材费用开支通过后调用函数
+     * @param  [integre] $aid [记录ID]
+     * @return [array]      [状态]
+     */
+	public function YxhbCostMoneyEnd($aid)
+    {
+		$res = M('yxhb_feefy')->where(array('id'=>$aid))->setField('stat', 4);
+        $resArr = $res?array("status"=>"success"):array("status"=>"failure");
+        return $resArr;
+	}
+	/**
      * 环保退修改通过后调用函数
      * @param  [integre] $aid [记录ID]
      * @return [array]      [状态]
@@ -628,13 +624,7 @@ class WorkFlowFuncController extends Controller {
         if(!empty($id))  $res = M('kk_newguest')->where(array('id'=>$id['g_beian']))->data($data)->save();
         $res = M('kk_guest2')->where(array('id'=>$aid))->setField('g_stat3', 1);
 
-        //修改子客户状态
-        $map = array(
-            'reid'=>$aid,
-            'id'=>$aid+1,
-        );
-        $res2 = M('kk_guest2')->where($map)->setField('g_stat3', 1);
-
+        $newres = D('KkContract_guest_Apply2','Logic')->add2($aid);
         $resArr = $res?array("status"=>"success"):array("status"=>"failure");
         return $resArr;
     }
@@ -651,12 +641,7 @@ class WorkFlowFuncController extends Controller {
         if(!empty($id))  $res = M('yxhb_newguest')->where(array('id'=>$id['g_beian']))->data($data)->save();
         $res = M('yxhb_guest2')->where(array('id'=>$aid))->setField('g_stat3', 1);
 
-        //修改子客户状态
-        $map = array(
-            'reid'=>$aid,
-            'id'=>$aid+1,
-        );
-        $res2 = M('yxhb_guest2')->where($map)->setField('g_stat3', 1);
+        $newres = D('YxhbContract_guest_Apply2','Logic')->add2($aid);
 
         $resArr = $res?array("status"=>"success"):array("status"=>"failure");
         return $resArr;
@@ -671,6 +656,18 @@ class WorkFlowFuncController extends Controller {
     {
         $res = M('kk_guest2')->where(array('id'=>$aid))->setField('g_stat3', 1);
         $resArr = $res?array("status"=>"success"):array("status"=>"failure");
+
+        //如果总客户的开票方式和结算方式为空，则把子客户的开票方式和结算方式复制到总客户中
+        $data = M('kk_guest2')->where(array('id'=>$aid))->find();
+        $map = array(
+            "id"=>$data['reid'],
+        );
+        $data2 = M('kk_guest2')->where($map)->find();
+        if (empty($data2['g_kpfs']) || empty($data2['g_jsfs'])){
+            $g['g_kpfs'] = $data['g_kpfs'];
+            $g['g_jsfs'] = $data['g_jsfs'];
+            $res = M('kk_guest2')->where($map)->data($g)->save();
+        }
         return $resArr;
     }
 
@@ -683,9 +680,59 @@ class WorkFlowFuncController extends Controller {
     {
         $res = M('yxhb_guest2')->where(array('id'=>$aid))->setField('g_stat3', 1);
         $resArr = $res?array("status"=>"success"):array("status"=>"failure");
+        //如果总客户的开票方式和结算方式为空，则把子客户的开票方式和结算方式复制到总客户中
+        $data = M('yxhb_guest2')->where(array('id'=>$aid))->find();
+        $map = array(
+            "id"=>$data['reid'],
+        );
+        $data2 = M('yxhb_guest2')->where($map)->find();
+        if (empty($data2['g_kpfs']) || empty($data2['g_jsfs'])){
+            $g['g_kpfs'] = $data['g_kpfs'];
+            $g['g_jsfs'] = $data['g_jsfs'];
+            $res = M('yxhb_guest2')->where($map)->data($g)->save();
+        }
+        return $resArr;
+    }
+	/**
+     * 建材新增合同通过后调用函数
+     * @param  [integre] $aid [记录ID]
+     * @return [array]      [状态]
+     */
+    public function KkContractApplyEnd($aid)
+    {
+        $res = M('kk_ht')->where(array('pid'=>$aid))->setField('ht_stat', 2);
+        $resArr = $res?array("status"=>"success"):array("status"=>"failure");
+        return $resArr;
+    }
+
+	/**
+     * 环保新增合同通过后调用函数
+     * @param  [integre] $aid [记录ID]
+     * @return [array]      [状态]
+     */
+    public function YxhbContractApplyEnd($aid)
+    {
+        $res = M('yxhb_ht')->where(array('pid'=>$aid))->setField('ht_stat', 2);
+        $resArr = $res?array("status"=>"success"):array("status"=>"failure");
         return $resArr;
     }
 
 
+    /**
+     * 建材发货删除通过后调用函数
+     * @param  [integre] $aid [记录ID]
+     * @return [array]      [状态]
+     */
+    public function Kkfh_del_ApplyEnd($aid)
+    {
+        $r = M('kk_fh')->where(array('id'=>$aid))->setField('fh_stat', 0);
+        $data = M('kk_fh')->where(array('id'=>$aid))->find();
+        if($data['fh_bzfs']!='散装'){
+            $r = M('kk_gb')->where(array('fh_num'=>$data['fh_num']))->setField('gb_stat', 0);
+        }
+        $res = D('Kkfh_del_Apply','Logic')->theEnd($aid);
+        $resArr = $res?array("status"=>"success"):array("status"=>"failure");
+        return $resArr;
+    }
 // -----END------
 }

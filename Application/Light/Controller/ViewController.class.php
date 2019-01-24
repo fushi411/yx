@@ -29,8 +29,11 @@ class ViewController  extends BaseController
         $appflow  = GetAppFlow($system,$mod_name);
         // 推送
         $push       = GetPush($system,$mod_name);
-        $detailAuth = D('YxDetailAuth')->CueAuthCheck();
-        $atten      = D('YxDetailAuth')->ActiveAttention($system,$mod_name);
+        $detailModel= D('YxDetailAuth');
+        $detailAuth = $detailModel->CueAuthCheck();
+        $atten      = $detailModel->ActiveAttention($system,$mod_name);
+        $explain    = $detailModel->ActiveExplain($system,$mod_name);
+        
         $this -> assign('system', $system);
         $this -> assign('modname', $mod_name);
         $this -> assign('push',$push['data']);
@@ -44,6 +47,7 @@ class ViewController  extends BaseController
         $this -> assign('today',$this->today);
         $this -> assign('title',$this->PageArr['title']);
         $this -> assign('atten',$atten);
+        $this -> assign('explain',$explain);
         $this -> assign('CueConfig',$detailAuth);
         if( $special_page){
             $this->display($mod_name.'/'.$special_page);

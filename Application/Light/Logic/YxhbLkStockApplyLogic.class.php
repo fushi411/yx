@@ -592,7 +592,7 @@ class YxhbLkStockApplyLogic extends Model {
                                      'value'=>$res['rdy'],
                                      'type'=>'string'
                                     );
-        $result[] = array('name'=>'申请理由：',
+        $result[] = array('name'=>'相关说明：',
                                      'value'=>$res['bz'] ? $res['bz'] :'无',
                                      'type'=>'text'
                                     );

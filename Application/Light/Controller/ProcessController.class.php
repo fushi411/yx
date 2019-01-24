@@ -14,37 +14,41 @@ class ProcessController extends Controller
      * 推送可视化页面
      */
     public function ApplyProcess(){
-        $pro_mod = I('modname');
+        $pro_mod = I('get.modname');
         // $pro_mod 为空的情况
-        $system = I('system');
+        $system = I('get.system');
         if(!$system)$system='yxhb';
         if($pro_mod == '') die;
-
-        $proData = GetAppFlow($system,$pro_mod);
-        $temp['proName'] = str_replace('表','',$proData[0]['pro_name']); 
-
-        // 特殊页面显示 （临时额度） 目前只有临时页面特殊，后期可能修改
-        switch($pro_mod){
-            case 'TempCreditLineApply': 
-                        $func = 'TempCreditLineApply'; 
-                break;
-            case 'fh_edit_Apply_hb': 
-                        $func = 'fh_edit_Apply_hb'; 
-                break;
-            case 'fh_edit_Apply': 
-                        $func = 'fh_edit_Apply'; 
-                break;
-            case 'KfMaterielApply': 
-                        $func = 'KfMaterielApply'; 
-                break;
-            default:
-                        $func = 'getApplyProcess';
+        $mod_name  = D('Seek')->getModname($pro_mod,$system);
+        $mod_name  = $mod_name.'流程';
+        $map = array(
+            'system' => $system,
+            'mod'    => $pro_mod,
+            'stat'   => 1,
+        );
+        $data = M('yx_config_viewpro')->where($map)->order('id desc')->select();
+        $temp = array();
+        if(empty($data)){
+            $html = D(ucfirst($system).'Appflowtable')->getConditionStepHtml($pro_mod);
+            $temp[] = array(
+                'title' => $mod_name,
+                'html'  => $html, 
+            );
+        }else{
+            foreach( $data as $k => $v){
+                $html = D(ucfirst($system).'Appflowtable')->getConditionStepHtml($pro_mod,$v['condition']);
+                $temp[] = array(
+                    'title' => $v['title'],
+                    'html'  => $html, 
+                );
+            }
         }
-        $temp['data'] = $this->$func($proData);
+        $show['name'] = $mod_name;
+        $show['data'] = $temp;
         $authGroup =  $this->getAuthGroup($system,$pro_mod);
         $this->assign('group',$authGroup);
-        $this->assign('data',$proData);
-        $this->assign('show',$temp);
+        //$this->assign('data',$proData);
+        $this->assign('show',$show);
       
         $this->display('Process/ApplyProcess');
     }

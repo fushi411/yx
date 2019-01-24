@@ -80,7 +80,7 @@ class KkfhrefundApplyLogic extends Model {
                                      'color' => 'black'
                                     );
                         
-        $result['content'][] = array('name'=>'申请理由：',
+        $result['content'][] = array('name'=>'相关说明：',
                                      'value'=>$res['xg_reason'],
                                      'type'=>'text',
                                      'color' => 'black'
@@ -253,7 +253,7 @@ class KkfhrefundApplyLogic extends Model {
                                      'type'=>'string'
                                     );
         
-        $result[] = array('name'=>'申请理由：',
+        $result[] = array('name'=>'相关说明：',
                                      'value'=>$res['xg_reason'],
                                      'type'=>'text'
                                     );
@@ -504,7 +504,7 @@ class KkfhrefundApplyLogic extends Model {
             'xg_person'   => $user,
             'image'       => $file,
         ); 
-        return array('code' => 404,'msg' =>'提交失败，请重新尝试！','data' => $addData);
+        
         if(empty($count)){
             $result = M('kk_fhxg')->add($addData);
         }else{

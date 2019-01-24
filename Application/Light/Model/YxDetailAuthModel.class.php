@@ -107,5 +107,41 @@ class YxDetailAuthModel extends Model
         $data = M('yx_config_attention')->where($map)->find();
         return $data;
     }
+
+    /**
+     * 获取是有效配置
+     * @param string $system
+     * @param string $modname
+     * @return array
+     */
+    public function ActiveExplain($system,$modname){
+        $map = array(
+            'system' => $system,
+            'mod'    => $modname,
+            'stat'   => 1
+        );
+        $explain = M('yx_config_explain')->where($map)->find();
+        if(empty($explain)) return $explain;
+        $data    = explode('&lt;br&gt;',$explain['content']);
+        $data    = array_filter($data);
+        $row     = count($data);
+        $explain['row']     = $row>=3?$row:3;
+        $explain['content'] = implode("\n",$data);
+        return $explain;
+         
+    }
     
+
+    // auth权限
+    public function authGetBmId($system){
+        if(empty($system)) return false;
+        $wxid   = session('wxid');
+        $data   = M('auth_group_access a')
+                ->join('auth_group b on a.group_id=b.id')
+                ->join($system.'_bm c on c.id=b.bm')
+                ->field('c.id')
+                ->where(array('a.uid' => $wxid))
+                ->find();
+        return $data['id'];
+    }
 }

@@ -228,25 +228,7 @@
             </div>
         </div>
     </div>
-    <div class="weui-cells weui-cells_form">
-        <div class="weui-cell">
-            <div class="weui-cell__hd">
-                <label class="weui-label">申请理由&nbsp;&nbsp;
-                    <span style="color:red;">*</span>
-                </label>
-            </div>
-        </div>
-        <div class="weui-cell">
-            <div class="weui-cell__bd" id="cnt">
-                <textarea class="weui-textarea" name="reason" id="reason" placeholder="请详细说明理由；
-至少5个字(必填)；
-严禁因发货余额不足；
-挂其他客户名义开单；" rows="5"></textarea>
-                <div class="weui-textarea-counter">
-                    <span id="reason_char">0</span>/200</div>
-            </div>
-        </div>
-    </div>
+   
     <input type="hidden" id="ratio" value="ratio">
     <div id="btn-all">
             <a href="javascript:;" class="weui-btn weui-btn_mini weui-btn_primary">返回</a>
@@ -481,7 +463,7 @@
                 var Y = $date.getFullYear(),
                     M = $date.getMonth() + 1,
                     D = $date.getDate();
-
+                    M = M<10 ? '0'+M:M;
                 return Y + '-' + M + '-' + D + ' 00:00:00';
         }
         var clickInfo = '';

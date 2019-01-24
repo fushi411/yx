@@ -694,15 +694,13 @@ class CustomerModel extends Model
      * @return arr   3种临时额度 申请情况
      */
     public function getQuoteTimes($client_id,$system,$date = ''){
-        $date = $date ==''?$this->today:$date;
-
+        $this->today = date('Y-m-d H:i',time());
+        if(!empty($date)) $this->today=$date;
         $tempClient = array('20000','50000','100000');
-        $daysArray  = array(3,5,7);
         $data = array();
         foreach($tempClient as $k=>$v){
             $where = array(
-                "DATEDIFF('{$date}',date)" => array('lt',$daysArray[$k]),
-                'stat' => 1,
+                "DATEDIFF('{$this->today}',date) <= SUBSTRING(yxq,1) and stat" => 1,
                 'line' => $v,
                 'clientid' => $client_id
             );
