@@ -104,26 +104,26 @@
         </block >
         <!--  备案信息 END -->
     </div>
-    <div class="weui-cells">
-        <block>
-            <div class="weui-cell">
-                <div class="weui-cell__hd">
-                    <label class="weui-label">相关说明&nbsp;&nbsp;
-                        <span style="color:red;">*</span>
-                    </label>
-                </div>
-            </div>
-            <div class="weui-cell">
-                <div class="weui-cell__bd" id="wordCount">
-                    <textarea class="weui-textarea" name="info" id="info" placeholder="请输入相关说明(至少5个字);" rows="3"></textarea>
-                    <div class="weui-textarea-counter">
-                        <span id="reason_char">0</span>/200
-                    </div>
-                </div>
-            </div>
-        </block >
-        <!--  备案信息 END -->
-    </div>
+    <!--<div class="weui-cells">-->
+        <!--<block>-->
+            <!--<div class="weui-cell">-->
+                <!--<div class="weui-cell__hd">-->
+                    <!--<label class="weui-label">相关说明&nbsp;&nbsp;-->
+                        <!--<span style="color:red;">*</span>-->
+                    <!--</label>-->
+                <!--</div>-->
+            <!--</div>-->
+            <!--<div class="weui-cell">-->
+                <!--<div class="weui-cell__bd" id="wordCount">-->
+                    <!--<textarea class="weui-textarea" name="info" id="info" placeholder="请输入相关说明(至少5个字);" rows="3"></textarea>-->
+                    <!--<div class="weui-textarea-counter">-->
+                        <!--<span id="reason_char">0</span>/200-->
+                    <!--</div>-->
+                <!--</div>-->
+            <!--</div>-->
+        <!--</block >-->
+        <!--&lt;!&ndash;  备案信息 END &ndash;&gt;-->
+    <!--</div>-->
 </block>
 
 <block name="js">
@@ -133,15 +133,15 @@
          * keyup         统计备注的字数，截取前200个字符
          * len           备注的长度
          */
-        $("#info").keyup(function(){
-            var len = $(this).val().length;
-            if(len > 199){
-                $(this).val($(this).val().substring(0,200));
-                $("#reason_char").text(200);
-            }else{
-                $("#reason_char").text(len);
-            }
-        });
+    //     $("#info").keyup(function(){
+    //         var len = $(this).val().length;
+    //         if(len > 199){
+    //             $(this).val($(this).val().substring(0,200));
+    //             $("#reason_char").text(200);
+    //         }else{
+    //             $("#reason_char").text(len);
+    //         }
+    //     });
 
         var user_id = 0;
             //app_pro = $('#app_pro');    //审批流程
@@ -220,7 +220,7 @@
         var g_khlx = $('#g_khlx').val();                     //客户类型
         var contacts = $('#contacts').val();                //联系人员
         var telephone = $('#telephone').val();             //联系电话
-        var info = $('#info').val();                      //相关说明
+        var info = $('#reason').val();                    //相关说明
         var time = $('#showDatePicker').val();           //申请日期
         var copyto_id = $("#copyto_id").val();          //抄送的姓名（拼音）
         var ht_kpfs = $("#ht_kpfs").val();             //开票方式
@@ -302,7 +302,7 @@
                     $('#name').val(res.data.name);
                     $('#telephone').val(res.data.telephone);
                     $('#contacts').val(res.data.contacts);
-                    $('#info').val(res.data.info);
+                    $('#reason').val(res.data.info);
                     check_isbeian = res.data.id;
                 }
             }

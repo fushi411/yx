@@ -348,10 +348,10 @@ class KkfhdelApplyLogic extends Model {
 
 
         //把之前的审批记录清空
-        M('kk_appflowproc')->where(array('id' =>$fh_id))->setField('mod_name','');
+        M('kk_appflowproc')->where(array('id' =>$fh_id))->setField('mod_name',null);
 
         //把撤销记录清空
-        M('kk_appflowcomment')->where(array('id' =>$fh_id))->setField('mod_name','');
+        M('kk_appflowcomment')->where(array('id' =>$fh_id))->setField('mod_name',null);
 
         // 抄送
         $copyto_id = trim($copyto_id,',');

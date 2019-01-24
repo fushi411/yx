@@ -475,7 +475,7 @@ class KkCgfkApplyLogic extends Model {
         return $data;
     }
 
-    /**
+        /**
      * 合同信息获取
      */
     public function getHtbh(){

@@ -345,10 +345,10 @@ class YxhbfhdelApplyLogic extends Model {
 
 
         //把之前的审批记录清空
-        M('yxhb_appflowproc')->where(array('id' =>$fh_id))->setField('mod_name','');
+        M('yxhb_appflowproc')->where(array('id' =>$fh_id))->setField('mod_name',null);
 
         //把撤销记录清空
-        M('yxhb_appflowcomment')->where(array('id' =>$fh_id))->setField('mod_name','');
+        M('yxhb_appflowcomment')->where(array('id' =>$fh_id))->setField('mod_name',null);
 
         // 抄送
         $copyto_id = trim($copyto_id,',');

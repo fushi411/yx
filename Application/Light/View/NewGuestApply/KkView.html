@@ -39,52 +39,47 @@
         </div>
         <!--  联系电话 END -->
     </div>
-    <div class="weui-cells">
-        <block>
-            <div class="weui-cell">
-                <div class="weui-cell__hd">
-                    <label class="weui-label">相关说明&nbsp;&nbsp;
-                        <span style="color:red;">*</span>
-                    </label>
-                </div>
-            </div>
-            <div class="weui-cell">
-                <div class="weui-cell__bd" id="wordCount">
-                    <textarea class="weui-textarea" name="info" id="info" placeholder="请输入相关说明(至少5个字);" rows="3"></textarea>
-                    <div class="weui-textarea-counter">
-                        <span id="reason_char">0</span>/200
-                    </div>
-                </div>
-            </div>
-        </block >
-        <!--  备案信息 END -->
-    </div>
+    <!--<a onclick="zydata()">数据转移</a>-->
+    <!--<div class="weui-cells">-->
+        <!--<block>-->
+            <!--<div class="weui-cell">-->
+                <!--<div class="weui-cell__hd">-->
+                    <!--<label class="weui-label">相关说明&nbsp;&nbsp;-->
+                        <!--<span style="color:red;">*</span>-->
+                    <!--</label>-->
+                <!--</div>-->
+            <!--</div>-->
+            <!--<div class="weui-cell">-->
+                <!--<div class="weui-cell__bd" id="wordCount">-->
+                    <!--<textarea class="weui-textarea" name="info" id="info" placeholder="请输入相关说明(至少5个字);" rows="3"></textarea>-->
+                    <!--<div class="weui-textarea-counter">-->
+                        <!--<span id="reason_char">0</span>/200-->
+                    <!--</div>-->
+                <!--</div>-->
+            <!--</div>-->
+        <!--</block >-->
+        <!--&lt;!&ndash;  备案信息 END &ndash;&gt;-->
+    <!--</div>-->
 </block>
 
 <block name="js">
 <script type="text/javascript">
-    $(function(){
-        /**
-         * keyup         统计备注的字数，截取前200个字符
-         * len           备注的长度
-         */
-        $("#info").keyup(function(){
-            var len = $(this).val().length;
-            if(len > 199){
-                $(this).val($(this).val().substring(0,200));
-                $("#reason_char").text(200);
-            }else{
-                $("#reason_char").text(len);
-            }
-        });
-    });
-
-    // $(function () {
-    //     $('#attention').show();
-    //     $("#attentionContent").parent().attr('style',"font-size:14px");
-    //     var html = `<span>1.新增备案客户当日未转为合同客户，或当日无跟踪记录，次日系统自动删除;</span></br>`;
-    //     $('#attentionContent').html(html);
-    // })
+    // $(function(){
+    //     /**
+    //      * keyup         统计备注的字数，截取前200个字符
+    //      * len           备注的长度
+    //      */
+    //     $("#info").keyup(function(){
+    //         var len = $(this).val().length;
+    //         if(len > 199){
+    //             $(this).val($(this).val().substring(0,200));
+    //             $("#reason_char").text(200);
+    //         }else{
+    //             $("#reason_char").text(len);
+    //         }
+    //     });
+    // });
+    
 
     /**
      * checkItem          检测填写的内容是否有空缺的函数
@@ -105,7 +100,7 @@
         var name = $('#name').val();                          //备案名称
         var contacts = $('#contacts').val();                //联系人
         var telephone = $('#telephone').val();             //联系电话
-        var info = $('#info').val();                      //相关说明
+        var info = $('#reason').val();                    //相关说明
         var time = $('#showDatePicker').val();           //申请日期
         var copyto_id = $("#copyto_id").val();          //抄送的姓名（拼音）
 
@@ -160,6 +155,18 @@
             success: function (res) {
                 check_isset = res;
                 if (res == false) return tooltip('备案名称已存在，请调整后申请!');
+            }
+        })
+    }
+
+    //数据转移
+    function zydata() {
+        $.ajax({
+            type:'post',
+            url:"{:U('Light/Api/NewGuestApplyApi')}"+"&system=kk&modname=NewGuestApply&action=zydata",
+            dataType: 'json',
+            success: function (res) {
+               console.log(res)
             }
         })
     }

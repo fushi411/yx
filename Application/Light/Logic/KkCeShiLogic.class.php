@@ -1,6 +1,6 @@
 <?php
 namespace Light\Logic;
-use Think\Model;
+use Think\Controller;
 use  Vendor\Overtrue\Pinyin\Pinyin;
 
 /**
@@ -8,9 +8,9 @@ use  Vendor\Overtrue\Pinyin\Pinyin;
  * @author 
  */
 
-class KkNewGuestApplyLogic extends Model {
+class KkCeShiLogic extends BaseController {
     // 实际表名
-    protected $trueTableName = 'kk_newguest';
+    protected $trueTableName = 'kk_pushlist';
 
     /**
      * 记录内容
@@ -164,94 +164,62 @@ class KkNewGuestApplyLogic extends Model {
         return $result;
     }
 
-
-    /**
-     * 我的审批，抄送，提交 所需信息
-     * @param  integer $id 记录ID
-     * @return array    所需内容      
-     */
-    public function addNewGuest(){
-        $name = I('post.name');
-        $product = '水泥';
-        $contacts = I('post.contacts');
-        $telephone = I('post.telephone');
-        $info = I('post.info');
-        $date = I('post.time');
-        $copyto_id  = I('post.copyto_id');
-        $sales = session('name');
-        $salesid = session('kk_id');
-
-        $py = new PinYin();
-        $helpword = $py->abbr($name);
-        $sub_time = date("Y-m-d H:i:s",time());
-        $res = array(
-            'name'=>$name,                      //备案名称
-            'salesid'=>$salesid,                //申请者的id
-            'clientvalue'=>'',
-            'date'=>$date,                      //申请日期
-            'product'=>$product,                //产品
-            'telephone'=>$telephone,            //电话
-            'addr'=>'',
-            'sales'=>$sales,                    //申请者姓名
-            'dtime'=>$sub_time,                 //提交时间
-            'helpword'=>$helpword,              //拼音
-            'stat'=>2,
-            'area'=>'',
-            'info'=>$info,                      //相关说明
-            'notice'=>'',
-            'contacts'=>$contacts,              //联系人
-            'edittime'=>'0000-00-00 00:00:00',
-            'stat2'=>1,                         //1代表未转为合同客户的备案客户，2表示已经转为合同客户
-            'stat3'=>1,
-        );
-        //$_POST    提交数据的方式为post
-        if(!M('kk_newguest')->autoCheckToken($_POST)) return array('code' => 404,'msg' => '网络延迟，请勿点击提交按钮！');    //在Model.class.php中，自动表单令牌验证
-        $result = M('kk_newguest')->add($res);
-
-        if(!$result) return array('code' => 404,'msg' =>'提交失败，请重新尝试！');
-        // 抄送
-        $copyto_id = trim($copyto_id,',');      //移除字符串两侧的空白字符及','
-        if (!empty($copyto_id)) {
-            D('KkAppcopyto')->copyTo($copyto_id,'NewGuestApply', $result);
-        }
-        $wf = A('WorkFlow');    //调用控制器
-        $res = $wf->setWorkFlowSV('NewGuestApply',$result, $salesid, 'kk');
-        return array('code' => 200,'msg' => '提交成功' , 'aid' =>$result);
+   //
+    public function push(){
+        $system = 'kk';
+        $special_page = I('get.special');
+        $mod_name = 'CeShi';
+        $push  = $this->GetPush($system,$mod_name);
+        $this -> assign('push',$push['data']);
+        $this->display($mod_name.'/'.$special_page);
+        return $push;
     }
 
-    // 重名验证
-    public function checkNameIsSet(){
-        $name = I('post.name');
-        $map = array(
-            'name' => $name,
-            'stat'=>2
+    function GetPush($system,$mod_name)
+    {
+        if(!$mod_name) return false;
+        $data = array(
+            'receviers' => '',
+            'data'      => array()
         );
-        $data = M('kk_newguest')->where($map)->find();
-        if(empty($data)) return true;
-        return false;
-    }
+        // 查询推送的人员
+        $res = M($system.'_pushlist')
+            ->field('push_name')
+            ->where(array('pro_mod' => $mod_name, 'stat' => 1))
+            ->find();
+        // 为空，返回空数组
+        if(empty($res)) return $data;
+        $data['receviers'] = $res['push_name'];
+        $pushArr = json_decode($res['push_name'],true);
+        $push_id = $pushArr['push'];
+        $tempStr = explode(',',$push_id);
 
-
-    //转移数据
-    public function zydata(){
-        $map = array(
-            'stage_id'=>0,
-            'stage_name'=>'推送'
-        );
-        $data = M('yxhb_appflowtable')->where($map)->select();
-        foreach ($data as $val){
-            $res = array(
-                'pro_mod'=>substr($val['pro_mod'],0,-5),
-                'stage_name'=>'推送',
-                'date'=>'',
-                'condition'=>'',
-                'push_name'=>substr($val['condition'],8,-1),
-                'ranges'=>'',
-                'type'=>2,
-                'stat'=>1,
-            );
-            $result = M('yxhb_pushlist')->add($res);
+        // where 条件拼接
+        foreach($tempStr as $k => $v){
+            if($k != 0) $where .=' or ';
+            $where .= "wxid = '{$v}'";
         }
+        $res = M($system.'_boss')
+            ->field('name,wxid,avatar')
+            ->where($where)
+            ->select();
+        $temp = $res;
+        foreach($temp as $k => $v){
+            $temp[$k]['sortwxid'] = strtolower($v['wxid']);
+        }
+        $top  = array('ChenBiSong','csh','csl');
+        $array = array('','','');
+
+        $temp  = list_sort_by($temp,'sortwxid','asc');
+
+        foreach($temp as $v){
+            if($v['wxid'] == $top[0]){ $array[0] = $v;continue;}
+            if($v['wxid'] == $top[1]){ $array[1] = $v;continue;}
+            if($v['wxid'] == $top[2]){ $array[2] = $v;continue;}
+            $array[] = $v;
+        }
+        $data['data'] = array_filter($array);
+        return $data;
     }
     
 }
