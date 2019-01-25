@@ -277,7 +277,7 @@ class KkContractguestApplyLogic extends Model {
             'g_khlx'=>$g_khlx,          //客户类型
             'g_ed'=>0,
             'reid'=>0,                  //0代表总客户，其他代表是这个数字的二级客户
-            'g_stat'=>0,
+            'g_stat'=>1,
             'g_flag'=>0,
             'salesid'=>$salesid,        //申请人的id
             'sales'=>$sales,            //申请人的姓名

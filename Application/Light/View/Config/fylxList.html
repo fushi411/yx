@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>费用类型配置</title>
+    <title>费用类型列表</title>
     <link href="__PUBLIC__/assets/css/bootstrap.min.css" rel="stylesheet">
     <!-- 引入 WeUI -->
     <!-- <link rel="stylesheet" href="https://res.wx.qq.com/open/libs/weui/1.1.2/weui.min.css" /> -->
@@ -118,48 +118,27 @@
 
 <body>
     <div class="weui-toptips weui-toptips_warn js_tooltips" style="opacity: 1;">错误提示</div>
-
     <div class="container" id="container">
-            <h3 class="titleTab" style="text-align: center;">费用类型配置</h3>
-            <if condition="$type neq 'add'">
-                <div class="weui-cells weui-cells_form">
-                <else/>
-                <div class="weui-cells weui-cells_form" style="display:none;">
-            </if>
-                    <div class="weui-cell weui-cell_switch">
-                        <div class="weui-cell__bd">删除</div>
-                        <div class="weui-cell__ft">
-                            <label for="switchCP" class="weui-switch-cp">
-                                <if condition="$data.stat eq 1">
-                                        <input id="switchCP" class="weui-switch-cp__input" type="checkbox" value="off">
-                                        <else/>
-                                        <input id="switchCP" class="weui-switch-cp__input" type="checkbox" checked="checked" value="on">
-                                </if>
-                                
-                                <div class="weui-switch-cp__box"></div>
-                            </label>
-                        </div>
-                    </div>
-                </div>
-        <if condition="$type neq 'add'">
-            <div class="weui-cells__title">修改费用类型名称</div>
-        <else/>
-            <div class="weui-cells__title">费用类型名称</div>
-        </if>
-        <div class="weui-cells weui-cells_form">
-            <div class="weui-cell" id="cnt">
-                <div class="weui-cell__bd">
-                    <input class="weui-input" type="text" id='fy_name' value="{$data['fy_name']}" placeholder="请输入费用类型名称">
-                </div>
+        <div class="page home js_show">
+            <h3 class="titleTab" style="text-align: center;">费用类型列表</h3>
+            <div class="weui-cells__title">费用类型列表 
+                    <span class="glyphicon glyphicon-plus addbtn" index="{:U('Light/Config/Dispenser',array('robot'=>'fylx','system' => $system ,'type' =>'add'))}" 
+                        aria-hidden="true" style="float: right;font-weight: 800;margin-right: 5px;color: #09BB07;"></span>
             </div>
-         
-        </div>
-        <div class="weui-btn-area">
-            <input type="hidden" name="file_names" id="file_names">
-            <a class="weui-btn weui-btn_primary" href="javascript:" id="submit">提交</a>
+            <div class="weui-cells" style="margin-bottom: 35px;">
+                <volist name="data" id="vo" key="k">
+                    <a class="weui-cell weui-cell_access" href="{:U('Light/Config/Dispenser',array('robot'=>'fylx','system' => $system ,'id' => $vo['id']))}">
+                        <div class="weui-cell__bd">
+                            <p style='margin: 0;'>{$k}.{$vo.fy_name}</p>
+                        </div>
+                        <div class="weui-cell__ft">
+                        </div>
+                    </a>
+                </volist>
+            </div>
         </div>
     </div>
-
+    
     <div id="loadingToast" style=" display: none;">
         <div class="weui-mask_transparent"></div>
         <div class="weui-toast">
@@ -205,50 +184,44 @@
         var r = window.location.search.substr(1).match(reg); 
         if (r != null) return unescape(r[2]); return null; 
     } 
-    // 启用配置
-    $('#switchCP').on('click',function(){
-        var switchVal=$(this).val();
-      
-         switchVal == 'on' ?$(this).val('off'):$(this).val('on');
+    $('.addbtn').click(function(){
+        location.href = $(this).attr('index');
     });
-    $('#mustfill').on('click',function(){
-        var switchVal=$(this).val();
-       
-         switchVal == 'on' ?$(this).val('off'):$(this).val('on');
-    });
-    // 点击提交
-    $('#submit').on('click',function(){
-       
-        toastfadeIn(200,'数据提交中');
-        var type   = getQueryString('type'),
-            id     = getQueryString('id'),
-            system = getQueryString('system');
-        $.ajax({
-                type:'POST',
-                url: "{:U('Light/Config/Dispenser',array('robot'=>'fylxApi'))}", //&system=yxhb&modname=CgfkApply&action=getCustomerList
-                dataType: 'json',
-                data: {
-                    switch : $('#switchCP').val(),
-                    name   : $('#fy_name').val(),
-                    system : system,
-                    type   : type,
-                    id     : id,
-                },
-                dataType: 'json',
-                success: function (res) {
-                    toast.fadeOut(200);
-                    if (res.code == 200) {
-                        $('#toast').fadeIn();
-                        setTimeout(function () {
-                            location.href = "{:U('Light/Config/Dispenser',array('robot'=>'fylxList'))}"+'&system='+system;
-                        }, 1500);
-                    } else {
-                        tooltip(res.msg);
-                    }
-                }
-            });
 
-    });
+    // // 点击提交
+    // $('#submit').on('click',function(){
+    //     var reasonVal = reason.val();
+    //     if(!reasonVal) return tooltip('请输入注意事项');
+    //     toastfadeIn(200,'数据提交中');
+    //     var modname = getQueryString('modname'),
+    //         system  = getQueryString('system');
+    //         reasonVal = reasonVal.replace(/\n|\r\n/g,"<br>");  
+    //     $.ajax({
+    //             type:'POST',
+    //             url: "{:U('Light/Config/Dispenser',array('robot'=>'explainApi'))}", //&system=yxhb&modname=CgfkApply&action=getCustomerList
+    //             dataType: 'json',
+    //             data: {
+    //                 switch   : $('#switchCP').val(),
+    //                 mustfill : $('#mustfill').val(),
+    //                 text     : reasonVal,
+    //                 system   : system,
+    //                 modname  : modname
+    //             },
+    //             dataType: 'json',
+    //             success: function (res) {
+    //                 toast.fadeOut(200);
+    //                 if (res.code == 200) {
+    //                     $('#toast').fadeIn();
+    //                     setTimeout(function () {
+    //                         window.history.go(-1);
+    //                     }, 1500);
+    //                 } else {
+    //                     tooltip(res.msg);
+    //                 }
+    //             }
+    //         });
+
+    // });
 </script>
 
 </html>

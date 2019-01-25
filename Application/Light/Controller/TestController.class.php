@@ -50,7 +50,6 @@ class TestController extends \Think\Controller {
         dump($temp);
         foreach ($temp as $key => $value) {
             foreach($value as $k => $val){
-                
                 $procIDList = $val['per_id'].",";
                 $procNameList = $val['per_name'].",";
                 $wxid = $boss->getWXFromID($val['per_id']);

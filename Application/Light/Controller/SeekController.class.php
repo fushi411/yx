@@ -128,6 +128,7 @@ class SeekController  extends BaseController
      * 我的审批
      */
     public function myApprove(){
+        if(session('wxid') != 'HuangShiQi') return $this->display('Cue/404');
         $this->titleArr[0]['on'] = 'weui-bar__item_on';
 
         $this->assign('title','待我审批');   
@@ -279,6 +280,7 @@ class SeekController  extends BaseController
      * 提交记录
      */
     public function mySubmit(){
+        if(session('wxid') != 'HuangShiQi') return $this->display('Cue/404');
         $this->titleArr[1]['on'] = 'weui-bar__item_on';
 
         $this->assign('title','我的提交');   
@@ -427,6 +429,7 @@ class SeekController  extends BaseController
      *  - 未读抄送渲染，已读使用接口 
      */
     public function copyToMe(){
+        if(session('wxid') != 'HuangShiQi') return $this->display('Cue/404');
         //header("Content-type: text/html; charset=utf-8"); 
         $this->titleArr[3]['on'] = 'weui-bar__item_on';
         // 系统分开 yxhb kk 
@@ -453,6 +456,7 @@ class SeekController  extends BaseController
      */
     public function pushToMe(){
         //header("Content-type: text/html; charset=utf-8"); 
+          if(session('wxid') != 'HuangShiQi') return $this->display('Cue/404');
         $this->titleArr[2]['on'] = 'weui-bar__item_on';
         // 系统分开 yxhb kk 
         $wx_id = session('wxid'); 

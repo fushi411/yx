@@ -242,6 +242,7 @@ class KkNewGuestApplyLogic extends Model {
         foreach ($data as $val){
             $res = array(
                 'pro_mod'=>substr($val['pro_mod'],0,-5),
+                'pro_name'=>$val['pro_name'],
                 'stage_name'=>'推送',
                 'date'=>'',
                 'condition'=>'',
@@ -250,7 +251,7 @@ class KkNewGuestApplyLogic extends Model {
                 'type'=>2,
                 'stat'=>1,
             );
-            $result = M('yxhb_pushlist')->add($res);
+            M('yxhb_pushlist')->add($res);
         }
     }
     
