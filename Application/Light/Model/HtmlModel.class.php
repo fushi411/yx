@@ -35,30 +35,30 @@ class HtmlModel extends Model
 
     /**
      * 我的审批html
-     * @param int $type 1-签收 2-审批
+     * @param int $type 1-审批 2-签收
      */
     public function getMyApproveHtml($data,$type){
         $html = '';
         if( empty($data) || !is_array($data)) return $html;
         foreach( $data as $k=>$v ){
-            $url   = U('Light/Apply/applyInfo');
+            $url   = U('Light/Apply/applyInfo',array('system' => $v['system'],'modname' => $v['mod'] ,'aid' => $v['aid']));
             $date  = date('m/d',strtotime($v['date']));
-            list($lable,$pro) = $v['type'] == 1 ? $this->pro_stat() : $this->sign_stat();
+            list($lable,$pro) = $type == 1 ? $this->pro_stat($v['stat'],$v['apply']) : $this->sign_stat($v['stat'],$v['apply']);
             $html .= "<a href='{$url}'
                 class='weui-cell weui-cell_access weui-cell_link' style='text-decoration: none;'>
                 <div class='weui-media-box weui-media-box_text' style='width: 100%;padding-left: 0px;padding-right: 0px;'>
                     <div class='weui-flex' style='align-items: center;'>
                         <div class='weui-flex__item'>
-                            <h4 class='weui-media-box__title'>{$v['toptitle']}</h4>
+                            <h4 class='weui-media-box__title'>{$v['applyer']}的{$v['toptitle']}</h4>
                         </div>
                         <div class='weui-flex__item'><span class='label {$lable}' style='margin-left: 1em;padding-top: 0.3em;padding-bottom: 0.2em'>{$pro}</span></div>
                         <div class='weui-flex__item' style='text-align: right;'>
                             <h5>{$date}</h5>
                         </div>
                     </div>
-                    <p class='weui-media-box__desc ' style='margin-bottom: 0px;'><span>{$v['first_title']}</span><span>{$v['first_content']}</span></p>
-                    <p class='weui-media-box__desc ' style='margin-bottom: 0px;'><span>{$v['second_title']}</span><span>{$v['second_content']}</span></p>
-                    <p class='weui-media-box__desc ' style='margin-bottom: 0px;'><span>{$v['third_title']}</span><span>{$v['third_content']}</span></p>
+                    <p class='weui-media-box__desc ' style='margin-bottom: 0px;'><span>{$v['first_title']}：</span><span>{$v['first_content']}</span></p>
+                    <p class='weui-media-box__desc ' style='margin-bottom: 0px;'><span>{$v['second_title']}：</span><span>{$v['second_content']}</span></p>
+                    <p class='weui-media-box__desc ' style='margin-bottom: 0px;'><span>{$v['third_title']}：</span><span>{$v['third_content']}</span></p>
                 </div>
             </a>";
         }
@@ -71,7 +71,8 @@ class HtmlModel extends Model
         if($stat == 1) $res = array('label-success','已通过');  
         if($stat == 2 && $apply['stat'] == 2) $res = array('label-success','已通过');  
         if($stat == 2 && $apply['stat'] == 1) $res = array('label-danger','已退审');  
-        if($stat == 2 && $apply['stat'] == 0) $res = array('label-primary','审批中');  
+        if($stat == 2 && $apply['stat'] == 0) $res = array('label-primary','审批中');
+        if($stat == 2 && $apply['stat'] == -1) $res = array('label-primary','审批中');   
         if($stat == 0) $res = array('label-default','已撤销');  
         return $res;
     }

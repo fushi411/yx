@@ -35,7 +35,7 @@ class KkfhrefundApplyLogic extends Model {
         $result = array();
         $clientname = M('kk_guest2')->field('g_name')->where(array('id' => $res['fh_client']))->find();
         $result['content'][] = array('name'=>'申请单位：',
-                                     'value'=>'环保退货修改',
+                                     'value'=>'建材退货修改',
                                      'type'=>'date',
                                      'color' => 'black'
                                     );

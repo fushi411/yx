@@ -82,36 +82,90 @@ class SeekController  extends BaseController
         }
         return $sql;
     }
+
+
     /**
-     *  一键全读功能之抄送全读
+     * 我的审批
      */
-    public function copyReadApi(){
-        $wx_id = session('wxid'); 
-        $copySql = "SELECT * from (
-                    SELECT  `aid`,`readed_id`,`mod_name`,`time`,1 FROM `yxhb_appcopyto` WHERE FIND_IN_SET('{$wx_id}',`copyto_id`) AND  !FIND_IN_SET('{$wx_id}',`readed_id`) and type=1 AND `stat` <> 0 {$this->qs_sql()}
-                UNION ALL
-                    SELECT  `aid`,`readed_id`,`mod_name`,`time`,2 FROM `kk_appcopyto` WHERE FIND_IN_SET('{$wx_id}',`copyto_id`) AND !FIND_IN_SET('{$wx_id}',`readed_id`) and type=1 AND `stat` <> 0 {$this->qs_sql()}
-                ) a GROUP BY aid order by time desc";
-                
-        $copy = M()->query($copySql);   
-        foreach($copy as $k => $v){
-            // 查询数据
-            $system = $v[1] == 1?'yxhb':'kk';
-            $copyTo = D($system.'Appcopyto');
-            $copyTo->readCopytoApply($v['mod_name'],$v['aid'] ,null,1);
-        }
-        return  'success';
+    public function myApprove(){
+        $pass = I('get.pass');
+        if($pass != 'pass') return $this->display('Cue/404');
+        $this->titleArr[0]['on'] = 'weui-bar__item_on';
+        $this->assign('titleArr',$this->titleArr);  
+        $data = $this->noApprove();
+        $this->assign('noApprove',$data);
+        $this->display('Seek/myApprove');
+    }
+    /**
+     * 提交记录
+     */
+    public function mySubmit(){
+        $pass = I('get.pass');
+        if($pass != 'pass') return $this->display('Cue/404');
+        $this->titleArr[1]['on'] = 'weui-bar__item_on';
+        $this->assign('titleArr',$this->titleArr);  
+        $this->display('Seek/mySubmit');
     }
 
     /**
-     *  一键全读功能之推送全读
+     * 抄送我的  
+     *  - 未读抄送渲染，已读使用接口 
      */
+    public function copyToMe(){
+        $pass = I('get.pass');
+        if($pass != 'pass') return $this->display('Cue/404'); 
+        $this->titleArr[3]['on'] = 'weui-bar__item_on';
+        $this->assign('titleArr',$this->titleArr);  
+        $this->display('Seek/copyToMe');
+    }
+    /**
+     * 推送我的  
+     *  - 未读推送渲染，已读使用接口 
+     */
+    public function pushToMe(){
+        //header("Content-type: text/html; charset=utf-8"); 
+        $pass = I('get.pass');
+        if($pass != 'pass') return $this->display('Cue/404');
+        $this->titleArr[2]['on'] = 'weui-bar__item_on';
+        $this->assign('titleArr',$this->titleArr); 
+        $this->display('Seek/pushToMe');
+    } 
+
+    #STAR  一键全读 ---------------------------------------
+    //   抄送全读
+    public function copyReadApi(){
+        $this->allRead(1);
+        return  'success';
+    }
+
+    // 推送全读
     public function pushReadApi(){
+        $this->allRead(2);
+        return 'success';
+    }
+
+    // 全读功能
+    public function allRead($id){
         $wx_id = session('wxid'); 
         $pushSql = "SELECT * from (
-                    SELECT  `aid`,`readed_id`,`mod_name`,`time`,1 FROM `yxhb_appcopyto` WHERE FIND_IN_SET('{$wx_id}',`copyto_id`) AND !FIND_IN_SET('{$wx_id}',`readed_id`) and type=2 AND `stat` <> 0 {$this->qs_sql()}
+                    SELECT  
+                        `aid`,`readed_id`,`mod_name`,`time`,1 
+                    FROM 
+                        `yxhb_appcopyto` 
+                    WHERE 
+                        FIND_IN_SET('{$wx_id}',`copyto_id`) 
+                        AND !FIND_IN_SET('{$wx_id}',`readed_id`) 
+                        and type={$id} 
+                        AND `stat` <> 0 {$this->qs_sql()}
                 UNION ALL
-                    SELECT  `aid`,`readed_id`,`mod_name`,`time`,2 FROM `kk_appcopyto` WHERE FIND_IN_SET('{$wx_id}',`copyto_id`) AND !FIND_IN_SET('{$wx_id}',`readed_id`) and type=2 AND `stat` <> 0 {$this->qs_sql()}
+                    SELECT  
+                        `aid`,`readed_id`,`mod_name`,`time`,2 
+                    FROM 
+                        `kk_appcopyto` 
+                    WHERE 
+                        FIND_IN_SET('{$wx_id}',`copyto_id`) 
+                        AND !FIND_IN_SET('{$wx_id}',`readed_id`) 
+                        and type={$id} AND `stat` <> 0 {$this->qs_sql()}
                 ) a GROUP BY aid order by time desc";
                 
         $push = M()->query($pushSql);   
@@ -119,29 +173,83 @@ class SeekController  extends BaseController
             // 查询数据
             $system = $v[1] == 1?'yxhb':'kk';
             $copyTo = D($system.'Appcopyto');
-            $copyTo->readCopytoApply($v['mod_name'],$v['aid'] ,null,2);
+            $copyTo->readCopytoApply($v['mod_name'],$v['aid'] ,null,$id);
         }
-        return 'success';
     }
-
-    /**
-     * 我的审批
-     */
-    public function myApprove(){
-        if(session('wxid') != 'HuangShiQi') return $this->display('Cue/404');
-        $this->titleArr[0]['on'] = 'weui-bar__item_on';
-
-        $this->assign('title','待我审批');   
-        $this->assign('titleArr',$this->titleArr);   
-        $noApprove = $this->noApprove();
-        $this->assign('noApprove',$noApprove);
-        $this->display('Seek/myApprove');
+    #END  一键全读 ---------------------------------------
+    
+    #START 未读数量 ------------------------
+    // 未审批
+    public function getApproveCount(){
+        $res = $this->noApproveData();
+        return count($res);
     }
+    #END 未读数量 ------------------------
+
+    #START 未读数据 --------------------
+    // 未审批数据
+    public function noApproveData(){
+        $tab = $this->getAppTable();
+        $tab = $this->arrayMerge($tab);
+        $sub = array();
+        foreach ($tab as $k => $v ) {
+            $id = session($v['system'].'_id'); 
+            $res = M($v['system'].'_appflowproc a')
+                    ->join("{$v['table_name']}  on a.aid={$v['table_name']}.{$v['id']}")
+                    ->field($v['copy_field'])
+                    ->where(array('a.app_stat' => 0,"{$v['table_name']}.{$v['stat']}" => $v['submit']['stat'],'a.mod_name' => $v['mod_name'] , 'a.per_id' => $id))
+                    ->select();    
+            if(!empty($res)){
+                foreach($res as $key => $val){
+                    $res[$key]['system']  = $v['system'];
+                    $res[$key]['mod']     = $v['mod_name'];
+                    $res[$key]['modname'] = $v['toptitle'];
+                }
+            }
+            $sub = array_merge($sub,$res);
+        }
+        return $sub;
+    }
+    public function noApprove(){
+        $sub = $this->noApproveData();
+        $sub = list_sort_by($sub,'date','desc');
+        $res = $this->reData($sub);
+        $res = D('Html')->getMyApproveHtml($res,1); 
+        return $res;
+    }
+    #END 未读数据 --------------------
+
+    #START 数据重构 ---------------------------
+    public function reData($data){
+        $result = array();
+        foreach($data as $k => $v){
+            if( empty($v['applyer']) ) continue;
+            $res       = D(ucfirst($v['system']).$v['mod'], 'Logic')->sealNeedContent($v['aid']);
+            $appStatus = D($v['system'].'Appflowproc')->getWorkFlowStatus($res['modname'], $v['aid']);
+            $arr = array(
+                'first_title'    => $res['first_title'],
+                'second_title'   => $res['second_title'],
+                'third_title'    => $res['third_title'],
+                'first_content'  => $res['first_content'],
+                'second_content' => $res['second_content'],
+                'third_content'  => $res['third_content'],
+                'date'           => $v['date'],
+                'system'         => $v['system'],
+                'mod'            => $v['mod'],
+                'aid'            => $v['aid'],
+                'stat'           => $res['stat'],
+                'toptitle'       => $v['modname'],
+                'applyer'        => $v['applyer'],
+                'apply'          => $appStatus,
+            );
+            $result[] = $arr;
+        }
+        return $result;
+    }
+    #END 数据重构 ---------------------------
 
 
-    /**
-     * 已审批记录获取
-     */
+    // 已审批记录获取
     public function approve(){
         $page       = I('post.page_num');
         $page       = $page?$page:1;
@@ -220,89 +328,17 @@ class SeekController  extends BaseController
         // dump($result);
         return $result;
     }
-    /**
-     * 待审批的记录
-     */
-    public function noApprove(){
-        $tab = $this->getAppTable();
-        $tab = $this->arrayMerge($tab);
-        $result = array();
-        $sub = array();
-        foreach ($tab as $k => $v ) {
-            $id = session($v['system'].'_id'); 
-            $res = M($v['system'].'_appflowproc a')
-                    ->join("{$v['table_name']}  on a.aid={$v['table_name']}.{$v['id']}")
-                    ->field($v['copy_field'])
-                    ->where(array('a.app_stat' => 0,"{$v['table_name']}.{$v['stat']}" => $v['submit']['stat'],'a.mod_name' => $v['mod_name'] , 'a.per_id' => $id))
-                    ->select();    
-            if(!empty($res)){
-                foreach($res as $key => $val){
-                    $res[$key][0] = $k; 
-                }
-            }
-            $sub = array_merge($sub,$res);
-        }
-       
-        // 数据重构
-        foreach($sub as $k => $v){
-            if( empty($v['applyer']) ) continue;
-            $res       = D(ucfirst($tab[$v[0]]['system']).$tab[$v[0]]['mod_name'], 'Logic')->sealNeedContent($v['aid']);
-            $appStatus = D($tab[$v[0]]['system'].'Appflowproc')->getWorkFlowStatus($res['modname'], $v['aid']);
-            $statRes   = $this->transStat($res['modname'],$v['stat']);
-            $stat      = $statRes !== 'false' ? $statRes: $v['stat'];
-            $arr = array(
-                'system'    => $tab[$v[0]]['system'],
-                'systemName'=> $tab[$v[0]]['title'],
-                'mod_name'  => $res['modname'],
-                'title'     => $tab[$v[0]]['title'],
-                'aid'       => $v['aid'],
-                'date'      => date('m/d',strtotime($v['date'])),
-                'applyer'   => $v['applyer'],
-                'title2'    => $res['title2'],
-                'stat'      => $stat,
-                'titlename' => $res['title'],
-                'name'      => $res['name'],
-                'approve'   => iconv('gbk','UTF-8',$v['approve']),
-                'notice'    => $v['notice'],
-                'apply'     => $appStatus
-            );
-            $result[] = $arr;
-        }
-        return $result;
-    }
+    
+
 
     public function arrayMerge($data){
         $seek =  D('Seek');
         $tab = $seek->arrayMerge($data);
         return $tab;
     }
-    /**
-     * 提交记录
-     */
-    public function mySubmit(){
-        if(session('wxid') != 'HuangShiQi') return $this->display('Cue/404');
-        $this->titleArr[1]['on'] = 'weui-bar__item_on';
+    
 
-        $this->assign('title','我的提交');   
-        $this->assign('titleArr',$this->titleArr);
-        $submit = $this->mySubmitData(1);
-        $tmp = array();
-        $count = 1;
-        foreach($submit as $val){
-            if($val['apply']['stat'] == 1 && $count < 5) continue;
-            if($val['apply']['stat'] == 1) $count++;
-            
-            $tmp = $val;
-        }
-        
-        $this->assign('submit',$submit);
-        $this->display('Seek/mySubmit');
-    }
-    /**
-     *   deal with  my submission of record data
-     * @param array [$data] 
-     */
-   
+
 
     /**
      * 获取我的提交记录
@@ -424,61 +460,6 @@ class SeekController  extends BaseController
         return $flag;
     } 
     
-    /**
-     * 抄送我的  
-     *  - 未读抄送渲染，已读使用接口 
-     */
-    public function copyToMe(){
-        if(session('wxid') != 'HuangShiQi') return $this->display('Cue/404');
-        //header("Content-type: text/html; charset=utf-8"); 
-        $this->titleArr[3]['on'] = 'weui-bar__item_on';
-        // 系统分开 yxhb kk 
-        $wx_id = session('wxid'); 
-        $copy = array();
-        // 环保未读 yxhb 
-
-        $copySql = "SELECT * from (
-                     SELECT  `aid`,`readed_id`,`mod_name`,`time`,1 FROM `yxhb_appcopyto` WHERE FIND_IN_SET('{$wx_id}',`copyto_id`) AND !FIND_IN_SET('{$wx_id}',`readed_id`) and type=1 AND `stat` <> 0 {$this->qs_sql()}
-                    UNION ALL
-                     SELECT  `aid`,`readed_id`,`mod_name`,`time`,2 FROM `kk_appcopyto` WHERE FIND_IN_SET('{$wx_id}',`copyto_id`) AND !FIND_IN_SET('{$wx_id}',`readed_id`) and type=1 AND `stat` <> 0 {$this->qs_sql()}
-                    ) a GROUP BY aid order by time desc";
-        $copy = M()->query($copySql);          
-
-        $copy = $this->dealCopyArr($copy);
-        $this->assign('title','抄送我的');   
-        $this->assign('titleArr',$this->titleArr);
-        $this->assign('copyto',$copy);
-        $this->display('Seek/copyToMe');
-    }
-    /**
-     * 推送我的  
-     *  - 未读推送渲染，已读使用接口 
-     */
-    public function pushToMe(){
-        //header("Content-type: text/html; charset=utf-8"); 
-          if(session('wxid') != 'HuangShiQi') return $this->display('Cue/404');
-        $this->titleArr[2]['on'] = 'weui-bar__item_on';
-        // 系统分开 yxhb kk 
-        $wx_id = session('wxid'); 
-        $copy = array();
-        // 环保未读 yxhb 
-
-        $copySql = "SELECT * from (
-                     SELECT  `aid`,`readed_id`,`mod_name`,`time`,1 FROM `yxhb_appcopyto` WHERE FIND_IN_SET('{$wx_id}',`copyto_id`) AND !FIND_IN_SET('{$wx_id}',`readed_id`) and type=2 AND `stat` <> 0 {$this->qs_sql()}
-                    UNION ALL
-                     SELECT  `aid`,`readed_id`,`mod_name`,`time`,2 FROM `kk_appcopyto` WHERE FIND_IN_SET('{$wx_id}',`copyto_id`) AND !FIND_IN_SET('{$wx_id}',`readed_id`) and type=2 AND `stat` <> 0 {$this->qs_sql()}
-                    ) a GROUP BY aid order by time desc";
-                    
-        $copy = M()->query($copySql);          
-
-        $copy = $this->dealCopyArr($copy);
-        $this->assign('title','推送我的');   
-        $this->assign('titleArr',$this->titleArr);
-        $this->assign('copyto',$copy);
-        $this->display('Seek/pushToMe');
-    }    
-
-  
     /**
      * 抄送接口
      */
@@ -611,12 +592,12 @@ class SeekController  extends BaseController
     public function transStat($modname,$stat){
         if($stat == 0) return 0;
         $statArr = array(
-            'CgfkApply'               => array('4' =>2 ,'3' => 2 ,'2' => 1),
-            'WlCgfkApply'             => array('4' =>2 ,'3' => 2 ,'2' => 1),
-            'PjCgfkApply'             => array('4' =>2 ,'3' => 2 ,'2' => 1),
-            'CostMoney'               => array('5' =>2 ,'4' => 1 ,'2' => 1),
-            'Contract_guest_Apply'    => array('2' =>2 ,'1' => 1 ,'5' => 0, '4' => 0 , '3' => 1),
-            'Contract_guest_Apply2'   => array('2' =>2 ,'1' => 1 ,'5' => 0, '4' => 0 , '3' => 1),
+            'CgfkApply'               => array('4' =>2 ,'3' => 2 ,'2' => 1 ,'0' => 0 ),
+            'WlCgfkApply'             => array('4' =>2 ,'3' => 2 ,'2' => 1 ,'0' => 0 ),
+            'PjCgfkApply'             => array('4' =>2 ,'3' => 2 ,'2' => 1 ,'0' => 0 ),
+            'CostMoney'               => array('5' =>2 ,'4' => 1 ,'2' => 1 ,'0' => 0 ),
+            'Contract_guest_Apply'    => array('2' =>2 ,'1' => 1 ,'5' => 0, '4' => 0 , '3' => 1 , '0' => 0),
+            'Contract_guest_Apply2'   => array('2' =>2 ,'1' => 1 ,'5' => 0, '4' => 0 , '3' => 1 , '0' => 0),
             'ContractApply'           => array(0 => 0, 1 => 2,2 => 1,3 => 2),
         );
 
@@ -674,31 +655,30 @@ class SeekController  extends BaseController
         $wx_id = session('wxid'); 
         //抄送未读  yxhb - kk
         $copeSql = "SELECT count(1) as count from (
-            select * from kk_appcopyto where FIND_IN_SET('{$wx_id}',`copyto_id`) and !FIND_IN_SET('{$wx_id}',`readed_id`) and type=1 and stat!=0 {$this->qs_sql()} GROUP BY aid
+                select 
+                    * 
+                from 
+                    kk_appcopyto 
+                where 
+                    FIND_IN_SET('{$wx_id}',`copyto_id`) 
+                    and !FIND_IN_SET('{$wx_id}',`readed_id`) 
+                    and type=1 and stat!=0 {$this->qs_sql()} GROUP BY aid
             union ALL
-            select * from yxhb_appcopyto where FIND_IN_SET('{$wx_id}',`copyto_id`) and !FIND_IN_SET('{$wx_id}',`readed_id`) and type=1  and stat!=0 {$this->qs_sql()} GROUP BY aid)a ";
+                select 
+                    * 
+                from 
+                    yxhb_appcopyto 
+                where 
+                    FIND_IN_SET('{$wx_id}',`copyto_id`) 
+                    and !FIND_IN_SET('{$wx_id}',`readed_id`) 
+                    and type=1  and stat!=0 {$this->qs_sql()} GROUP BY aid)a ";
         $copyRes = M()->query($copeSql);
         $copy_count =$copyRes[0]['count'];
         return $copy_count?$copy_count:0;
     }
 
-    /**
-     * 未审批数量
-     */
-    public function getApproveCount(){
-        $tab = $this->getAppTable();
-        $count = 0;
-        foreach ($tab as $k => $v ) {
-            $id = session($v['system'].'_id'); 
-            $res = M($v['system'].'_appflowproc a')
-                    ->join("{$v['table_name']} b on a.aid=b.{$v['id']}")
-                    ->field('1')
-                    ->where(array('a.app_stat' => 0,'b.'.$v['stat'] => $v['submit']['stat'],'a.mod_name' => $v['mod_name'] , 'a.per_id' => $id))
-                    ->select();
-            $count += count($res);
-        }
-        return $count;
-    }
+    
+    
     /**
      * 查询表 -> 用于查询未审批的
      */
@@ -720,7 +700,6 @@ class SeekController  extends BaseController
             if($mod_name == 'WlCgfkApply' || $mod_name == 'PjCgfkApply' ) $mod_name = 'CgfkApply';
             if($v['system'] == $system && $v['mod_name'] == $mod_name){
                 $result = $v;
-               
                 break;
             }
         }

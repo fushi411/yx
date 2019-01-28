@@ -99,10 +99,19 @@ class KkPjCgfkApplyLogic extends Model {
         $result['imgsrc'] = '';
         $result['applyerID'] =  D('KkBoss')->getIDFromName($res['rdy']);
         $result['applyerName'] = $res['rdy'];
-        $result['stat'] = $res['stat'];
+        $result['stat'] = $this->transStat($res['stat']);
         return $result;
     }
 
+    public function transStat($stat){
+        $statArr = array(
+            4 => 2 ,
+            3 => 2 ,
+            2 => 1 ,
+            0 => 0
+        );
+        return $statArr[$stat];
+    }
     /**
      * 删除记录
      * @param  integer $id 记录ID
@@ -188,22 +197,20 @@ class KkPjCgfkApplyLogic extends Model {
         }elseif($res['fylx'] == 2 || $res['fylx'] == 7){
             $name = M('kk_wl')->field('g_name')->where(array('id' => $res['gys']))->find();
             $modname = 'WlCgfkApply';
-            $title = '汽运公司';
+            $title = '运输公司';
         }elseif($res['fylx'] == 6){
             $name = array( 'g_name' => $res['pjs']);
             $modname = 'PjCgfkApply';
             $title = '配件公司';
         }
         $result = array(
-            'sales'   => $res['rdy'],
-            'title2'  => '申请金额',
-            'approve' => number_format($res['fkje'],2,'.',',')."元",
-            'notice'  => $res['zy'],
-            'date'    => $res['zd_date'],
-            'title'   => $title,
-            'name'    => $name['g_name'], 
-            'modname' => $modname,
-            'stat'    => $res['stat']
+            'first_title'    => $title,
+            'first_content'  => $name['g_name']?$name['g_name']:'无',
+            'second_title'   => '申请金额',
+            'second_content' => number_format($res['fkje'],2,'.',',')."元",
+            'third_title'    => '相关说明',
+            'third_content'  => $res['zy'],
+            'stat'           => $this->transStat($res['stat']),
         );
         return $result;
     }

@@ -44,7 +44,7 @@ class WorkFlowController extends BaseController {
       $systemU = ucfirst($system);
       //当前审批流程
       $appflowproc = D($systemU.'Appflowproc');
-      $nowStepArr = $appflowproc->getStepInfo($flowName, $id, $pid);
+      $nowStepArr = $appflowproc->getStepInfo($flowName, $id, $pid); 
       // 获取下一审批步骤数(似乎没用了)
       $appflowtable = D($systemU.'Appflowtable');
       $tableStepArr = $appflowtable->getStepInfo($nowStepArr['pro_id'], $nowStepArr['app_stage']);

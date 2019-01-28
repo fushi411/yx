@@ -29,13 +29,11 @@ class KkCeShiLogic extends Controller {
     public function push(){
         $system   = I('get.system');
         $viewtype = I('viewtype');
-        $mod_name = 'CeShi';
+        $mod_name = I('get.modname');
         $push  = $this->GetPush($system,$mod_name);
         $this -> assign('system', $system);
         $this -> assign('modname', $mod_name);
         $this->assign('push',$push['data']);
-
-
         $this -> display($mod_name.'/'.ucfirst($system).$viewtype.'View');
     }
 

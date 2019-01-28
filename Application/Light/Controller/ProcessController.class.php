@@ -235,7 +235,6 @@ class ProcessController extends Controller
     }
 
 
-
     /**
      * 推送信息重构
      * @param array $condition condition 数据
@@ -328,5 +327,90 @@ class ProcessController extends Controller
      */
     public function forTest(){
         $this->display('Process/index');
+    }
+
+
+
+    //测试用的
+    public function push_ceshi(){
+        // 进入指定的位置所需参数
+        $system = I('get.system');
+        $pro_mod = I('get.modname');
+        $sy = array('kk' => '建材','yxhb' => '环保');
+        $arr = M($system.'_pushlist')->where(array('stat' => 1 , 'pro_mod' => $pro_mod))->field('pro_name,pro_mod,push_name')->select();
+        $push = $this->recombinant_ceshi($arr,$system);
+        $this->assign('condition',$push);
+        $this->assign('pro_name',$sy[$system].$push[0]['pro_name']);
+        $this->assign('pro_mod',$push[0]['pro_mod']);
+        $this->display('Process/push_ceshi');
+//        var_dump($push);
+    }
+
+
+    private function recombinant_ceshi($condition,$system,$mod,$sy){
+        // 数据检验
+        if(!is_array($condition)) return false;
+        foreach($condition as $k => $v){
+            $v['push_name'] = json_decode($v['push_name'],true);
+
+            // 特殊页面显示 （临时额度） 目前只有临时页面特殊，后期可能修改
+            switch($v['pro_mod']){
+                case 'TempCreditLineApply':
+                    $func = 'TempCreditLinePush';
+                    break;
+                default:
+                    $func = 'getApplyPush_ceshi';
+            }
+            if($sy == $system && $mod == $v['pro_mod']) $condition[$k]['display']   = 'black';
+            $condition[$k]['push_name'] = $this->$func($v,$system);
+        }
+        return $condition;
+    }
+
+    private function getApplyPush_ceshi($data,$system){
+        $result = array();
+        $pushManStr = $data['push_name'];
+        $pushManArr = explode(',',$pushManStr);
+        $pushManArr = $this->getUserInfo($pushManArr,$system);
+
+        $result[] = array(
+            'title' => $data['pro_name'],
+            'pushMan' =>$pushManArr
+        );
+        return $result;
+    }
+
+    //查看新增的推送人员是否已存在
+    public function check_ts(){
+        $system = I('post.system');
+        $name = I('post.name');
+        $pro_mod = I('post.pro_mod');
+        $res = M($system.'_pushlist')->field('push_name')->where(array('pro_mod'=>$pro_mod))->find();
+        if (empty($res)) $this->ajaxReturn(array('data'=>true));
+        $res = $res['push_name'];
+        $res = trim($res,'"');
+        $res = explode(',',$res);
+        //$res = json_decode($res['push_name'],true);  //因为存进去的不是json格式的，所以不能用json_decode
+        //$this->ajaxReturn($res);
+        foreach ($res as $val){
+            if ($name == $val) $this->ajaxReturn(array('data'=>false));
+        }
+        $this->ajaxReturn(array('data'=>true));
+    }
+
+    //修改推送名单
+    public function save_ts(){
+        $system = I('post.system');
+        $pro_mod = I('post.pro_mod');
+        $data = I('post.data');
+        //$this->ajaxReturn($data);
+        $data = implode(',', $data);
+        $data = '"'.$data.'"';
+        //$data = json_encode($data);
+        //$_POST    提交数据的方式为post
+//        if(!M($system.'_pushlist')->autoCheckToken($_POST)) return array('code' => 404,'msg' => '网络延迟，请勿点击提交按钮！');    //在Model.class.php中，自动表单令牌验证
+        $result = M($system.'_pushlist')->where(array('pro_mod'=>$pro_mod))->setField('push_name',$data);
+        if(!$result) $this->ajaxReturn(array('code' => 404,'msg' =>'提交失败，请重新尝试！'));
+        $this->ajaxReturn(array('code' => 200,'msg' => '提交成功' , 'aid' =>$result));
     }
 }
