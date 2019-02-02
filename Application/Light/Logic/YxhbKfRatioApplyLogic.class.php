@@ -238,9 +238,13 @@ class YxhbKfRatioApplyLogic extends Model {
         $scfz = $res['scfz']>9?$res['scfz']:'0'.$res['scfz'];
 
         $result = array(
-            array('生产时间',$res['date'].' '.$hour.':'.$scfz),
-            array('生产品种',$res['variety']),
-            array('相关说明',$res['bz']?$res['bz']:'无')
+            'first_title'    => '生产时间',
+            'first_content'  => $res['date'].' '.$hour.':'.$scfz,
+            'second_title'   => '生产品种',
+            'second_content' => $res['variety'],
+            'third_title'    => '相关说明',
+            'third_content'  => $res['bz']?$res['bz']:'无',
+            'stat'           => $res['state'],
         );
         return $result;
     }

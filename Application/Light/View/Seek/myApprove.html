@@ -56,7 +56,7 @@
     function getData(){
         $.ajax({
             type:'POST',
-            url: "{:U('Light/Seek/seekApi')}",
+            url: "{:U('Light/Seek/seekApi',array('cost'=>$cost))}",
             data: {
                 type: 'approve',
                 page_num:page,

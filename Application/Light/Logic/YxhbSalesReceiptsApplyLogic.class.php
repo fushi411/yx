@@ -292,9 +292,15 @@ class YxhbSalesReceiptsApplyLogic extends Model {
         $user = M('yxhb_guest2')->where(array('id' => $dtg['gid']))->find();
         $user_name = $user['g_name'];
         $result = array(
-            array('客户名称',$user_name),
-            array('收款金额', number_format($res['nmoney'],2,'.',',')."元"),
-            array('相关说明',$res['ntext']?$res['ntext']:'无')
+            'first_title'    => '客户名称',
+            'first_content'  => $user_name,
+            'second_title'   => '收款金额',
+            'second_content' => number_format($res['nmoney'],2,'.',',')."元",
+            'third_title'    => '本月累计',
+            'third_content'  => "&yen;".number_format($this->getTheMonthRec($dtg['gid'],$res['sj_date']),2,'.',',')."元",
+            'fourth_title'   => '相关说明',
+            'fourth_content' => $res['ntext']?$res['ntext']:'无',
+            'stat'           => $res['stat'],
         );
         return $result;
     }

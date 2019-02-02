@@ -44,4 +44,30 @@ class WxMessageModel extends Model {
         $system = 'yxhb';
         $this->wx->sendCardMessage($recevier,$title,$description,$url,15,$sender,$system);
     }
+
+    
+    //  自动催审
+    public function autoProSendMessage($data,$applyerName)
+    {
+        $system  = $data['system'];
+        $modname = $data['modname'];
+        $aid     = $data['aid'];
+        $mod     = $data['mod'];
+        $per_id  = $data['per_id']; // 当前审批人id
+
+        // 微信发送
+        $title = $modname.'(催审)';
+        $url = "https://www.fjyuanxin.com/WE/index.php?m=Light&c=Apply&a=applyInfo&system=".$system."&aid=".$aid."&modname=".$mod;
+        $applyerName='('.$applyerName.'提交)';
+        $boss = D($system.'_boss')->getWXFromID($per_id);
+        $description = "您有一个流程需要审批".$applyerName;
+
+        $receviers = "wk|HuangShiQi|".$boss;
+        $comment_list = D($system.'Appflowcomment')->autoMessageNumber($mod, $aid,$boss);
+        $description .= "\n系统发起的第{$comment_list}次催审";
+        $agentid = 15;
+        $info = $this->wx->sendCardMessage($receviers,$title,$description,$url,$agentid,$mod,$system);
+        return $info;
+    }
+
 }

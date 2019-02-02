@@ -242,15 +242,13 @@ class YxhbContractguestApply2Logic extends Model {
     public function sealNeedContent($id){
         $res = $this->record($id);
         $result = array(
-            'sales'   => $res['sales'],         //申请人的姓名
-            'title2'  => '客户类型',
-            'approve' => $res['g_khlx'],
-            'notice'  => $res['g_xmmc'],
-            'date'    => $res['g_date'],
-            'title'   => '客户名称',
-            'name'    => $res['g_name'],
-            'modname' => 'Contract_guest_Apply2',
-            'stat'    => $res['g_stat3']
+            'first_title'    => '客户名称',
+            'first_content'  => $res['g_name']?$res['g_name']:'无',
+            'second_title'   => '客户类型',
+            'second_content' => $res['g_khlx']?$res['g_khlx']:'无',
+            'third_title'    => '相关说明',
+            'third_content'  => $res['g_xmmc']?$res['g_xmmc']:'无',
+            'stat'           => $res['g_stat3'],
         );
         return $result;
     }
@@ -340,7 +338,7 @@ class YxhbContractguestApply2Logic extends Model {
         $copyto_id  = I('post.copyto_id');
         $g_khlx = I('post.g_khlx');
         $sales = session('name');
-        $salesid = session('kk_id');
+        $salesid = session('yxhb_id');
         $g_kpfs = I('post.ht_kpfs');
         $g_sljs = I('post.ht_sljsfs');
         $check_isbeian = I('post.check_isbeian');

@@ -214,15 +214,7 @@ class KkWlCgfkApplyLogic extends Model {
         return $result;
     }
 
-    public function transStat($stat){
-        $statArr = array(
-            4 => 2 ,
-            3 => 2 ,
-            2 => 1 ,
-            0 => 0
-        );
-        return $statArr[$stat];
-    }
+   
 
     /**
      * 获取采购付款 供应商信息

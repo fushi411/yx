@@ -192,9 +192,13 @@ class KkFhfRatioApplyLogic extends Model {
         $fz   = str_replace('分','',$res['scfz']);
         $hour = $hour>9?$hour:'0'.$hour;
         $result = array(
-            array('生产时间',$res['scrq'].' '.$hour.':'.$fz),
-            array('生产品种','复合粉'),
-            array('相关说明',$res['tznr']?$res['tznr']:'无')
+            'first_title'    => '生产时间',
+            'first_content'  => $res['scrq'].' '.$hour.':'.$fz,
+            'second_title'   => '生产品种',
+            'second_content' => '复合粉',
+            'third_title'    => '相关说明',
+            'third_content'  => $res['tznr']?$res['tznr']:'无',
+            'stat'           => $res['STAT'],
         );
         return $result;
     }

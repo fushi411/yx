@@ -63,16 +63,27 @@
             'data'      => array()
         );
         // 查询推送的人员
-        $res = M($system.'_appflowtable')
-              ->field('condition')
-              ->where(array('pro_mod' => $mod_name.'_push', 'stat' => 1))
+//        $res = M($system.'_appflowtable')
+//              ->field('condition')
+//              ->where(array('pro_mod' => $mod_name.'_push', 'stat' => 1))
+//              ->find();
+//        // 为空，返回空数组
+//        if(empty($res)) return $data;
+//        $data['receviers'] = $res['condition'];
+//        $pushArr = json_decode($res['condition'],true);
+//		$push_id = $pushArr['push'];
+//        $tempStr = explode(',',$push_id);
+
+          $res = M($system.'_pushlist')
+              ->field('push_name')
+              ->where(array('pro_mod' => $mod_name, 'stat' => 1))
               ->find();
-        // 为空，返回空数组
-        if(empty($res)) return $data;
-        $data['receviers'] = $res['condition'];
-        $pushArr = json_decode($res['condition'],true);
-		$push_id = $pushArr['push'];
-        $tempStr = explode(',',$push_id);
+          // 为空，返回空数组
+          if(empty($res)) return $data;
+          if($res['push_name']=='""') return $data;
+          $data['receviers'] = $res['push_name'];
+          $res = trim($res['push_name'],'"');
+          $tempStr = explode(',',$res);
         
         // where 条件拼接
         foreach($tempStr as $k => $v){

@@ -197,15 +197,13 @@ class YxhbTempCreditLineApplyLogic extends Model {
         $res = $this->record($id);
         $clientname = M('yxhb_guest2')->field('g_khjc')->where(array('id' => $res['clientid']))->find();
         $result = array(
-            'sales'   => $res['sales'],
-            'title2'  => '申请金额',
-            'approve' => number_format($res['line'],2,'.',',')."元",
-            'notice'  => $res['notice'],
-            'date'    => $res['date'],
-            'title'   => '客户名称',
-            'name'    => $clientname['g_khjc'], 
-            'modname' => 'TempCreditLineApply',
-            'stat'    => $res['stat']
+            'first_title'    => '客户名称',
+            'first_content'  => $clientname['g_khjc'],
+            'second_title'   => '申请金额',
+            'second_content' => number_format($res['line'],2,'.',',')."元",
+            'third_title'    => '相关说明',
+            'third_content'  => $res['notice']?$res['notice']:'无',
+            'stat'           => $res['stat'],
         );
         return $result;
     }

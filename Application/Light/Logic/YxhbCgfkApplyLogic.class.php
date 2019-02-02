@@ -194,10 +194,10 @@ class YxhbCgfkApplyLogic extends Model {
      */
     public function sealNeedContent($id){
         $res    = $this->record($id);
-        if($res['fylx'] == 1){
+        if($res['fylx'] == 1 || $res['fylx'] == 4){
             $name = M('yxhb_gys')->field('g_name')->where(array('id' => $res['gys']))->find();
             $modname = 'CgfkApply';
-            $title = '供货单位';
+            $title = $res['fylx'] == 1?'供货单位':'卸船码头';
         }elseif($res['fylx'] == 2 || $res['fylx'] == 7){
             $name = M('yxhb_wl')->field('g_name')->where(array('id' => $res['gys']))->find();
             $modname = 'WlCgfkApply';

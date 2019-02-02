@@ -207,18 +207,30 @@ class YxhbCostMoneyLogic extends Model {
      */
     public function sealNeedContent($id){
         $res    = $this->record($id);
+        if( $res['nfylx'] == 0 ){
+            $fybx = M('yxhb_feefy3')->where(array('dh' => $res['dh']))->find();
+            $fylx = M('yxhb_fylx')->field('id as val,fy_name as name')->where(array('id' =>$fybx['nfylx']))->order('id asc')->find(); 
+        }else{
+            $fylx = M('yxhb_fylx')->field('id as val,fy_name as name')->where(array('id' =>$res['nfylx']))->order('id asc')->find(); 
+        }
+
+        $first_title    = '申请类型';
+        $first_content  = '用款费用';
+        $second_title   = '费用类型';
+        $second_content = $fylx['name'];
+        if($res['nfylx'] == 0)$first_content  = '报销费用';
+
         $result = array(
-            'sales'   => $res['njbr'],
-            'title2'  => '用款金额',
-            'approve' => "&yen;".number_format(-$res['nmoney'],2,'.',',')."元",
-            'notice'  => $res['ntext'],
-            'date'    => $res['jl_date'],
-            'title'   => '收款单位',
-            'name'    => $res['skdw'], 
-            'modname' => 'CostMoney',
-            'stat'    => $this->transStat($res['stat'])
+            'first_title'    => $first_title,
+            'first_content'  => $first_content,
+            'second_title'   => $second_title,
+            'second_content' => $second_content,
+            'third_title'    => '用款金额',
+            'third_content'  => "&yen;".number_format(-$res['nmoney'],2,'.',',')."元",
+            'fourth_title'   => '相关说明',
+            'fourth_content' => $res['ntext']?$res['ntext']:'无',
+            'stat'           => $this->transStat($res['stat']),
         );
-        return $result;
         return $result;
     }
 

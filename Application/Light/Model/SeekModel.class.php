@@ -26,7 +26,7 @@ class SeekModel extends Model {
             $temp = array(
                 'title'      => $val['mod_title']     ,  
                 'search'     => $val['mod_search']    , 
-                'toptitle'   => $val['mod_show_name'] , 
+                'toptitle'   => $val['mod_title'] , 
                 'system'     => $val['mod_system']    , 
                 'mod_name'   => $val['name']          , 
                 'table_name' => $val['mod_table']     , 
@@ -44,9 +44,14 @@ class SeekModel extends Model {
     }
     /**
      * 审批 同表操作
+     * @param array $data 没用
+     * @param string $cost null-全选,1-排除费用开支，2-只有费用开支
      */
-    public function arrayMerge($data,$flag){
-        $data = M('yx_config_title')->where(array('stat' => array(1,2,'or')))->select();
+    public function arrayMerge($data,$cost){
+        $map  = array('stat' => array(1,2,'or'));
+        if($cost == 1)$map['name'] = array('neq','CostMoney');
+        if($cost == 2)$map['name'] = array('eq','CostMoney');
+        $data = M('yx_config_title')->where($map)->select();
         $result = array();
         foreach($data as $val){
             $field = "{$val['mod_table']}.{$val['mod_field_aid']}     as aid,
@@ -58,7 +63,7 @@ class SeekModel extends Model {
             $temp = array(
                 'title'      => $val['mod_title']     , 
                 'search'     => $val['mod_search']    , 
-                'toptitle'   => $val['mod_show_name'] , 
+                'toptitle'   => $val['mod_title'] , 
                 'system'     => $val['mod_system']    , 
                 'mod_name'   => $val['name']          , 
                 'table_name' => $val['mod_table']     , 
@@ -75,9 +80,8 @@ class SeekModel extends Model {
         return $result;
     }
 
-    /**
-     * 签收数组
-     */
+    
+    //  签收数组
     public function configSign(){
         $data = M('yx_config_title')->where(array('stat' => 3))->select();
         $result = array();
@@ -86,6 +90,7 @@ class SeekModel extends Model {
             $temp = array(
                 'title'      => $val['mod_title'] , 
                 'search'     => $val['mod_search'] , 
+                'toptitle'   => $val['mod_title'] , 
                 'system'     => $val['mod_system'] , 
                 'mod_name'   => $val['name'] , 
                 'table_name' => $val['mod_table'] , 

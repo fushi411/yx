@@ -243,9 +243,13 @@ class KkAddMoneyQtLogic extends Model {
         $res = $this->record($id);
         $skfsArr = array(4 => '现金',2 => '公司账户', 3 => '承兑汇票');
         $result = array(
-            array('收款方式',$skfsArr[$res['nfkfs']]),
-            array('收款金额', number_format($res['nmoney'],2,'.',',')."元"),
-            array('相关说明',$res['ntext']?$res['ntext']:'无')
+            'first_title'    => '收款方式',
+            'first_content'  => $skfsArr[$res['nfkfs']]?$skfsArr[$res['nfkfs']]:'无',
+            'second_title'   => '收款金额',
+            'second_content' => number_format($res['nmoney'],2,'.',',')."元",
+            'third_title'    => '相关说明',
+            'third_content'  => $res['ntext']?$res['ntext']:'无',
+            'stat'           => $res['stat'],
         );
         return $result;
     }

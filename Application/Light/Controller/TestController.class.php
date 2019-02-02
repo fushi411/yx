@@ -9,15 +9,173 @@ class TestController extends \Think\Controller {
         header('Content-Type: text/html; charset=utf-8');
         // iconv('gbk','UTF-8',$v['approve']),
         //$data = D('KkAppflowtable')->getConditionStepHtml($modname,$condition);
+        $limit = 1;
+        $page   = I('post.page_num');
+        $page   = $page?$page:1;
+        $search = I('post.search');
+        $arr    = $this->getSearchTable($search);
+        $name   = session('name');
+        $mod    = array();
+        $eq     = empty($limit)?'!=':'=';
+        $unpass = empty($limit)?'=':'!=';
+        $and    = empty($limit)?'or':'and';
+        // sql 重构
+        foreach($arr as $k => $v){
+            $map = array(
+                'a.app_stat'                      => 1,
+                "{$v['table_name']}.{$v['stat']}" => $v['submit']['stat'],
+                'a.mod_name'                      => $v['mod_name']
+            );
+            $res = M($v['system'].'_appflowproc a')
+                    ->join("{$v['table_name']}  on a.aid={$v['table_name']}.{$v['id']}")
+                    ->field("a.aid")
+                    ->where($map)
+                    ->select();  
+            $aid = '';
+            foreach($res as $val){
+                $aid .= "{$and} {$v['id']}{$unpass}{$val['aid']} ";
+            };
+            if($k != 0) $sql .= ' UNION all ';
+            $userId =  $idArr[$v['system']];
+            $sql .=  "select 
+                        {$v['copy_field']},{$k} 
+                    from 
+                        {$v['table_name']} 
+                    where 
+                        {$v['submit']['name']}='{$name}' 
+                    AND {$v['stat']}{$eq}{$v['submit']['stat']}  {$v['map']}";
+        }
+        if(empty($sql)) return '';
+        $sql = "select * from($sql)a GROUP BY aid,`0` ORDER BY date desc";
+        if(empty($limit)){
+            $sql .= ' LIMIT '.(($page-1)*20).',20';
+        }
+        $res = M()->query($sql);  
+        foreach($res as $k => $v){
+            $key = $v['0'];
+            $res[$k]['system']  = $arr[$key]['system'];
+            $res[$k]['mod']     = $arr[$key]['mod_name'];
+            $res[$k]['modname'] = $arr[$key]['toptitle'];
+        }
+        $res = $this->reData($res);
+        dump($sql);
+        $res = M()->query($sql);  
+      
+        
+        //dump($res);
+    }
+    public function reData($data){
+        $result = array();
+        foreach($data as $k => $v){
+            if( empty($v['applyer']) ) continue;
+            $res       = D(ucfirst($v['system']).$v['mod'], 'Logic')->sealNeedContent($v['aid']);
+            $appStatus = D($v['system'].'Appflowproc')->getWorkFlowStatus($v['mod'], $v['aid']);
+            $arr = array(
+                'first_title'    => $res['first_title'],
+                'second_title'   => $res['second_title'],
+                'third_title'    => $res['third_title'],
+                'first_content'  => $res['first_content'],
+                'second_content' => $res['second_content'],
+                'third_content'  => $res['third_content'],
+                'date'           => $v['date'],
+                'system'         => $v['system'],
+                'mod'            => $v['mod'],
+                'aid'            => $v['aid'],
+                'stat'           => $res['stat'],
+                'toptitle'       => $v['modname'],
+                'applyer'        => $v['applyer'],
+                'apply'          => $appStatus,
+            );
+            if(!empty($res['fourth_title'])){
+                $arr['fourth_title'] = $res['fourth_title'];
+                $arr['fourth_content'] = $res['fourth_content'];
+            }
+            $result[] = $arr;
+        }
+        return $result;
+    }
+     // 搜索模块
+     public function getSearchTable($search){
         $tab = $this->getAppTable();
         $tab = $this->arrayMerge($tab);
-        dump($tab);
+        $res = array();
+        if(empty($search)) return $tab;
+        foreach($tab as $k => $v){
+            $flag = $this->searchFind($v['search'],$search);
+            if(!$flag) continue;
+            $res[] = $v;
+        }
+        return $res;
+   }
+    /**
+     * 搜索查询模块检索
+     * @param string $searchText 搜索字段
+     */
+    public function dealSearch($searchText){
         
+        $result = array('yxhb' => '','kk' => '');
+        // 搜索为空，全查
+        if(empty($searchText)) return $result;
+   
+        // 系统是否要搜索 -- 1、只输入模块名，无系统名  2、系统加模块名
+        $tableArr = $this->getAppTable();
+        $mod_name = array();
+        foreach($tableArr as $k =>$v){
+            $tmp = $this->spStr($v['search']);
+            $flag = false;
+            foreach($tmp as $key => $val){
+                if(substr_count($searchText,$val)>0) { // 检查是否有需要改项目
+                    $flag=true;
+                    break;
+                }
+            }
+            // 需要此项目
+            if($flag) $mod_name[] = $v['mod_name'];
+        }
+        // 去除重复项
+        $mod_name = array_unique($mod_name);
+        // 拼接 sql
+        $sql = '';
+        foreach ($mod_name as $k =>$v) {
+            $k == 0 ?$sql.=' ( ':$sql.=' or ';
+            $sql .= "mod_name='{$v}'";
+        }
         
+        // 系统检查  -- 同时为空,或同时存在 全系统查询    -- 单方面为空 屏蔽单系统
+        // sql为空 -- 没有查询到结果  不为空查询到结果
+        $yxhbCount = substr_count($searchText,'环保');
+        $kkCount = substr_count($searchText,'建材');
+        if(($yxhbCount>0 && $kkCount>0)){ // sql无结果，系统检索有结果
+            // 排除上方查询无结果的情况
+            if(!empty($sql)){
+                $result['yxhb'] = ' and '.$sql.') ';
+                $result['kk'] = ' and '.$sql.' ) ';
+            }
+        }elseif($yxhbCount<1 && $kkCount<1){ // sql无结果，系统检索无结果
+            if(!empty($sql)){
+                $result['yxhb'] = ' and '.$sql.') ';
+                $result['kk'] = ' and '.$sql.' ) ';
+            }else{
+                $result['yxhb'] = ' and type=99 ';
+                $result['kk'] = ' and type=99 ';
+            }
+        }elseif($yxhbCount>0 && $kkCount<1){ // 查建材不查环保
+            if (empty($sql)) {
+                $result['yxhb'] = ' and type=99 ';
+            } else {
+                $result['yxhb'] = ' and '.$sql.') and type=99 ';
+                $result['kk'] = ' and '.$sql.' ) ';
+            }
+        }elseif($yxhbCount<1 && $kkCount>0){// 查环保不查建材
+            if (empty($sql)) {
+                $result['kk'] = ' and type=99 ';
+            } else {
+                $result['yxhb'] = ' and '.$sql.') ';
+                $result['kk'] = ' and '.$sql.' ) and type=99 ';
+            }
+        }
+        return $result;
     }
-   
-   
-
     private function getAuthGroup($system,$type=''){
         $reArr = array(
             'group'   => '暂无',
@@ -285,6 +443,9 @@ class TestController extends \Think\Controller {
         }
         return $new_array;
     }
+   
+    
+  
 } 
 
 

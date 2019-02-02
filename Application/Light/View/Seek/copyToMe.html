@@ -18,6 +18,9 @@
                     <a href="javascript:" class="weui-search-bar__cancel-btn" id="searchCancel">搜索</a>
                 </div>
             </div>
+            <div id='unready'>
+                    {$noApprove}
+            </div>
         <div id='show_data_content'>
            
         </div>
@@ -48,7 +51,7 @@
         function dialog_confirm(){
         $.ajax({
             type:'POST',
-            url: "{:U('Light/Seek/seekApi')}",
+            url: "{:U('Light/Seek/seekApi',array('cost'=>$cost))}",
             dataType: 'json',
             data: {
                 type: 'copyRead',
@@ -73,7 +76,7 @@
     function getData(){
         $.ajax({
             type:'POST',
-            url: "{:U('Light/Seek/seekApi')}",
+            url: "{:U('Light/Seek/seekApi',array('cost'=>$cost))}",
           
             data: {
                 type: 'copy',

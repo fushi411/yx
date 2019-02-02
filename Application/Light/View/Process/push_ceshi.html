@@ -4,7 +4,6 @@
 <block name='title'>{$pro_name}名单</block>
 <block name='content'>
     <volist name='condition' id='val'>
-
     <h3 class="titleTab">{$pro_name}名单</h3>
         <span style="display: none" id="pro_mod">{$pro_mod}</span>
         <volist name="val.push_name" id="vo">
@@ -14,7 +13,7 @@
                     <div class="weui-cell__bd">
                         <div class="weui-uploader">
                             <div class="weui-uploader__bd" style="min-height: 85px;">
-                                <ul class="weui-uploader__files selectUser {$vo.id}"  style="margin-bottom: 0px;">
+                                <ul class="weui-uploader__files" id="selectUser" style="margin-bottom: 0px;">
                                     <!-- 为空的情况 -->
                                     <if condition="$vo.count eq -1">
                                         <h1 class="page__title">{$vo.msg}</h1>
@@ -27,7 +26,6 @@
                                                     <else/>
                                                     <img src="{$v.avatar}" class='weui-selet__user' style='margin-bottom: 0px;margin-right: 6px;margin-top:10px;'>
                                                     <span style='margin-right: 6px;font-size: 14px;'> {$v.name}</span>
-                                                    <!--推送名单的拼音-->
                                                     <span style="display: none" class="aaa">{$v.wxid}</span>
                                                     <span class="weui-badge" style="position: relative;top: -5.8em;right: -1.4em;">X</span>
                                                 </if>
@@ -37,22 +35,12 @@
                                     </if>
                                 </ul>
                                 <div class="weui-uploader__input-box" style="width: 2.5em;height: 2.5em;margin-right: 0px;margin-bottom: 0px;margin-top:10px;">
-                                    <input id="uploaderInput" class="weui-uploader__input open_model" type="button" name="copyto" readonly="" autocomplete="off" onclick='show_myModal("{$vo.id}")'>
-                                    <!--<input type="hidden" name="copyto_id" id="copyto_id" value=",LeiZhiBao" autocomplete="off">-->
+                                    <input id="uploaderInput" class="weui-uploader__input open_model" type="button" name="copyto" readonly="" autocomplete="off"> <!--data-toggle="modal" data-target="#myModal" -->
+
+                                    <input type="hidden" name="copyto_id" id="copyto_id" value=",LeiZhiBao" autocomplete="off">
                                 </div>
-                                <!--{$vo.tiaojian}是临时额度推送的条件-->
-                                <a class="weui-btn weui-btn_mini weui-btn_primary xxx" style="cursor: pointer;float: right;margin: 30px 20px" onclick='save("{$vo.id}")'>保存</a>
-                                <!--<button onclick="sjzh()">数据格式转化，勿点</button>-->
+                                <a class="weui-btn weui-btn_mini weui-btn_primary" style="cursor: pointer;float: right;margin: 30px 20px" onclick="save()">保存</a>
                             </div>
-                            <!--BEGIN toast-->
-                            <div id="toast" style="display: none;">
-                                <div class="weui-mask_transparent"></div>
-                                <div class="weui-toast">
-                                    <i class="weui-icon-success-no-circle weui-icon_toast"></i>
-                                    <p class="weui-toast__content">修改成功</p>
-                                </div>
-                            </div>
-                            <!--end toast-->
                         </div>
                     </div>
                 </div>
@@ -122,19 +110,17 @@
 
 <block name="js">
     <script>
-        var system = '',              //系统
-            check_quanxian = false,   //判断登入用户是否有权限修改推送人员
-            data_id = '';              //模块数据的id
+        var system = '';
         // 抄送
         var loading = '<div class="weui-loadmore"><i class="weui-loading"></i><span class="weui-loadmore__tips">正在加载</span></div>';
         var noresult = '<div class="weui-loadmore weui-loadmore_line"><span class="weui-loadmore__tips">暂无数据</span></div>';
-        var $selectUser = '';
+        var $selectUser = $("#selectUser");
 
         //获取跳转过来的系统
         $(function () {
             system = getQueryString("system");
-
-            check_jurisdiction();
+            // pro_mod = $("#pro_mod").text();
+            // getPush(system,pro_mod);
         })
 
         // 获取URL参数
@@ -142,26 +128,6 @@
             var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
             var r = window.location.search.substr(1).match(reg);
             if (r != null) return unescape(r[2]); return null;
-        }
-
-        //验证登入的用户是否有权限修改推送人员
-        function check_jurisdiction(){
-            $.ajax({
-                type:'post',
-                url: "{:U('Light/Process/check_jurisdiction')}",
-                data:"",
-                dataType: 'json',
-                success: function (res) {
-                    if (res ==false){
-                        $('.weui-badge').css('display','none');
-                        $('.xxx').css('display','none');
-                        $('.weui-uploader__input-box').css('display','none');
-                        check_quanxian = false;
-                    }else{
-                        check_quanxian = true;
-                    }
-                }
-            })
         }
 
         // Modal
@@ -172,11 +138,9 @@
         });
 
         //点击 + 号
-        function show_myModal(id) {
+        $('.open_model').on('click',function(){
             $('#myModal').modal('show');
-            data_id = id;   //给数据的id赋值
-            $selectUser = $("."+data_id);
-        }
+        });
 
         //获取部门目录
         function getDepartment(id) {
@@ -231,6 +195,7 @@
 
         // select department user 选择部门人员
         $("#searchResult").on("click", ".select-user", function () {
+            // var tmpl = '<li class="weui-uploader__file weui-selet__user" style="background-image:url(#url#)" id="#id#"></li>';
             var id = $(this).attr('data-id');   //拼音
             var tmpl = '<li class="weui-uploader__file wk-select__user" id="#id#" style="height:90px;">' +
                             '<img src="#url#" class="weui-selet__user" style="margin-bottom: 0px;margin-right: 6px;margin-top:10px;" />' +
@@ -247,12 +212,10 @@
 
         });
 
-        // delete  user 点击人员头像
-        $(".selectUser").on("click", ".wk-select__user", function () {
-            if (check_quanxian == true){
-                $li_dom = $(this);
-                $("#iosDialog").fadeIn(200);
-            }
+        // delete  user 点击人员头像的x号
+        $("#selectUser").on("click", ".wk-select__user", function () {
+            $li_dom = $(this);
+            $("#iosDialog").fadeIn(200);
         });
 
         // Close dialog 取消
@@ -367,11 +330,12 @@
             $.ajax({
                 type:'post',
                 url: "{:U('Light/Process/check_ts')}",
-                data:{'name':id,'system': system,'pro_mod':pro_mod,'id':data_id},
+                data:{'name':id,'system': system,'pro_mod':pro_mod},
                 dataType: 'json',
                 success: function (res) {
-                    if (res['code'] ==404){
-                        tooltip(res['data']);
+                    if (res['data'] == false){
+                        //alert('推送人员已存在，请重新选择！')
+                        tooltip('推送人员已存在，请重新选择！')
                     }else{
                         tmpl = tmpl.replace('#id#', id);
                         tmpl = tmpl.replace('#name#', name);
@@ -402,50 +366,24 @@
         }
 
         //保存推送人员名单
-        function save(id) {
+        function save() {
             var pro_mod = $("#pro_mod").text();
-            console.log(id)
-            var name_data = $("."+id).children('li').children('.aaa');
-            var arr_name = new Array();  //名字的数组
-            for(var i = 0;i<name_data.length;i++){
-                if(name_data[i].innerHTML!=""){
-                    arr_name.push(name_data[i].innerHTML)
-                }
+            var data = $("#selectUser").children('li').children('.aaa');
+            var abc = new Array();
+            for(var i = 0;i<data.length;i++){
+                abc.push(data[i].innerHTML)
             }
-
-            console.log(arr_name);
             $.ajax({
                 type:'post',
                 url: "{:U('Light/Process/save_ts')}",
-                data:{'data':arr_name,'system': system,'pro_mod':pro_mod,'__hash__': hash,'id':id},
+                data:{'data':abc,'system': system,'pro_mod':pro_mod,'__hash__': hash,},
                 dataType: 'json',
                 success: function (res) {
                     if(res.code==404){
-                        tooltip(res.msg);
-                    }else{
-                        $('#toast').css('display','block');
-                        setTimeout(function () {
-                            $('#toast').css('display','none');
-                            window.location.reload();
-                        }, 1500);
+                        tooltip(res.data);
                     }
                 }
             })
-        }
-
-        //转化数据格式
-        function sjzh() {
-            $.ajax({
-                type:'post',
-                url: "{:U('Light/Process/sjzh')}",
-                data:{'system': system,},
-                dataType: 'json',
-                success: function (res) {
-                    console.log(typeof res);
-                    console.log(res);
-                }
-            })
-
         }
 
     </script>

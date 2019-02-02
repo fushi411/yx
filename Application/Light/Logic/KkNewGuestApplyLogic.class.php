@@ -151,15 +151,13 @@ class KkNewGuestApplyLogic extends Model {
     public function sealNeedContent($id){
         $res = $this->record($id);
         $result = array(
-            'sales'   => $res['sales'],         //申请人的姓名
-            'title2'  => '备案产品',
-            'approve' => iconv('gbk','UTF-8',$res['product']),
-            'notice'  => $res['info'],
-            'date'    => $res['date'],
-            'title'   => '备案名称',
-            'name'    => $res['name'],
-            'modname' => 'NewGuestApply',
-            'stat'    => $res['stat']
+            'first_title'    => '备案名称',
+            'first_content'  => $res['name'],
+            'second_title'   => '备案产品',
+            'second_content' => iconv('gbk','UTF-8',$res['product']),
+            'third_title'    => '相关说明',
+            'third_content'  => $res['info']?$res['info']:'无',
+            'stat'           => $res['stat'],
         );
         return $result;
     }

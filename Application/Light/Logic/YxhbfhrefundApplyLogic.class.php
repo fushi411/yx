@@ -284,15 +284,13 @@ class YxhbfhrefundApplyLogic extends Model {
       
         if($res['xg_person']) $res['fh_kpy'] = $res['xg_person'];
         $result = array(
-            'sales'   => $res['fh_kpy'],
-            'title2'  => '修改重量',
-            'approve' => $res['fh_zl'],
-            'notice'  => $res['xg_reason'],
-            'date'    => $res['fh_da'],
-            'title'   => '客户名称',
-            'name'    => $clientname['g_name'], 
-            'modname' => 'fh_refund_Apply',
-            'stat'    => $this->getStat($id)
+            'first_title'    => '客户名称',
+            'first_content'  => $clientname['g_name']?$clientname['g_name']:'无',
+            'second_title'   => '修改重量',
+            'second_content' => $res['fh_zl'],
+            'third_title'    => '相关说明',
+            'third_content'  => $res['xg_reason']?$res['xg_reason']:'无',
+            'stat'           => $this->getStat($id),
         );
         return $result;
     }

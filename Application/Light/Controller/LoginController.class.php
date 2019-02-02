@@ -85,59 +85,30 @@ class LoginController extends \Think\Controller {
         if(session('wxid') != 'HuangShiQi'){
             if(get_client_ip(0) != '0.0.0.0') return '无权限操作';
         }
-        
         $seek =  D('Seek');
         $tab = $seek->getAppTable();
         $tab = $seek->arrayMerge($tab);
-        $arr = array();
+        $sub = array();
+
         foreach ($tab as $k => $v ) {
-            $where = array(
-                'a.app_stat' => 0,
-                'b.'.$v['stat'] => $v['submit']['stat'] 
-            );
-            // 采购付款特殊处理
-            if($v['mod_name'] == 'CgfkApply'){
-                $where['a.mod_name'] = array(array('eq',$v['mod_name']),array('eq','PjCgfkApply'),array('eq','WlCgfkApply'),'OR');
-            }else{
-                $where['a.mod_name'] = $v['mod_name'];
-            }
             $res = M($v['system'].'_appflowproc a')
-                    ->join("{$v['table_name']} b on a.aid=b.{$v['id']}")
-                    ->field("a.aid,a.per_id,a.mod_name,a.per_name, 1 as {$v[system]}")
-                    ->where($where)
-                    ->select();
-            $arr = array_merge($res,$arr);
+                    ->join("{$v['table_name']}  on a.aid={$v['table_name']}.{$v['id']}")
+                    ->field("a.aid,a.per_id,a.mod_name,a.per_name")
+                    ->where(array('a.app_stat' => 0,"{$v['table_name']}.{$v['stat']}" => $v['submit']['stat'],'a.mod_name' => $v['mod_name']))
+                    ->select();    
+            if(!empty($res)){
+                foreach($res as $key => $val){
+                    $res[$key]['system']  = $v['system'];
+                    $res[$key]['mod']     = $v['mod_name'];
+                    $res[$key]['modname'] = $v['toptitle'];
+                }
+            }
+            $sub = array_merge($sub,$res);
         }
-        $arr = $this->dataFilter($arr);
-        $this->systemUrge($arr);
-       // $this->Sign();
+
+        $this->systemUrge($sub);
     }
 
-    /**
-     * 过滤自动催审中 退审的
-     */
-    private function  dataFilter($data){
-        $result = array();
-        $tmp    = array();
-        foreach($data as $v){
-            $system = $v['kk'] ?'kk':'yxhb';
-            $tmp[] = $v['aid'].'-'.$v['mod_name'].'-'.$system;
-        }
-        $tmp = array_unique($tmp);
-        $res = array();
-        foreach($tmp as $k => $v){
-            $v = explode('-',$v);
-            $map = array(
-                'app_stat' => 1,
-                'mod_name' => $v[1],
-                'aid'      => $v[0]
-            ); 
-           $res = M($v[2].'_appflowproc')->where($map)->find();
-           if(empty($res)) $result[] = $data[$k];
-        }
-        return $result;
-    }
-    
     /**
      * 系统自动催审
      * @param array $urgeData 催审名单 
@@ -149,7 +120,7 @@ class LoginController extends \Think\Controller {
         
         foreach($urgeData as $val){
             # 系统选择
-            $system = $val['kk'] ?'kk':'yxhb';
+            $system = $val['system'];
             $mod_name = $val['mod_name'];
             $logic = D(ucfirst($system).$mod_name, 'Logic');
             $res = $logic->recordContent($val['aid']);
@@ -184,7 +155,6 @@ class LoginController extends \Think\Controller {
         // }
         $boss = D($system.'_boss');
         $proName = $boss->getusername($pid);
-
         $subName = $boss->getusername($applyerid);
         $applyerName='('.$subName.'提交)';
        

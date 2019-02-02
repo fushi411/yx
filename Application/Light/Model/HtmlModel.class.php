@@ -37,13 +37,23 @@ class HtmlModel extends Model
      * 我的审批html
      * @param int $type 1-审批 2-签收
      */
-    public function getMyApproveHtml($data,$type){
+    public function getMyApproveHtml($data,$type,$unready){
         $html = '';
         if( empty($data) || !is_array($data)) return $html;
+        $dot = '';
+        if($unready){
+            $dot = '<div class="weui-flex__item">
+                <span class="weui-badge weui-badge_dot" style="margin-left: 5px;margin-right: 5px;margin-bottom: 8px;"></span>
+            </div>';
+        }
+                
         foreach( $data as $k=>$v ){
             $url   = U('Light/Apply/applyInfo',array('system' => $v['system'],'modname' => $v['mod'] ,'aid' => $v['aid']));
             $date  = date('m/d',strtotime($v['date']));
+            
             list($lable,$pro) = $type == 1 ? $this->pro_stat($v['stat'],$v['apply']) : $this->sign_stat($v['stat'],$v['apply']);
+            $fourth = empty($v['fourth_title'])?'':"<p class='weui-media-box__desc ' style='margin-bottom: 0px;'><span>{$v['fourth_title']}：</span><span>{$v['fourth_content']}</span></p>";
+            
             $html .= "<a href='{$url}'
                 class='weui-cell weui-cell_access weui-cell_link' style='text-decoration: none;'>
                 <div class='weui-media-box weui-media-box_text' style='width: 100%;padding-left: 0px;padding-right: 0px;'>
@@ -52,6 +62,7 @@ class HtmlModel extends Model
                             <h4 class='weui-media-box__title'>{$v['applyer']}的{$v['toptitle']}</h4>
                         </div>
                         <div class='weui-flex__item'><span class='label {$lable}' style='margin-left: 1em;padding-top: 0.3em;padding-bottom: 0.2em'>{$pro}</span></div>
+                        {$dot}
                         <div class='weui-flex__item' style='text-align: right;'>
                             <h5>{$date}</h5>
                         </div>
@@ -59,6 +70,7 @@ class HtmlModel extends Model
                     <p class='weui-media-box__desc ' style='margin-bottom: 0px;'><span>{$v['first_title']}：</span><span>{$v['first_content']}</span></p>
                     <p class='weui-media-box__desc ' style='margin-bottom: 0px;'><span>{$v['second_title']}：</span><span>{$v['second_content']}</span></p>
                     <p class='weui-media-box__desc ' style='margin-bottom: 0px;'><span>{$v['third_title']}：</span><span>{$v['third_content']}</span></p>
+                    {$fourth}
                 </div>
             </a>";
         }

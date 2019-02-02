@@ -197,15 +197,13 @@ class YxhbfhdelApplyLogic extends Model {
         $res2 = M("yxhb_guest2")->where($map)->find();                          //客户表
         $res3 = M("yxhb_fhdel")->where(array('fh_id'=>$res['id']))->find();    //发货删除记录表
         $result = array(
-            'sales'   => $res3['del_person'],                                //申请删除者的姓名
-            'title2'  => '客户类型',
-            'approve' => $res['fh_wlname'],
-            'notice'  => $res3['del_reason'],                                 //申请理由
-            'date'    => $res3['del_date'],                                   //申请删除的日期
-            'title'   => '提货单位',
-            'name'    => $res2['g_name'],
-            'modname' => 'fh_del_Apply',
-            'stat'    => $this->transStat($res['id']),                      //审批状态
+            'first_title'    => '提货单位',
+            'first_content'  => $res2['g_name']?$res2['g_name']:'无',
+            'second_title'   => '客户类型',
+            'second_content' => $res['fh_wlname']?$res['fh_wlname']:'无',
+            'third_title'    => '相关说明',
+            'third_content'  => $res3['del_reason']?$res3['del_reason']:'无',
+            'stat'           => $this->transStat($res['id']),
         );
         return $result;
     }

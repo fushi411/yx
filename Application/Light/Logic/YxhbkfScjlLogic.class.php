@@ -208,15 +208,13 @@ class YxhbkfScjlLogic extends Model {
     public function sealNeedContent($id){
         $res = $this->record($id);
         $result = array(
-            'sales'   => $res['jyry'],
-            'title2'  => '比表',
-            'approve' => $res['bbmj'],
-            'notice'  => $res['bz'],
-            'date'    => $res['scrq'],
-            'title'   => '生产品种',
-            'name'    => $res['scpz'], 
-            'modname' => 'kfScjl',
-            'stat'    => $res['STAT']
+            'first_title'    => '生产品种',
+            'first_content'  => $res['scpz'],
+            'second_title'   => '比表面积',
+            'second_content' => $res['bbmj'],
+            'third_title'    => '相关说明',
+            'third_content'  => $res['bz']?$res['bz']:'无',
+            'stat'           => $res['STAT'],
         );
         return $result;
     }

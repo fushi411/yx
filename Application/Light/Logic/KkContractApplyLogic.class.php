@@ -184,15 +184,13 @@ class KkContractApplyLogic extends Model {
         $clientname = M('kk_guest2')->field('g_name,reid')->where(array('id' => $res['ht_khmc']))->find();
         $topGys     = M('kk_guest2')->field('g_name')->where(array('id' => $clientname['reid']))->find();
         $result = array(
-            'sales'   => $res['ht_rdy'],
-            'title2'  => '二级客户',
-            'approve' => $clientname['g_name'],
-            'notice'  => $res['ht_bz']?$res['ht_bz']:'无',
-            'date'    => $res['ht_date'],
-            'title'   => '上级客户',
-            'name'    => $topGys['g_name'], 
-            'modname' => 'ContractApply',
-            'stat'    => $this->transStat($res['ht_stat']),
+            'first_title'    => '上级客户',
+            'first_content'  => $topGys['g_name']?$topGys['g_name']:'无',
+            'second_title'   => '二级客户',
+            'second_content' => $clientname['g_name']?$clientname['g_name']:'无',
+            'third_title'    => '相关说明',
+            'third_content'  => $res['ht_bz']?$res['ht_bz']:'无',
+            'stat'           => $this->transStat($res['ht_stat']),
         );
         return $result;
     }

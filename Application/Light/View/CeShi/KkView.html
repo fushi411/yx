@@ -29,7 +29,7 @@
         <!--  联系人 END -->
         <!--<div class="weui-cell ">-->
             <div class="weui-cells__title">推送名单
-                <a href="{:U('Light/Process/PushProcess',array('system' => $system,'modname'=>$modname))}"><i class="iconfont icon-chakan" style="vertical-align: middle;" ></i></a>
+                <a href="{:U('Light/Process/push_ceshi',array('system' => $system,'modname'=>$modname))}"><i class="iconfont icon-chakan" style="vertical-align: middle;" ></i></a>
                 <span style="color: #f12e2e">（审批通过后群发推送人）</span>
             </div>
             <div >
@@ -70,7 +70,6 @@
             data:'',
             dataType: 'json',
             success: function (res) {
-                console.log('bbb');
                console.log(res)
             }
         })
