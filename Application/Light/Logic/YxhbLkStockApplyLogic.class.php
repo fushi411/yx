@@ -592,7 +592,7 @@ class YxhbLkStockApplyLogic extends Model {
                                      'value'=>$res['rdy'],
                                      'type'=>'string'
                                     );
-        $result[] = array('name'=>'申请理由：',
+        $result[] = array('name'=>'相关说明：',
                                      'value'=>$res['bz'] ? $res['bz'] :'无',
                                      'type'=>'text'
                                     );
@@ -616,11 +616,14 @@ class YxhbLkStockApplyLogic extends Model {
      */
     public function sealNeedContent($id){
         $res = $this->record($id);
-
         $result = array(
-            array('提交时间',date('Y-m-d H:i',strtotime($res['cretime']))),
-            array('量库时间',date('Y-m-d H:i',strtotime($res['date'])+$res['time']*3600)),
-            array('相关说明',$res['bz']?$res['bz']:'无')
+            'first_title'    => '提交时间',
+            'first_content'  => date('Y-m-d H:i',strtotime($res['cretime'])),
+            'second_title'   => '量库时间',
+            'second_content' => date('Y-m-d H:i',strtotime($res['date'])+$res['time']*3600),
+            'third_title'    => '相关说明',
+            'third_content'  => $res['bz']?$res['bz']:'无',
+            'stat'           => $res['stat'],
         );
         return $result;
     }
@@ -703,38 +706,7 @@ class YxhbLkStockApplyLogic extends Model {
         }
         $boss_id = implode('|',$sign_arr);
         M('yxhb_appflowproc')->addAll($all_arr);
-        $this->sendMessage($result,$boss_id);
+        D('WxMessage')->ProSendCarMessage('yxhb','LkStockApply',$result,$boss_id,session('yxhb_id'),'QS');
         return array('code' => 200,'msg' => '提交成功' , 'aid' =>$result);
     }
-    /**
-     * 通知信息发送
-     * @
-     */
-    public function sendMessage($apply_id,$boss){
-        $system = 'yxhb';
-        $mod_name = 'LkStockApply';
-        $logic = D(ucfirst($system).$mod_name, 'Logic');
-        $res   = $logic->record($apply_id);
-        $systemName = array('kk'=>'建材', 'yxhb'=>'环保');
-        // 微信发送
-        $WeChat = new \Org\Util\WeChat;
-        
-        $descriptionData = $logic->getDescription($apply_id);
-     
-        $title = '量库库存(签收)';
-        $url = "https://www.fjyuanxin.com/WE/index.php?m=Light&c=Apply&a=applyInfo&system=".$system."&aid=".$apply_id."&modname=".$mod_name;
-      
-        $applyerName='('.$res['rdy'].'提交)';
-        $description = "您有一个流程需要签收".$applyerName;
-
-        $receviers = "wk|HuangShiQi|".$boss;
-        foreach( $descriptionData as $val ){
-            $description .= "\n{$val['name']}{$val['value']}";
-        }
-        $agentid = 15;
-        $WeChat = new \Org\Util\WeChat;
-        $info = $WeChat->sendCardMessage($receviers,$title,$description,$url,$agentid,$mod_name,$system);
-    }
-
-
 }

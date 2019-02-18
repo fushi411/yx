@@ -24,7 +24,7 @@
     <volist name="content" id="val">
         <p class="weui-media-box__desc weui-flex">
             <span style="display: inline-block; ">{$val.name}</span>
-            <span class="weui-flex__item" style="color:{$val.color} ">
+            <span class="weui-flex__item" id="{$val.id}"  style="color:{$val.color} ">
                 {$val.value}
             </span>
         </p>
@@ -265,7 +265,7 @@
                     </div>
                 </div>
                 <div class="button-sp-area" style="margin-bottom: 20px;display: flex;flex-direction: row;width: 100%;justify-content: space-around;align-items: baseline;">
-                    <a href="javascript:;" id="ratio-refuse" class="weui-btn weui-btn_warn" style="width: 40%;margin-top: 20px;">光闭</a>
+                    <a href="javascript:;" id="ratio-refuse" class="weui-btn weui-btn_warn" style="width: 40%;margin-top: 20px;">关闭</a>
                 </div>
             </div>
         </div>

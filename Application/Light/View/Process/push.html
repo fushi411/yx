@@ -3,41 +3,450 @@
 
 <block name='title'>{$pro_name}名单</block>
 <block name='content'>
-    
     <volist name='condition' id='val'>
+
     <h3 class="titleTab">{$pro_name}名单</h3>
-    
-        <volist name="val.condition" id="vo"> 
+        <span style="display: none" id="pro_mod">{$pro_mod}</span>
+        <volist name="val.push_name" id="vo">
             <div class="weui-cells__title">{$vo.title}</div>
             <div class="weui-cells" style="margin-top:0px;">
                 <div class="weui-cell">
                     <div class="weui-cell__bd">
                         <div class="weui-uploader">
                             <div class="weui-uploader__bd" style="min-height: 85px;">
-                                <ul class="weui-uploader__files" id="app_pro" style="margin-bottom: 0px;">
+                                <ul class="weui-uploader__files selectUser {$vo.id}"  style="margin-bottom: 0px;">
                                     <!-- 为空的情况 -->
                                     <if condition="$vo.count eq -1">
                                         <h1 class="page__title">{$vo.msg}</h1>
                                         <else/>
                                         <!-- 不为空的情况 -->
                                         <volist name="vo.pushMan" id="v">
-                                                    <li class='weui-uploader__file wk-select__user' style='min-height:80px;'>
-                                                    <if condition="$v.avatar eq ''">
-                                                        <img src="Public/assets/i/defaul.png" class='weui-selet__user' style='margin-bottom: 0px;margin-right: 6px;margin-top:10px;'>
-                                                        <else/>
-                                                        <img src="{$v.avatar}" class='weui-selet__user' style='margin-bottom: 0px;margin-right: 6px;margin-top:10px;'>
-                                                    </if>
+                                            <li class='weui-uploader__file wk-select__user' style='min-height:80px;'>
+                                                <if condition="$v.avatar eq ''">
+                                                    <img src="Public/assets/i/defaul.png" class='weui-selet__user' style='margin-bottom: 0px;margin-right: 6px;margin-top:10px;'>
+                                                    <else/>
+                                                    <img src="{$v.avatar}" class='weui-selet__user' style='margin-bottom: 0px;margin-right: 6px;margin-top:10px;'>
                                                     <span style='margin-right: 6px;font-size: 14px;'> {$v.name}</span>
-                                                </li>
+                                                    <!--推送名单的拼音-->
+                                                    <span style="display: none" class="aaa">{$v.wxid}</span>
+                                                    <span class="weui-badge" style="position: relative;top: -5.8em;right: -1.4em;">X</span>
+                                                </if>
+                                            </li>
                                         </volist>
                                         <!-- 不为空的情况 -->
                                     </if>
                                 </ul>
+                                <div class="weui-uploader__input-box" style="width: 2.5em;height: 2.5em;margin-right: 0px;margin-bottom: 0px;margin-top:10px;">
+                                    <input id="uploaderInput" class="weui-uploader__input open_model" type="button" name="copyto" readonly="" autocomplete="off" onclick='show_myModal("{$vo.id}")'>
+                                    <!--<input type="hidden" name="copyto_id" id="copyto_id" value=",LeiZhiBao" autocomplete="off">-->
+                                </div>
+                                <!--{$vo.tiaojian}是临时额度推送的条件-->
+                                <a class="weui-btn weui-btn_mini weui-btn_primary xxx" style="cursor: pointer;float: right;margin: 30px 20px" onclick='save("{$vo.id}")'>保存</a>
+                                <!--<button onclick="sjzh()">数据格式转化，勿点</button>-->
                             </div>
+                            <!--BEGIN toast-->
+                            <div id="toast" style="display: none;">
+                                <div class="weui-mask_transparent"></div>
+                                <div class="weui-toast">
+                                    <i class="weui-icon-success-no-circle weui-icon_toast"></i>
+                                    <p class="weui-toast__content">修改成功</p>
+                                </div>
+                            </div>
+                            <!--end toast-->
                         </div>
                     </div>
                 </div>
             </div>
         </volist>   
-    </volist>   
+    </volist>
+</block>
+<block name="model">
+    <!-- Modal -->
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" width="100%">
+
+        <div class="weui-toptips weui-toptips_warn js_tooltips" style="opacity: 1;">错误提示</div>
+
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only copy_to_close">Close</span></button>
+                    <h4 class="modal-title" id="myModalLabel">选择人员</h4>
+                </div>
+
+                <div class="modal-body" id="select_content" style="padding-top: 0px;padding-bottom: 0px;">
+                    <div class="page js_show" style="position: relative;">
+                        <div class="page__bd">
+                            <div class="weui-search-bar" id="searchBar">
+                                <form class="weui-search-bar__form">
+                                    <div class="weui-search-bar__box">
+                                        <i class="weui-icon-search"></i>
+                                        <input type="search" class="weui-search-bar__input " id="searchInput" placeholder="请输入姓名或拼音缩写搜索" required="">
+                                        <a href="javascript:" class="weui-icon-clear" id="searchClear"></a>
+                                    </div>
+                                    <label class="weui-search-bar__label searchCenter" id="searchText">
+                                        <i class="weui-icon-search"></i>
+                                        <span>请输入姓名或拼音缩写搜索</span>
+                                    </label>
+                                </form>
+                                <a href="javascript:" class="weui-search-bar__cancel-btn" id="searchCancel">搜索</a>
+                            </div>
+                            <div class="weui-cells searchbar-result" id="searchResult" style="margin-top: 0px;">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default copy_to_close" data-dismiss="modal" >关闭</button>
+                    <button type="button" class="btn btn-success" id="pre-level" data-pid="">上一级</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Modal END-->
+    <!--BEGIN dialog-->
+    <div id="dialogs">
+        <div class="js_dialog" id="iosDialog" style="display: none;">
+            <div class="weui-mask"></div>
+            <div class="weui-dialog">
+                <div class="weui-dialog__hd"><strong class="weui-dialog__title">是否删除推送人</strong></div>
+                <div class="weui-dialog__ft">
+                    <a href="javascript:;" onclick="dialog_close()" class="weui-dialog__btn weui-dialog__btn_default">取消</a>
+                    <a href="javascript:;" onclick="dialog_confirm()" class="weui-dialog__btn weui-dialog__btn_primary">确认</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- END dialog -->
+
+</block>
+
+<block name="js">
+    <script>
+        var system = '',              //系统
+            check_quanxian = false,   //判断登入用户是否有权限修改推送人员
+            data_id = '';              //模块数据的id
+        // 抄送
+        var loading = '<div class="weui-loadmore"><i class="weui-loading"></i><span class="weui-loadmore__tips">正在加载</span></div>';
+        var noresult = '<div class="weui-loadmore weui-loadmore_line"><span class="weui-loadmore__tips">暂无数据</span></div>';
+        var $selectUser = '';
+
+        //获取跳转过来的系统
+        $(function () {
+            system = getQueryString("system");
+
+            check_jurisdiction();
+        })
+
+        // 获取URL参数
+        function getQueryString(name) {
+            var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
+            var r = window.location.search.substr(1).match(reg);
+            if (r != null) return unescape(r[2]); return null;
+        }
+
+        //验证登入的用户是否有权限修改推送人员
+        function check_jurisdiction(){
+            $.ajax({
+                type:'post',
+                url: "{:U('Light/Process/check_jurisdiction')}",
+                data:"",
+                dataType: 'json',
+                success: function (res) {
+                    if (res ==false){
+                        $('.weui-badge').css('display','none');
+                        $('.xxx').css('display','none');
+                        $('.weui-uploader__input-box').css('display','none');
+                        check_quanxian = false;
+                    }else{
+                        check_quanxian = true;
+                    }
+                }
+            })
+        }
+
+        // Modal
+        $('#myModal').on('show.bs.modal', function (e) {
+            var id = 1;
+            $("#pre-level").attr("data-pid", 0);
+            getDepartment(id);
+        });
+
+        //点击 + 号
+        function show_myModal(id) {
+            $('#myModal').modal('show');
+            data_id = id;   //给数据的id赋值
+            $selectUser = $("."+data_id);
+        }
+
+        //获取部门目录
+        function getDepartment(id) {
+            $('#searchResult').empty();
+            $('#searchResult').append(loading);
+            $.post("{:U('Light/Apply/getDeptHtml')}",
+                {
+                    "id":id
+                },function(data){
+                    $('#searchResult').empty();
+                    //console.log(data);
+                    if (data=='') {
+                        $('#searchResult').append(noresult);
+                    } else {
+                        $('#searchResult').append(data);
+                    }
+                }
+            );
+        }
+
+        // up pre-level  点击上一级
+        $("#pre-level").on("click", function () {
+            $('#searchResult').empty();
+            $('#searchResult').append(loading);
+            var pid = $(this).attr("data-pid");
+            // console.log(pid);
+            $.post("{:U('Light/Apply/getParentDeptHtml')}",
+                {
+                    "id": pid
+                }, function (data) {
+                    $('#searchResult').empty();
+                    // console.log(data);
+                    if (data == '') {
+                        $('#searchResult').append(noresult);
+                    } else {
+                        $('#searchResult').append(data.html);
+                        // console.log(data.pid);
+                        $("#pre-level").attr("data-pid", data.pid);
+                    }
+                }
+            );
+        });
+
+        // select department  选择部门
+        $("#searchResult").on("click", ".select-department", function () {
+            var id = $(this).attr('data-id');
+            var type = $(this).attr('data-type');
+            // console.log(id);
+            getDepartment(id);
+            $("#pre-level").attr("data-pid", id);
+        });
+
+        // select department user 选择部门人员
+        $("#searchResult").on("click", ".select-user", function () {
+            var id = $(this).attr('data-id');   //拼音
+            var tmpl = '<li class="weui-uploader__file wk-select__user" id="#id#" style="height:90px;">' +
+                            '<img src="#url#" class="weui-selet__user" style="margin-bottom: 0px;margin-right: 6px;margin-top:10px;" />' +
+                            '<span style="margin-right: 6px;font-size: 14px;">#name#</span>' +
+                            '<span style="display: none" class="aaa">'+id+'</span>' +
+                            '<span class="weui-badge" style="position: relative;top: -5.8em;right: -1.4em;">X</span>' +
+                        '</li>';
+            var type = $(this).attr('data-type');
+            var img = $(this).attr('data-img');
+            var name = $(this).attr('data-name');
+            var ids = $("#copyto_id").val() + "," + id;
+
+            check_ts(id,name,img,ids,tmpl);       //验证添加的推送人员是否已存在
+
+        });
+
+        // delete  user 点击人员头像
+        $(".selectUser").on("click", ".wk-select__user", function () {
+            if (check_quanxian == true){
+                $li_dom = $(this);
+                $("#iosDialog").fadeIn(200);
+            }
+        });
+
+        // Close dialog 取消
+        function dialog_close() {
+            $("#iosDialog").fadeOut(100);
+        }
+        // Confirm dialog 确认
+        function dialog_confirm() {
+            var id = $li_dom.attr("id");
+            // console.log(id);
+            var ids = $("#copyto_id").val() + ",";
+            var old_ids_arr = ids.split(",");
+            var id_str = '';
+            var location = $.inArray(id, old_ids_arr);
+            // // console.log(old_name_arr);
+            if (location >= 0) {
+                var repl_id = ',' + id + ',';
+                id_str = ids.replace(repl_id, ',');
+            }
+            $("#copyto_id").val(id_str);
+            $li_dom.remove();
+            $("#iosDialog").fadeOut(100);
+        }
+        // 抄送搜索
+        $(function(){
+            var $searchBar = $('#searchBar'),
+                $searchResult = $('#searchResult'),
+                $searchText = $('#searchText'),
+                $searchInput = $('#searchInput'),
+                $searchClear = $('#searchClear'),
+                $searchCancel = $('#searchCancel');
+
+            function hideSearchResult(){
+                // $searchResult.hide();
+                $searchInput.val('');
+            }
+            function cancelSearch(){
+                hideSearchResult();
+                $searchBar.removeClass('weui-search-bar_focusing');
+                $searchText.show();
+            }
+
+            $searchText.on('click', function(){
+                $searchBar.addClass('weui-search-bar_focusing');
+                $searchInput.focus();
+            });
+            $searchInput
+                .on('blur', function () {
+                    if(!this.value.length) cancelSearch();
+                })
+                .on('input', function(){
+                    if(this.value.length) {
+                        $searchResult.show();
+                        searchCopyUser();
+                    } else {
+                        modelIni()
+                    }
+                })
+            ;
+            $searchClear.on('click', function(){
+                hideSearchResult();
+                $searchInput.focus();
+            });
+            $searchCancel.on('click', function(){
+                searchCopyUser();
+            });
+            $searchInput.on('keypress',function(e) {
+                var keycode = e.keyCode;
+                var searchName = $(this).val();
+                if(keycode=='13') {
+                    e.preventDefault();
+
+                    searchCopyUser();
+                }
+            });
+            function searchCopyUser(){
+                word = $searchInput.val();
+                if(!word.length) return modelIni();
+                $('#searchResult').empty();
+                $('#searchResult').append(loading);
+                $.post("{:U('Light/Apply/getDeptHtml')}",
+                    {
+                        "type": 1,
+                        'search':word
+                    }, function (data) {
+                        $('#searchResult').empty();
+                        // console.log(data);
+                        if(data == '') {
+                            console.log(1);
+                            $('#searchResult').append(noresult);
+                        } else {
+                            console.log(2);
+                            $('#searchResult').append(data);
+                            // console.log(data.pid);
+                            $("#pre-level").attr("data-pid", 17);
+                        }
+                    }
+                );
+            }
+
+            function modelIni(){
+                var id = 1;
+                $searchInput.val(null);
+                $("#pre-level").attr("data-pid", 0);
+                getDepartment(id);
+            }
+        });
+
+        //查看添加的推送人员是否已存在
+        function check_ts(id,name,img,ids,tmpl) {
+            var pro_mod = $("#pro_mod").text();
+            $.ajax({
+                type:'post',
+                url: "{:U('Light/Process/check_ts')}",
+                data:{'name':id,'system': system,'pro_mod':pro_mod,'id':data_id},
+                dataType: 'json',
+                success: function (res) {
+                    if (res['code'] ==404){
+                        tooltip(res['data']);
+                    }else{
+                        tmpl = tmpl.replace('#id#', id);
+                        tmpl = tmpl.replace('#name#', name);
+                        $selectUser.append($(tmpl.replace('#url#', img)));
+                        $("#copyto_id").val(ids);
+                        $('#searchInput').val(null);
+                        $('#myModal').modal('hide')
+                    }
+                }
+            })
+        }
+
+        var $tooltips = $('.js_tooltips'),
+             hash      = $("meta[name='__hash__']").attr('content');
+
+        // 错误提示
+        function tooltip(text) {
+            if ($tooltips.css('display') != 'none') return;
+
+            // toptips的fixed, 如果有`animation`, `position: fixed`不生效
+            $('.page.cell').removeClass('slideIn');
+
+            $tooltips.text(text);
+            $tooltips.css('display', 'block');
+            setTimeout(function () {
+                $tooltips.css('display', 'none');
+            }, 2000);
+        }
+
+        //保存推送人员名单
+        function save(id) {
+            var pro_mod = $("#pro_mod").text();
+            console.log(id)
+            var name_data = $("."+id).children('li').children('.aaa');
+            var arr_name = new Array();  //名字的数组
+            for(var i = 0;i<name_data.length;i++){
+                if(name_data[i].innerHTML!=""){
+                    arr_name.push(name_data[i].innerHTML)
+                }
+            }
+
+            console.log(arr_name);
+            $.ajax({
+                type:'post',
+                url: "{:U('Light/Process/save_ts')}",
+                data:{'data':arr_name,'system': system,'pro_mod':pro_mod,'__hash__': hash,'id':id},
+                dataType: 'json',
+                success: function (res) {
+                    if(res.code==404){
+                        tooltip(res.msg);
+                    }else{
+                        $('#toast').css('display','block');
+                        setTimeout(function () {
+                            $('#toast').css('display','none');
+                            window.location.reload();
+                        }, 1500);
+                    }
+                }
+            })
+        }
+
+        //转化数据格式
+        function sjzh() {
+            $.ajax({
+                type:'post',
+                url: "{:U('Light/Process/sjzh')}",
+                data:{'system': system,},
+                dataType: 'json',
+                success: function (res) {
+                    console.log(typeof res);
+                    console.log(res);
+                }
+            })
+
+        }
+
+    </script>
 </block>

@@ -64,7 +64,12 @@ class KkfheditApplyhbLogic extends Model {
                                      'value'=> date('Y-m-d H:i',strtotime($res['fh_date'])),
                                      'type'=>'string',
                                      'color' => 'black'
-                                    );                                
+                                    );        
+        $result['content'][] = array('name'=>'超期详情：',
+                                     'value'=> $res['overdue']==1?'超期':'未超期',
+                                     'type'=>'string',
+                                     'color' => $res['overdue']==1?'red':'black'
+                                    );                          
 
         
         $result['content'][] = array('name'  => '发货详情：',
@@ -99,13 +104,20 @@ class KkfheditApplyhbLogic extends Model {
                                      'type'=>'text',
                                      'color' => $color
                                     );                  
-        $result['content'][] = array('name'=>'申请理由：',
+        $result['content'][] = array('name'=>'相关说明：',
                                      'value'=>$res['xg_reason'],
                                      'type'=>'text',
                                      'color' => 'black'
                                     );
         if($res['xg_person']) $res['fh_kpy'] = $res['xg_person'];
-        $result['imgsrc'] = '';
+        $img  = M('yxhb_fh_image')->where(array('fh_id' => $res['fh_num']))->find();
+        $imgsrc = explode('|', $img['url']) ;
+        $image = array();
+        $imgsrc = array_filter($imgsrc);
+        foreach ($imgsrc as $key => $value) {
+            $image[] = 'http://www.fjyuanxin.com/WE/Public/upload/fh/'.$value;
+        }
+        $result['imgsrc'] = $image;
         $result['applyerID'] =  D('KkBoss')->getIDFromName($res['fh_kpy']);
         $result['applyerName'] = $res['fh_kpy'];
         $result['stat'] = $this->getStat($id);
@@ -124,7 +136,8 @@ class KkfheditApplyhbLogic extends Model {
                   <input class='weui-input' type='text' style='color: black;'  readonly value='产品编号：{$data['fh_snbh']}'>
                   <input class='weui-input' type='text' style='color: black;'  readonly value='我方重量：{$data['fh_zl']}'> 
                   <input class='weui-input' type='text' style='color: black;'  readonly value='承运车号：{$data['fh_carnum']}'>
-                  <input class='weui-input' type='text' style='color: black;'  readonly value='运输方式：{$wlfs['fh_wlfs']}'> ";
+                  <input class='weui-input' type='text' style='color: black;'  readonly value='运输方式：{$wlfs['fh_wlfs']}'> 
+                  <input class='weui-input' type='text' style='color: black;'  readonly value='开票人员：{$wlfs['fh_kpy']}'>";
         return $html;
     } 
     /**
@@ -188,7 +201,8 @@ class KkfheditApplyhbLogic extends Model {
             'fh_passtime'   => $res['fh_passtime'],
             'del_reason'    => '',
             'fh_stat5'      => 0,
-            'xg_person'     => $res['xg_person']
+            'xg_person'     => $res['xg_person'],
+            'overdue'       => $res['overdue']
         ); 
         M('yxhb_fh')->add($addData);
         $this->AutomaticRenewalTwoMonth($id);
@@ -283,7 +297,7 @@ class KkfheditApplyhbLogic extends Model {
                                      'value'=>$wlfs['ht_wlfs'] ,
                                      'type'=>'string'
                                     );
-        $result[] = array('name'=>'申请理由：',
+        $result[] = array('name'=>'相关说明：',
                                      'value'=>$res['xg_reason'],
                                      'type'=>'text'
                                     );
@@ -315,15 +329,13 @@ class KkfheditApplyhbLogic extends Model {
         $name = M('yxhb_guest2')->field('g_name')->where(array('id' => $name['fh_client']))->find();
         if($res['xg_person']) $res['fh_kpy'] = $res['xg_person'];
         $result = array(
-            'sales'   => $res['fh_kpy'],
-            'title2'  => '修改名称',
-            'approve' => $name['g_name'],
-            'notice'  => $res['xg_reason'],
-            'date'    => $res['fh_da'],
-            'title'   => '客户名称',
-            'name'    => $clientname['g_name'], 
-            'modname' => 'fh_edit_Apply_hb',
-            'stat'    => $this->getStat($id)
+            'first_title'    => '客户名称',
+            'first_content'  => $clientname['g_name']?$clientname['g_name']:'无',
+            'second_title'   => '修改名称',
+            'second_content' => $name['g_name']?$name['g_name']:'无',
+            'third_title'    => '相关说明',
+            'third_content'  => $res['xg_reason']?$res['xg_reason']:'无',
+            'stat'           => $this->getStat($res['id']),
         );
         return $result;
     }
@@ -355,12 +367,18 @@ class KkfheditApplyhbLogic extends Model {
      * 获取采购付款 供应商信息
      */
     public function getFhList(){
-        $today    = date('Y-m-d',time()+24*3600);
-        $yestoday = date('Y-m-d',time()-4*24*3600);
+        $days     = I('post.days')?I('post.days'):4;
+        if($days != 4){
+            $today    = date('Y-m-d',time()-3*24*3600);
+        }else{
+            $today    = date('Y-m-d',time()+24*3600);
+        }
+        $yestoday = date('Y-m-d',time()-$days*24*3600);
         $clientid = I('post.client');
         $id       = I('post.id');
         $time     = I('post.date');
         $page     = I('post.page');
+        $carNum   = I('post.carNum');
         $page     = $page?$page:1;
         if($time) $time = date('Y-m-d',strtotime($time));
         $complex  = array(
@@ -377,8 +395,9 @@ class KkfheditApplyhbLogic extends Model {
         if($clientid) $where['fh_client'] = $clientid; 
         if($id)       $where['id']        = $id; 
         if($time)     $where['fh_da']     = $time;
+        if($carNum)   $where['fh_carnum']     = array('like',"%{$carNum}%");
         $data = M('yxhb_fh')->where($where)->order('fh_date DESC')->limit((($page-1)*20).",20")->select();
-       
+        
         $data = $this->fhInfo($data);
         return $data;
     }
@@ -492,11 +511,15 @@ class KkfheditApplyhbLogic extends Model {
         $user_id    = I('post.user_id');
         $copyto_id  = I('post.copyto_id');
         $fh_wl      = I('post.fh_wl');
+        $file_names = I('post.file_names');
         // 简单校验
         if(!$user_id) return array('code' => 404,'msg' => '请选择客户名称');
         // 重复提交
         if(!M('yxhb_fhxg')->autoCheckToken($_POST)) return array('code' => 404,'msg' => '网络延迟，请勿点击提交按钮！');
-        $count = M('yxhb_fhxg')->where(array('fh_num' => $fhinfo['fh_num']))->find();
+        $count      = M('yxhb_fhxg')->where(array('fh_num' => $fhinfo['fh_num']))->find();
+        $img_count  = M('yxhb_fh_image')->where(array('fh_id' => $fhinfo['fh_num']))->find();
+        $today_date = date('Y-m-d',time()-72*3600);
+        $overdue    = $fhinfo['fh_da'] >= $today_date?0:1;
         $addData = array(
             'fh_num'      => $fhinfo['fh_num'],
             'fh_client'   => $user_id,
@@ -527,12 +550,13 @@ class KkfheditApplyhbLogic extends Model {
             'fh_stat4'    => 2,
             'fh_stat2'    => $fhinfo['fh_stat2'],
             'fh_wlname'   => $fhinfo['fh_wlname'],
-            'fh_flag'     => $fhinfo['fh_flag'],
+            'fh_flag'     => 1,
             'fh_bid'      => $fhinfo['fh_bid'],
             'fh_pass'     => $fhinfo['fh_pass'],//
             'fh_passtime' => $fhinfo['fh_passtime'],//
             'xg_reason'   => $text,//
-            'xg_person'   => $user
+            'xg_person'   => $user,
+            'overdue'     => $overdue
         ); 
      
         if(empty($count)){
@@ -540,9 +564,20 @@ class KkfheditApplyhbLogic extends Model {
         }else{
             $result = M('yxhb_fhxg')->where(array('fh_num' => $fhinfo['fh_num']))->save($addData);
         }
+        $image = array(
+            'fh_id' => $fhinfo['fh_num'],
+            'url'   => $file_names,
+        );
+        if(empty($img_count)){
+            $result = M('yxhb_fh_image')->add($image);
+        }else{
+            $result = M('yxhb_fh_image')->where(array('fh_id' => $fhinfo['fh_num']))->save($image);
+        }
         
         if(!$result) return array('code' => 404,'msg' =>'提交失败，请重新尝试！');
         $result = $fhinfo['id'];
+        // 清楚之前的审批记录
+        M('kk_appflowproc')->where(array( 'mod_name' => 'fh_edit_Apply_hb','aid' => $result ))->save(array( 'mod_name' => 'fh_edit_Apply_hb__delete' ));
         $save_fh = array(
             'xg_date'     => date('Y-m-d H:i:s',time()),
             'xg_person' => $user,
@@ -581,5 +616,55 @@ class KkfheditApplyhbLogic extends Model {
         $map    = array('id' => $aid);
         $res    = M('yxhb_fhxg_pg')->where($map)->find();
         return empty($res)?0:1;
+    }
+
+    /**
+     * 附件上传
+     */
+    public function fjsc(){
+        $uploader = new \Think\Upload\Driver\Local;
+        if(!$uploader){
+            E("不存在上传驱动");
+        }
+        // 生成子目录名
+        $savePath = date('Y-m-d')."/";
+
+        // 生成文件名
+        $img_str = I('post.imagefile');
+        $order = I('post.order');
+        $img_header = substr($img_str, 0, 23);
+        // echo $img_header;exit();
+        if (strpos($img_header, 'png')) {
+            $output_file = uniqid('comment_').'_'.$order.'.png';
+        }else{
+            $output_file = uniqid('comment_').'_'.$order.'.jpg';
+        }
+        //  $base_img是获取到前端传递的src里面的值，也就是我们的数据流文件
+        $base_img = I('post.imagefile');
+        if (strpos($img_header, 'png')) {
+            $base_img = str_replace('data:image/png;base64,', '', $base_img);
+        }else{
+            $base_img = str_replace('data:image/jpeg;base64,', '', $base_img);
+        }
+
+        //  设置文件路径和文件前缀名称
+        $rootPath = "/www/web/default/WE/Public/upload/fh/";
+        /* 检测上传根目录 */
+        if(!$uploader->checkRootPath($rootPath)){
+            $error = $uploader->getError();
+            return $error;
+        }
+        /* 检查上传目录 */
+        if(!$uploader->checkSavePath($savePath)){
+            $error = $uploader->getError();
+            return $error;
+        }
+        $path = $rootPath.$savePath.$output_file;
+        //  创建将数据流文件写入我们创建的文件内容中
+        file_put_contents($path, base64_decode($base_img));
+        $val['path'] = $path;
+        $val['output_file'] = $savePath.$output_file;
+        $res[] = $val;
+        return $res;
     }
 }

@@ -9,7 +9,7 @@
         <!-- <div id="data_show"> -->
             <div class="weui-cell weui-cell_select weui-cell_select-after">
                 <div class="weui-cell__hd">
-                    <label class="weui-label">汽运公司&nbsp;&nbsp;
+                    <label class="weui-label">运输公司&nbsp;&nbsp;
                             <span style="color:red;">*</span>
                     </label>
                 </div>
@@ -151,24 +151,7 @@
  
     </div>
 
-    <div class="weui-cells weui-cells_form">
-        <div class="weui-cell">
-            <div class="weui-cell__hd">
-                <label class="weui-label">申请理由&nbsp;&nbsp;
-                <span style="color:red;">*</span>
-                </label>
-            </div>
-        </div>
-        <div class="weui-cell">
-            <div class="weui-cell__bd" id="cnt">
-                <textarea class="weui-textarea" name="reason" id="reason" placeholder="申请理由至少5个字(必填)；
-请简要描述付款信息！"
-rows="3"></textarea>
-                <div class="weui-textarea-counter">
-                    <span id="reason_char">0</span>/200</div>
-            </div>
-        </div>
-    </div>
+
 </block>
 <block name="js">
     <script src="__PUBLIC__/assets/js/AmountConversionformat.js"></script>
@@ -186,6 +169,7 @@ rows="3"></textarea>
         accout   = $('#accout'),
         gyszh    = 0,
         user_id  = '',
+        g_name   = '',
         ysyeVal  = 0,
         type     = 0;
 
@@ -224,7 +208,7 @@ rows="3"></textarea>
     }
     // 合同选择
     $('#htbh').click(function(){
-        if(!user_id) return tooltip('请选择汽运公司');
+        if(!user_id) return tooltip('请选择运输公司');
         
     });
  $(function () {
@@ -286,6 +270,7 @@ rows="3"></textarea>
             $('.select2-selection__choice__remove').click();
             var selectArr = e.params.args.data;
             user_id = selectArr.id;
+            g_name  = selectArr.text;
             if(selectArr.text.length > 9) {
                 selectArr.text =  selectArr.text.replace(/有限/, "");
                 selectArr.text =  selectArr.text.replace(/责任/, "");
@@ -297,6 +282,7 @@ rows="3"></textarea>
         });
         $("#user_name").on("select2:unselecting", function (e) {
             user_id = '';
+            g_name  = '';
             $('.show_number').show();
             ysye.html('');
             $('#type').val(-1).addClass('greyColor');
@@ -349,7 +335,7 @@ rows="3"></textarea>
         // 类型选择
         $('#type').change(function(){
             type = $(this).val();
-            if(!user_id) return tooltip('请选择物流公司');
+            if(!user_id) return tooltip('请选择运输公司');
 
             if(type == 3 ) {
                 gyszh    = 0
@@ -360,11 +346,12 @@ rows="3"></textarea>
                 url: "{:U('Light/Api/WlCgfkApplyApi')}", //&system=yxhb&modname=CgfkApply&action=getCustomerList
                 dataType: 'json',
                 data: {
-                    type:type,
-                    user_id: user_id,
-                    system:"{$system}",
-                    modname:'WlCgfkApply',
-                    action:'bankInfo'
+                    type    : type,
+                    g_name  : g_name,
+                    user_id : user_id,
+                    system  : "{$system}",
+                    modname : 'WlCgfkApply',
+                    action  : 'bankInfo'
                 },
                 dataType: 'json',
                 success: function (res) {
@@ -398,10 +385,36 @@ rows="3"></textarea>
                 if(htbhArr[i].ht_wl != user_id) continue;
                 optionStr += '<option selected=""  value="'+htbhArr[i].ht_dh+'">'+htbhArr[i].ht_dh+'</option>'; 
             }
+            if(!optionStr) return getHyht(user_id);
             optionStr += '<option value="-1" disabled selected style="display:none;">请选择合同编号</option>';
             htbh.html(optionStr);
         }
 
+        // 获取海运合同
+        function getHyht(id){
+            $.ajax({
+                type:'POST',
+                url: "{:U('Light/Api/WlCgfkApplyApi')}", //&system=yxhb&modname=CgfkApply&action=getCustomerList
+                dataType: 'json',
+                data: {
+                    system : "{$system}",
+                    modname: 'WlCgfkApply',
+                    action : 'getHyht',
+                    g_name : g_name,
+                    user_id: id,
+                },
+                dataType: 'json',
+                success: function (res) {
+                    var optionStr = '';
+                    for(i=0;i<res.length;i++){
+                        optionStr += '<option selected="" index='+res[i]['ht_dh']+' value="'+i+'">'+res[i]['ht_dh']+'</option>'; 
+                    }
+                    optionStr += '<option value="-1" disabled selected style="display:none;">请选择合同编号</option>';
+                    
+                    htbh.html(optionStr);
+                }
+            });
+        }
         accout.change(function(){
             var index = $(this).val();
             makeOption();
@@ -436,18 +449,19 @@ rows="3"></textarea>
                 url: "{:U('Light/Api/WlCgfkApplyApi')}", //&system=yxhb&modname=CgfkApply&action=getCustomerList
                 dataType: 'json',
                 data: {
-                    user_id: user_id,
-                    text: notice,
-                    money: money.val(),
-                    copyto_id:$("#copyto_id").val(),
+                    user_id  : user_id,
+                    text     : notice,
+                    money    : money.val(),
+                    copyto_id: $("#copyto_id").val(),
                     //ysye:ysyeVal,
-                    htbh:htbh.val(),
-                    type:$('#type').val(),
-                    system:"{$system}",
-                    modname:'WlCgfkApply',
-                    action:'wlsubmit',
-                    gyszh:gyszh,
-                    __hash__: hash
+                    g_name   : g_name,
+                    htbh     : htbh.val(),
+                    type     : $('#type').val(),
+                    system   : "{$system}",
+                    modname  : 'WlCgfkApply',
+                    action   : 'wlsubmit',
+                    gyszh    : gyszh,
+                    __hash__ : hash
                 },
                 dataType: 'json',
                 success: function (res) {

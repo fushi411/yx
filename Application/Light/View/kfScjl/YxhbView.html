@@ -12,7 +12,7 @@
                 </label>
             </div>
             <div class="weui-cell__bd">
-                <select class="weui-select greyColor" disabled name="type" id='type'>
+                <select class="weui-select greyColor"  name="type" id='type'>
                     <option value='-1' disabled selected style='display:none;'>自动填写</option>
                     <option value="F75">F75</option>
                     <option value="F85">F85</option>
@@ -29,7 +29,7 @@
                 </label>
             </div>
             <div class="weui-cell__bd">
-                <select class="weui-select greyColor" disabled name="type" id='scx'> 
+                <select class="weui-select greyColor"  name="type" id='scx'> 
                     <option value='-1' disabled selected style='display:none;'>自动填写</option>
                     <option value="A#">A#生产线</option>
                     <option value="B#">B#生产线</option>
@@ -44,7 +44,7 @@
                 </label>
             </div>
             <div class="weui-cell__bd">
-                <select class="weui-select greyColor" disabled name="type" id='kh'> 
+                <select class="weui-select greyColor"  name="type" id='kh'> 
                     <option value='-1' disabled selected style='display:none;'>自动填写</option>
                     <option value='1#'>1#</option>
                     <option value='2#'>2#</option>
@@ -109,22 +109,7 @@
         </div>
 
     </div>
-    <div class="weui-cells weui-cells_form">
-        <div class="weui-cell">
-            <div class="weui-cell__hd">
-                <label class="weui-label">相关说明&nbsp;&nbsp;
-                </label>
-            </div>
-        </div>
-        <div class="weui-cell">
-            <div class="weui-cell__bd" id="cnt">
-                <textarea class="weui-textarea" name="reason" id="reason" placeholder="请输入相关说明；"
-                    rows="3"></textarea>
-                <div class="weui-textarea-counter">
-                    <span id="reason_char">0</span>/200</div>
-            </div>
-        </div>
-    </div>
+    
     <div class="other_page" id="other_page" style="display: none;">
         <div class="container">
             <div class="page js_show">
@@ -201,6 +186,18 @@
                         <div class="weui-cell__bd">
                             <input class="weui-select peibi scale" type="number" index="石灰石" maxlength="15" name="custodian"
                                 id="scale6" placeholder="0-100%">
+                        </div>
+                    </div>
+                    <div class="weui-cell weui-cell_select weui-cell_select-after ">
+                        <div class="weui-cell__hd">
+                            <label class="weui-label">
+                                <span class="font-width">铜尾渣</span>&nbsp;&nbsp;
+
+                            </label>
+                        </div>
+                        <div class="weui-cell__bd">
+                            <input class="weui-select peibi scale" type="number" index="铜尾渣" maxlength="15" name="custodian"
+                                id="scale7" placeholder="0-100%">
                         </div>
                     </div>
                 </div>
@@ -338,6 +335,7 @@
             scale4 = $('#scale4'),
             scale5 = $('#scale5'),
             scale6 = $('#scale6'),
+            scale7 = $('#scale7'),
             scale_array = [],
             out_scale_array = [],
             xd     = $('#xd'),
@@ -454,12 +452,14 @@
         //获取下方信息
         function getProductInfo(datetime){
             if(!datetime) return false;
+            wlid = getQueryString('wlid');
             toast.fadeIn(200);
             $.ajax({
                 type: 'POST',
                 url: "{:U('Light/Api/kfScjlApi')}", //&system=yxhb&modname=CgfkApply&action=getCustomerList
                 dataType: 'json',
                 data: {
+                    wlid: wlid,
                     time: datetime,
                     system: "{$system}",
                     modname: 'kfScjl',
@@ -540,6 +540,7 @@
                scale_4 = scale4.val(),
                scale_5 = scale5.val(),
                scale_6 = scale6.val();
+               scale_7 = scale7.val();
                out_scale  = $('#out_scale').val();
                out_scale1 = $('#out_scale1').val();
            if (!scale_1 && !scale_2 && !scale_3 && !scale_4 && !scale_5 && !scale_6) return tooltip('请选择至少一种物料');
@@ -550,6 +551,7 @@
            scale_array[3] = { 'name': scale_4 ? scale_4 : null, 'value': scale4.attr('index') };
            scale_array[4] = { 'name': scale_5 ? scale_5 : null, 'value': scale5.attr('index') };
            scale_array[5] = { 'name': scale_6 ? scale_6 : null, 'value': scale6.attr('index') };
+           scale_array[6] = { 'name': scale_7 ? scale_7 : null, 'value': scale7.attr('index') };
            out_scale_array[0] = { 'name': out_scale ? out_scale : null, 'value': $('#out_scale').attr('index') };
            out_scale_array[1] = { 'name': out_scale1 ? out_scale1 : null, 'value': $('#out_scale1').attr('index') };
            show_wl();

@@ -31,10 +31,13 @@ class KkWlCgfkApplyLogic extends Model {
     {
         $res = $this->record($id);
         $result = array();
-        if($res['fylx'] == 1){
+        if($res['fylx'] == 1 || $res['fylx'] == 4){
             $clientname = M('kk_gys')->field('g_name')->where(array('id' => $res['gys']))->find();
         }elseif($res['fylx'] == 2 || $res['fylx'] == 7){
-            $clientname = M('kk_wl')->field('g_name')->where(array('id' => $res['gys']))->find();
+            $clientname = M('kk_wl')->field('g_name,g_ch')->where(array('id' => $res['gys']))->find();
+            $type = "(汽运)";
+            if($clientname['g_ch']) $type = "(海运)";
+            $clientname['g_name'] = $clientname['g_name'].$type;
         }elseif($res['fylx'] == 6){
             $clientname = array( 'g_name' => $res['pjs']);
         }
@@ -84,7 +87,7 @@ class KkWlCgfkApplyLogic extends Model {
                                      'type'=>'string',
                                      'color' => 'black'
                                     );                                    
-        $result['content'][] = array('name'=>'申请理由：',
+        $result['content'][] = array('name'=>'相关说明：',
                                      'value'=>$res['zy'],
                                      'type'=>'text',
                                      'color' => 'black'
@@ -92,10 +95,19 @@ class KkWlCgfkApplyLogic extends Model {
         $result['imgsrc'] = '';
         $result['applyerID'] =  D('KkBoss')->getIDFromName($res['rdy']);
         $result['applyerName'] = $res['rdy'];
-        $result['stat'] = $res['stat'];
+        $result['stat'] = $this->transStat($res['stat']);
         return $result;
     }
 
+    public function transStat($stat){
+        $statArr = array(
+            4 => 2 ,
+            3 => 2 ,
+            2 => 1 ,
+            0 => 0
+        );
+        return $statArr[$stat];
+    }
     /**
      * 删除记录
      * @param  integer $id 记录ID
@@ -115,10 +127,13 @@ class KkWlCgfkApplyLogic extends Model {
     public function getDescription($id){
         $res = $this->record($id);
         $result = array();
-        if($res['fylx'] == 1){
+        if($res['fylx'] == 1 || $res['fylx'] == 4){
             $clientname = M('kk_gys')->field('g_name')->where(array('id' => $res['gys']))->find();
         }elseif($res['fylx'] == 2 || $res['fylx'] == 7){
-            $clientname = M('kk_wl')->field('g_name')->where(array('id' => $res['gys']))->find();
+            $clientname = M('kk_wl')->field('g_name,g_ch')->where(array('id' => $res['gys']))->find();
+            $type = "(汽运)";
+            if($clientname['g_ch']) $type = "(海运)";
+            $clientname['g_name'] = $clientname['g_name'].$type;
         }elseif($res['fylx'] == 6){
             $clientname = array( 'g_name' => $res['pjs']);
         }
@@ -150,7 +165,7 @@ class KkWlCgfkApplyLogic extends Model {
                                      'value'=>$res['rdy'],
                                      'type'=>'string'
                                     );
-        $result[] = array('name'=>'申请理由：',
+        $result[] = array('name'=>'相关说明：',
                                      'value'=>$res['zy'],
                                      'type'=>'text'
                                     );
@@ -174,32 +189,32 @@ class KkWlCgfkApplyLogic extends Model {
      */
     public function sealNeedContent($id){
         $res = $this->record($id);
-        if($res['fylx'] == 1){           
+        if($res['fylx'] == 1 || $res['fylx'] == 4){           
             $name = M('kk_gys')->field('g_name')->where(array('id' => $res['gys']))->find();
             $modname = 'CgfkApply';
-            $title = '供货单位';
+            $title = $res['fylx'] == 1?'供货单位':'运输公司';
         }elseif($res['fylx'] == 2 || $res['fylx'] == 7){
             $name = M('kk_wl')->field('g_name')->where(array('id' => $res['gys']))->find();
             $modname = 'WlCgfkApply';
-            $title = '汽运公司';
+            $title = '运输公司';
         }elseif($res['fylx'] == 6){
             $name = array( 'g_name' => $res['pjs']);
             $modname = 'PjCgfkApply';
             $title = '配件公司';
         }
         $result = array(
-            'sales'   => $res['rdy'],
-            'title2'  => '申请金额',
-            'approve' => number_format($res['fkje'],2,'.',',')."元",
-            'notice'  => $res['zy'],
-            'date'    => $res['zd_date'],
-            'title'   => $title,
-            'name'    => $name['g_name'], 
-            'modname' => $modname,
-            'stat'    => $res['stat']
+            'first_title'    => $title,
+            'first_content'  => $name['g_name']?$name['g_name']:'无',
+            'second_title'   => '申请金额',
+            'second_content' => number_format($res['fkje'],2,'.',',')."元",
+            'third_title'    => '相关说明',
+            'third_content'  => $res['zy'],
+            'stat'           => $this->transStat($res['stat']),
         );
         return $result;
     }
+
+   
 
     /**
      * 获取采购付款 供应商信息
@@ -227,7 +242,8 @@ class KkWlCgfkApplyLogic extends Model {
 
         $word = I('math');
         // 供应表有的才能选中
-        $sql = "SELECT
+           // 供应表有的才能选中
+           $sql = "SELECT
                     a.id AS id,
                     a.g_name AS text
                 FROM
@@ -244,9 +260,59 @@ class KkWlCgfkApplyLogic extends Model {
                     a.id
                 ORDER BY
                     a.g_name ASC";
-                    
-        $res = M()->query($sql);
+            $res = M()->query($sql);
+            $res = $this->addSuffix($res,'(汽运)');
+            $sql = "SELECT
+                    b.id as id,
+                    b.g_name as text
+                FROM
+                    kk_gys as a,
+                    kk_wl AS b,
+                    kk_cght_yf AS c
+                WHERE
+                    b.id = c.ht_gys
+                and a.id=b.gid
+                AND c.ht_stat = 2
+                AND g_ch != ''
+                and (a.g_helpword like '%{$word}%' or a.g_name like '%{$word}%')
+                GROUP BY
+                    b.id
+                ORDER BY
+                    b.g_name ASC";
+            $hyres = M()->query($sql);
+            $hyres = $this->addSuffix($hyres,'(海运)');
+            $res = array_merge($res,$hyres);
+            $sql = "SELECT
+                        a.id as id,
+                        a.g_name as text
+                    FROM
+                        kk_gys a
+                    INNER JOIN kk_cght_qt b ON a.id = b.ht_gys
+                    WHERE
+                        b.ht_stat = 2
+                    AND a.g_type = '码头'
+                    and (a.g_helpword like '%{$word}%' or a.g_name like '%{$word}%')
+                    GROUP BY
+                        a.id";
+            $mtres = M()->query($sql);
+            $mtres = $this->addSuffix($mtres,'(码头)');
+            $res = array_merge($res,$mtres);
+
+
         return $res;
+    }
+
+     /**
+     * 添加尾缀
+     */ 
+    public function addSuffix($data,$suffix){
+        if(!is_array($data)) return;
+        $temp = array();
+        foreach($data as $k=>$v){
+            $v['text'] .= $suffix;
+            $temp[] = $v;
+        }
+        return $temp;
     }
 
     /**
@@ -265,8 +331,13 @@ class KkWlCgfkApplyLogic extends Model {
         if($count < 99) return $id.'0'.($count+1);
         return $id.$count;
     }
-
-
+   
+   // 判断汽运还是海运
+   public function judgeTransportation($id){
+        $res = M('kk_wl')->where("id={$id}")->find();
+        if($res['g_ch']) return true;
+        return false;
+    }
 
     /**
      * 物流采购付款提交 
@@ -278,13 +349,22 @@ class KkWlCgfkApplyLogic extends Model {
         $ysye  = I('post.ysye');
         $bank  = I('post.type');
         $gyszh = I('post.gyszh');
+        $g_name= I('post.g_name');
         $htbh  = I('post.htbh');
         $copyto_id = I('post.copyto_id');
         if(!$val['bool']) return $val;
         list($user_id, $notice,$money,$system) = $val['data'];
         // 重复提交
         if(!M('kk_cgfksq')->autoCheckToken($_POST)) return array('code' => 404,'msg' => '网络延迟，请勿点击提交按钮！');
-
+        // 汽运 海运判断
+        $is_hy = $this->judgeTransportation($user_id);
+        $fylx = 7;
+        $htlx = '汽运';
+        if($is_hy) {
+            $fylx=2;
+            $htlx = '海运';
+        }
+        if(strpos($g_name,'(码头)') !== false) $fylx = 4;
         $addData = array(
             'dh'      => $this->getDhId(),
             'zd_date' => $today,
@@ -303,8 +383,8 @@ class KkWlCgfkApplyLogic extends Model {
             'jjyy'    => '',
             'gyszh'   => $gyszh,
             'date'    => date('Y-m-d H:i:s',time()),
-            'fylx'    => 7,
-            'htlx'    => '汽运',
+            'fylx'    =>  $fylx,
+            'htlx'    =>  $htlx,
             'yfye'    =>  0
         ); 
         
@@ -336,7 +416,7 @@ class KkWlCgfkApplyLogic extends Model {
         $money = I('post.money');
 
         // 公司检测
-        if($user_id == '' || $user_id <= 0) return array('bool'=> false, 'msg' => '请选择供货公司');
+        if($user_id == '' || $user_id <= 0) return array('bool'=> false, 'msg' => '请选择运输公司');
         // 金额 
         if($money == '' ||  $money <= 0 || $money > 1000000000000 ) return array('bool'=> false, 'msg' => '付款金额错误');
         // 备注检测
@@ -364,14 +444,26 @@ class KkWlCgfkApplyLogic extends Model {
      * 获取银行账号信息
      */
     public function bankInfo(){
-        $gys   = I('post.user_id'); 
-        $type  = I('post.type');
-        $where = array(
+        $gys    = I('post.user_id'); 
+        $g_name = I('post.g_name');
+        $type   = I('post.type');
+        $is_mt  = true;
+        if(strpos($g_name,'(码头)') === false) $is_mt = false;
+        $where  = array(
             'bank_stat' => 1,
-            'bank_wl'  => $gys,
             'bank_lx'   => $type
         );
-        $data  = M('kk_bankwl')->field('bank_wl,bank_zhmc,bank_account,bank_khh,bank_lx,id')->where($where)->select();
+        if($is_mt){
+            $where['bank_gys'] = $gys;
+            $table             = 'kk_bankgys';
+            $field             = 'bank_gys,bank_zhmc,bank_account,bank_khh,bank_lx,id';
+        }else{
+            $where['bank_wl'] = $gys;
+            $table            = 'kk_bankwl';
+            $field             = 'bank_wl,bank_zhmc,bank_account,bank_khh,bank_lx,id';
+        }
+         
+        $data  = M($table)->field($field)->where($where)->select();
         foreach($data as $k => $v){
             $account = $v['bank_account'];
             $data[$k]['bank_account'] = substr($account,0,4).'****'.substr($account,-4);
@@ -386,5 +478,20 @@ class KkWlCgfkApplyLogic extends Model {
         $sql = "select ht_gys,ht_clmc,ht_clgg,ht_dh,ht_wl from kk_cght where ht_stat='2' group by ht_gys,ht_clmc,ht_clgg,ht_dh";
         $data = M()->query($sql);
         return $data;
+    }
+
+    /**
+     * 合同信息获取
+     */
+    public function getHyht(){
+        $gys   = I('post.user_id'); 
+        $g_name = I('post.g_name');
+        $table  = 'kk_cght_qt';
+        if(strpos($g_name,'(码头)') === false) $table = 'kk_cght_yf';
+        $wlht = M($table)
+                ->field('ht_dh')
+                ->where("ht_gys={$gys}")
+                ->select();
+        return $wlht;
     }
 }

@@ -78,7 +78,7 @@ class MsgdataModel extends Model {
             'info'    => U('Light/Apply/applyInfo',array('modname'=>'WlCgfkApply','system'=>'yxhb')),
            
         );   
-        $result['wlkkWlCgfkApply'] = array(
+        $result['kkWlCgfkApply'] = array(
             'process' => U('Light/Process/ApplyProcess',array('modname'=>'WlCgfkApply','system' => 'kk')),
             'info'    => U('Light/Apply/applyInfo',array('modname'=>'WlCgfkApply','system'=>'kk')),
             
@@ -239,6 +239,11 @@ class MsgdataModel extends Model {
         return $this->fhApply();
     }
 
+    // 发货删除
+    public function fh_del_Apply(){
+        return $this->fhApply();
+    }
+
     public function fhApply(){
         $result = array();
         $result['url'] = array(
@@ -246,6 +251,8 @@ class MsgdataModel extends Model {
             array('name' => '建材发货修改','url' => U('Light/View/View',array('modname'=>'fh_edit_Apply','system' => 'kk')),'modname' => 'kkfh_edit_Apply'),
             array('name' => '环保退货修改','url' => U('Light/View/View',array('modname'=>'fh_refund_Apply','system' => 'yxhb')),'modname' => 'yxhbfh_refund_Apply'),
             array('name' => '建材退货修改','url' => U('Light/View/View',array('modname'=>'fh_refund_Apply','system' => 'kk')),'modname' => 'kkfh_refund_Apply'),
+            array('name' => '环保发货删除','url' => U('Light/View/View',array('modname'=>'fh_del_Apply','system' => 'yxhb')),'modname' => 'yxhbfh_del_Apply'),
+            array('name' => '建材发货删除','url' => U('Light/View/View',array('modname'=>'fh_del_Apply','system' => 'kk')),'modname' => 'kkfh_del_Apply'),
         );
    
         $result['kkfh_edit_Apply_hb'] = array(
@@ -263,6 +270,14 @@ class MsgdataModel extends Model {
         $result['kkfh_refund_Apply'] = array(
             'process' => U('Light/Process/ApplyProcess',array('modname'=>'fh_refund_Apply','system' => 'kk')),
             'info'    => U('Light/Apply/applyInfo',array('modname'=>'fh_refund_Apply','system'=>'kk'))
+        );
+        $result['yxhbfh_del_Apply'] = array(
+            'process' => U('Light/Process/ApplyProcess',array('modname'=>'fh_del_Apply','system' => 'yxhb')),
+            'info'    => U('Light/Apply/applyInfo',array('modname'=>'fh_del_Apply','system'=>'yxhb'))
+        );
+        $result['kkfh_del_Apply'] = array(
+            'process' => U('Light/Process/ApplyProcess',array('modname'=>'fh_del_Apply','system' => 'kk')),
+            'info'    => U('Light/Apply/applyInfo',array('modname'=>'fh_del_Apply','system'=>'kk'))
         );
         return $result;  
     }
@@ -357,8 +372,8 @@ class MsgdataModel extends Model {
     public function CostMoney(){
         $result = array();
         $result['url'] = array(
-            //array('name' => '环保用款费用','url' => U('Light/View/View',array('modname'=>'CostMoney','system' => 'yxhb')),'modname' => 'yxhbCostMoney'),
-            array('name' => '建材用款费用','url' => U('Light/View/View',array('modname'=>'CostMoney','system' => 'kk')),'modname' => 'kkCostMoney'),
+            array('name' => '建材费用开支','url' => U('Light/View/View',array('modname'=>'CostMoney','system' => 'kk')),'modname' => 'kkCostMoney'),
+            array('name' => '环保费用开支','url' => U('Light/View/View',array('modname'=>'CostMoney','system' => 'yxhb')),'modname' => 'yxhbCostMoney'),
         );
    
         $result['yxhbCostMoney'] = array(
@@ -389,4 +404,118 @@ class MsgdataModel extends Model {
         // ); 
         return $result;   
     }
+    // 生控记录(矿粉)
+    public function KfMaterielAmend(){
+        $result = array();
+        $result['url'] = array(
+            array('name' => '矿粉物料补录','url' => U('Light/View/View',array('modname'=>'KfMaterielAmend','system' => 'yxhb')),'modname' => 'yxhbKfMaterielAmend'),
+           
+        );
+   
+        $result['yxhbKfMaterielAmend'] = array(
+            'process' => U('Light/Process/ApplyProcess',array('modname'=>'KfMaterielAmend','system' => 'yxhb')),
+            'info'    => U('Light/Apply/applyInfo',array('modname'=>'KfMaterielAmend','system'=>'yxhb'))
+        );   
+      
+        return $result;   
+    }
+
+    // 新增客户申请
+    public function GuestApply(){
+        $result = array();
+        $result['url'] = array(
+            array('name' => '环保新增总客户'  ,'url' => U('Light/View/View',array('modname'=>'Contract_guest_Apply','system' => 'yxhb')),'modname' => 'yxhbContract_guest_Apply'),
+            array('name' => '建材新增总客户'  ,'url' => U('Light/View/View',array('modname'=>'Contract_guest_Apply','system' => 'kk')),'modname' => 'kkContract_guest_Apply'),
+            array('name' => '环保新增子客户'  ,'url' => U('Light/View/View',array('modname'=>'Contract_guest_Apply2','system' => 'yxhb')),'modname' => 'yxhbContract_guest_Apply2'),
+            array('name' => '建材新增子客户'  ,'url' => U('Light/View/View',array('modname'=>'Contract_guest_Apply2','system' => 'kk')),'modname' => 'kkContract_guest_Apply2'),
+            array('name' => '环保新增备案客户'  ,'url' => U('Light/View/View',array('modname'=>'NewGuestApply','system' => 'yxhb')),'modname' => 'yxhbNewGuestApply'),
+            array('name' => '建材新增备案客户'  ,'url' => U('Light/View/View',array('modname'=>'NewGuestApply','system' => 'kk')),'modname' => 'kkNewGuestApply'),
+        );
+
+        $result['kkContract_guest_Apply'] = array(
+            'process' => U('Light/Process/ApplyProcess',array('modname'=>'Contract_guest_Apply','system' => 'kk')),
+            'info'    => U('Light/Apply/applyInfo',array('modname'=>'Contract_guest_Apply','system'=>'kk'))
+        );
+        $result['kkContract_guest_Apply2'] = array(
+            'process' => U('Light/Process/ApplyProcess',array('modname'=>'Contract_guest_Apply2','system' => 'kk')),
+            'info'    => U('Light/Apply/applyInfo',array('modname'=>'Contract_guest_Apply2','system'=>'kk'))
+        );
+        $result['yxhbContract_guest_Apply'] = array(
+            'process' => U('Light/Process/ApplyProcess',array('modname'=>'Contract_guest_Apply','system' => 'yxhb')),
+            'info'    => U('Light/Apply/applyInfo',array('modname'=>'Contract_guest_Apply','system'=>'yxhb'))
+        );
+        $result['yxhbContract_guest_Apply2'] = array(
+            'process' => U('Light/Process/ApplyProcess',array('modname'=>'Contract_guest_Apply2','system' => 'yxhb')),
+            'info'    => U('Light/Apply/applyInfo',array('modname'=>'Contract_guest_Apply2','system'=>'yxhb'))
+        );
+        $result['yxhbNewGuestApply'] = array(
+            'process' => U('Light/Process/ApplyProcess',array('modname'=>'NewGuestApply','system' => 'yxhb')),
+            'info'    => U('Light/Apply/applyInfo',array('modname'=>'NewGuestApply','system'=>'yxhb'))
+        );
+        $result['kkNewGuestApply'] = array(
+            'process' => U('Light/Process/ApplyProcess',array('modname'=>'NewGuestApply','system' => 'kk')),
+            'info'    => U('Light/Apply/applyInfo',array('modname'=>'NewGuestApply','system'=>'kk'))
+        );
+
+        return $result;
+    }
+    // 新增备案客户
+    public function NewGuestApply(){
+        return $this->GuestApply();
+    }
+    
+    // 新增合同总客户
+    public function Contract_guest_Apply(){
+        return $this->GuestApply();
+    }
+
+    // 新增合同子客户
+    public function Contract_guest_Apply2(){
+        return $this->GuestApply();
+    }
+
+    // 新增价格合同
+    public function  ContractApply(){
+        $result = array();
+        $result['url'] = array(
+            array('name' => '环保新增合同价格','url' => U('Light/View/View',array('modname'=>'ContractApply','system' => 'yxhb')),'modname' => 'yxhbContractApply'),
+            array('name' => '建材新增合同价格','url' => U('Light/View/View',array('modname'=>'ContractApply','system' => 'kk')),'modname' => 'kkContractApply'),
+        );
+    
+        $result['yxhbContractApply'] = array(
+            'process'       => U('Light/Process/ApplyProcess',array('modname'=>'ContractApply','system' => 'yxhb')),
+            'info'          => U('Light/Apply/applyInfo',array('modname'=>'ContractApply','system'=>'yxhb')),
+            'fiexd_copy_id' => 'csl,LanYanHong',
+            'copydata'      => array(
+                array('name' =>'陈尚霖','url' => 'http://shp.qpic.cn/bizmp/nFsVdIIiaLZsDpCS95SJ0M61tqqOJG9IriaiaZzaMzJfZ11YZy68j90ow/'),
+                array('name' =>'兰艳红','url' => 'http://p.qlogo.cn/bizmail/VniaCv2mTAjm0YEuIz9e7snSNgGykQgUGsOiarhyyDO2FHHXyNiapzibicQ/0'),
+            )
+        );   
+        $result['kkContractApply'] = array(
+            'process'       => U('Light/Process/ApplyProcess',array('modname'=>'ContractApply','system' => 'kk')),
+            'info'          => U('Light/Apply/applyInfo',array('modname'=>'ContractApply','system'=>'kk')),
+            'fiexd_copy_id' => 'csl,LanYanHong',
+            'copydata'      => array(
+                array('name' =>'陈尚霖','url' => 'http://shp.qpic.cn/bizmp/nFsVdIIiaLZsDpCS95SJ0M61tqqOJG9IriaiaZzaMzJfZ11YZy68j90ow/'),
+                array('name' =>'兰艳红','url' => 'http://p.qlogo.cn/bizmail/VniaCv2mTAjm0YEuIz9e7snSNgGykQgUGsOiarhyyDO2FHHXyNiapzibicQ/0'),
+            )
+        ); 
+        return $result;   
+    }
+
+    //汪同津测试
+    public function CeShi(){
+        $result = array();
+        $result['url'] = array(
+            array('name' => '汪同津测试','url' => U('Light/View/View',array('modname'=>'CeShi','system' => 'kk')),'modname' => 'kkCeShi'),
+        );
+
+        $result['kkCeShi'] = array(
+            'process'       => U('Light/Process/ApplyProcess',array('modname'=>'CeShi','system' => 'kk')),
+            'info'          => U('Light/Apply/applyInfo',array('modname'=>'CeShi','system'=>'kk')),
+        );
+
+        return $result;
+    }
+
 }

@@ -2,7 +2,7 @@
 namespace Light\Controller;
 use Think\Controller;
 
-class ViewController extends BaseController
+class ViewController  extends BaseController
 {
     private $today = null;
     private $PageArr = '';
@@ -19,20 +19,25 @@ class ViewController extends BaseController
     }
 
     public function view(){
+        // 个别特殊模块页面
+        $special_page = I('get.special');
         // 系统和模块决定
         $mod_name = I('modname');
-        $system = I('system');
+        $system   = I('system');
         $viewtype = I('viewtype');
-        
         // 审批
-        $appflow = GetAppFlow($system,$mod_name);
+        $appflow  = GetAppFlow($system,$mod_name);
         // 推送
-        $push = GetPush($system,$mod_name);
+        $push       = GetPush($system,$mod_name);
+        $detailModel= D('YxDetailAuth');
+        $detailAuth = $detailModel->CueAuthCheck();
+        $atten      = $detailModel->ActiveAttention($system,$mod_name);
+        $explain    = $detailModel->ActiveExplain($system,$mod_name);
         
         $this -> assign('system', $system);
         $this -> assign('modname', $mod_name);
         $this -> assign('push',$push['data']);
-        
+
         $appflow = $this->appflowJson($appflow,$mod_name);
         $this -> assign('appflow',$appflow);
         $this -> assign('info',$this->PageArr);
@@ -40,13 +45,18 @@ class ViewController extends BaseController
         $this -> assign('fixed',$this->PageArr[$viewtype.$system.$mod_name]);
 
         $this -> assign('today',$this->today);
-
         $this -> assign('title',$this->PageArr['title']);
-        
-        $this -> display($mod_name.'/'.ucfirst($system).$viewtype.'View');
-
+        $this -> assign('atten',$atten);
+        $this -> assign('explain',$explain);
+        $this -> assign('CueConfig',$detailAuth);
+        if( $special_page){
+            $this->display($mod_name.'/'.$special_page);
+        }else{
+            $this -> display($mod_name.'/'.ucfirst($system).$viewtype.'View');
+        }
     }
-
+     
+    
     /**
      * 审批流程转化成json格式字符串
      * @param  array   $appflow 审批数组
@@ -57,5 +67,12 @@ class ViewController extends BaseController
         $modArr = array('TempCreditLineApply','fh_edit_Apply_hb','fh_edit_Apply');
         return in_array($mod,$modArr) ? json_encode($appflow) : $appflow;
     }
+
+    // 提示页面
+    public function cue(){
+        $id = I('get.cueid');
+        $this->display('Cue/index');
+    }
+
 
 }

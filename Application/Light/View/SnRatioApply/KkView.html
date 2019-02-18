@@ -87,23 +87,7 @@
         </div>
 
     </div>
-    <div class="weui-cells weui-cells_form">
-        <div class="weui-cell">
-            <div class="weui-cell__hd">
-                <label class="weui-label">相关说明&nbsp;&nbsp;
-                </label>
-            </div>
-        </div>
-        <div class="weui-cell">
-            <div class="weui-cell__bd" id="cnt">
-                <textarea class="weui-textarea" name="reason" id="reason" placeholder="请输入相关说明；
-无配比单无法填写生控数据；
-签收后仍可使用撤销功能；" rows="4"></textarea>
-                <div class="weui-textarea-counter">
-                    <span id="reason_char">0</span>/200</div>
-            </div>
-        </div>
-    </div>
+  
     <div class="other_page" id="other_page" style="display: none;">
         <div class="container">
             <div class="page js_show">
@@ -596,13 +580,13 @@
             F85[3][1] = 0;
             F85[3][2] = 10;
 
-            $('#scale5').attr('placeholder','0 - 10 %');
+            $('#scale5').attr('placeholder','0 - 20 %');
             F85[4][1] = 0;
-            F85[4][2] = 10;
+            F85[4][2] = 20;
 
-            $('#scale7').attr('placeholder','15 - 30 %');
+            $('#scale7').attr('placeholder','15 - 40 %');
             F85[6][1] = 15;
-            F85[6][2] = 30;
+            F85[6][2] = 40;
         }else if(type == 'P.S.A32.5'){
             $('#scale1').attr('placeholder','50 - 90 %');
             F85[0][1] = 50;

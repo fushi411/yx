@@ -138,24 +138,7 @@
  
     </div>
 
-    <div class="weui-cells weui-cells_form">
-        <div class="weui-cell">
-            <div class="weui-cell__hd">
-                <label class="weui-label">申请理由&nbsp;&nbsp;
-                <span style="color:red;">*</span>
-                </label>
-            </div>
-        </div>
-        <div class="weui-cell">
-            <div class="weui-cell__bd" id="cnt">
-                <textarea class="weui-textarea" name="reason" id="reason" placeholder="申请理由至少5个字(必填)；
-请简要描述付款信息！"
-rows="3"></textarea>
-                <div class="weui-textarea-counter">
-                    <span id="reason_char">0</span>/200</div>
-            </div>
-        </div>
-    </div>
+
 </block>
 <block name="js">
     <script src="__PUBLIC__/assets/js/AmountConversionformat.js"></script>
@@ -172,7 +155,8 @@ rows="3"></textarea>
         gyszh    = 0,
         user_id  = '',
         ysyeVal  = 0,
-        type     = 0;
+        type     = 0,
+        is_hy    = '';
 
         bank.toggle();
 
@@ -252,6 +236,8 @@ rows="3"></textarea>
                 selectArr.text =  selectArr.text.replace(/责任/, "");
                 selectArr.text =  selectArr.text.replace(/公司/, "");
             }
+            is_hy = '汽运';
+            if(selectArr.text.indexOf('(海运)') != -1) is_hy = '海运';
             $('.select2-selection__choice').text(selectArr.text);
             getSupplyPayment();
         });
@@ -387,6 +373,7 @@ rows="3"></textarea>
                     money: money.val(),
                     copyto_id:$("#copyto_id").val(),
                     ysye:ysyeVal,
+                    is_hy:is_hy,
                     type:$('#type').val(),
                     system:"{$system}",
                     modname:'CgfkApply',

@@ -120,6 +120,10 @@ class YxhbKfRatioApplyLogic extends Model {
             $proportion5 = ceil($scale[6]->name) == $scale[6]->name?ceil($scale[6]->name): $scale[6]->name;
             $html .= "<input class='weui-input' type='text' style='color: black;'  readonly value='{$scale[6]->value}：{$scale[6]->name}%'>";
         }
+        if(!empty($scale[7]) && !empty($scale[7]->name)) {
+            $proportion5 = ceil($scale[7]->name) == $scale[7]->name?ceil($scale[7]->name): $scale[7]->name;
+            $html .= "<input class='weui-input' type='text' style='color: black;'  readonly value='{$scale[7]->value}：{$scale[7]->name}%'>";
+        }
         $out_scale = json_decode($data['out_scale']);
         // if(!empty($out_scale[0]->name)) {
         //     $html .= "<input class='weui-input' type='text' style='color: black; font-weight: 700;border-bottom: 1px solid #e5e5e5; '  readonly value='磨外'>";
@@ -234,9 +238,13 @@ class YxhbKfRatioApplyLogic extends Model {
         $scfz = $res['scfz']>9?$res['scfz']:'0'.$res['scfz'];
 
         $result = array(
-            array('生产时间',$res['date'].' '.$hour.':'.$scfz),
-            array('生产品种',$res['variety']),
-            array('相关说明',$res['bz']?$res['bz']:'无')
+            'first_title'    => '生产时间',
+            'first_content'  => $res['date'].' '.$hour.':'.$scfz,
+            'second_title'   => '生产品种',
+            'second_content' => $res['variety'],
+            'third_title'    => '相关说明',
+            'third_content'  => $res['bz']?$res['bz']:'无',
+            'stat'           => $res['state'],
         );
         return $result;
     }
@@ -327,37 +335,9 @@ class YxhbKfRatioApplyLogic extends Model {
         }
         $boss_id = implode('|',$sign_arr);
         M('yxhb_appflowproc')->addAll($all_arr);
-        $this->sendMessage($result,$boss_id);
+        D('WxMessage')->ProSendCarMessage('yxhb','KfRatioApply',$result,$boss_id,session('yxhb_id'),'QS');
         return array('code' => 200,'msg' => '提交成功' , 'aid' =>$result);
     }
-    /**
-     * 通知信息发送
-     * @
-     */
-    public function sendMessage($apply_id,$boss){
-        $system = 'yxhb';
-        $mod_name = 'KfRatioApply';
-        $logic = D(ucfirst($system).$mod_name, 'Logic');
-        $res   = $logic->record($apply_id);
-        $systemName = array('kk'=>'建材', 'yxhb'=>'环保');
-        // 微信发送
-        $WeChat = new \Org\Util\WeChat;
-        
-        $descriptionData = $logic->getDescription($apply_id);
-     
-        $title = '配比通知(签收)';
-        $url = "https://www.fjyuanxin.com/WE/index.php?m=Light&c=Apply&a=applyInfo&system=".$system."&aid=".$apply_id."&modname=".$mod_name;
-      
-        $applyerName='('.$res['name'].'提交)';
-        $description = "您有一个流程需要签收".$applyerName;
-
-        $receviers = "wk|HuangShiQi|".$boss;
-        foreach( $descriptionData as $val ){
-            $description .= "\n{$val['name']}{$val['value']}";
-        }
-        $agentid = 15;
-        $WeChat = new \Org\Util\WeChat;
-        $info = $WeChat->sendCardMessage($receviers,$title,$description,$url,$agentid,$mod_name,$system);
-    }
+   
 
 }

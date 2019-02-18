@@ -108,7 +108,12 @@ class ApplyController extends BaseController {
         $copyTo->readCopytoApply($mod_name, $apply_id,null,1);
         // 推送标记为已读
         $copyTo->readCopytoApply($mod_name, $apply_id,null,2);
-
+        // 注意事项配置
+        $detailAuth = D('YxDetailAuth')->CueAuthCheck();
+        $atten      = D('YxDetailAuth')->ActiveAttention($system,$mod_name);
+        $this -> assign('atten',$atten);
+        $this -> assign('CueConfig',$detailAuth);
+        
         if (!in_array($wxid, $authArr)) {
             $this->error ( '无查看权限！', U('Light/Index/index',array('system'=>$system)), 2 );
         }
@@ -162,7 +167,7 @@ class ApplyController extends BaseController {
         );
 
         $id = 1;
-        $userInfoList  = M('wx_info')->where($where)->field('wxid as id,name,avatar')->select();
+        $userInfoList  = M('wx_info')->where($where)->field('wxid as id,name,avatar')->group('wxid')->select();
         $Dept          = D('department');
         $childDeptHtml = $Dept->genDeptUserHtml($userInfoList);
         $this->ajaxReturn($childDeptHtml);
@@ -190,34 +195,17 @@ class ApplyController extends BaseController {
         $aid      = I('post.id');
         $system   = I('post.system');
         $mod_name = I('post.mod_name');
-        $per_name = session('name'); // 去除自己
-        // - 申请人
-        $res = D(ucfirst($system).$mod_name, 'Logic')->recordContent($aid);
-        $apply_id = $res['applyerID'];
-        $res = M($system.'_boss')->field('wxid')->where(array('id' => $apply_id))->find();
-        $receviers = $res['wxid'].',';
-
-        // - 流程人员
-        $resArr =  M($system.'_appflowproc a')->join($system.'_boss b on b.id=a.per_id')->field('b.wxid')->where(array('a.aid' => $aid ,'a.mod_name' => $mod_name,'a.per_name'=>array('neq',$per_name)))->select();               
-        foreach($resArr as $val){
-            $receviers .= $val['wxid'].',';
-        }
-
-        // - 抄送人员
-        $resArr = M($system.'_appcopyto')->field('copyto_id')->where(array('aid' => $aid,'mod_name' =>$mod_name,'type' => 1))->find();
-        $receviers .= $reArr['copyto_id'] ;
-        $recevier = str_replace(',', '|',  $receviers);
-        
+        // 流程
+        $recevier = D('WxMessage')->getAllCurrentProcessPeople($system,$mod_name,$aid,0,'No');
         // 数据重构  -- 去除重复的人员
         $tmpRecevierArr = explode('|',$recevier);  
-        $tmpRecevierArr = array_filter($tmpRecevierArr); // ---- 去除空值
         $tmpRecevierArr = array_unique($tmpRecevierArr); // -- 去除重复
+        $tmpRecevierArr = array_filter($tmpRecevierArr); // ---- 去除空值
 
         // 查询数组
         $User = D($system.'_boss');
         $resArr = array();
         
-        // dump($matchUser);
         foreach ($tmpRecevierArr as $key => $value) {
             $info = $User->getWXInfo($value);
             if (!empty($info)) {
@@ -225,86 +213,52 @@ class ApplyController extends BaseController {
                 $html .= '<a class="weui-cell weui-cell_access select-comment-user" href="javascript:;" data-id="'.$info['id'].'" data-uid="'.$value['userid'].'" data-type="user" data-img="'.$info['avatar'].'" data-name="'.$info['name'].'" style="text-decoration:none;"><div class="weui-cell__hd"><img src="'.$avatar.'" alt="" style="width:20px;margin-right:5px;display:block"></div><div class="weui-cell__bd"><p style="margin-bottom: 0px;">'.$info['name'].'</p></div><div class="weui-cell__ft"></div></a>';
             }
         }
-        unset($value);
-        // dump($resArr);
+        
         $this->ajaxReturn(array("html"=>$html, "keywords"=>$keywords));
     }
 
-
+  
 
     // 评论记录
     public function saveApplyComment()
     {
-        $system = I('post.system');
-        $per_id = session($system.'_id');
-        $per_name = session('name');
+        $system   = I('post.system');
+        $aid      = I('post.aid');
+        $ctoid    = I('post.ctoid');
         $image    = I('post.file');
-        if (M()->autoCheckToken($_POST)){
-            $data['aid'] = I('post.aid');
-            $ctoid = I('post.ctoid');
-            $ctoid = explode(',',$ctoid);
-            $ctoid = array_filter($ctoid);
-            $ctoid = implode(',',$ctoid);
-            $data['comment_to_id'] = $ctoid;
-            $data['mod_name'] = I('post.mod_name');
-            $data['app_word'] = I('post.word');
-            $data['per_id'] = $per_id;
-            $data['per_name'] = $per_name;
-            $data['app_stat'] = 1;
-            $data['comment_img'] = $image;
-            $data['time'] = date('Y-m-d H:i:s');
-            // 后期使用
-            $data['reply_id'] = 0;
-            
-            // 发送消息提醒相关人员 
-            if (!empty($data['comment_to_id'])) {
-            // 发送抄送消息
-                $recevier = 'wk|HuangShiQi|'.str_replace(',', '|', $data['comment_to_id']);
-            }else{
-            // 无@指定人 发送流程内的人
-               // - 申请人，抄送人员，流程人员（不包括自己本身） #appflowproc  #copyto 
-                
-                // - 申请人
-                $res = D(ucfirst($system).$data['mod_name'], 'Logic')->recordContent($data['aid']);
-                $apply_id = $res['applyerID'];
-                $res = M($system.'_boss')->field('wxid')->where(array('id' => $apply_id))->find();
-                $receviers = $res['wxid'].',';
+        $mod      = I('post.mod_name');
+        $word     = I('post.word');
+        $per_id   = session($system.'_id');
+        $per_name = session('name');
+        # 重复提交
+        if (!M()->autoCheckToken($_POST)) $this->ajaxReturn('error');
+        # 数据处理
+        $ctoid = explode(',',$ctoid);
+        $ctoid = array_filter($ctoid);
+        $ctoid = implode(',',$ctoid);
 
-                // - 流程人员
-                $resArr =  M($system.'_appflowproc a')->join($system.'_boss b on b.id=a.per_id')->field('b.wxid')->where(array('a.aid' => $data['aid'] ,'a.mod_name' => $data['mod_name'],'a.per_name'=>array('neq',$per_name)))->select();               
-                foreach($resArr as $val){
-                    $receviers .= $val['wxid'].',';
-                }
-
-                // - 抄送人员
-                $resArr = M($system.'_appcopyto')->field('copyto_id')->where(array('aid' => $data['aid'],'mod_name' =>$data['mod_name'],'type' => 1))->find();
-                $receviers .= $reArr['copyto_id'] ;
-                $recevier = 'wk|HuangShiQi|'.str_replace(',', '|',  $receviers);
-                
-                // 数据重构  -- 去除重复的人员
-                $tmpRecevierArr = explode('|',$recevier);  
-                $tmpRecevierArr = array_filter($tmpRecevierArr); // ---- 去除空值
-                $tmpRecevierArr = array_unique($tmpRecevierArr); // -- 去除重复
-                $tmpRecevier = implode(',',$tmpRecevierArr);
-
-                $temrecevier = str_replace('|',',',$tmpRecevier);
-                $data['comment_to_id'] = $tmpRecevier;
-                $data['app_word'].='@所有人';
-            }
-            // - 发送信息
-            $flowTable = M($system.'_appflowtable');
-            $mod_cname = $flowTable->getFieldByProMod($data['mod_name'], 'pro_name');
-            $title = str_replace('表','',$mod_cname) ;
-            $description = "您有新的评论：".$per_name."@了你!";
-            $url = "https://www.fjyuanxin.com/WE/index.php?m=Light&c=Apply&a=applyInfo&system=".$system."&aid=".$data['aid']."&modname=".$data['mod_name'];
-            $WeChat = new \Org\Util\WeChat;
-            $WeChat->sendCardMessage($recevier,$title,$description,$url,15,$data['mod_name'],$system);
-            // - 数据插入
-
-            $res = M($system.'_appflowcomment')->add($data);
-            $this->ajaxReturn($res);
+        $data['aid']           = $aid;
+        $data['comment_to_id'] = $ctoid;
+        $data['mod_name']      = $mod;
+        $data['app_word']      = $word;
+        $data['per_id']        = $per_id;
+        $data['per_name']      = $per_name;
+        $data['app_stat']      = 1;
+        $data['comment_img']   = $image;
+        $data['time']          = date('Y-m-d H:i:s');
+        $data['reply_id']      = 0;
+        
+        // 发送消息提醒相关人员 
+        $temrecevier           = D('WxMessage')->commentSendMessage($system,$mod,$aid,$ctoid);
+        if (empty($ctoid)) {
+            $temrecevier           = str_replace('|',',',$temrecevier);
+            $data['comment_to_id'] = $temrecevier;
+            $data['app_word']     .= '@所有人';
         }
-        $this->ajaxReturn('error');
+       
+        // - 数据插入
+        $res = M($system.'_appflowcomment')->add($data);
+        $this->ajaxReturn($res); 
     }
 
     public function delCommentRecord()
@@ -361,69 +315,20 @@ class ApplyController extends BaseController {
             $this->success('提交成功',U('Light/Apply/applyInfo',array('modname'=>$mod_name,'aid'=>$aid,'system'=>$system)));
         }
     }
+
     // 撤销申请
     public function delRecord()
     {
-        $id = I('post.id');
-        $mod_name = I('post.mod_name');
-        $system = I('post.system');
-        if ($id) {
-            $res = D(ucfirst($system).$mod_name, 'Logic')->delRecord($id);
-            $this->delRecordCue();
-            $wf=new WorkFlowController();
-            $wf->workFlowSVReset($mod_name,$id,$system);
-            
-            $this->ajaxReturn('success');
-        } else {
-            $this->ajaxReturn('failure');
-        }
-    }
-
-    // 撤销通知
-    public function delRecordCue(){
         $system      =  I('post.system');
         $id          =  I('post.id');
         $mod_name    =  I('post.mod_name');
         $reason      =  I('post.reason');
-
-        $receviers   = 'HuangShiQi,wk,';
-        $res = D(ucfirst($system).$mod_name, 'Logic')->recordContent($id);
-        $apply_user = $res['applyerName'];
-        
-        $resArr =  M($system.'_appflowproc a')
-                ->join($system.'_boss b on b.id=a.per_id')
-                ->field('b.wxid')
-                ->where(array('a.aid' => $id ,'a.mod_name' => $mod_name))
-                ->select();               
-        
-        foreach($resArr as $val){
-            $receviers .= $val['wxid'].',';
-        }
-
-        // - 抄送人员
-        $resArr = M($system.'_appcopyto')->field('copyto_id')->where(array('aid' => $id,'mod_name' =>$mod_name,'type' => 1))->find();
-        
-        $receviers .= $resArr['copyto_id'] ;
-        $recevier = str_replace(',', '|',  $receviers);
-        
-        // 数据重构  -- 去除重复的人员
-        $tmpRecevierArr = explode('|',$recevier);  
-        $tmpRecevierArr = array_filter($tmpRecevierArr); // ---- 去除空值
-        $tmpRecevierArr = array_unique($tmpRecevierArr); // -- 去除重复
-        $temrecevier = implode('|',$tmpRecevierArr);
-
-        $systemName = array('kk'=>'建材', 'yxhb'=>'环保');
-        $flowTable   = M($system.'_appflowtable');
-        $mod_cname   = $flowTable->getFieldByProMod($mod_name, 'pro_name');
-
-        $title       = '【已撤销推送】';
-        $description = $systemName[$system].$mod_cname."({$apply_user}提交)\n撤销理由：".$reason;
-        if($system == 'kk' && $mod_name == 'AddMoneyQtTz') $description = '投资'.$mod_cname."({$apply_user}提交)\n撤销理由：".$reason;
-        $url         = "https://www.fjyuanxin.com/WE/index.php?m=Light&c=Apply&a=applyInfo&system=".$system."&aid=".$id."&modname=".$mod_name;
-        $WeChat      = new \Org\Util\WeChat;
-        $WeChat->sendCardMessage($temrecevier,$title,$description,$url,15,$mod_name,$system);
-
-        // $ctoid = $res['per_id'];
+        if (!$id) $this->ajaxReturn('failure');
+        # 撤销处理
+        $res = D(ucfirst($system).$mod_name, 'Logic')->delRecord($id);
+        # 信息发送以及保存
+        $receviers             = D('WxMessage')->delRecordSendMessage($system,$mod_name,$id,$reason);
+        $receviers             = str_replace('|',',',$receviers);
         $data['aid']           = $id;
         $data['comment_to_id'] = $receviers;
         $data['mod_name']      = $mod_name;
@@ -433,6 +338,10 @@ class ApplyController extends BaseController {
         $data['app_stat']      = 1;
         $data['time']          = date('Y-m-d H:i:s');
         $commentRes            = M($system.'_appflowcomment')->add($data);
+
+        $wf=new WorkFlowController();
+        $wf->workFlowSVReset($mod_name,$id,$system);
+        $this->ajaxReturn('success');
     }
 
     // 审核撤回
@@ -546,23 +455,6 @@ class ApplyController extends BaseController {
         $val['output_file'] = $savePath.$output_file;
         $this->ajaxReturn( array('code' => 200,'data' => $val));
     }
-
-    public function ReDescription($data){
-        $description = '';
-        foreach($data as $k =>$v){
-          $description.=$v['name'].$v['value']."\n";
-        }
-        return $description;
-    }
-
-    public function forTest()
-    {
-        header("Content-type:text/html;charset=utf-8");
-        
-    }
-
- 
-
 
 // ---END---
 }

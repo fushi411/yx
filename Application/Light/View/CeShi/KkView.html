@@ -1,0 +1,52 @@
+<extend name="Apply:applyBase" />
+<!-- 去除不可选择日期 -->
+<block name="disable_date"></block>
+<!-- 去除可选择日期 -->
+
+<block name="content_body">
+    <div class="weui-cells" id="content1">
+        <div class="weui-cell ">
+            <div class="weui-cell__hd">
+                <label class="weui-label">备案名称&nbsp;&nbsp;
+                    <span style="color:red;">*</span>
+                </label>
+            </div>
+            <div class="weui-cell__bd">
+                <input id="name" name="name" class="weui-input" type="text" placeholder="不超过15个字" maxlength="15" onblur="checkNameIsSet()">
+            </div>
+        </div>
+        <!--  备案名称 END -->
+        <div class="weui-cell ">
+            <div class="weui-cell__hd">
+                <label class="weui-label">联系人员&nbsp;&nbsp;
+                    <span style="color:red;">*</span>
+                </label>
+            </div>
+            <div class="weui-cell__bd">
+                <input id="contacts" name="contacts" class="weui-input" type="text" placeholder="真实姓名" >
+            </div>
+        </div>
+        <!--  联系人 END -->
+        <a class="button" onclick="getData()">获取数据</a>
+    </div>
+</block>
+
+<block name="js">
+<script type="text/javascript">
+
+    function getData(){
+        $.ajax({
+            // type:'post',
+            url: "{:U('Light/Api/CeShiApi')}"+"&system=kk&modname=CeShi&action=getData",
+            // data:'',
+            dataType: 'json',
+            success: function (res) {
+                console.log(res)
+            }
+        })
+    }
+
+
+</script>
+
+</block>

@@ -86,7 +86,7 @@ function geUnSigntData(){
             },
             dataType: 'json',
             success: function (res) {
-                makeHtml(res,$('#unread_content'),1);
+                makeHtml(res,$('#unread_content'));
                 toast.fadeOut(200);
             }
         });
@@ -104,7 +104,6 @@ function geUnSigntData(){
             },
             success: function (res) {
                 var data = res;
-               
                 if(data.length <20){
                     no_more.show();
                     load_more.hide();
@@ -113,45 +112,10 @@ function geUnSigntData(){
                     load_more.show();
                     no_more.hide();
                 }
-                makeHtml(data,$('#show_data_content'),0); 
+                makeHtml(data,$('#show_data_content')); 
                 toast.fadeOut(200);
             }
         });
     }
-// html 生成
-    function  makeHtml(data,dom,type){
-        var html = '';
-        for(i = 0 ; i<data.length;i++){
-            html +="<a href='"+"{:U('Light/Apply/applyInfo')}"+'&system='+data[i]['system']+'&aid='+data[i]['aid']+'&modname='+data[i]['mod_name']+"' class='weui-cell weui-cell_access weui-cell_link' style='text-decoration: none;'>"+
-            '<div class="weui-media-box weui-media-box_text" style="width: 100%;padding-left: 0px;padding-right: 0px;">'+
-            '<div class="weui-flex" style="align-items: center;">'+
-            '<div class="weui-flex__item">'+
-            '<h4 class="weui-media-box__title" >'+data[i]['applyer']+'的'+data[i]['title']+'</h4>'+
-            '</div>'+
-            '<div class="weui-flex__item">';
-            if(data[i]['stat'] == 0){
-                html+= '<span class="label label-default" style="margin-left: 1em;padding-top: 0.3em;padding-bottom: 0.2em">已撤销</span>'
-            }else if(data[i]['stat'] == 2){
-                html+='<span class="label label-primary" style="margin-left: 1em;padding-top: 0.3em;padding-bottom: 0.2em">签收中</span>';
-            }else if(data[i]['stat'] == 1){
-                html+= '<span class="label label-success" style="margin-left: 1em;padding-top: 0.3em;padding-bottom: 0.2em">已签收</span>';
-            }else if(data[i]['stat'] == 3){
-                html+= '<span class="label label-danger" style="margin-left: 1em;padding-top: 0.3em;padding-bottom: 0.2em">已拒收</span>';
-            }
-            html += '</div>';
-            if(type == 1){
-                html +='<div class="weui-flex__item">'+
-                    '<span class="weui-badge weui-badge_dot" style="margin-left: 5px;margin-right: 5px;margin-bottom: 8px;"></span>'+
-                '</div>';
-            }
-            html +='<div class="weui-flex__item" style="text-align: right;"><h5>'+data[i]['date']+'</h5></div> </div>';
-            for(x = 0 ;x < data[i].content.length;x++){
-                html +='<p class="weui-media-box__desc " style="margin-bottom: 0px;"><span>'+data[i].content[x][0]+'：</span><span  >'+data[i].content[x][1]+'</span></p>';
-            }
-            html += '</div> </a>';
-        }
-        dom.append(html);
-    }  
-
     </script>
 </block>

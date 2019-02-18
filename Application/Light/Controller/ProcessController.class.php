@@ -14,37 +14,41 @@ class ProcessController extends Controller
      * 推送可视化页面
      */
     public function ApplyProcess(){
-        $pro_mod = I('modname');
+        $pro_mod = I('get.modname');
         // $pro_mod 为空的情况
-        $system = I('system');
+        $system = I('get.system');
         if(!$system)$system='yxhb';
         if($pro_mod == '') die;
-
-        $proData = GetAppFlow($system,$pro_mod);
-        $temp['proName'] = str_replace('表','',$proData[0]['pro_name']); 
-
-        // 特殊页面显示 （临时额度） 目前只有临时页面特殊，后期可能修改
-        switch($pro_mod){
-            case 'TempCreditLineApply': 
-                        $func = 'TempCreditLineApply'; 
-                break;
-            case 'fh_edit_Apply_hb': 
-                        $func = 'fh_edit_Apply_hb'; 
-                break;
-            case 'fh_edit_Apply': 
-                        $func = 'fh_edit_Apply'; 
-                break;
-            case 'KfMaterielApply': 
-                        $func = 'KfMaterielApply'; 
-                break;
-            default:
-                        $func = 'getApplyProcess';
+        $mod_name  = D('Seek')->getModname($pro_mod,$system);
+        $mod_name  = $mod_name.'流程';
+        $map = array(
+            'system' => $system,
+            'mod'    => $pro_mod,
+            'stat'   => 1,
+        );
+        $data = M('yx_config_viewpro')->where($map)->order('id desc')->select();
+        $temp = array();
+        if(empty($data)){
+            $html = D(ucfirst($system).'Appflowtable')->getConditionStepHtml($pro_mod);
+            $temp[] = array(
+                'title' => $mod_name,
+                'html'  => $html, 
+            );
+        }else{
+            foreach( $data as $k => $v){
+                $html = D(ucfirst($system).'Appflowtable')->getConditionStepHtml($pro_mod,$v['condition']);
+                $temp[] = array(
+                    'title' => $v['title'],
+                    'html'  => $html, 
+                );
+            }
         }
-        $temp['data'] = $this->$func($proData);
+        $show['name'] = $mod_name;
+        $show['data'] = $temp;
         $authGroup =  $this->getAuthGroup($system,$pro_mod);
         $this->assign('group',$authGroup);
-        $this->assign('data',$proData);
-        $this->assign('show',$temp);
+        //$this->assign('data',$proData);
+        $this->assign('show',$show);
       
         $this->display('Process/ApplyProcess');
     }
@@ -120,11 +124,11 @@ class ProcessController extends Controller
         $temp = array();
         $temp[] = array(
             'title' => '授权库号一致审批流程',
-            'count' => 1
+            'count' => 0
         );
         $temp[] = array(
             'title' => '授权库号不一致审批流程',
-            'count' => 2
+            'count' => 1
         );
         return $temp;
     }
@@ -156,11 +160,11 @@ class ProcessController extends Controller
         $temp = array();
         $temp[] = array(
             'title' => '授权库号一致审批流程',
-            'count' => 1
+            'count' => 0
         );
         $temp[] = array(
             'title' => '授权库号不一致审批流程',
-            'count' => 2
+            'count' => 1
         );
         return $temp;
     }
@@ -220,17 +224,42 @@ class ProcessController extends Controller
 
     public function PushProcess(){
         // 进入指定的位置所需参数
-        $system = I('system'); 
-        $pro_mod = I('modname'); 
+//        $system = I('system');
+//        $pro_mod = I('modname');
+//        $sy = array('kk' => '建材','yxhb' => '环保');
+//        $arr = M($system.'_appflowtable')->where(array('stat' => 1 , 'pro_mod' => $pro_mod.'_push'))->field('pro_name,pro_mod,condition')->select();
+//        $push = $this->recombinant($arr,$system);
+//        $this->assign('condition',$push);
+//        $this->assign('pro_name',$sy[$system].$push[0]['pro_name']);
+//        $this->display('Process/push');
+
+
+        $system = I('get.system');
+        $pro_mod = I('get.modname');
         $sy = array('kk' => '建材','yxhb' => '环保');
-        $arr = M($system.'_appflowtable')->where(array('stat' => 1 , 'pro_mod' => $pro_mod.'_push'))->field('pro_name,pro_mod,condition')->select();
-        $push = $this->recombinant($arr,$system);
+        $arr = M($system.'_pushlist')->where(array('stat' => 1 , 'pro_mod' => $pro_mod))->field('id,pro_name,pro_mod,push_name')->select();
+        //不能重复添加相同的模块名
+        $arr = $this->a_array_unique($arr);
+        $push = $this->recombinant($arr,$system,$pro_mod,$sy);
         $this->assign('condition',$push);
         $this->assign('pro_name',$sy[$system].$push[0]['pro_name']);
+        $this->assign('pro_mod',$push[0]['pro_mod']);
         $this->display('Process/push');
     }
 
-
+    //去除重复模块名的方法
+    function a_array_unique($data)
+    {
+        $i = array();
+        foreach($data as $key => &$value){
+            if(in_array($value['pro_mod'],$i)){
+                unset($data[$key]);
+            }else{
+                $i = $value;
+            }
+        }
+        return $data;
+    }
 
     /**
      * 推送信息重构
@@ -239,52 +268,119 @@ class ProcessController extends Controller
      */
     private function recombinant($condition,$system,$mod,$sy){
         // 数据检验
+//        if(!is_array($condition)) return false;
+//        foreach($condition as $k => $v){
+//            $v['condition'] = json_decode($v['condition'],true);
+//
+//            // 特殊页面显示 （临时额度） 目前只有临时页面特殊，后期可能修改
+//            switch($v['pro_mod']){
+//                case 'TempCreditLineApply_push':
+//                            $func = 'TempCreditLinePush';
+//                    break;
+//                default:
+//                            $func = 'getApplyPush';
+//            }
+//            if($sy == $system && $mod == $v['pro_mod']) $condition[$k]['display']   = 'black';
+//            $condition[$k]['condition'] = $this->$func($v,$system);
+//        }
+//        return $condition;
+
         if(!is_array($condition)) return false;
         foreach($condition as $k => $v){
-            $v['condition'] = json_decode($v['condition'],true);
+            $v['push_name'] = json_decode($v['push_name'],true);
 
             // 特殊页面显示 （临时额度） 目前只有临时页面特殊，后期可能修改
             switch($v['pro_mod']){
-                case 'TempCreditLineApply_push': 
-                            $func = 'TempCreditLinePush'; 
+                case 'TempCreditLineApply':
+                    $func = 'TempCreditLinePush';
                     break;
                 default:
-                            $func = 'getApplyPush';
+                    $func = 'getApplyPush';
             }
             if($sy == $system && $mod == $v['pro_mod']) $condition[$k]['display']   = 'black';
-            $condition[$k]['condition'] = $this->$func($v,$system);
+            $condition[$k]['push_name'] = $this->$func($v,$system);
         }
         return $condition;
     }
 
     private function TempCreditLinePush($data,$system){
-        $result = array();
-        $pushManStr = $data['condition']['two'];
-        $pushManArr = explode(',',$pushManStr);
-        $pushManArr = $this->getUserInfo($pushManArr,$system);
-        $result[] = array(
-            'title' => '二万临时额度',
-            'pushMan' =>$pushManArr
-        );
-        $pushManStr = $data['condition']['push'];
-        $pushManArr = explode(',',$pushManStr);
-        $pushManArr = $this->getUserInfo($pushManArr,$system);
-        $result[] = array(
-            'title' => '五万,十万临时额度',
-            'pushMan' =>$pushManArr
-        );
+//        $result = array();
+//        $pushManStr = $data['condition']['two'];
+//        $pushManArr = explode(',',$pushManStr);
+//        $pushManArr = $this->getUserInfo($pushManArr,$system);
+//        $result[] = array(
+//            'title' => '二万临时额度',
+//            'pushMan' =>$pushManArr
+//        );
+//        $pushManStr = $data['condition']['push'];
+//        $pushManArr = explode(',',$pushManStr);
+//        $pushManArr = $this->getUserInfo($pushManArr,$system);
+//        $result[] = array(
+//            'title' => '五万,十万临时额度',
+//            'pushMan' =>$pushManArr
+//        );
+//        return $result;
 
+        $pro_mod = $data['pro_mod'];
+        $res = M($system.'_pushlist')->where(array('typs'=>2,'stat'=>1,'pro_mod'=>$pro_mod))->select();
+        $result = array();
+        foreach ($res as $key=>$val){
+            if($val['condition']=='line=20000'){
+                $pushManStr = $val['push_name'];
+                $pushManStr = trim($pushManStr,'"');
+                $pushManArr = explode(',',$pushManStr);
+                $pushManArr = $this->getUserInfo($pushManArr,$system);
+                $result[] = array(
+                    'title' => '二万临时额度',
+                    'tiaojian'=>$val['condition'],
+                    'id'=>$val['id'],
+                    'pushMan' =>$pushManArr
+                );
+            }else{
+                $pushManStr = $val['push_name'];
+                $pushManStr = trim($pushManStr,'"');
+                $pushManArr = explode(',',$pushManStr);
+                $pushManArr = $this->getUserInfo($pushManArr,$system);
+                $result[] = array(
+                    'title' => '五万,十万临时额度',
+                    'tiaojian'=>$val['condition'],
+                    'id'=>$val['id'],
+                    'pushMan' =>$pushManArr
+                );
+            }
+        }
         return $result;
     }
 
     private function getApplyPush($data,$system){
+//        $result = array();
+//        $pushManStr = $data['condition']['push'];
+//        $pushManArr = explode(',',$pushManStr);
+//        $pushManArr = $this->getUserInfo($pushManArr,$system);
+//
+//        $result[] = array(
+//            'title' => $data['pro_name'],
+//            'pushMan' =>$pushManArr
+//        );
+//        return $result;
+
         $result = array();
-        $pushManStr = $data['condition']['push'];
+        $pushManStr = $data['push_name'];
+        if($pushManStr=='""'||$pushManStr==""){
+            $result[] = array(
+                'title' => $data['pro_name'],
+                'id'=>$data['id'],
+                'pushMan' =>array(),
+            );
+            return $result;
+        }
+        $pushManStr = trim($pushManStr,'"');
         $pushManArr = explode(',',$pushManStr);
         $pushManArr = $this->getUserInfo($pushManArr,$system);
 
         $result[] = array(
             'title' => $data['pro_name'],
+            'id'=>$data['id'],
             'pushMan' =>$pushManArr
         );
         return $result;
@@ -319,10 +415,81 @@ class ProcessController extends Controller
         return $res;
     }
 
+    //查看新增的推送人员是否已存在
+    public function check_ts(){
+        $system = I('post.system');
+        $name = I('post.name');
+        $pro_mod = I('post.pro_mod');
+        $id = I('post.id');
+        $res = M($system.'_pushlist')->field('push_name')->where(array('pro_mod'=>$pro_mod,'id'=>$id))->find();
+        if (empty($res)) $this->ajaxReturn(array('code'=>200,'dtata'=>true));
+        $res = $res['push_name'];
+        $res = trim($res,'"');
+        $res = explode(',',$res);
+        //$res = json_decode($res['push_name'],true);  //因为存进去的不是json格式的，所以不能用json_decode
+        //$this->ajaxReturn($res);
+        //验证推送人员是否已存在
+        foreach ($res as $val){
+            if ($name == $val) $this->ajaxReturn(array('code'=>404,'data'=>'推送人员已存在，请重新选择！'));
+        }
+
+        //验证推送人员是否在建材、环保系统
+        $res = M($system.'_boss')->where(array('wxid'=>$name))->find();
+        if(empty($res)) $this->ajaxReturn(array('code'=>404,'data'=>'该推送人员不在本系统，请重新选择'));
+        $this->ajaxReturn(array('code'=>200,'dtata'=>true));
+    }
+
+    //修改推送名单
+    public function save_ts(){
+        $system = I('post.system');         //系统
+        $pro_mod = I('post.pro_mod');       //模块名
+        $data = I('post.data');             //推送人员名单
+        $id = I('post.id');                 //数据id
+        //$this->ajaxReturn($data);
+        $data = implode(',', $data);
+        $data = '"'.$data.'"';
+        if(!M($system.'_pushlist')->autoCheckToken($_POST)) return array('code' => 404,'msg' => '网络延迟，请勿点击提交按钮！');    //在Model.class.php中，自动表单令牌验证
+        $result = M($system.'_pushlist')->where(array('pro_mod'=>$pro_mod,'id'=>$id))->setField('push_name',$data);
+        if(!$result) $this->ajaxReturn(array('code' => 404,'msg' =>'提交失败，请重新尝试！'));
+        $this->ajaxReturn(array('code' => 200,'msg' => '提交成功' , 'aid' =>$result));
+    }
+
+
+    //验证登入用户是否有权限修改推送名单
+    public function check_jurisdiction(){
+        $detailModel= D('YxDetailAuth');
+        $detailAuth = $detailModel->CueAuthCheck();
+        $this->ajaxReturn($detailAuth);
+    }
+
     /**
      * 测试
      */
     public function forTest(){
         $this->display('Process/index');
     }
+
+    //数据格式转化
+    public function sjzh(){
+        $system = I('post.system');
+        $res = M($system.'_pushlist')->field('id,push_name')->select();
+        $arr = array();
+        $data = array(
+            'id'=>'',
+            'push_name'=>array(),
+        );
+        foreach ($res as $value){
+            $data['id']=$value['id'];
+            $value = trim($value['push_name'],'"');
+            $value = explode(',',$value);
+            $data['push_name']=$value;
+            $data['push_name'] = array_filter( $data['push_name']);
+            $arr[]=$data;
+        }
+        foreach ($arr as $value){
+            M($system.'_pushlist')->where(array('id'=>$value['id']))->setField('push_name',json_encode($value['push_name']));
+        }
+
+    }
+
 }

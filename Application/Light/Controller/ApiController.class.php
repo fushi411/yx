@@ -205,4 +205,76 @@ class ApiController extends BaseController {
         $this->ajaxReturn($res);
     }
 
+    // 矿粉物料配置补录
+    public function KfMaterielAmendApi(){
+        $system = I('system');
+        $mod    = I('modname');
+        $action = I('action');
+        $logic = D(ucfirst($system).$mod ,'Logic');
+        $res = $logic->$action();
+        $this->ajaxReturn($res);
+    }
+
+    // 新增备案客户
+    public function NewGuestApplyApi(){
+        $system = I('get.system');
+        $mod    = I('get.modname');
+        $action = I('get.action');
+        $logic = D(ucfirst($system).$mod ,'Logic');
+        $res = $logic->$action();
+        $this->ajaxReturn($res);
+    }
+
+    // 新增总客户
+    public function Contract_guest_ApplyApi(){
+        $system = I('get.system');
+        $mod    = I('get.modname');
+        $action = I('get.action');
+        $logic = D(ucfirst($system).$mod ,'Logic');
+        $res = $logic->$action();
+        $this->ajaxReturn($res);
+    }
+
+    // 新增子客户
+    public function Contract_guest_Apply2Api(){
+        $system = I('get.system');
+        $mod    = I('get.modname');
+        $action = I('get.action');
+        $logic = D(ucfirst($system).$mod ,'Logic');
+        $res = $logic->$action();
+        $this->ajaxReturn($res);
+    }
+
+    // 新增子客户
+    public function ContractApplyApi(){
+        $system = I('system');
+        $mod    = I('modname');
+        $action = I('action');
+        $logic = D(ucfirst($system).$mod ,'Logic');
+        $res = $logic->$action();
+        $this->ajaxReturn($res);
+    }
+
+    // 发货删除
+    public function fh_del_ApplyApi(){
+        $system = I('system');
+        $mod    = I('modname');
+        $action = I('action');
+        $logic = D(ucfirst($system).$mod ,'Logic');
+        $res = $logic->$action();
+        $this->ajaxReturn($res);
+    }
+
+    // 汪测试
+    public function CeShiApi(){
+        $system = I('system');
+        $mod    = I('modname');
+        $action = I('action');
+        $logic = D(ucfirst($system).$mod ,'Logic');
+        $res = $logic->$action();
+        $this->ajaxReturn($res);
+    }
+
+
+
 }

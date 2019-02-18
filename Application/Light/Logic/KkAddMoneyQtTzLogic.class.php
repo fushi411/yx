@@ -249,9 +249,13 @@ class KkAddMoneyQtTzLogic extends Model {
         $res = $this->record($id);
         $skfsArr = array(4 => '现金',2 => '公司账户', 3 => '承兑汇票');
         $result = array(
-            array('收款方式',$skfsArr[$res['nfkfs']]),
-            array('收款金额', number_format($res['nmoney'],2,'.',',')."元"),
-            array('相关说明',$res['ntext']?$res['ntext']:'无')
+            'first_title'    => '收款方式',
+            'first_content'  => $skfsArr[$res['nfkfs']]?$skfsArr[$res['nfkfs']]:'无',
+            'second_title'   => '收款金额',
+            'second_content' => number_format($res['nmoney'],2,'.',',')."元",
+            'third_title'    => '相关说明',
+            'third_content'  => $res['ntext']?$res['ntext']:'无',
+            'stat'           => $res['stat'],
         );
         return $result;
     }
@@ -464,7 +468,7 @@ class KkAddMoneyQtTzLogic extends Model {
         }
         $boss_id = implode('|',$sign_arr);
         M('kk_appflowproc')->addAll($all_arr);
-        $this->sendMessage($result,$boss_id);
+        D('WxMessage')->ProSendCarMessage('kk','AddMoneyQtTz',$result,$boss_id,session('kk_id'),'QS');
         return array('code' => 200,'msg' => '提交成功' , 'aid' =>$result);
     }
 
@@ -480,35 +484,6 @@ class KkAddMoneyQtTzLogic extends Model {
         if($res<9)     return "{$db}00{$num}";
         if($res < 99)  return "{$db}0{$num}";
         return "{$db}{$num}";
-    }
-
-    /**
-     * 通知信息发送
-     */
-    public function sendMessage($apply_id,$boss){
-        $system = 'kk';
-        $mod_name = 'AddMoneyQtTz';
-        $logic = D(ucfirst($system).$mod_name, 'Logic');
-        $res   = $logic->record($apply_id);
-        $systemName = array('yxhb'=>'建材', 'yxhb'=>'环保');
-        // 微信发送
-        $WeChat = new \Org\Util\WeChat;
-        
-        $descriptionData = $logic->getDescription($apply_id);
-
-        $title = '其他收入(签收)';
-        $url = "https://www.fjyuanxin.com/WE/index.php?m=Light&c=Apply&a=applyInfo&system=".$system."&aid=".$apply_id."&modname=".$mod_name;
-        
-        $applyerName='('.$res['name'].'提交)';
-        $description = "您有一个流程需要签收".$applyerName;
-
-        $receviers = "wk|HuangShiQi|".$boss;
-        foreach( $descriptionData as $val ){
-            $description .= "\n{$val['name']}{$val['value']}";
-        }
-        $agentid = 15;
-        $WeChat = new \Org\Util\WeChat;
-        $info = $WeChat->sendCardMessage($receviers,$title,$description,$url,$agentid,$mod_name,$system);
     }
 
 }

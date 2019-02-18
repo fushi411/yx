@@ -72,8 +72,26 @@ class TaskController extends \Think\Controller {
     // 配置中心
     public function config(){
         $this->titleArr[2]['on'] = 'weui-bar__item_on';
+        $name = session('name');
+        $map = array(
+            'name' => $name,
+            'stat' => 1
+        );
+        $avatar = M('wx_info')->where($map)->find();
+        if($avatar['avatar']) $avatar['avatar'] = str_replace('http:','',$avatar['avatar']);
+        $head   = $avatar['avatar'] ?$avatar['avatar']:'Public/assets/i/defaul.png';
+        $this->assign('avatar',$head);
+        $this->assign('name',$name);
         $this->assign('bottom',$this->titleArr);
         $this->display("Task/config");
+    }
+    // 功能定位配置
+    public function configOfAction(){
+        $this->titleArr[2]['on'] = 'weui-bar__item_on';
+        $data = M('yx_task_fuc')->where(array('stat' => 1))->select();
+        $this->assign('action',$data);
+        $this->assign('bottom',$this->titleArr);
+        $this->display("Task/config_action");
     }
     // 修改草稿
     public function change()

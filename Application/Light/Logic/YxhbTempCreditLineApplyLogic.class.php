@@ -90,7 +90,7 @@ class YxhbTempCreditLineApplyLogic extends Model {
                                      'type'=>'string',
                                      'color' => 'black'
                                     );   
-        $result['content'][] = array('name'=>'申请理由：',
+        $result['content'][] = array('name'=>'相关说明：',
                                      'value'=>$res['notice'],
                                      'type'=>'string',
                                      'color' => 'black'
@@ -169,7 +169,7 @@ class YxhbTempCreditLineApplyLogic extends Model {
                                      'value'=>$res['sales'],
                                      'type'=>'string'
                                     );
-        $result[] = array('name'=>'申请理由：',
+        $result[] = array('name'=>'相关说明：',
                                      'value'=>$res['notice'],
                                      'type'=>'text'
                                     );
@@ -197,15 +197,13 @@ class YxhbTempCreditLineApplyLogic extends Model {
         $res = $this->record($id);
         $clientname = M('yxhb_guest2')->field('g_khjc')->where(array('id' => $res['clientid']))->find();
         $result = array(
-            'sales'   => $res['sales'],
-            'title2'  => '申请金额',
-            'approve' => number_format($res['line'],2,'.',',')."元",
-            'notice'  => $res['notice'],
-            'date'    => $res['date'],
-            'title'   => '客户名称',
-            'name'    => $clientname['g_khjc'], 
-            'modname' => 'TempCreditLineApply',
-            'stat'    => $res['stat']
+            'first_title'    => '客户名称',
+            'first_content'  => $clientname['g_khjc'],
+            'second_title'   => '申请金额',
+            'second_content' => number_format($res['line'],2,'.',',')."元",
+            'third_title'    => '相关说明',
+            'third_content'  => $res['notice']?$res['notice']:'无',
+            'stat'           => $res['stat'],
         );
         return $result;
     }
@@ -251,7 +249,7 @@ class YxhbTempCreditLineApplyLogic extends Model {
         if($user_id=='' || $reason=='' || $money=='')  return array('code' => 404,'msg' => '请刷新页面，重新提交');
         
         // 字数校验
-        if(strlen($reason)<5 ||strlen($reason)>200)  return array('code' => 404,'msg' => '申请理由不能少于5个字，且不能多于200字');
+        if(strlen($reason)<5 ||strlen($reason)>200)  return array('code' => 404,'msg' => '相关说明不能少于5个字，且不能多于200字');
         // 次数校验
         $model = D('Customer');
         $timeArr = array(5,3,1);

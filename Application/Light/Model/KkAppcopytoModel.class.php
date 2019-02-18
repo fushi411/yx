@@ -128,13 +128,16 @@ class KkAppcopytoModel extends Model {
               $cpid = implode(',',$recevierArr);
 
               $title    = str_replace('表','',$mod_cname);
+              $title    = str_replace('申请','',$title);
+              $title    = str_replace('审批','',$title);
+              $title    = str_replace('环保','',$title);
+              $title    = str_replace('建材','',$title);
               $qsRes =  M('kk_appflowtable')->field('pro_mod')->where(array('stage_name' => '签收'))->select();
                 $qsArr = array();
                 foreach($qsRes as $val){
                         $qsArr[] = $val['pro_mod'];
                 }
-              
-              $template =  in_array($mod_name,$qsArr)?"【签收后推送信息】\n申请单位：{$system_msg}\n申请类型：{$title}":"【审批后推送信息】\n申请单位：{$system_msg}\n申请类型：{$title}";
+                $template =  in_array($mod_name,$qsArr)?"【{$title}】推送\n申请单位：{$system_msg}":"【{$title}】推送\n申请单位：{$system_msg}";
               
               $descriptionData = $logic->getDescription($aid);
               $description     = $this->ReDescription($descriptionData);

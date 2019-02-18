@@ -78,7 +78,7 @@ class KkSnMaterielApplyLogic extends Model {
                                      'type'=>'string',
                                      'color' => 'black'
                                     );    
-        $result['content'][] = array('name'=>'申请理由：',
+        $result['content'][] = array('name'=>'相关说明：',
                                      'value'=>$res['info'],
                                      'type'=>'text',
                                      'color' => 'black'
@@ -155,7 +155,7 @@ class KkSnMaterielApplyLogic extends Model {
                                      'value'=>$res['tjr'],
                                      'type'=>'string'
                                     );
-        $result[] = array('name'=>'申请理由：',
+        $result[] = array('name'=>'相关说明：',
                                      'value'=>$res['info'],
                                      'type'=>'text'
                                     );
@@ -179,18 +179,16 @@ class KkSnMaterielApplyLogic extends Model {
      */
     public function sealNeedContent($id){
         $res    = $this->record($id);
+        
         $result = array(
-            'sales'   => $res['tjr'],
-            'title2'  => '入库库号',
-            'approve' => $res['ku'],
-            'notice'  => $res['info'],
-            'date'    => $res['sb_date'],
-            'title'   => '生产品种',
-            'name'    => $res['product'], 
-            'modname' => 'KfMaterielApply',
-            'stat'    => $res['stat'],
+            'first_title'    => '生产品种',
+            'first_content'  => $res['product']?$res['product']:'无',
+            'second_title'   => '入库库号',
+            'second_content' => $res['ku'],
+            'third_title'    => '相关说明',
+            'third_content'  => $res['info']?$res['info']:'无',
+            'stat'           => $res['stat'],
         );
-        return $result;
         return $result;
     }
 

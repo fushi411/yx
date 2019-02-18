@@ -39,7 +39,6 @@ class YxhbAppflowtableModel extends Model {
                                    'avatar'=>$avatar,
                                    'sign'  => $sign
                                   );
-                
             }
         }
         $firstProc = $proInfo[0];
@@ -92,7 +91,6 @@ class YxhbAppflowtableModel extends Model {
         }
         foreach ($temp as $key => $value) {
             foreach($value as $k => $val){
-                
                 $procIDList = $val['per_id'].",";
                 $procNameList = $val['per_name'].",";
                 $wxid = $boss->getWXFromID($val['per_id']);
@@ -146,5 +144,66 @@ class YxhbAppflowtableModel extends Model {
         $map['pro_mod'] = $mod_name;
         $map['stat'] = 1;
         return $this->where($map)->max('stage_id');
+    }
+
+    /**
+     * 获取条件流程html（建议一个条件为一整套流程，不使用公用审批人）
+     * @param string $modname 模块名
+     * @param string $condition 当前状态
+     * @return array $res 
+     */
+    public function getConditionStepHtml($modname,$condition)
+    {
+        $map = array(
+            'pro_mod' => $modname, 
+            'stat'    => 1,
+        );
+        $data = $this
+                ->field('pro_name,pro_id,per_name,per_id,stage_id,point,condition,stage_name')
+                ->where($map)
+                ->order('stage_id asc')
+                ->select();
+        $data = $this->getAccordCondition($data,$condition);
+        $data = $this->getProInfo($data);
+        $html = D('Html')->getProHtml($data);
+        return $html;
+    }
+    /**
+     * 挑选符合条件的数据
+     * @param string $condition 条件
+     * @return array $res 
+     */
+    public function  getAccordCondition($data,$condition){
+        $temp = $data;
+        foreach($data as $k => $v){
+            if(empty($v['condition'])) continue;
+            if(strpos($v['condition'],$condition) === false) unset($temp[$k]); 
+        }
+        $temp = array_values($temp);
+        return $temp;
+    }
+
+    /**
+     * 流程人员数组重构
+     * @param array $data 流程数据
+     * @return array $info 
+     */
+    public function getProInfo($data){
+        $boss = D('YxhbBoss');
+        $info = array();
+        foreach($data as $k => $val){
+            $wxid   = $boss->getWXFromID($val['per_id']);
+            $name   = $boss->getNameFromID($val['per_id']);
+            $avatar = $boss->getAvatar($val['per_id']);
+            // 同级审批 是true 否false
+            $parallel = $data[$k+1]['stage_id'] == $val['stage_id'] ? true : false;
+            $info[] = array(
+                'wxid'     => $wxid,
+                'name'     => $name,
+                'avatar'   => $avatar,
+                'parallel' => $parallel,
+            );
+        }
+        return $info;
     }
 }

@@ -100,6 +100,7 @@ class YxhbkfScjlLogic extends Model {
             'rmcxpzsf' => '电厂炉渣',
             'rmzlzsf'  => '精炼炉渣',
             'rmshssf'  => '石灰石',
+            'rmtwzsf'  => '铜尾渣'
         );
         $flag = 0;
         $html = "<input class='weui-input' type='text' style='color: black; font-weight: 700;border-bottom: 1px solid #e5e5e5; '  readonly value='磨内(单位:%)'>";
@@ -160,7 +161,7 @@ class YxhbkfScjlLogic extends Model {
                                      'value'=>$res['jyry'],
                                      'type'=>'string'
                                     );
-        $result[] = array('name'=>'申请理由：',
+        $result[] = array('name'=>'相关说明：',
                                      'value'=>$res['bz']?$res['bz']:'无',
                                      'type'=>'text'
                                     );
@@ -207,15 +208,13 @@ class YxhbkfScjlLogic extends Model {
     public function sealNeedContent($id){
         $res = $this->record($id);
         $result = array(
-            'sales'   => $res['jyry'],
-            'title2'  => '比表',
-            'approve' => $res['bbmj'],
-            'notice'  => $res['bz'],
-            'date'    => $res['scrq'],
-            'title'   => '生产品种',
-            'name'    => $res['scpz'], 
-            'modname' => 'kfScjl',
-            'stat'    => $res['STAT']
+            'first_title'    => '生产品种',
+            'first_content'  => $res['scpz'],
+            'second_title'   => '比表面积',
+            'second_content' => $res['bbmj'],
+            'third_title'    => '相关说明',
+            'third_content'  => $res['bz']?$res['bz']:'无',
+            'stat'           => $res['STAT'],
         );
         return $result;
     }
@@ -227,9 +226,15 @@ class YxhbkfScjlLogic extends Model {
     */
     public function  getProductInfo(){
         $datetime = I('post.time');
-        $map = array(
-            'pruduct_date' => array('elt',$datetime),
-        );
+        $wlid     = I('post.wlid');
+        $map      = array();
+        if($wlid){
+            $map['id'] = $wlid;
+        }else{
+            $map['pruduct_date'] = array('elt',$datetime);
+        }
+        
+
         $field = 'ku,product,scx';
         $res = M('yxhb_materiel')->field($field)->where($map)->order('pruduct_date desc')->find();
         return $res;
@@ -309,8 +314,8 @@ class YxhbkfScjlLogic extends Model {
         $add['jyry']   = session('name');
         $add['jlsj'] = date('Y-m-d H:i:s',time());
         if(!empty($cpsf)){
-            $add['cpsf'] = $cpsf[1]['name'];
-            $add['qtwlsf'] = $cpsf[0]['name'];
+            $add['cpsf'] = $cpsf[0]['name'];
+            $add['qtwlsf'] = $cpsf[1]['name'];
         }
         $sfData = $this->sfDataMake($sf);
         $add = array_merge($add,$sfData);
@@ -341,64 +346,6 @@ class YxhbkfScjlLogic extends Model {
         
     }
 
-     // $sign_id   = I('post.sign');
-        // $sign_arr  = explode(',',$sign_id);
-        // $sign_arr  = array_filter($sign_arr);// 去空
-        // $sign_arr  = array_unique($sign_arr); // 去重
-        // 签收通知
-        // $all_arr = array();
-        // foreach($sign_arr as $val){
-        //     $per_name = M('yxhb_boss')->where(array('wxid'=>$val))->Field('name,id')->find();
-        //     $data = array(
-        //         'pro_id'        => 31,
-        //         'aid'           => $result,
-        //         'per_name'      => $per_name['name'],
-        //         'per_id'        => $per_name['id'],
-        //         'app_stat'      => 0,
-        //         'app_stage'     => 1,
-        //         'app_word'      => '',
-        //         'time'          => date('Y-m-d H:i',time()),
-        //         'approve_time'  => '0000-00-00 00:00:00',
-        //         'mod_name'      => 'kfScjl',
-        //         'app_name'      => '签收',
-        //         'apply_user'    => '',
-        //         'apply_user_id' => 0, 
-        //         'urge'          => 0,
-        //     );
-        //     $all_arr[]=$data;
-        // }
-        // $boss_id = implode('|',$sign_arr);
-        // M('yxhb_appflowproc')->addAll($all_arr);
-        // $this->sendMessage($result,$boss_id);
-    /**
-     * 通知信息发送
-     * @
-     */
-    public function sendMessage($apply_id,$boss){
-        $system = 'yxhb';
-        $mod_name = 'kfScjl';
-        $logic = D(ucfirst($system).$mod_name, 'Logic');
-        $res   = $logic->record($apply_id);
-        $systemName = array('kk'=>'建材', 'yxhb'=>'环保');
-        // 微信发送
-        $WeChat = new \Org\Util\WeChat;
-        
-        $descriptionData = $logic->getDescription($apply_id);
-     
-        $title = '生控记录(矿粉)(签收)';
-        $url = "https://www.fjyuanxin.com/WE/index.php?m=Light&c=Apply&a=applyInfo&system=".$system."&aid=".$apply_id."&modname=".$mod_name;
-      
-        $applyerName='('.$res['rdy'].'提交)';
-        $description = "您有一个流程需要签收".$applyerName;
-        $receviers = "HuangShiQi|".$boss;
-        foreach( $descriptionData as $val ){
-            $description .= "\n{$val['name']}{$val['value']}";
-        }
-        $agentid = 15;
-        $WeChat = new \Org\Util\WeChat;
-        $info = $WeChat->sendCardMessage($receviers,$title,$description,$url,$agentid,$mod_name,$system);
-    }
-
     // 水份数据
     protected function sfDataMake($sfData){
         $temp = array(
@@ -408,6 +355,7 @@ class YxhbkfScjlLogic extends Model {
             '电厂炉渣' => 'rmcxpzsf',
             '精炼炉渣' => 'rmzlzsf',
             '石灰石'   => 'rmshssf',
+            '铜尾渣'   => 'rmtwzsf',
         );
         $res = array();
         foreach($sfData as $v){

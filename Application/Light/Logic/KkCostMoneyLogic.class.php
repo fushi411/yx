@@ -42,13 +42,29 @@ class KkCostMoneyLogic extends Model {
                                      'type'=>'date',
                                      'color' => 'black'
                                     );
-        $fylx = M('kk_fylx')->field('id as val,fy_name as name')->where(array('id' =>$res['nfylx']))->order('id asc')->find();    
-      
+         $result['content'][] = array('name'=>'申请日期：',
+                                     'value'=> date('Y-m-d',strtotime($res['jl_date'])) ,
+                                     'type'=>'date',
+                                     'color' => 'black'
+                                    ); 
+        if( $res['nfylx'] == 1 ){
+            $fybx = M('kk_feefy3')->where(array('dh' => $res['dh']))->find();
+            $fylx = M('kk_fylx')->field('id as val,fy_name as name')->where(array('id' =>$fybx['nfylx']))->order('id asc')->find(); 
+        }else{
+            $fylx = M('kk_fylx')->field('id as val,fy_name as name')->where(array('id' =>$res['nfylx']))->order('id asc')->find(); 
+        }
+ 
+        $result['content'][] = array('name'=>'申请类型：',
+                                     'value'=> $res['nfylx'] == 1?'报销费用':'用款费用',
+                                     'type'=>'date',
+                                     'color' => 'black'
+                                    );
         $result['content'][] = array('name'=>'费用类型：',
                                      'value'=> $fylx['name'],
                                      'type'=>'date',
                                      'color' => 'black'
                                     );
+        
         $fkfs = M('kk_fkfs')->field('id as val,fk_name as name')->where(array('id' =>$res['nfkfs']))->order('id asc')->find();
 
         $result['content'][] = array('name'=>'付款方式：',
@@ -59,32 +75,34 @@ class KkCostMoneyLogic extends Model {
         $result['content'][] = array('name'=>'用款金额：',
                                      'value'=> "&yen;".number_format(-$res['nmoney'],2,'.',',')."元"  ,
                                      'type'=>'string',
-                                     'color' => 'black'
+                                     'color' => 'black;font-weight: 600;'
                                     );
         $result['content'][] = array('name'=>'大写金额：',
                                      'value'=>cny( -$res['nmoney'] ),
                                      'type'=>'number',
-                                     'color' => 'black;'
+                                     'color' => 'black; '
                                     );
+        if($res['nfylx'] == 1){
+            $result['content'][] = array('name'=>'收款单位：',
+                                        'value'=>$res['skdw'],
+                                        'type'=>'string',
+                                        'color' => 'black'
+                                        );
 
-        $result['content'][] = array('name'=>'收款单位：',
-                                     'value'=>$res['skdw'],
-                                     'type'=>'string',
-                                     'color' => 'black'
-                                    );
+            $result['content'][] = array('name'=>'收款账号：',
+                                        'value'=>$res['skzh'],
+                                        'type'=>'string',
+                                        'color' => 'black'
+                                        );    
+            $result['content'][] = array('name'=>'开户银行：',
+                                        'value'=>$res['khyh'],
+                                        'type'=>'string',
+                                        'color' => 'black'
+                                        );
+        }
+  
 
-        $result['content'][] = array('name'=>'收款账号：',
-                                     'value'=>$res['skzh'],
-                                     'type'=>'string',
-                                     'color' => 'black'
-                                    );    
-        $result['content'][] = array('name'=>'开户银行：',
-                                     'value'=>$res['khyh'],
-                                     'type'=>'string',
-                                     'color' => 'black'
-                                    );  
-
-        $result['content'][] = array('name'=>'用款用途：',
+        $result['content'][] = array('name'=>'相关说明：',
                                      'value'=>$res['ntext']?$res['ntext']:'无',
                                      'type'=>'text',
                                      'color' => 'black'
@@ -136,6 +154,14 @@ class KkCostMoneyLogic extends Model {
      */
     public function delRecord($id)
     {
+        $data = $this->record($id);
+        $map = array('dh' => $data['dh']);
+        M('kk_feefy3')->field(true)->where($map)->setField('stat',0);
+        if($data['nfylx'] == 1){
+            M('kk_fybx')->field(true)->where($map)->setField('stat',0);
+        }else{
+            M('kk_ykfy')->field(true)->where($map)->setField('stat',0);
+        }   
         $map = array('id' => $id);
         return $this->field(true)->where($map)->setField('stat',0);
     }
@@ -153,8 +179,12 @@ class KkCostMoneyLogic extends Model {
                                      'type'=>'date'
                                     );
           
-        $fylx = M('kk_fylx')->field('id as val,fy_name as name')->where(array('id' =>$res['nfylx']))->order('id asc')->find();    
-      
+        if( $res['nfylx'] == 1 ){
+            $fybx = M('kk_feefy3')->where(array('dh' => $res['dh']))->find();
+            $fylx = M('kk_fylx')->field('id as val,fy_name as name')->where(array('id' =>$fybx['nfylx']))->order('id asc')->find(); 
+        }else{
+            $fylx = M('kk_fylx')->field('id as val,fy_name as name')->where(array('id' =>$res['nfylx']))->order('id asc')->find(); 
+        }
         $result[] = array('name'=>'费用类型：',
                                      'value'=> $fylx['name'] ,
                                      'type'=>'number'
@@ -198,18 +228,31 @@ class KkCostMoneyLogic extends Model {
      */
     public function sealNeedContent($id){
         $res    = $this->record($id);
+
+        if( $res['nfylx'] == 1 ){
+            $fybx = M('kk_feefy3')->where(array('dh' => $res['dh']))->find();
+            $fylx = M('kk_fylx')->field('id as val,fy_name as name')->where(array('id' =>$fybx['nfylx']))->order('id asc')->find(); 
+        }else{
+            $fylx = M('kk_fylx')->field('id as val,fy_name as name')->where(array('id' =>$res['nfylx']))->order('id asc')->find(); 
+        }
+
+        $first_title    = '申请类型';
+        $first_content  = '用款费用';
+        $second_title   = '费用类型';
+        $second_content = $fylx['name'];
+        if($res['nfylx'] == 1)$first_content  = '报销费用';
+           
         $result = array(
-            'sales'   => $res['njbr'],
-            'title2'  => '用款金额',
-            'approve' => "&yen;".number_format(-$res['nmoney'],2,'.',',')."元",
-            'notice'  => $res['ntext'],
-            'date'    => $res['jl_date'],
-            'title'   => '收款单位',
-            'name'    => $res['skdw'], 
-            'modname' => 'CostMoney',
-            'stat'    => $this->transStat($res['stat'])
+            'first_title'    => $first_title,
+            'first_content'  => $first_content,
+            'second_title'   => $second_title,
+            'second_content' => $second_content,
+            'third_title'    => '用款金额',
+            'third_content'  => "&yen;".number_format(-$res['nmoney'],2,'.',',')."元",
+            'fourth_title'   => '相关说明',
+            'fourth_content' => $res['ntext']?$res['ntext']:'无',
+            'stat'           => $this->transStat($res['stat']),
         );
-        return $result;
         return $result;
     }
 
@@ -217,18 +260,23 @@ class KkCostMoneyLogic extends Model {
      * 矿粉物料配置
      */
     public function submit(){
-        $fylx = I('post.fylx');
-        $fkfs = I('post.fkfs');
-        $skzh = I('post.skzh');
-        $khyh = I('post.khyh');
-        $skdw = I('post.skdw');
-        $ykje = I('post.ykje');
-        $text = I('post.text');
+        $system = 'kk';
+        $fylx   = I('post.fylx');
+        $fkfs   = I('post.fkfs');
+        $skzh   = I('post.skzh');
+        $khyh   = I('post.khyh');
+        $skdw   = I('post.skdw');
+        $ykje   = I('post.ykje');
+        $text   = I('post.text');
+        $sqlx   = I('post.sqlx');
         $copyto_id = I('post.copyto_id');
-        $imagepath = I('post.imagepath');
+        $imagepath = I('post.imagepath');   
         
-        if(!M('kk_feefy')->autoCheckToken($_POST)) return array('code' => 404,'msg' => '网络延迟，请勿点击提交按钮！');
+        if(!M($system.'_feefy')->autoCheckToken($_POST)) return array('code' => 404,'msg' => '网络延迟，请勿点击提交按钮！');
         $dh = $this->getDhId();
+        $bm = D('YxDetailAuth')->authGetBmId($system);
+        $stat = $sqlx == 1?3:1;
+        $fyfy = $sqlx == 1?1:$fylx;
         $feefy = array(
             'dh'      => $dh,
             'nmoney'  => -$ykje,
@@ -238,9 +286,9 @@ class KkCostMoneyLogic extends Model {
             'npeople' => session('name'),
             'ntext'   => $text,
             'nfkfs'   => $fkfs,
-            'nfylx'   => $fylx,
+            'nfylx'   => $fyfy,
             'njbr'    => session('name'),
-            'nbm'     => 8,
+            'nbm'     => $bm,
             'stat'    => 5,
             'att_name' => $imagepath,
             'att_name2'=> 'image',
@@ -260,26 +308,34 @@ class KkCostMoneyLogic extends Model {
             'nfkfs'   => $fkfs,
             'nfylx'   => $fylx,
             'njbr'    => session('name'),
-            'nbm'     => 8,
-            'stat'    => 1,
+            'nbm'     => $bm,
+            'stat'    => $stat,
         );
+
+        
+        $result = M($system.'_feefy')->add($feefy);
+        M($system.'_feefy3')->add($feefy3);
 
         $ykfy = array(
             'dh'     => $dh,
             'smonth' => intval(date('m',time())),
-            'skdw'   => $skdw,
-            'ykyt'   =>  $text,
-            'stat'   => 1,
+            'stat'   => $stat,
         );
-        $result = M('kk_feefy')->add($feefy);
-        M('kk_feefy3')->add($feefy3);
-        M('kk_ykfy')->add($ykfy);
+        if($sqlx == 1){
+            $ykfy['nr'] = $text;
+            $table      = $system.'_fybx'; 
+        }else{
+            $ykfy['skdw'] = $skdw;
+            $ykfy['ykyt'] = $text;
+            $table        = $system.'_ykfy'; 
+        }
+        M($table)->add($ykfy);
         if(!$result) return array('code' => 404,'msg' => '提交失败，请重新尝试！');
         // 抄送
         $copyto_id = trim($copyto_id,',');
         if (!empty($copyto_id)) {
             // 发送抄送消息
-            D('KkAppcopyto')->copyTo($copyto_id,'CostMoney', $result);
+            D('YxhbAppcopyto')->copyTo($copyto_id,'CostMoney', $result);
         }
         $wf = A('WorkFlow');
         $salesid = session('kk_id');
@@ -319,7 +375,7 @@ class KkCostMoneyLogic extends Model {
      */
     public function getFylx(){
         $tmp = array();
-        $fylx = M('kk_fylx')->field('id as val,fy_name as name')->order('id asc')->select();
+        $fylx = M('kk_fylx')->field('id as val,fy_name as name')->where(array('stat' => 1))->order('id asc')->select();
         return $fylx;
     }
     /**
@@ -388,5 +444,18 @@ class KkCostMoneyLogic extends Model {
         $val['output_file'] = $savePath.$output_file;
         $res[] = $val;
         return $res;
+    }
+
+    /**
+     * 获取对应的审批流程
+     */
+    public function getProHtml(){
+        $modname = 'CostMoney';
+        $fylx    = I('post.fylx');
+        $bm      = D('YxDetailAuth')->authGetBmId('kk');
+        if(empty($bm)) return '暂无部门';
+        $condition = 'nbm='.$bm;
+        $data = D('KkAppflowtable')->getConditionStepHtml($modname,$condition);
+        return $data;
     }
 }

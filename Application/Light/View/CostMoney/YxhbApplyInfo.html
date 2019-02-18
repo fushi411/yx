@@ -1,144 +1,63 @@
 <extend name="Apply:base" />
 
-
 <block name="show_title">
     <div style="display: flex;flex-direction: row;align-items: center;margin-bottom: 1em;">
-        <img class="weui-media-box__thumb" src="{$avatar}" alt="" style="border-radius: 5px;width: 2.5em;height: 2.5em;margin-right: 1em;">
+        <img class="weui-media-box__thumb" src="{$avatar}" index="{$stat}" i="{$apply.stat}" alt="" style="border-radius: 5px;width: 2.5em;height: 2.5em;margin-right: 1em;">
         <h4 class="weui-media-box__title" style="font-weight: 800;font-size:20px;">{$applyer}的{$title|str_replace="表",'',###}</h4>
         <eq name="stat" value="1">
-            <span class="label label-success" style="margin-left: 1em;padding-top: 0.3em;padding-bottom: 0.2em">已签收</span>
+            <span class="label label-success" style="margin-left: 1em;padding-top: 0.3em;padding-bottom: 0.2em">已通过</span>
         </eq>
         <eq name="stat" value="2">
-            <span class="label label-primary" style="margin-left: 1em;padding-top: 0.3em;padding-bottom: 0.2em">签收中</span>
+            <eq name="apply.stat" value="2">
+                <span class="label label-success" style="margin-left: 1em;padding-top: 0.3em;padding-bottom: 0.2em">已通过</span>
+            </eq>
+            <eq name="apply.stat" value="1">
+                <span class="label label-danger" style="margin-left: 1em;padding-top: 0.3em;padding-bottom: 0.2em">已退审</span>
+            </eq>
+            <eq name="apply.stat" value="0">
+                    <eq name="isSigning" value='会审'>
+                            <span class="label label-primary" style="margin-left: 1em;padding-top: 0.3em;padding-bottom: 0.2em">会审中</span>
+                        <else/>
+                            <span class="label label-primary" style="margin-left: 1em;padding-top: 0.3em;padding-bottom: 0.2em">审批中</span>
+                    </eq>
+            </eq>
         </eq>
         <eq name="stat" value="0">
             <span class="label label-default" style="margin-left: 1em;padding-top: 0.3em;padding-bottom: 0.2em">已撤销</span>
         </eq>
-        <eq name="stat" value="3">
-            <span class="label label-default" style="margin-left: 1em;padding-top: 0.3em;padding-bottom: 0.2em">已拒收</span>
-        </eq>
     </div>
 </block>
-
-<block name="content_body">
-    <volist name="content" id="val">
-        <p class="weui-media-box__desc weui-flex">
-            <span style="display: inline-block; width: 100px;text-align: right;">{$val.name}</span>
-            <span class="weui-flex__item" style="color:{$val.color} ">
-                {$val.value}
-            </span>
-        </p>
-    </volist>
-</block>
-
-<block name="work_flow">
-    <div class="weui-panel" style="margin-top: 0px;">
-        <div class="weui-panel__hd" style="font-size: 16px;background-color: #f8f8f8;color:black;padding-top: 10px;">签收名单
-        </div>
-        <div class="weui-cells" style="margin-top:0px;">
-            <div class="weui-cell">
-                <div class="weui-cell__bd">
-                    <div class="weui-uploader">
-                        <div class="weui-uploader__bd" style="height: 85px;">
-                            <ul class="weui-uploader__files" id="app_pro" style="margin-bottom: 0px;">
-                                <volist name="process" id="vo">
-                                    <if condition="$vo.id eq $first['id']">
-                                        <li class='weui-uploader__file wk-select__user' id='{$first.id}' style='height:90px;'>
-                                            <img src={$first.avatar} class='weui-selet__user' style='margin-bottom: 0px;margin-right: 6px;margin-top:10px;'>
-                                            <span style='margin-right: 6px;font-size: 14px;'>{$first.per_name}</span>
-                                        </li>
-                                        <else/>
-                                        <li class='weui-uploader__file wk-select__user' id='{$vo.id}' style='height:90px;margin-left:8px'>
-                                            <if condition="$vo.avatar eq ''">
-                                                <img src='Public/assets/i/defaul.png' class='weui-selet__user' style='margin-bottom: 0px;margin-right: 6px;margin-top:10px;'>
-                                                <else/>
-                                                <img src={$vo.avatar} class='weui-selet__user' style='margin-bottom: 0px;margin-right: 6px;margin-top:10px;'>
-                                            </if>
-                                            <span style='margin-right: 6px;font-size: 14px;'>{$vo.per_name}</span>
-                                        </li>
-                                    </if>
-                                </volist>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</block>
-
-
-
-<block name="process_record">
-    <div class="weui-panel" style="margin-top: 0px;">
-        <div class="weui-panel__hd" style="font-size: 16px;background-color: #f8f8f8;color:black;padding-top: 10px;">签收记录</div>
-        <div class="weui-panel__bd">
-            <div class="weui-media-box weui-media-box_small-appmsg" style="padding-bottom: 10px;">
-                <div class="weui-cells">
-
-                    <if condition="empty($process)">
-                        <span class="weui-media-box weui-media-box_appmsg" style="    align-items: flex-start;padding-top: 10px;">
-                            <h4 class="weui-media-box__title" style="/*font-weight: 800;*/margin-top: 0px;margin-bottom: 5px;color:grey;">
-                                无签收记录
-                            </h4>
-                        </span>
-                        <else/>
-                        <volist name="process" id="proc">
-                            <span class="weui-media-box weui-media-box_appmsg" style="    align-items: flex-start;padding-top: 10px;">
-                                <div class="weui-media-box__hd" style="width: 2.5em;height: 2.5em;">
-                                    <img class="weui-media-box__thumb" src="{$proc.avatar}" alt="" style="border-radius: 5px;">
-                                </div>
-                                <div class="weui-media-box__bd">
-                                    <h4 class="weui-media-box__title" style="/*font-weight: 800;*/margin-top: 0px;margin-bottom: 5px;color:grey;">
-                                        <eq name="proc.app_stat" value="0"> {$proc.per_name}&nbsp;&nbsp;&nbsp;&nbsp;[签收中]</eq>
-                                        <eq name="proc.app_stat" value="1"> {$proc.per_name}&nbsp;&nbsp;&nbsp;&nbsp;
-                                            <span style="color:red;">[已拒收]</span>
-                                        </eq>
-                                        <eq name="proc.app_stat" value="2">
-                                            <if condition="$proc.app_name eq '已转审'">
-                                                {$proc.per_name}&nbsp;&nbsp;&nbsp;&nbsp;[已转签]
-                                                <else/> {$proc.per_name}&nbsp;&nbsp;&nbsp;&nbsp;[已签收]
-                                            </if>
-                                        </eq>
-                                    </h4>
-                                    <p class="weui-media-box__desc" style="display: block;overflow: visible; word-break:break-all; word-wrap:break-word;margin-bottom: 0px;color:black;">
-                                        {$proc.app_word}
-                                    </p>
-                                    <p class="weui-media-box__desc" style="display: block;overflow: visible; word-break:break-all; word-wrap:break-word;font-size: 15px;margin-bottom: 0px;">
-                                        {$proc.approve_time|substr=2,14}
-                                    </p>
-                                </div>
-                            </span>
-                        </volist>
-                    </if>
-                </div>
-            </div>
-        </div>
-    </div>
-</block>
-
-
-
-
-
 <block name="apply">
-    <eq name="isApplyer" value="1">
-        <eq name="stat" value="2">
+        <eq name="isApplyer" value="1">
             <eq name="apply.stat" value="0">
                 <div class="weui-panel" style="margin-top: 0px;">
-                    <div class="weui-panel__hd" style="font-size: 16px;background-color: #f8f8f8;color:black;padding-top: 10px;">签收意见</div>
+                    <div class="weui-panel__hd" style="font-size: 16px;background-color: #f8f8f8;color:black;padding-top: 10px;">{$stepStatus}意见</div>
                     <div class="weui-panel__bd">
                         <div class="weui-cell">
                             <div class="weui-cell__bd">
-                                <textarea class="weui-textarea" placeholder="请输入签收意见;
-签收意见可@指定人;
+                                <textarea class="weui-textarea" placeholder="请输入{$stepStatus}意见;
+{$stepStatus}意见可@指定人;
 无指定默认@所有人（含抄送）;" rows="3" id="comment" style="font-size: 1.2em"></textarea>
                                 <div class="weui-textarea-counter">
                                     <!-- 指定@ -->
                                     <div class="weui-tabbar" style="position: initial;">
                                         <a href="#" class="weui-tabbar__item" style="text-decoration: none;">
                                             <p class="weui-tabbar__label" style="font-size: 15px;color:black;" id="btn-sp">
-                                                <span class="glyphicon" aria-hidden="true" style="margin-right: 5px;"></span>@ 指定人</p>
+                                                <span class="glyphicon" aria-hidden="true" style="margin-right: 5px;"></span>
+                                                @ 指定人
+                                            </p>
+                                        </a>
+                                        <a href="#" class="weui-tabbar__item" id="btn-qz-div" style=" text-decoration: none;">
+                                            <p class="weui-tabbar__label" style="font-size: 15px;color:black;" id="btn-qz">
+                                                <span class="glyphicon glyphicon-pencil" aria-hidden="true" style="margin-right: 5px;"></span> 
+                                                签字
+                                            </p>  
+                                        </a>
+                                        <a href="#" class="weui-tabbar__item" id="btn-yl-div"  style="display: none;text-decoration: none;">
+                                            <p class="weui-tabbar__label" style="font-size: 15px;color:#1aad19;" id="btn-yl">
+                                                <span class="glyphicon glyphicon-paperclip" aria-hidden="true" style="margin-right: 5px;"></span> 
+                                                已签字（点击预览）
+                                            </p>  
                                         </a>
                                     </div>
                                     <div class="page js_show" id="approve_at" style="position: relative;display: none;">
@@ -152,7 +71,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-
+            
                                             <div class="weui-cells searchbar-result" id="approveSearchResult" style="margin-top: 0px;">
                                             </div>
                                         </div>
@@ -160,77 +79,25 @@
                                     <!-- end   指定@ -->
                                 </div>
                             </div>
-
+                            
                         </div>
                         <div class="button-sp-area" id="apply-area" style="margin-bottom: 20px;display: flex;flex-direction: row;width: 100%;justify-content: space-around;align-items: baseline;">
-                            <a href="javascript:;" id="apply-agree-qs" class="weui-btn weui-btn_primary" style="width: 40%">签收</a>
-                            <a href="javascript:;" id="apply-refuse-qs" class="weui-btn weui-btn_warn" style="width: 40%;">拒收</a>
+                            <a href="javascript:;" id="apply-agree" class="weui-btn weui-btn_primary" style="width: 40%">同意</a>
+                            <a href="javascript:;" id="apply-refuse" class="weui-btn weui-btn_warn" style="width: 40%;">退审</a>
                             <!-- <a href="javascript:;" class="weui-btn weui-btn_default">转审</a> -->
+                            
                             <input type="hidden" name="apply_user" id="apply_user" value="{$applyerID}">
                         </div>
+                        <div class="button-sp-area" style="margin-bottom: 20px;display: flex;flex-direction: row;width: 100%;justify-content: space-around;align-items: baseline;">
+                            <button id="apply-change" class="weui-btn weui-btn_primary" style="width: 90%">转审</button>
+                        </div>
+                        
+                        <!-- <div class="weui-cells__title">各个中心主管及以上职位的申请抄送</div> -->
+                        
                     </div>
                 </div>
             </eq>
         </eq>
-    </eq>
-</block>
+    </block>
 
-<block name="js">
-    <script>
-        // apply
-        $("#apply-area").on("click", "#apply-agree-qs,#apply-refuse-qs", function () {
-            $('#loadingToast').fadeIn(100);
-            var type = $(this).attr("id");
-            var option = 0;
 
-            //审批值传入
-            var comment = $("#comment").val();
-            var apply_user = $("#apply_user").val();
-            var copyto_id = $("#copyto_id").val();
-            var id = $("#aid").val();
-            var hash = $(":input[name='__hash__']").val();
-            var approve_id = $("#approve_to_id").val();
-            //console.log(approve_id);
-
-            // 审批类型
-            if (type == "apply-agree-qs") {
-                option = 2;
-            } else {
-                option = 1;
-            }
-            //保存数据
-            $.ajax({
-                type: "POST",
-                url: "{:U('Light/WorkFlowOpTv/WorkFlowSubmit_qs')}",
-                dataType: "json",
-                data: {
-                    id: id,
-                    approve_id: approve_id,
-                    mod_name: "{$mod_name}",
-                    system: "{$system}",
-                    apply_user: apply_user, //中文申请人姓名，用于发送审批结果 
-                    option: option,
-                    copyto_id: copyto_id,
-                    word: comment,
-                    status: "submit",
-                    __hash__: hash
-                },
-                complete: function (data) {
-                    //审批完成后操作
-                    // alert('审批通过');
-                    // console.log(data);
-                    $('#loadingToast').hide();
-                    var $toast = $('#toast');
-                    if ($toast.css('display') != 'none') return;
-
-                    $toast.fadeIn(100);
-                    // console.log(id);
-                    setTimeout(function () {
-                        $toast.fadeOut(100);
-                        window.location = "{:U('Light/Apply/applyInfo?aid=')}" + id + "&modname=" + '{$mod_name}' + "&system=" + '{$system}';
-                    }, 500);
-                }
-            });
-        });
-    </script>
-</block>

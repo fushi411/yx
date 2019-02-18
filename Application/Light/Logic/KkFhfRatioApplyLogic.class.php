@@ -192,9 +192,13 @@ class KkFhfRatioApplyLogic extends Model {
         $fz   = str_replace('分','',$res['scfz']);
         $hour = $hour>9?$hour:'0'.$hour;
         $result = array(
-            array('生产时间',$res['scrq'].' '.$hour.':'.$fz),
-            array('生产品种','复合粉'),
-            array('相关说明',$res['tznr']?$res['tznr']:'无')
+            'first_title'    => '生产时间',
+            'first_content'  => $res['scrq'].' '.$hour.':'.$fz,
+            'second_title'   => '生产品种',
+            'second_content' => '复合粉',
+            'third_title'    => '相关说明',
+            'third_content'  => $res['tznr']?$res['tznr']:'无',
+            'stat'           => $res['STAT'],
         );
         return $result;
     }
@@ -287,37 +291,7 @@ class KkFhfRatioApplyLogic extends Model {
         }
         $boss_id = implode('|',$sign_arr);
         M('kk_appflowproc')->addAll($all_arr);
-        $this->sendMessage($result,$boss_id);
+        D('WxMessage')->ProSendCarMessage('kk','FhfRatioApply',$result,$boss_id,session('kk_id'),'QS');
         return array('code' => 200,'msg' => '提交成功' , 'aid' =>$result);
     }
-    /**
-     * 通知信息发送
-     * @
-     */
-    public function sendMessage($apply_id,$boss){
-        $system = 'kk';
-        $mod_name = 'FhfRatioApply';
-        $logic = D(ucfirst($system).$mod_name, 'Logic');
-        $res   = $logic->record($apply_id);
-        $systemName = array('kk'=>'建材', 'yxhb'=>'环保');
-        // 微信发送
-        $WeChat = new \Org\Util\WeChat;
-        
-        $descriptionData = $logic->getDescription($apply_id);
-     
-        $title = '配比通知(签收)';
-        $url = "https://www.fjyuanxin.com/WE/index.php?m=Light&c=Apply&a=applyInfo&system=".$system."&aid=".$apply_id."&modname=".$mod_name;
-      
-        $applyerName='('.$res['zby'].'提交)';
-        $description = "您有一个流程需要签收".$applyerName;
-
-        $receviers = "wk|HuangShiQi|".$boss;
-        foreach( $descriptionData as $val ){
-            $description .= "\n{$val['name']}{$val['value']}";
-        }
-        $agentid = 15;
-        $WeChat = new \Org\Util\WeChat;
-        $info = $WeChat->sendCardMessage($receviers,$title,$description,$url,$agentid,$mod_name,$system);
-    }
-
 }

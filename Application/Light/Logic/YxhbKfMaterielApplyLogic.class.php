@@ -18,7 +18,10 @@ class YxhbKfMaterielApplyLogic extends Model {
      */
     public function record($id)
     {
-        $map = array('id' => $id);
+        $map = array(
+            'id'   => $id,
+            'type' => 1
+        );
         return $this->field(true)->where($map)->find();
     }
 
@@ -72,13 +75,18 @@ class YxhbKfMaterielApplyLogic extends Model {
                                      'type'=>'string',
                                      'color' => 'black'
                                     );
+        $result['content'][] = array('name'=>'开启双线：',
+                                     'value'=> $this->makeDoubleScx($res['pruduct_date']),
+                                     'type'=>'text',
+                                     'color' => 'black'
+                                    );
         $html = $this->makeHtml($res['data']);
         $result['content'][] = array('name'=>'配置详情：',
                                      'value'=>$html,
                                      'type'=>'string',
                                      'color' => 'black'
                                     );    
-        $result['content'][] = array('name'=>'申请理由：',
+        $result['content'][] = array('name'=>'相关说明：',
                                      'value'=>$res['info']?$res['info']:'无',
                                      'type'=>'text',
                                      'color' => 'black'
@@ -90,7 +98,18 @@ class YxhbKfMaterielApplyLogic extends Model {
         $result['stat'] = $res['stat'];
         return $result;
     }
-
+    /**
+     * 获取开启双线html
+     * @param  datetime $date
+     * @return string   $res
+     * https://www.fjyuanxin.com/WE/index.php?m=&&m=Light&c=View&a=View&modname=KfMaterielApply&system=yxhb&systempath=sngl&datetime=1545768000
+     */
+    public function makeDoubleScx($date){
+        $date = strtotime($date)+8*3600;
+        $url  = U('View/View',array('modname' => 'KfMaterielApply','system' => 'yxhb','datetime' => $date));
+        $html = " <a href='{$url}'> <span style='color: #337ab7;cursor: pointer;'>点击配置双线</span></a>";
+        return $html;
+    }
     /**
      * 发货详情html生成
      * @param array   $data 配比数据
@@ -103,8 +122,16 @@ class YxhbKfMaterielApplyLogic extends Model {
             if(count($v['data']) == 1){
                 $html .= "<input class='weui-input' type='text' style='color: black;padding: 3px 0 0 10px;'  readonly value='{$v['data'][0]['name']}'>";
             }else{
-                $html .= "<input class='weui-input' type='text' style='color: black;padding: 3px 0 0 10px;'  readonly value='{$v['data'][0]['name']}：{$v['data'][1]['name']}'>";
-                $html .= "<input class='weui-input' type='text' style='color: black;padding: 3px 0 0 10px;'  readonly value='分配比例：{$v['data'][0]['value']}比{$v['data'][1]['value']}'>";
+                $name = '';
+                $bili = '';
+                foreach($v['data'] as $vData){
+                    $name .= $vData['name'].':';
+                    $bili .= $vData['value'].':';
+                }
+                $name = trim($name,':');
+                $bili = trim($bili,':');
+                $html .= "<input class='weui-input' type='text' style='color: black;padding: 3px 0 0 10px;'  readonly value='{$name}'>";
+                $html .= "<input class='weui-input' type='text' style='color: black;padding: 3px 0 0 10px;'  readonly value='分配比例：{$bili}'>";
             }
         }
         return $html;
@@ -158,7 +185,7 @@ class YxhbKfMaterielApplyLogic extends Model {
                                      'value'=>$res['tjr'],
                                      'type'=>'string'
                                     );
-        $result[] = array('name'=>'申请理由：',
+        $result[] = array('name'=>'相关说明：',
                                      'value'=>$res['info']?$res['info']:'无',
                                      'type'=>'text'
                                     );
@@ -183,18 +210,15 @@ class YxhbKfMaterielApplyLogic extends Model {
     public function sealNeedContent($id){
         $res    = $this->record($id);
         $result = array(
-            'sales'   => $res['tjr'],
-            'title2'  => '入库库号',
-            'approve' => $res['ku'],
-            'notice'  => $res['info'],
-            'date'    => $res['sb_date'],
-            'title'   => '生产品种',
-            'name'    => $res['product'], 
-            'modname' => 'KfMaterielApply',
-            'stat'    => $res['stat'],
+            'first_title'    => '生产品种',
+            'first_content'  => $res['product'],
+            'second_title'   => '入库库号',
+            'second_content' => $res['ku'],
+            'third_title'    => '相关说明',
+            'third_content'  => !empty($res['info'])?$res['info']:'无',
+            'stat'           => $res['stat'],
         );
         return $result;
-        
     }
 
     /**

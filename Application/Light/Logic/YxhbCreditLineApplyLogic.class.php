@@ -73,7 +73,7 @@ class YxhbCreditLineApplyLogic extends Model {
                                      'color' => 'black'
                                     );
 
-        $result['content'][] = array('name'=>'申请理由：',
+        $result['content'][] = array('name'=>'相关说明：',
                                      'value'=>$res['notice'],
                                      'type'=>'text',
                                      'color' => 'black'
@@ -130,7 +130,7 @@ class YxhbCreditLineApplyLogic extends Model {
                                      'value'=>$res['sales'],
                                      'type'=>'string'
                                     );
-        $result[] = array('name'=>'申请理由：',
+        $result[] = array('name'=>'相关说明：',
                                      'value'=>$res['notice'],
                                      'type'=>'text'
                                     );
@@ -185,15 +185,13 @@ class YxhbCreditLineApplyLogic extends Model {
         $res = $this->record($id);
         $clientname = M('yxhb_guest2')->field('g_khjc')->where(array('id' => $res['clientid']))->find();
         $result = array(
-            'sales'   => $res['sales'],
-            'title2'  => '申请金额',
-            'approve' => number_format($res['line'],2,'.',',')."元",
-            'notice'  => $res['notice'],
-            'date'    => $res['date'],
-            'title'   => '客户名称',
-            'name'    => $clientname['g_khjc'], 
-            'modname' => 'CreditLineApply',
-            'stat'    => $res['stat']
+            'first_title'    => '客户名称',
+            'first_content'  => $clientname['g_khjc']?$clientname['g_khjc']:'无',
+            'second_title'   => '申请金额',
+            'second_content' => number_format($res['line'],2,'.',',')."元",
+            'third_title'    => '相关说明',
+            'third_content'  => $res['notice']?$res['notice']:'无',
+            'stat'           => $res['stat'],
         );
         return $result;
     }
@@ -237,7 +235,7 @@ class YxhbCreditLineApplyLogic extends Model {
         // 申请金额校验
         if($money=='' || $money<0 ) return array('code' => 404,'msg' => '申请金额不能为空，且不能为负数！');
         // 字数校验
-        if(strlen($reason)<5 ||strlen($reason)>200) return array('code' => 404,'msg' => '申请理由不能少于5个字，且不能多于200字！');
+        if(strlen($reason)<5 ||strlen($reason)>200) return array('code' => 404,'msg' => '相关说明不能少于5个字，且不能多于200字！');
         $model = D('Customer');
 
         $clientname = $model->getClientname($user_id,'yxhb');

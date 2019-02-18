@@ -130,7 +130,7 @@
                     <div class="weui-cell__hd">
                         <label class="weui-label">
                             <span class="">模块类型</span>&nbsp;&nbsp;
-                            <span style="color:red;">*</span>
+                            <!-- <span style="color:red;">*</span> -->
                         </label>
                     </div>
                     <div class="weui-cell__bd">
@@ -146,7 +146,7 @@
                     <div class="weui-cell__hd">
                         <label class="weui-label">
                             <span class="">二级类型</span>&nbsp;&nbsp;
-                            <span style="color:red;">*</span>
+                            <!-- <span style="color:red;">*</span> -->
                         </label>
                     </div>
                     <div class="weui-cell__bd">
@@ -162,7 +162,7 @@
                     <div class="weui-cell__hd">
                         <label class="weui-label">
                             <span class="">三级类型</span>&nbsp;&nbsp;
-                            <span style="color:red;">*</span>
+                            <!-- <span style="color:red;">*</span> -->
                         </label>
                     </div>
                     <div class="weui-cell__bd">
@@ -360,9 +360,6 @@
             $content = content.val(),
             $user = user.val();
 
-        if ( !$mod)      return tooltip('请选择模块类型');
-        if ( !$modTwo)   return tooltip('请选择二级类型');
-        if ( !$modThree) return tooltip('请选择三级类型');
         if ( !$func)     return tooltip('请选择需求功能');
         if ( !$title)    return tooltip('请选择需求标题');
         if ( !$content)  return tooltip('请选择需求描述');

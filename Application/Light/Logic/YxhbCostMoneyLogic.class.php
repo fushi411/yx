@@ -33,82 +33,99 @@ class YxhbCostMoneyLogic extends Model {
         $result = array();
 
         $result['content'][] = array('name'=>'申请单位：',
-                                     'value'=>'环保矿粉物料配置',
+                                     'value'=>'环保费用开支',
                                      'type'=>'date',
                                      'color' => 'black'
-                                    );
+                                    );                      
         $result['content'][] = array('name'=>'提交时间：',
-                                     'value'=> date('m-d H:i',strtotime($res['sb_date'])) ,
+                                     'value'=> date('m-d H:i',strtotime($res['jl_date'])) ,
                                      'type'=>'date',
                                      'color' => 'black'
                                     );
+        $result['content'][] = array('name'=>'申请日期：',
+                                     'value'=> date('Y-m-d',strtotime($res['jl_date'])) ,
+                                     'type'=>'date',
+                                     'color' => 'black'
+                                    ); 
+        if( $res['nfylx'] == 0 ){
+            $fybx = M('yxhb_feefy3')->where(array('dh' => $res['dh']))->find();
+            $fylx = M('yxhb_fylx')->field('id as val,fy_name as name')->where(array('id' =>$fybx['nfylx']))->order('id asc')->find(); 
+        }else{
+            $fylx = M('yxhb_fylx')->field('id as val,fy_name as name')->where(array('id' =>$res['nfylx']))->order('id asc')->find(); 
+        }
  
-        $result['content'][] = array('name'=>'生产时间：',
-                                     'value'=> $res['pruduct_date'],
+        $result['content'][] = array('name'=>'申请类型：',
+                                     'value'=> $res['nfylx'] == 0?'报销费用':'用款费用',
                                      'type'=>'date',
                                      'color' => 'black'
                                     );
-        $ratio = M('yxhb_assay')->where('id='.$res['rid'])->find();
-        $no   = str_replace('生产线',' ' ,$ratio['scx']);
-        $no   = $no.date('Ymd H:i',strtotime($ratio['date'])+$ratio['hour']*3600); 
-        $result['content'][] = array('name'=>'配比通知：',
-                                     'value'=>$no ,
+        $result['content'][] = array('name'=>'费用类型：',
+                                     'value'=> $fylx['name'],
+                                     'type'=>'date',
+                                     'color' => 'black'
+                                    );
+        $fkfs = M('yxhb_fkfs')->field('id as val,fk_name as name')->where(array('id' =>$res['nfkfs']))->order('id asc')->find();
+
+        $result['content'][] = array('name'=>'付款方式：',
+                                     'value'=>$fkfs['name'] ,
                                      'type'=>'string',
                                      'color' => 'black'
                                     );
-        $result['content'][] = array('name'=>'配比详情：',
-                                     'value'=> "<span  onclick=ratioDetail({$res['rid']}) id='ratio_btn_look' style='color: #337ab7;cursor: pointer;'>点击查看详情</span>" ,
+        $result['content'][] = array('name'=>'用款金额：',
+                                     'value'=> "&yen;".number_format(-$res['nmoney'],2,'.',',')."元"  ,
                                      'type'=>'string',
-                                     'color' => 'black'
+                                     'color' => 'black;font-weight: 600;'
                                     );
-        $result['content'][] = array('name'=>'生产品种：',
-                                     'value'=>$res['product'],
+        $result['content'][] = array('name'=>'大写金额：',
+                                     'value'=>cny( -$res['nmoney'] ),
                                      'type'=>'number',
                                      'color' => 'black;'
                                     );
+        if($res['nfylx'] != 0){
+            $result['content'][] = array('name'=>'收款单位：',
+                                        'value'=>$res['skdw']?$res['skdw']:'无',
+                                        'type'=>'string',
+                                        'color' => 'black'
+                                        );
 
-        $result['content'][] = array('name'=>'入库库号：',
-                                     'value'=>$res['ku'],
-                                     'type'=>'string',
-                                     'color' => 'black'
-                                    );
-        $html = $this->makeHtml($res['data']);
-        $result['content'][] = array('name'=>'配置详情：',
-                                     'value'=>$html,
-                                     'type'=>'string',
-                                     'color' => 'black'
-                                    );    
-        $result['content'][] = array('name'=>'申请理由：',
-                                     'value'=>$res['info']?$res['info']:'无',
+            $result['content'][] = array('name'=>'收款账号：',
+                                        'value'=>$res['skzh']?$res['skzh']:'无',
+                                        'type'=>'string',
+                                        'color' => 'black'
+                                        );    
+            $result['content'][] = array('name'=>'开户银行：',
+                                        'value'=>$res['khyh']?$res['khyh']:'无',
+                                        'type'=>'string',
+                                        'color' => 'black'
+                                        );  
+        }
+        
+        $result['content'][] = array('name'=>'相关说明：',
+                                     'value'=>$res['ntext']?$res['ntext']:'无',
                                      'type'=>'text',
                                      'color' => 'black'
                                     );
-        
-        $result['imgsrc'] = '';
-        $result['applyerID'] = D('YxhbBoss')->getIDFromName($res['tjr']);
-        $result['applyerName'] = $res['tjr'];
-        $result['stat'] = $res['stat'];
+        $imgsrc = explode('|', $res['att_name']) ;
+        $image = array();
+        $imgsrc = array_filter($imgsrc);
+        foreach ($imgsrc as $key => $value) {
+            $image[] = 'http://www.fjyuanxin.com/yxhb/upload/fy/'.$value;
+        }
+        $result['imgsrc'] = $image;
+        $result['applyerID'] = D('YxhbBoss')->getIDFromName($res['njbr']);
+        $result['applyerName'] = $res['njbr'];
+        $result['stat'] = $this->transStat($res['stat']);
         return $result;
     }
-
-    /**
-     * 发货详情html生成
-     * @param array   $data 配比数据
-     * @return string $html 
-     */
-    public function makeHtml($data){
-        $data = json_decode($data,true);
-        foreach( $data as $v){
-            $html.="<input class='weui-input' type='text' style='color: black; font-weight: 700;border-bottom: 1px solid #e5e5e5; '  readonly value='{$v['pd']}'>";
-            if(count($v['data']) == 1){
-                $html .= "<input class='weui-input' type='text' style='color: black;padding: 3px 0 0 10px;'  readonly value='{$v['data'][0]['name']}'>";
-            }else{
-                $html .= "<input class='weui-input' type='text' style='color: black;padding: 3px 0 0 10px;'  readonly value='{$v['data'][0]['name']}：{$v['data'][1]['name']}'>";
-                $html .= "<input class='weui-input' type='text' style='color: black;padding: 3px 0 0 10px;'  readonly value='分配比例：{$v['data'][0]['value']}比{$v['data'][1]['value']}'>";
-            }
-        }
-        return $html;
-    } 
+     // 状态值转换
+     public function transStat($stat){
+        $statArr = array(
+            5 => 2,
+            4 => 1,
+            0 => 0
+        );
+        return $statArr[$stat];
+     }
 
     /**
      * 删除记录
@@ -116,7 +133,15 @@ class YxhbCostMoneyLogic extends Model {
      * @return integer     影响行数
      */
     public function delRecord($id)
-    {
+    { 
+        $data = $this->record($id);
+        $map = array('dh' => $data['dh']);
+        M('yxhb_feefy3')->field(true)->where($map)->setField('stat',0);
+        if($data['nfylx'] == 0){
+            M('yxhb_fybx')->field(true)->where($map)->setField('stat',0);
+        }else{
+            M('yxhb_ykfy')->field(true)->where($map)->setField('stat',0);
+        }   
         $map = array('id' => $id);
         return $this->field(true)->where($map)->setField('stat',0);
     }
@@ -130,36 +155,36 @@ class YxhbCostMoneyLogic extends Model {
         $res = $this->record($id);
         $result = array();
         $result[] = array('name'=>'提交时间：',
-                                     'value'=> date('m-d H:i',strtotime($res['sb_date'])),
+                                     'value'=> date('m-d H:i',strtotime($res['jl_date'])),
                                      'type'=>'date'
                                     );
-        $result[] = array('name'=>'生产时间：',
-                                     'value'=>date('Y-m-d',strtotime($res['pruduct_date'])),
-                                     'type'=>'date'
-                                    );
-    
-        $ratio = M('yxhb_assay')->where('id='.$res['rid'])->find();
-        $no   = str_replace('生产线',' ' ,$ratio['scx']);
-        $no   = $no.date('Ymd H:i',strtotime($ratio['date'])+$ratio['hour']*3600); 
-        $result[] = array('name'=>'配比通知：',
-                                     'value'=> $no ,
+        if( $res['nfylx'] == 0 ){
+            $fybx = M('yxhb_feefy3')->where(array('dh' => $res['dh']))->find();
+            $fylx = M('yxhb_fylx')->field('id as val,fy_name as name')->where(array('id' =>$fybx['nfylx']))->order('id asc')->find(); 
+        }else{
+            $fylx = M('yxhb_fylx')->field('id as val,fy_name as name')->where(array('id' =>$res['nfylx']))->order('id asc')->find(); 
+        }
+        $result[] = array('name'=>'费用类型：',
+                                     'value'=> $fylx['name'] ,
                                      'type'=>'number'
                                     );
-        $result[] = array('name'=>'生产品种：',
-                                     'value'=>$res['product'],
+        $fkfs = M('yxhb_fkfs')->field('id as val,fk_name as name')->where(array('id' =>$res['nfkfs']))->order('id asc')->find();
+        $result[] = array('name'=>'付款方式：',
+                                     'value'=>$fkfs['name'],
                                      'type'=>'number'
                                     );
-        $result[] = array('name'=>'入库库号：',
-                                     'value'=>$res['ku'],
+
+        $result[] = array('name'=>'用款金额：',
+                                     'value'=>-$res['nmoney'],
                                      'type'=>'number'
                                     );
 
         $result[] = array('name'=>'申请人员：',
-                                     'value'=>$res['tjr'],
+                                     'value'=>$res['njbr'],
                                      'type'=>'string'
                                     );
-        $result[] = array('name'=>'申请理由：',
-                                     'value'=>$res['info']?$res['info']:'无',
+        $result[] = array('name'=>'用款用途：',
+                                     'value'=>$res['ntext']?$res['ntext']:'无',
                                      'type'=>'text'
                                     );
         return $result;
@@ -173,7 +198,7 @@ class YxhbCostMoneyLogic extends Model {
     public function getApplyer($id)
     {
         $map = array('id' => $id);
-        return $this->field(true)->where($map)->getField('tjr');
+        return $this->field(true)->where($map)->getField('njbr');
     }
     /**
      * 我的审批，抄送，提交 所需信息
@@ -182,18 +207,30 @@ class YxhbCostMoneyLogic extends Model {
      */
     public function sealNeedContent($id){
         $res    = $this->record($id);
+        if( $res['nfylx'] == 0 ){
+            $fybx = M('yxhb_feefy3')->where(array('dh' => $res['dh']))->find();
+            $fylx = M('yxhb_fylx')->field('id as val,fy_name as name')->where(array('id' =>$fybx['nfylx']))->order('id asc')->find(); 
+        }else{
+            $fylx = M('yxhb_fylx')->field('id as val,fy_name as name')->where(array('id' =>$res['nfylx']))->order('id asc')->find(); 
+        }
+
+        $first_title    = '申请类型';
+        $first_content  = '用款费用';
+        $second_title   = '费用类型';
+        $second_content = $fylx['name'];
+        if($res['nfylx'] == 0)$first_content  = '报销费用';
+
         $result = array(
-            'sales'   => $res['tjr'],
-            'title2'  => '入库库号',
-            'approve' => $res['ku'],
-            'notice'  => $res['info'],
-            'date'    => $res['sb_date'],
-            'title'   => '生产品种',
-            'name'    => $res['product'], 
-            'modname' => 'KfMaterielApply',
-            'stat'    => $res['stat'],
+            'first_title'    => $first_title,
+            'first_content'  => $first_content,
+            'second_title'   => $second_title,
+            'second_content' => $second_content,
+            'third_title'    => '用款金额',
+            'third_content'  => "&yen;".number_format(-$res['nmoney'],2,'.',',')."元",
+            'fourth_title'   => '相关说明',
+            'fourth_content' => $res['ntext']?$res['ntext']:'无',
+            'stat'           => $this->transStat($res['stat']),
         );
-        return $result;
         return $result;
     }
 
@@ -201,10 +238,103 @@ class YxhbCostMoneyLogic extends Model {
      * 矿粉物料配置
      */
     public function submit(){
-    
+        $system = 'yxhb';
+        $fylx   = I('post.fylx');
+        $fkfs   = I('post.fkfs');
+        $skzh   = I('post.skzh');
+        $khyh   = I('post.khyh');
+        $skdw   = I('post.skdw');
+        $ykje   = I('post.ykje');
+        $text   = I('post.text');
+        $sqlx   = I('post.sqlx');
+        $copyto_id = I('post.copyto_id');
+        $imagepath = I('post.imagepath');   
+        
+        if(!M($system.'_feefy')->autoCheckToken($_POST)) return array('code' => 404,'msg' => '网络延迟，请勿点击提交按钮！');
+        $dh = $this->getDhId();
+        $bm = D('YxDetailAuth')->authGetBmId($system);
+        $stat = $sqlx == 1?3:1;
+        $fyfy = $sqlx == 1?0:$fylx;
+        $feefy = array(
+            'dh'      => $dh,
+            'nmoney'  => -$ykje,
+            'nbank'   => '',
+            'sj_date' => date('Y-m-d',time()),
+            'jl_date' => date('Y-m-d H:i:s',time()),
+            'npeople' => session('name'),
+            'ntext'   => $text,
+            'nfkfs'   => $fkfs,
+            'nfylx'   => $fyfy,
+            'njbr'    => session('name'),
+            'nbm'     => $bm,
+            'stat'    => 5,
+            'att_name' => $imagepath,
+            'att_name2'=> 'image',
+            'skzh'     => $skzh,
+            'khyh'     => $khyh,
+            'skdw'     => $skdw
+        );
 
+        $feefy3 = array(
+            'dh'      => $dh,
+            'nmoney'  => -$ykje,
+            'nbank'   => '',
+            'sj_date' => date('Y-m-d',time()),
+            'jl_date' => date('Y-m-d H:i:s',time()),
+            'npeople' => session('name'),
+            'ntext'   => $text,
+            'nfkfs'   => $fkfs,
+            'nfylx'   => $fylx,
+            'njbr'    => session('name'),
+            'nbm'     => $bm,
+            'stat'    => $stat,
+        );
+
+        
+        $result = M($system.'_feefy')->add($feefy);
+        M($system.'_feefy3')->add($feefy3);
+
+        $ykfy = array(
+            'dh'     => $dh,
+            'smonth' => intval(date('m',time())),
+            'stat'   => $stat,
+        );
+        if($sqlx == 1){
+            $ykfy['nr'] = $text;
+            $table      = $system.'_fybx'; 
+        }else{
+            $ykfy['skdw'] = $skdw;
+            $ykfy['ykyt'] = $text;
+            $table        = $system.'_ykfy'; 
+        }
+        M($table)->add($ykfy);
+        if(!$result) return array('code' => 404,'msg' => '提交失败，请重新尝试！');
+        // 抄送
+        $copyto_id = trim($copyto_id,',');
+        if (!empty($copyto_id)) {
+            // 发送抄送消息
+            D('YxhbAppcopyto')->copyTo($copyto_id,'CostMoney', $result);
+        }
+        $wf = A('WorkFlow');
+        $salesid = session('yxhb_id');
+        $res = $wf->setWorkFlowSV('CostMoney', $result, $salesid, 'yxhb');
         return array('code' => 200,'msg' => '提交成功' , 'aid' =>$result);
 
+    }
+
+    /**
+     * 获取单号
+     */
+    public function getDhId(){
+        $today = date('Y-m-d',time());
+        $sql   = "select * from yxhb_feefy where date_format(jl_date, '%Y-%m-%d' )='{$today}' ";
+        $res   = M()->query($sql);
+        $count = count($res);
+        $time  = str_replace('-','',$today);
+        $id    = "FY{$time}";
+        if($count < 9)  return  $id.'00'.($count+1);
+        if($count < 99) return $id.'0'.($count+1);
+        return $id.$count;
     }
 
     /**
@@ -217,13 +347,13 @@ class YxhbCostMoneyLogic extends Model {
             'bm'   => $this->getSection()
         );
     }
-
+  
     /**
      * 获取费用类型
      */
     public function getFylx(){
         $tmp = array();
-        $fylx = M('yxhb_fylx')->field('id as val,fy_name as name')->order('id asc')->select();
+        $fylx = M('yxhb_fylx')->field('id as val,fy_name as name')->where(array('stat' => 1))->order('id asc')->select();
         return $fylx;
     }
     /**
@@ -292,5 +422,16 @@ class YxhbCostMoneyLogic extends Model {
         $val['output_file'] = $savePath.$output_file;
         $res[] = $val;
         return $res;
+    }
+    /**
+     * 获取对应的审批流程
+     */
+    public function getProHtml(){
+        $modname   = 'CostMoney';
+        $bm        = D('YxDetailAuth')->authGetBmId('yxhb');
+        if(empty($bm)) return '暂无部门';
+        $condition = 'nbm='.$bm;
+        $data = D('YxhbAppflowtable')->getConditionStepHtml($modname,$condition);
+        return $data;
     }
 }

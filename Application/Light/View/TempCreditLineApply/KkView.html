@@ -94,28 +94,7 @@
                 </div>
             
             </div> 
-            <div class="weui-cells weui-cells_form">
-                    <div class="weui-cell">
-                        <div class="weui-cell__hd">
-                            <label class="weui-label">申请理由&nbsp;&nbsp;
-                            <span style="color:red;">*</span>
-                            </label>
-                        </div>
-                    </div>
-                    <div class="weui-cell">
-                        <div class="weui-cell__bd" id="cnt">
-                            <textarea class="weui-textarea" name="reason" id="reason" placeholder="申请理由至少5个字(必填)；
-金额-有效期-有效次数；
-二万-3天-5次/月；
-五万-5天-3次/月；
-十万-7天-1次/月；
-同金额失效前不可二次提交；"
-rows="7"></textarea>
-                            <div class="weui-textarea-counter">
-                                <span id="reason_char">0</span>/200</div>
-                        </div>
-                    </div>
-                </div>
+
 
             <div id="dialogs">
                 <!--BEGIN dialog2-->
@@ -206,11 +185,13 @@ rows="7"></textarea>
                 delay: 350,
                 data: function (params) {
                     $('#alter_div input').eq(0).attr('placeholder', '请选择客户或拼音缩写');
+                    console.log(params)
                     return {
                         math: params.term,
                     };
                 },
                 processResults: function (data) {
+                    console.log(data)
                     return {
                         results: data
                     };

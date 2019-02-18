@@ -71,6 +71,11 @@ class KkSalesReceiptsApplyLogic extends Model {
                                      'type'=>'date',
                                      'color' => 'black'
                                     );
+        $result['content'][] = array('name'=>'本月累计：',
+                                     'value'=> "&yen;".number_format($this->getTheMonthRec($dtg['gid'],$res['sj_date']),2,'.',',')."元",
+                                     'type'=>'date',
+                                     'color' => 'black'
+                                    );
         if($res['nfkfs'] == 3){
             $result['content'][] = array('name' => '汇票详情：',
                                         'value' => '点击查看汇票',
@@ -210,6 +215,7 @@ class KkSalesReceiptsApplyLogic extends Model {
                                      'value'=>$skfsArr[$res['nfkfs']],
                                      'type'=>'number'
                                     );
+        
         if($res['nfkfs'] == 3 && $res['stat'] == 1){
             $result[] = array('name'=>'剩余期限：',
                                      'value'=>$this->gethpdate($res['dh']),
@@ -217,6 +223,10 @@ class KkSalesReceiptsApplyLogic extends Model {
                                     );
         }
         list($ysye,$color) = $this->getYsye($res);
+        $result[] = array('name'=>'本月累计：',
+                                     'value'=>number_format($this->getTheMonthRec($dtg['gid'],$res['sj_date']),2,'.',',')."元",
+                                     'type'=>'number'
+                                    );
         $result[] = array('name'=>'应收余额：',
                                      'value'=>str_replace('&yen;','',$ysye) ,
                                      'type'=>'number'
@@ -231,6 +241,34 @@ class KkSalesReceiptsApplyLogic extends Model {
                                     );
         return $result;
     }
+
+    /**
+     * 获取当月累计销售收款
+     * @param integer $id 用户id
+     * @param date   $date 时间
+     * @return string   收款格式
+     */
+    public function getTheMonthRec($id,$date){
+        if(!$id) return 0;
+        $beginDate = date('Y-m-01',strtotime($date));
+        $endDate   = date('Y-m-01',strtotime("$date +1 month"));
+        $map       = array(
+            'b.gid'     => $id,
+            'a.stat'    => 1,
+            'a.sj_date' => array(
+                            array('egt',$beginDate),
+                            array('lt',$endDate),
+                            'and'
+                        ),
+        );
+        $data = M('kk_feexs as a')
+                ->join('kk_dtg as b on a.dh=b.dh')
+                ->field('sum(a.nmoney) as money')
+                ->where($map)
+                ->find();
+        return $data['money'];
+    }
+
     public function gethpdate($dh ){
         $data = M('kk_cdhp')->where(array('odh' => $dh  , 'stat' => array('neq',0) ))->find();
         $days = (strtotime($data['dqda'])-time())/(3600*24);
@@ -256,10 +294,17 @@ class KkSalesReceiptsApplyLogic extends Model {
         $dtg  = M('kk_dtg')->where(array('dh' => $res['dh']))->find();
         $user = M('kk_guest2')->where(array('id' => $dtg['gid']))->find();
         $user_name = $user['g_name'];
+
         $result = array(
-            array('客户名称',$user_name),
-            array('收款金额', number_format($res['nmoney'],2,'.',',')."元"),
-            array('相关说明',$res['ntext']?$res['ntext']:'无')
+            'first_title'    => '客户名称',
+            'first_content'  => $user_name?$user_name:'无',
+            'second_title'   => '收款金额',
+            'second_content' => number_format($res['nmoney'],2,'.',',')."元",
+            'third_title'    => '本月累计',
+            'third_content'  => "&yen;".number_format($this->getTheMonthRec($dtg['gid'],$res['sj_date']),2,'.',',')."元",
+            'fourth_title'   => '相关说明',
+            'fourth_content' => $res['ntext']?$res['ntext']:'无',
+            'stat'           => $res['stat'],
         );
         return $result;
     }
@@ -455,6 +500,7 @@ class KkSalesReceiptsApplyLogic extends Model {
 		);
                 
         $user_other_name = I('post.user_other_name');
+        $user_other_name = $user_other_name ?$user_other_name:$this->getGuest($user);
 		$dtgData = array(
 			'dh'  => $dh,
 			'gid' => $user,
@@ -496,7 +542,7 @@ class KkSalesReceiptsApplyLogic extends Model {
         }
         $boss_id = implode('|',$sign_arr);
         M('kk_appflowproc')->addAll($all_arr);
-        $this->sendMessage($result,$boss_id);
+        D('WxMessage')->ProSendCarMessage('kk','SalesReceiptsApply',$result,$boss_id,session('kk_id'),'QS');
         return array('code' => 200,'msg' => '提交成功' , 'aid' =>$result);
     }
 
@@ -513,34 +559,12 @@ class KkSalesReceiptsApplyLogic extends Model {
         if($res < 99)  return "{$db}0{$num}";
         return "{$db}{$num}";
     }
-
     /**
-     * 通知信息发送
+     * 获取客户名
      */
-    public function sendMessage($apply_id,$boss){
-        $system = 'kk';
-        $mod_name = 'SalesReceiptsApply';
-        $logic = D(ucfirst($system).$mod_name, 'Logic');
-        $res   = $logic->record($apply_id);
-        $systemName = array('kk'=>'建材', 'yxhb'=>'环保');
-        // 微信发送
-        $WeChat = new \Org\Util\WeChat;
-        
-        $descriptionData = $logic->getDescription($apply_id);
-     
-        $title = '销售收款(签收)';
-        $url = "https://www.fjyuanxin.com/WE/index.php?m=Light&c=Apply&a=applyInfo&system=".$system."&aid=".$apply_id."&modname=".$mod_name;
-      
-        $applyerName='('.$res['name'].'提交)';
-        $description = "您有一个流程需要签收".$applyerName;
+    public function getGuest($id){
 
-        $receviers = "wk|HuangShiQi|".$boss;
-        foreach( $descriptionData as $val ){
-            $description .= "\n{$val['name']}{$val['value']}";
-        }
-        $agentid = 15;
-        $WeChat = new \Org\Util\WeChat;
-        $info = $WeChat->sendCardMessage($receviers,$title,$description,$url,$agentid,$mod_name,$system);
+        $user = M('kk_guest2')->where(array('id' => $id))->find();
+        return $user['g_name'];
     }
-
 }

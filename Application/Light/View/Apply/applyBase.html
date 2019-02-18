@@ -14,6 +14,7 @@
     <link rel="stylesheet" href="__PUBLIC__/assets/css/weui.min.css" />
     <link rel="stylesheet" href="__PUBLIC__/assets/css/weMain.css?version=201709012" />
     <link href="__PUBLIC__/assets/css/wc_select2.min.css?version=20170819" rel="stylesheet" />
+    <link rel="stylesheet" href="//at.alicdn.com/t/font_915899_6e03l1mub3m.css" />
     <style type="text/css">
         .weui-cells:after {
             border-bottom: 0px solid #fff;
@@ -106,6 +107,13 @@
             align-items: center;
             justify-content: center;
         }
+        .select2-selection--multiple ul li {
+            max-width:200px;
+            overflow:hidden;
+        }
+        .select2-selection--multiple ul .select2-selection__choice{
+            white-space:normal;
+        }
     </style>
 </head>
 <body>
@@ -175,17 +183,51 @@
 
             </block>
             <!-- 主体信息 END-->
+            <!-- 相关说明-->
+            <block name="explain">
+                
+                        <if condition=" (empty($explain)) and (!$CueConfig)">
+                                <div class="weui-cells weui-cells_form" style="display:none">
+                            <else/>
+                                <div class="weui-cells weui-cells_form">
+                        </if>
+                        <div class="weui-cell">
+                            <div class="weui-cell__hd">
+                                <label class="weui-label" style="width:200%;">
+                                    <span>相关说明</span>&nbsp;&nbsp;
+                                    <if condition=" $explain.mustfill == 1 ">
+                                        <span style="color:red;">*</span>
+                                    </if>
+                                </label>
+                            </div> 
+                            <if condition="$CueConfig">
+                                <a href="{:U('Light/Config/Dispenser',array('robot'=>'explain','system' => $system ,'modname' => $modname))}">
+                                    <i class="iconfont icon-xiugai" style="font-size: 18px;vertical-align: middle;" ></i>
+                                </a>
+                            </if>
+                        </div>
+                        <div class="weui-cell">
+                            <div class="weui-cell__bd" id="cnt">
+                                <textarea class="weui-textarea" name="reason" id="reason" placeholder="{$explain.content}" rows="{$explain.row}"></textarea>
+                                <div class="weui-textarea-counter">
+                                    <span id="reason_char">0</span>/200</div>
+                            </div>
+                        </div>
+                    </div>
+                
+            </block>
+            <!-- 相关说明 END-->
             <!-- 审批流程 -->
             <block name="Process">
                     <div class="weui-cells__title">审批流程
-                            <a href="{$fixed['process']}">（查看可视化流程）</a>
+                            <a href="{$fixed['process']}"><i class="iconfont icon-chakan" style="vertical-align: middle;" ></i></a>
                     </div>
                     <div id="allproc">
                         <div class="weui-cells" style="margin-top:0px;">
                             <div class="weui-cell">
                                 <div class="weui-cell__bd">
                                     <div class="weui-uploader">
-                                        <div class="weui-uploader__bd" style="height: 85px;">
+                                        <div class="weui-uploader__bd" style="height: 70px;">
                                             <ul class="weui-uploader__files" id="app_pro" style="margin-bottom: 0px;">
                                                     <volist name="appflow" id="vo">
                                                             <neq name="i" value="1">                                                   
@@ -251,7 +293,8 @@
             <!-- 推送 -->
             <block name="pushto">
                     <div class="weui-cells__title">推送名单
-                            <a href="{:U('Light/Process/PushProcess',array('system' => $system,'modname'=>$modname))}">（查看可视化名单）</a>
+                            <a href="{:U('Light/Process/PushProcess',array('system' => $system,'modname'=>$modname))}"><i class="iconfont icon-chakan" style="vertical-align: middle;" ></i></a>
+                            <span style="color: #f12e2e">（审批通过后群发推送人）</span>
                     </div>
                     <div >
                         <div class="weui-cells" style="margin-top:0px;">
@@ -272,7 +315,7 @@
                                                 </volist>
                                             </ul>
                                         </div>
-                                        <div class="weui-cells__title" style="display:block;padding-left: 0"><span style="color: #f12e2e">（审批通过后群发推送人）</span></div>
+                                        
                                     </div>
                                 </div>
                             </div>
@@ -286,8 +329,39 @@
                     <input type="hidden" name="file_names" id="file_names">
                     <a class="weui-btn weui-btn_primary" href="javascript:" id="submit">提交</a>
                 </div>
+
             </block>
             <!-- 提交 end -->
+            <block name='attention'>
+                <if condition=" (empty($atten)) and (!$CueConfig)">
+                    
+                    <div id="attention" style="display:none">
+
+                    <else/>
+                    <div id="attention" >
+                </if>
+                    <div class="weui-cells__title">注意事项  
+                        <!-- <a href="{:U('Light/Config/Dispenser',array('robot'=>'attention','system' => $system ,'modname' => $modname))}"><span style="color: #f12e2e">（点击配置）</span></a> -->
+                        <if condition="$CueConfig">
+                                <a href="{:U('Light/Config/Dispenser',array('robot'=>'attention','system' => $system ,'modname' => $modname))}">
+                                    <i class="iconfont icon-xiugai" style="vertical-align: middle;" ></i>
+                                </a>
+                        </if>
+                     </div>
+                    <!-- <div class="weui-cells__title">各个中心主管及以上职位的申请抄送</div> -->
+                    <div class="weui-cells" style="margin-top:0px;">
+                        <div class="weui-cell">
+                            <div class="weui-cell__bd">
+                                <div class="weui-uploader">
+                                    <div class="weui-uploader__bd" >
+                                        <div id="attentionContent" style="font-size: 15px;color: #f12e2e;white-space: pre-wrap;">{$atten.content}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </block>
             
         </div>
     </div>
@@ -384,7 +458,13 @@
 <script src="__PUBLIC__/assets/js/exif.js"></script>
 </body>
 <script>
- 
+    if(window.name != "bencalie"){
+        location.reload();
+        window.name = "bencalie";
+    }
+    else{
+        window.name = "";
+    }
  
     
     $('input').attr('autocomplete','off');

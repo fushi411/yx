@@ -1,0 +1,532 @@
+<extend name="Apply:applyBase" />
+
+<!-- 去除不可选择日期 -->
+
+<block name="disable_date"></block>
+<block name="content_body">
+    <div class="weui-cells weui-cells_form">
+        <div class="weui-cell weui-cell_select weui-cell_select-after">
+                <div class="weui-cell__hd">
+                    <label class="weui-label">上级客户&nbsp;&nbsp;
+                    </label>
+                </div>
+            <div class="weui-cell__bd">
+                <div class="weui-cell__bd"  id='alter_div'>
+                    <select class="weui-select" name="user_name[]" id="user_name" multiple="multiple" style="width: 95%;" data-placeholder="总客户-正常/冻结">
+                    </select>
+                </div>
+            </div>
+        </div> 
+        <div class="weui-cell weui-cell_select weui-cell_select-after " id='erji_show_div_two'>
+                <div class="weui-cell__hd">
+                    <label class="weui-label">开票方式&nbsp;&nbsp;
+                        <span style="color:red;">*</span>
+                    </label>
+                </div>
+                <div class="weui-cell__bd ">
+                    <input class="weui-select" type="text" id="kpfs" name="custodian" readonly placeholder="自动填写" />
+                    <select class="weui-select greyColor" style='display:none;' name="type" id='kpfs_sel'>
+                        <option value='-1' disabled selected style='display:none;'>请选择开票方式</option>
+                        <!-- <option value="P.C32.5R">P.C32.5R</option> -->
+                        <option value="出厂票价">出厂票价</option>
+                        <option value="送到票价">送到票价</option>
+                    </select>
+                </div>
+            </div>
+        <div class="weui-cell weui-cell_select weui-cell_select-after " id='erji_show_div_two'>
+            <div class="weui-cell__hd">
+                <label class="weui-label">结算方式&nbsp;&nbsp;
+                    <span style="color:red;">*</span>
+                </label>
+            </div>
+            <div class="weui-cell__bd ">
+                <input class="weui-select" type="text" id="jsfs" name="custodian" readonly placeholder="自动填写" />
+                <select class="weui-select greyColor " style='display:none;' name="type" id='jsfs_sel'>
+                    <option value='-1' disabled selected style='display:none;'>请选择结算方式</option>
+                    <!-- <option value="P.C32.5R">P.C32.5R</option> -->
+                    <option value="对方数量">对方数量</option>
+                    <option value="我方数量">我方数量</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <div class="weui-cells weui-cells_form">
+        <div class="weui-cell weui-cell_select weui-cell_select-after " id='erji_show_div_two'>
+            <div class="weui-cell__hd">
+                <label class="weui-label">二级客户&nbsp;&nbsp;
+                    <span style="color:red;">*</span>
+                </label>
+            </div>
+            <div class="weui-cell__bd ">
+                <input class="weui-select" type="text" id="ejkh" name="custodian" readonly placeholder="自动填写" />
+                <select class="weui-select greyColor" name="type" style='display:none;' id='ejkh_sel'>
+                    <option value='-1' disabled selected style='display:none;'>请选择二级客户</option>
+                    <!-- <option value="P.C32.5R">P.C32.5R</option> -->
+                </select>
+            </div>
+        </div>
+        <div class="weui-cell ">
+            <div class="weui-cell__hd">
+                <label class="weui-label">
+                    <span class="font-width">原有价格</span>&nbsp;&nbsp;
+                </label>
+            </div>
+            <div class="weui-cell__hd" style="width:100%">
+                <div id="ycl_content">
+
+                </div>
+                <div id="param_div">
+                    <span class="greyColor">自动填写</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="weui-cells weui-cells_form">
+      
+        <div class="weui-cell weui-cell_select weui-cell_select-after">
+            <div class="weui-cell__hd">
+                <label class="weui-label">价格配置&nbsp;&nbsp;
+
+                </label>
+            </div>
+            <div class="weui-cell__bd">
+                <input class="weui-select " type="text" readonly id="select_sf" style="color: #337ab7;" value="点击配置价格" />
+            </div>
+        </div>
+        <div class="weui-cell ">
+            <div class="weui-cell__hd">
+                <label class="weui-label">
+                    <span class="font-width">价格详情</span>&nbsp;&nbsp;
+                </label>
+            </div>
+            <div class="weui-cell__hd" style="width:100%">
+                <div id="submit_content">
+
+                </div>
+                <div id="submit_div">
+                    <span class="greyColor">自动填写</span>
+                </div>
+            </div>
+        </div>
+
+    </div>
+   
+    <div class="other_page" id="other_page" style="display: none;">
+        <div class="container">
+            <div class="page js_show">
+                <h3 class="titleTab" style="text-align: center">价格配置</h3>
+                <div class="weui-cells__title">单位:元/吨</div>
+                <div class="weui-cells weui-cells_form">
+                        
+                    <div class="weui-cell weui-cell_select weui-cell_select-after">
+                        <div class="weui-cell__hd">
+                            <label class="weui-label">产品品种&nbsp;&nbsp;
+                                <span style="color:red;">*</span>
+                            </label>
+                        </div>
+                        <div class="weui-cell__bd ">
+                            <select class="weui-select greyColor" name="type" id='cate'>
+                                <option value='-1' disabled selected style='display:none;'>请选择水泥品种</option>
+                                <!-- <option value="P.C32.5R">P.C32.5R</option> -->
+                                <option value="A#">A#生产线</option>
+                                <option value="B#">B#生产线</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="weui-cell weui-cell_select weui-cell_select-after ">
+                        <div class="weui-cell__hd">
+                            <label class="weui-label" >产品价格&nbsp;&nbsp;
+                                <span style="color:red;">*</span>
+                            </label>
+                        </div>
+                        <div class="weui-cell__bd">
+                            <input class="weui-select peibi scale" type="text" name="carNum" id="dj" placeholder="请输入产品价格">
+                        </div>
+                    </div>
+                    <div class="weui-cell weui-cell_select weui-cell_select-after">
+                        <div class="weui-cell__hd">
+                            <label class="weui-label">物流方式&nbsp;&nbsp;
+                                <span style="color:red;">*</span>
+                            </label>
+                        </div>
+                        <div class="weui-cell__bd ">
+                            <select class="weui-select greyColor" name="type" id='wlfs'>
+                                <option value='-1' disabled selected style='display:none;'>请选择物流方式</option>
+                                <!-- <option value="P.C32.5R">P.C32.5R</option> -->
+                                <option value="包运">包运</option>
+                                <option value="自提">自提</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="weui-cell weui-cell_select weui-cell_select-after ">
+                        <div class="weui-cell__hd">
+                            <label class="weui-label" >运输费用&nbsp;&nbsp;
+                            </label>
+                        </div>
+                        <div class="weui-cell__bd">
+                            <input class="weui-select peibi scale" type="text" name="carNum" id="yf" placeholder="请输入运输费用">
+                        </div>
+                    </div>
+                </div>
+                <div class="button-sp-area" style="margin-bottom: 20px;display: flex;flex-direction: row;width: 100%;justify-content: space-around;align-items: baseline;">
+                    <a href="javascript:;" id="ratio-refuse" class="weui-btn weui-btn_warn" style="width: 40%;">取消</a>
+                    <a href="javascript:;" id="ratio-agree" class="weui-btn weui-btn_primary" style="width: 40%">确定</a>
+                </div>
+            </div>
+        </div>
+    </div>
+  
+
+</block>
+<block name="js">
+    <script src="__PUBLIC__/assets/js/AmountConversionformat.js"></script>
+    <script>
+        var user_id    = 0,
+            er_user_id = 0,
+            stuff      = [],
+            submit     = [];
+        // 下拉框
+        // 用户选择
+        function formatRepo(repo) { return repo.text; }
+
+        function formatRepoSelection(repo) { return repo.text }
+        
+        $("#user_name").select2({
+            ajax: {
+                url: "{:U('Light/Api/ContractApplyApi')}" + "&system=yxhb&modname=ContractApply&action=getCustomerList",
+                dataType: 'json',
+                delay: 350,
+                data: function (params) {
+                    $('#alter_div input').eq(0).attr('placeholder', '请选择客户或拼音缩写');
+                    return {
+                        math: params.term,
+                    };
+                },
+                processResults: function (data) {
+                    return {
+                        results: data
+                    };
+                },
+                cache: true
+            },
+            escapeMarkup: function (markup) { return markup; },
+            minimumInputLength: 0,
+            minimumResultsForSearch: 9,
+            // allowClear: true,
+            language: "zh-CN",
+            templateResult: formatRepo,
+            templateSelection: formatRepoSelection
+        });
+        
+        $('#alter_div').on('blur','input',function(){
+            if(!user_id) $('#alter_div input').eq(0).attr('placeholder', '客户范围为正常总客户');
+        })
+        // select2 点击触发
+        $("#user_name").on("select2:selecting", function (e) {
+            $('#alter_div .select2-selection__choice__remove').click();
+            var selectArr = e.params.args.data;
+                user_id   = selectArr.id;
+
+            if(selectArr.jc) selectArr.text = selectArr.jc;
+            
+            text = selectArr.text;
+            text = text.replace(/有限/, "");
+            text = text.replace(/责任/, "");
+            text = text.replace(/公司/, "");
+            selectArr.text = text;
+            $('#user_name .select2-selection__choice').text(selectArr.text);
+            getreComp();
+        });
+        
+        $("#user_name").on("select2:unselecting", function (e) {
+            resetPage();
+        });
+        function resetPage(){
+            $('#ycl_content').html('');
+            $('#param_div').show();
+            er_user_id = 0;
+            user_id    = 0;
+            stuff      = [];
+            submit     = [];
+            submitShow();
+        };
+        
+        // 获取客户的信息
+        function getreComp(){
+            if(!user_id) return tooltip('请选择上级客户');
+            $.ajax({
+                type: 'POST',
+                url: "{:U('Light/Api/ContractApplyApi')}",
+                dataType: 'json',
+                data: {
+                    user_id : user_id,
+                    system  : "{$system}",
+                    modname : 'ContractApply',
+                    action  : 'getCustomerInfo'
+                },
+                dataType: 'json',
+                success: function (res) {
+                    $("#kpfs_sel").attr('style','');
+                    $("#jsfs_sel").attr('style','');
+                    // 开票方式 和 结算方式
+                    if(res.data.model.js){
+                        $('#jsfs').val(res.data.model.js);
+                        $('#jsfs').show();
+                        $('#jsfs_sel').hide();
+                    }else{
+                        $('#jsfs').val('');
+                        $('#jsfs').hide();
+                        var html = '<option value="-1" id="kpfs_1" selected="selected" class="weui-select" disabled style="display:none;">请选择结算方式</option>'+
+                                    '<option value="对方数量">对方数量</option>'+
+                                    '<option value="我方数量">我方数量</option>';
+                        $('#jsfs_sel').html(html);
+                        $('#jsfs_sel').show();
+                    }
+                    
+                    if(res.data.model.kf){
+                        $('#kpfs').val(res.data.model.kf);
+                        $('#kpfs').show();
+                        $('#kpfs_sel').hide();
+                    }else{
+                        $('#kpfs').val('');
+                        $('#kpfs').hide();
+                        var html = '<option value="-1"  selected="selected" class="weui-select" disabled style="display:none;">请选择开票方式</option>'+
+                                    '<option value="出厂票价">出厂票价</option>'+
+                                    '<option value="送到票价">送到票价</option>';
+                        $('#kpfs_sel').html(html);
+                        $('#kpfs_sel').show();
+                    }
+
+                    if(res.code == 404){
+                        $('#ejkh_sel').hide();
+                        $('#ejkh').show();
+                        $('#ejkh').val('无子客户');
+                        return tooltip('无子客户，请先添加子客户');
+                    }else{
+                        $('#ejkh').val('');
+                        $('#ejkh').hide();
+                        $("#ejkh_sel").attr('style','');
+                        var html = '<option value="-1"  selected="selected" class="weui-select" disabled style="display:none;">请选择二级客户</option>';
+                        for( key in res.data.data){
+                            html += '<option value="'+res.data.data[key].id+'">'+res.data.data[key].g_name+'</option>'
+                        }
+                        $('#ejkh_sel').html(html);
+                        $('#ejkh_sel').show();
+                    }
+                    
+                }
+            });
+        };
+        // 选择颜色改变
+        $('#jsfs_sel').change(function(){
+            $(this).attr('style','color:black');
+        });
+        $('#kpfs_sel').change(function(){
+            $(this).attr('style','color:black');
+        });
+        $('#ejkh_sel').change(function(){
+            $(this).attr('style','color:black');
+        });
+        
+        // 二级客户的显示和隐藏
+        $('#ejkh_sel').change(function(){
+            var er_id = $(this).val();
+            er_user_id = er_id;
+            if(!er_id) return tooltip('请选择二级客户');
+            $.ajax({
+                type: 'POST',
+                url: "{:U('Light/Api/ContractApplyApi')}",
+                dataType: 'json',
+                data: {
+                    user_id : er_id,
+                    system  : "{$system}",
+                    modname : 'ContractApply',
+                    action  : 'getGuestInfo'
+                },
+                dataType: 'json',
+                success: function (res) {
+
+                        makeDetail(res);
+                }
+            });
+        });
+
+        function makeDetail(data){
+            var length = data.length,
+                html   = '';
+            stuff  = data;
+            if(length == 0){
+                html = '暂无有效价格';
+            }else{
+                for(k in data){
+                    html += '<div style="padding: 3px 0 0 0;border-bottom: 1px solid #e5e5e5; "><strong >'+data[k].ht_cate+'('+data[k].ht_wlfs+')</strong></div>';
+                    var yf = '';
+                    if(data[k].ht_yf != 0) yf='<span style="color:red;">('+data[k].ht_yf+')</span>'; 
+                    html += '<div style="padding: 3px 0 0 10px;"><span class="" >单价(运费)</span>:' + data[k].ht_dj +yf+ '元</div>';
+                    var total = Number(data[k].ht_dj)+Number(data[k].ht_yf);
+                    html += '<div style="padding: 3px 0 0 10px;"><span class="" >合计</span>:' + total + '</div>';
+                }
+            }
+            $('#ycl_content').html(html);
+            $('#param_div').hide();
+        }
+        // 品种选择
+        getStuff();
+        function getStuff(){
+            $.ajax({
+                type: 'POST',
+                url: "{:U('Light/Api/ContractApplyApi')}",
+                dataType: 'json',
+                data: {
+                    system  : "{$system}",
+                    modname : 'ContractApply',
+                    action  : 'getStuff'
+                },
+                dataType: 'json',
+                success: function (res) {
+                    var html = '<option value="-1"  selected="selected" class="weui-select" disabled style="display:none;">请选择水泥品种</option>';
+                    for( key in res){
+                        html += '<option value="'+res[key]+'">'+res[key]+'</option>'
+                    }
+                    $('#cate').html(html);
+                }
+            });
+        }
+        // 显示配置的
+        $('#select_sf').click(function(){
+            if(!er_user_id) return tooltip('请先选择二级客户');
+           
+            $('#cate').val(-1);
+            $('#dj').val('');
+            $('#wlfs').val(-1);
+            $('#yf').val('');
+            $('#other_page').show();
+        });
+        $('#ratio-refuse').click(function(){
+            $('#other_page').hide();
+        });
+
+        $('#ratio-agree').click(function(){
+            var cate = $('#cate').val(),
+                dj   = $('#dj').val(),
+                wlfs = $('#wlfs').val(),
+                yf   = $('#yf').val();
+           
+            if(!cate) return tooltip('请先选择水泥品种');
+            if(!dj) return tooltip('请输入产品价格');
+            if(!wlfs) return tooltip('请先选择物流方式');
+            if( wlfs == '包运' && !yf) return tooltip('请先输入运费价格');
+            // 判断材料
+            for( k in stuff){
+                if( stuff[k].ht_cate == cate) return tooltip('此品种已有价格合同');
+            }
+            var temp = {
+                'ht_cate' : cate,
+                
+                'ht_wlfs' : wlfs,
+                'ht_dj'   : dj,
+                'ht_yf'   : yf,  
+            };
+            stuff.push(temp);
+            submit.push(temp);
+            $('#other_page').hide();
+            submitShow();
+        });
+
+        // 提交价格显示
+        function submitShow(){
+            if( submit.length == 0){
+                $('#submit_content').hide();
+                $('#submit_content').html('');
+                $('#submit_div').show();
+                return false;
+            }
+            var html = '';
+            for(k in submit){
+                html += '<div style="padding: 3px 0 0 0;border-bottom: 1px solid #e5e5e5; "><strong >'+submit[k].ht_cate+'('+submit[k].ht_wlfs+')</strong><span class="weui-icon-cancel" index='+k+' style="float: right;"></span></div>';
+                var yf = '';
+                if(submit[k].ht_yf != 0) yf='<span style="color:red;">('+submit[k].ht_yf+')</span>'; 
+                html += '<div style="padding: 3px 0 0 10px;"><span class="" >单价(运费)</span>:' + submit[k].ht_dj +yf+ '</div>';
+                var total = Number(submit[k].ht_dj)+Number(submit[k].ht_yf);
+                html += '<div style="padding: 3px 0 0 10px;"><span class="" >合计</span>:' + total + '</div>';
+            }
+            $('#submit_content').show();
+            $('#submit_div').hide();
+            $('#submit_content').html(html);
+        }
+        // 点击删除
+        $('#submit_content').on('click','.weui-icon-cancel',function(){
+            var index = $(this).attr('index'),
+           
+            cate = submit[index].ht_cate;
+            for( k in stuff){
+                if( stuff[k].ht_cate == cate){
+                    idx = k;
+                    break;
+                }
+            }
+            stuff.splice(idx, 1);
+            submit.splice(index,1);
+            submitShow();
+        });
+        $('#wlfs').change(function(){
+            $wlfs = $(this).val();
+            //console.log($wlfs);
+            if($wlfs == '自提'){
+                //readonly="readonly"
+                $('#yf').attr('readonly','readonly');
+                $('#yf').val('');
+            }else{
+                $('#yf').removeAttr('readonly');
+                $('#yf').val('');
+            }
+        });
+        
+        // 点击提交
+        $('#submit').click(function () {
+
+            // return tooltip('测试中...稍等2分钟');
+            var jsfs = $('#jsfs').val(),
+                kpfs = $('#kpfs').val();
+            if(!jsfs) return tooltip('请选择结算方式');
+            if(!kpfs) return tooltip('请选择开票方式');
+            if (!er_user_id) return tooltip('请选择二级客户');
+            if (submit.length <= 0) return tooltip('请点击配置价格');
+            // 备注检测
+            var notice = $('#reason').val();
+            toastfadeIn(200, '数据提交中');
+            $.ajax({
+                type: 'POST',
+                url: "{:U('Light/Api/ContractApplyApi')}", //&system=yxhb&modname=CgfkApply&action=getCustomerList
+                dataType: 'json',
+                data: {
+                    id       : user_id,
+                    jsfs     : jsfs,
+                    kpfs     : kpfs,
+                    copyto_id: $("#copyto_id").val(),
+                    user_id  : er_user_id,
+                    data     : submit,
+                    notice   : notice,
+                    system   : "{$system}",
+                    modname  : 'ContractApply',
+                    action   : 'submit',
+                    __hash__ : hash
+                },
+                dataType: 'json',
+                success: function (res) {
+                    toast.fadeOut(200);
+                    if (res.code == 200) {
+                        window.location.href = "{$fixed['info']}" + "&aid=" + res.aid;
+                    } else {
+                        tooltip(res.msg);
+                    }
+                }
+            });
+        });
+    </script>
+</block>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   
+
+
