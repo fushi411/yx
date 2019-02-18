@@ -279,6 +279,7 @@ class WorkFlowController extends BaseController {
 
     public function sendApplyMsg($flowName, $id, $pid, $applyerid, $system, $type='')
     {
+<<<<<<< HEAD
       $wx = D('WxMessage');
       if($flowName != 'CostMoney'){
         $recevier = $wx->ProSendMessage($system,$flowName,$id,$pid,$applyerid,$type);
@@ -286,6 +287,53 @@ class WorkFlowController extends BaseController {
         $recevier = $wx->ProSendCarMessage($system,$flowName,$id,$pid,$applyerid,$type);
       }
       return $receiver;
+=======
+        $systemName = array('kk'=>'建材', 'yxhb'=>'环保');
+        $flowTable = M($system.'_appflowtable');
+        $mod_cname = $flowTable->getFieldByProMod($flowName, 'pro_name');
+        $title = $mod_cname;
+        $url = "https://www.fjyuanxin.com/WE/index.php?m=Light&c=Apply&a=applyInfo&system=".$system."&aid=".$id."&modname=".$flowName;
+        $boss = D($system.'_boss');
+        $applyerName = $boss->getusername($applyerid);
+        $applyerwxid = $boss->getWXFromID($applyerid);
+        $proName = $boss->getusername($pid);
+        $prowxid = $boss->getWXFromID($pid);
+
+        switch ($type) {
+          case 'pass':
+            $description = "已审批通过";
+            $receviers = "wk|HuangShiQi|WangTongJin|".$applyerwxid;
+            break;
+          case 'refuse':
+            $description = "被拒绝";
+            $receviers = "wk|HuangShiQi|WangTongJin|".$applyerwxid;
+            break;
+          case 'other':
+            $description = "需要处理";
+            $receviers = "wk|HuangShiQi|WangTongJin|".$prowxid;
+            break;          
+          default:
+            $description = "需要审批";
+            $receviers = "wk|HuangShiQi|WangTongJin|".$prowxid;
+            break;
+        }
+        $title = str_replace('表','',$title);
+        $system_msg = $systemName[$system];
+        if( $flowName == 'fh_edit_Apply_hb' ) $system_msg = '环保';
+        $template = "您有一个流程{$description}\n申请单位：{$system_msg}\n申请类型：{$title}";
+
+        $logic = D(ucfirst($system).$flowName,'Logic');
+        $descriptionData = $logic->getDescription($id);
+
+        $description = $this->ReDescription($descriptionData);
+        $template =$template."\n".$description."<a href='".$url."'>点击查看</a>";
+       
+        // $template = $description."\n类型：".$title."\n申请人：".$applyerName."\n调休理由：".$record['content']."\n<a href=\"".$url."\">点击查看</a>";
+        $agentid = 15;
+        $info = $this->WeChat->sendMessage($receviers,$template,$agentid,$system);
+        // $info=$this->WeChat->sendCardMessage($receivers,$title,$applyerName.$description,$url,14);
+        return $info;
+>>>>>>> 3e5c7e349e5edf553fe0aec57fbbc9314164eac5
     }
     
     /**
@@ -301,7 +349,62 @@ class WorkFlowController extends BaseController {
         return $description;
     }
 
+<<<<<<< HEAD
   
+=======
+    public function sendApplyCardMsg($flowName, $id, $pid, $applyerid, $system, $type='', $subTitle='',$reason='')
+    {
+        $systemName = array('kk'=>'建材', 'yxhb'=>'环保');
+      // 微信发送
+        $flowTable = M($system.'_appflowtable');
+        $mod_cname = $flowTable->getFieldByProMod($flowName, 'pro_name');
+        $mod_cname = str_replace('表','',$mod_cname);
+        $system_msg = $systemName[$system];
+        if( $flowName == 'fh_edit_Apply_hb' ) $system_msg = '环保';
+
+        $title = $system_msg.$mod_cname.$subTitle;
+        $url = "https://www.fjyuanxin.com/WE/index.php?m=Light&c=Apply&a=applyInfo&system=".$system."&aid=".$id."&modname=".$flowName;
+        //crontab(CLI模式)无法正确生产URL
+        // if (PHP_SAPI=='cli') {
+        //   $detailsURL = str_replace('_PHP_FILE_', '/WE/index.php', $detailsURL);
+        // }
+        $boss = D($system.'_boss');
+        $proName = $boss->getusername($pid);
+
+        $subName = '';
+        if($subTitle == '(催审)'){
+          $subName = $boss->getusername($applyerid);
+          $applyerName='('.$subName.'提交)';
+        } else {
+          $applyerName = $boss->getusername($applyerid);
+        }
+        $boss = D($system.'_boss')->getWXFromID($applyerid);
+        switch ($type) {
+          case 'pass':
+            $description = "您有一个流程已审批通过".$applyerName;
+            $receviers = "wk|HuangShiQi|WangTongJin|".$boss;
+            break;
+          case 'refuse':
+            $description = "您有一个流程被拒绝".$applyerName;
+            $receviers = "wk|HuangShiQi|WangTongJin|".$boss;
+            break;
+          case 'other':
+            $description = "您有一个流程需要处理".$applyerName;
+            $receviers = "wk|HuangShiQi|WangTongJin|".$boss;
+            break;          
+          default:
+            $description = "您有一个流程需要审批".$applyerName;
+            $receviers = "wk|HuangShiQi|WangTongJin|".$boss;
+            break;
+        }
+        if(!empty($reason)){
+          $description .= "\n催审理由：".$reason;
+        }
+        $agentid = 15;
+        $info = $this->WeChat->sendCardMessage($receviers,$title,$description,$url,$agentid,$flowName,$system);
+        return $info;
+    }
+>>>>>>> 3e5c7e349e5edf553fe0aec57fbbc9314164eac5
 
     public function setOthersApply($mod_name, $pro_id, $aid, $stage_id, $others_id, $reason, $applyUserid, $system)
     {

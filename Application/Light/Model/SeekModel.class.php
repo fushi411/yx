@@ -135,6 +135,7 @@ class SeekModel extends Model {
         $title = $data['mod_title'];
         return $title;
     }
+<<<<<<< HEAD
 
     /**
      * 带系统 模块名
@@ -151,4 +152,6 @@ class SeekModel extends Model {
         $res = $data[$column];
         return $res;
     }
+=======
+>>>>>>> 3e5c7e349e5edf553fe0aec57fbbc9314164eac5
 }

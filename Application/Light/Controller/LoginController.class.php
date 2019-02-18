@@ -90,6 +90,7 @@ class LoginController extends \Think\Controller {
         $sub = array();
 
         foreach ($tab as $k => $v ) {
+<<<<<<< HEAD
             // 已退审
             $map = array(
                 'a.app_stat'                      => 1,
@@ -116,6 +117,13 @@ class LoginController extends \Think\Controller {
                     ->where($map)
                     ->select();  
             
+=======
+            $res = M($v['system'].'_appflowproc a')
+                    ->join("{$v['table_name']}  on a.aid={$v['table_name']}.{$v['id']}")
+                    ->field("a.aid,a.per_id,a.mod_name,a.per_name")
+                    ->where(array('a.app_stat' => 0,"{$v['table_name']}.{$v['stat']}" => $v['submit']['stat'],'a.mod_name' => $v['mod_name']))
+                    ->select();    
+>>>>>>> 3e5c7e349e5edf553fe0aec57fbbc9314164eac5
             if(!empty($res)){
                 foreach($res as $key => $val){
                     $res[$key]['system']  = $v['system'];
@@ -125,9 +133,16 @@ class LoginController extends \Think\Controller {
             }
             $sub = array_merge($sub,$res);
         }
+<<<<<<< HEAD
         $this->systemUrge($sub);
     }
 
+=======
+
+        $this->systemUrge($sub);
+    }
+
+>>>>>>> 3e5c7e349e5edf553fe0aec57fbbc9314164eac5
     /**
      * 系统自动催审
      * @param array $urgeData 催审名单 
@@ -141,7 +156,11 @@ class LoginController extends \Think\Controller {
         $wx = D('WxMessage');
         foreach($urgeData as $val){
             # 系统选择
+<<<<<<< HEAD
             $system   = $val['system'];
+=======
+            $system = $val['system'];
+>>>>>>> 3e5c7e349e5edf553fe0aec57fbbc9314164eac5
             $mod_name = $val['mod_name'];
             $logic    = D(ucfirst($system).$mod_name, 'Logic');
             $boss     = D($system.'_boss')->getWXFromID($val['per_id']);

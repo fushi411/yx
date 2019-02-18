@@ -42,14 +42,22 @@ class WxMessageModel extends Model {
         $recevier = str_replace(',','|',$data['part']);
         $title = '任务排单';
         $description = $data['tjr'].'向您派发了一条任务';
+<<<<<<< HEAD
         $url = $this->mUrl.'m=Light&c=task&a=taskLook&taskid='.$data['id'];
+=======
+        $url = 'https://www.fjyuanxin.com/WE/index.php?m=Light&c=task&a=taskLook&taskid='.$data['id'];
+>>>>>>> 3e5c7e349e5edf553fe0aec57fbbc9314164eac5
         $sender = session('wxid');
         $system = 'yxhb';
         $this->wx->sendCardMessage($recevier,$title,$description,$url,15,$sender,$system);
     }
 
     
+<<<<<<< HEAD
     //  自动催审 - 小于3条待审批
+=======
+    //  自动催审
+>>>>>>> 3e5c7e349e5edf553fe0aec57fbbc9314164eac5
     public function autoProSendMessage($data,$applyerName)
     {
         $system  = $data['system'];
@@ -57,14 +65,22 @@ class WxMessageModel extends Model {
         $aid     = $data['aid'];
         $mod     = $data['mod'];
         $per_id  = $data['per_id']; // 当前审批人id
+<<<<<<< HEAD
         
         // 微信发送
         $title = $modname.'(催审)';
         $url = $this->mUrl."m=Light&c=Apply&a=applyInfo&system=".$system."&aid=".$aid."&modname=".$mod;
+=======
+
+        // 微信发送
+        $title = $modname.'(催审)';
+        $url = "https://www.fjyuanxin.com/WE/index.php?m=Light&c=Apply&a=applyInfo&system=".$system."&aid=".$aid."&modname=".$mod;
+>>>>>>> 3e5c7e349e5edf553fe0aec57fbbc9314164eac5
         $applyerName='('.$applyerName.'提交)';
         $boss = D($system.'_boss')->getWXFromID($per_id);
         $description = "您有一个流程需要审批".$applyerName;
 
+<<<<<<< HEAD
         $receviers = $this->getFiexMan('|');
         $receviers.= $boss;
         $comment_list = D($system.'Appflowcomment')->autoMessageNumber($mod, $aid,$boss);
@@ -89,10 +105,17 @@ class WxMessageModel extends Model {
         $receviers = $this->getFiexMan('|');
         $receviers.= $boss;
         $agentid = $mod == 'CostMoney'?1000049:15;
+=======
+        $receviers = "wk|HuangShiQi|".$boss;
+        $comment_list = D($system.'Appflowcomment')->autoMessageNumber($mod, $aid,$boss);
+        $description .= "\n系统发起的第{$comment_list}次催审";
+        $agentid = 15;
+>>>>>>> 3e5c7e349e5edf553fe0aec57fbbc9314164eac5
         $info = $this->wx->sendCardMessage($receviers,$title,$description,$url,$agentid,$mod,$system);
         return $info;
     }
 
+<<<<<<< HEAD
     // 撤销通知 - 撤销推送，排除本人
     public function delRecordSendMessage($system,$mod,$id,$reason){
         $temrecevier = $this->getAllCurrentProcessPeople($system,$mod,$id,1);
@@ -343,4 +366,6 @@ class WxMessageModel extends Model {
         return implode($glue,$FiexMan).$glue;
     }
 
+=======
+>>>>>>> 3e5c7e349e5edf553fe0aec57fbbc9314164eac5
 }

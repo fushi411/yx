@@ -559,6 +559,17 @@ class KkSalesReceiptsApplyLogic extends Model {
         if($res < 99)  return "{$db}0{$num}";
         return "{$db}{$num}";
     }
+<<<<<<< HEAD
+=======
+    /**
+     * 获取客户名
+     */
+    public function getGuest($id){
+
+        $user = M('kk_guest2')->where(array('id' => $id))->find();
+        return $user['g_name'];
+    }
+>>>>>>> 3e5c7e349e5edf553fe0aec57fbbc9314164eac5
     /**
      * 获取客户名
      */

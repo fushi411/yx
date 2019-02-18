@@ -226,6 +226,7 @@ class ApplyController extends BaseController {
         $aid      = I('post.aid');
         $ctoid    = I('post.ctoid');
         $image    = I('post.file');
+<<<<<<< HEAD
         $mod      = I('post.mod_name');
         $word     = I('post.word');
         $per_id   = session($system.'_id');
@@ -254,6 +255,73 @@ class ApplyController extends BaseController {
             $temrecevier           = str_replace('|',',',$temrecevier);
             $data['comment_to_id'] = $temrecevier;
             $data['app_word']     .= '@所有人';
+=======
+        if (M()->autoCheckToken($_POST)){
+            $data['aid'] = I('post.aid');
+            $ctoid = I('post.ctoid');
+            $ctoid = explode(',',$ctoid);
+            $ctoid = array_filter($ctoid);
+            $ctoid = implode(',',$ctoid);
+            $data['comment_to_id'] = $ctoid;
+            $data['mod_name'] = I('post.mod_name');
+            $data['app_word'] = I('post.word');
+            $data['per_id'] = $per_id;
+            $data['per_name'] = $per_name;
+            $data['app_stat'] = 1;
+            $data['comment_img'] = $image;
+            $data['time'] = date('Y-m-d H:i:s');
+            // 后期使用
+            $data['reply_id'] = 0;
+            
+            // 发送消息提醒相关人员 
+            if (!empty($data['comment_to_id'])) {
+            // 发送抄送消息
+                $recevier = 'wk|HuangShiQi|WangTongJin|'.str_replace(',', '|', $data['comment_to_id']);
+            }else{
+            // 无@指定人 发送流程内的人
+               // - 申请人，抄送人员，流程人员（不包括自己本身） #appflowproc  #copyto 
+                
+                // - 申请人
+                $res = D(ucfirst($system).$data['mod_name'], 'Logic')->recordContent($data['aid']);
+                $apply_id = $res['applyerID'];
+                $res = M($system.'_boss')->field('wxid')->where(array('id' => $apply_id))->find();
+                $receviers = $res['wxid'].',';
+
+                // - 流程人员
+                $resArr =  M($system.'_appflowproc a')->join($system.'_boss b on b.id=a.per_id')->field('b.wxid')->where(array('a.aid' => $data['aid'] ,'a.mod_name' => $data['mod_name'],'a.per_name'=>array('neq',$per_name)))->select();               
+                foreach($resArr as $val){
+                    $receviers .= $val['wxid'].',';
+                }
+
+                // - 抄送人员
+                $resArr = M($system.'_appcopyto')->field('copyto_id')->where(array('aid' => $data['aid'],'mod_name' =>$data['mod_name'],'type' => 1))->find();
+                $receviers .= $reArr['copyto_id'] ;
+                $recevier = 'wk|HuangShiQi|WangTongJin|'.str_replace(',', '|',  $receviers);
+                
+                // 数据重构  -- 去除重复的人员
+                $tmpRecevierArr = explode('|',$recevier);  
+                $tmpRecevierArr = array_filter($tmpRecevierArr); // ---- 去除空值
+                $tmpRecevierArr = array_unique($tmpRecevierArr); // -- 去除重复
+                $tmpRecevier = implode(',',$tmpRecevierArr);
+
+                $temrecevier = str_replace('|',',',$tmpRecevier);
+                $data['comment_to_id'] = $tmpRecevier;
+                $data['app_word'].='@所有人';
+            }
+            // - 发送信息
+            $flowTable   = M($system.'_appflowtable');
+            $mod_cname   = $flowTable->getFieldByProMod($data['mod_name'], 'pro_name');
+            $systemName  = array('kk'=>'建材', 'yxhb'=>'环保');
+            $title       = $systemName[$system].str_replace('表','',$mod_cname) ;
+            $description = "您有新的评论：".$per_name."@了你!";
+            $url         = "https://www.fjyuanxin.com/WE/index.php?m=Light&c=Apply&a=applyInfo&system=".$system."&aid=".$data['aid']."&modname=".$data['mod_name'];
+            $WeChat      = new \Org\Util\WeChat;
+            $WeChat->sendCardMessage($recevier,$title,$description,$url,15,$data['mod_name'],$system);
+            // - 数据插入
+
+            $res = M($system.'_appflowcomment')->add($data);
+            $this->ajaxReturn($res);
+>>>>>>> 3e5c7e349e5edf553fe0aec57fbbc9314164eac5
         }
        
         // - 数据插入
@@ -323,12 +391,54 @@ class ApplyController extends BaseController {
         $id          =  I('post.id');
         $mod_name    =  I('post.mod_name');
         $reason      =  I('post.reason');
+<<<<<<< HEAD
         if (!$id) $this->ajaxReturn('failure');
         # 撤销处理
         $res = D(ucfirst($system).$mod_name, 'Logic')->delRecord($id);
         # 信息发送以及保存
         $receviers             = D('WxMessage')->delRecordSendMessage($system,$mod_name,$id,$reason);
         $receviers             = str_replace('|',',',$receviers);
+=======
+
+        $receviers   = 'HuangShiQi,wk,WangTongJin,';
+        $res = D(ucfirst($system).$mod_name, 'Logic')->recordContent($id);
+        $apply_user = $res['applyerName'];
+        
+        $resArr =  M($system.'_appflowproc a')
+                ->join($system.'_boss b on b.id=a.per_id')
+                ->field('b.wxid')
+                ->where(array('a.aid' => $id ,'a.mod_name' => $mod_name))
+                ->select();               
+        
+        foreach($resArr as $val){
+            $receviers .= $val['wxid'].',';
+        }
+
+        // - 抄送人员
+        $resArr = M($system.'_appcopyto')->field('copyto_id')->where(array('aid' => $id,'mod_name' =>$mod_name,'type' => 1))->find();
+        
+        $receviers .= $resArr['copyto_id'] ;
+        $recevier = str_replace(',', '|',  $receviers);
+        
+        // 数据重构  -- 去除重复的人员
+        $tmpRecevierArr = explode('|',$recevier);  
+        $tmpRecevierArr = array_filter($tmpRecevierArr); // ---- 去除空值
+        $tmpRecevierArr = array_unique($tmpRecevierArr); // -- 去除重复
+        $temrecevier = implode('|',$tmpRecevierArr);
+
+        $systemName = array('kk'=>'建材', 'yxhb'=>'环保');
+        $flowTable   = M($system.'_appflowtable');
+        $mod_cname   = $flowTable->getFieldByProMod($mod_name, 'pro_name');
+
+        $title       = '【已撤销推送】';
+        $description = $systemName[$system].$mod_cname."({$apply_user}提交)\n撤销理由：".$reason;
+        if($system == 'kk' && $mod_name == 'AddMoneyQtTz') $description = '投资'.$mod_cname."({$apply_user}提交)\n撤销理由：".$reason;
+        $url         = "https://www.fjyuanxin.com/WE/index.php?m=Light&c=Apply&a=applyInfo&system=".$system."&aid=".$id."&modname=".$mod_name;
+        $WeChat      = new \Org\Util\WeChat;
+        $WeChat->sendCardMessage($temrecevier,$title,$description,$url,15,$mod_name,$system);
+
+        // $ctoid = $res['per_id'];
+>>>>>>> 3e5c7e349e5edf553fe0aec57fbbc9314164eac5
         $data['aid']           = $id;
         $data['comment_to_id'] = $receviers;
         $data['mod_name']      = $mod_name;

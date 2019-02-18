@@ -503,6 +503,7 @@ class MsgdataModel extends Model {
         return $result;   
     }
 
+<<<<<<< HEAD
     //汪同津测试
     public function CeShi(){
         $result = array();
@@ -518,4 +519,6 @@ class MsgdataModel extends Model {
         return $result;
     }
 
+=======
+>>>>>>> 3e5c7e349e5edf553fe0aec57fbbc9314164eac5
 }
