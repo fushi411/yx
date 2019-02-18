@@ -346,64 +346,6 @@ class YxhbkfScjlLogic extends Model {
         
     }
 
-     // $sign_id   = I('post.sign');
-        // $sign_arr  = explode(',',$sign_id);
-        // $sign_arr  = array_filter($sign_arr);// 去空
-        // $sign_arr  = array_unique($sign_arr); // 去重
-        // 签收通知
-        // $all_arr = array();
-        // foreach($sign_arr as $val){
-        //     $per_name = M('yxhb_boss')->where(array('wxid'=>$val))->Field('name,id')->find();
-        //     $data = array(
-        //         'pro_id'        => 31,
-        //         'aid'           => $result,
-        //         'per_name'      => $per_name['name'],
-        //         'per_id'        => $per_name['id'],
-        //         'app_stat'      => 0,
-        //         'app_stage'     => 1,
-        //         'app_word'      => '',
-        //         'time'          => date('Y-m-d H:i',time()),
-        //         'approve_time'  => '0000-00-00 00:00:00',
-        //         'mod_name'      => 'kfScjl',
-        //         'app_name'      => '签收',
-        //         'apply_user'    => '',
-        //         'apply_user_id' => 0, 
-        //         'urge'          => 0,
-        //     );
-        //     $all_arr[]=$data;
-        // }
-        // $boss_id = implode('|',$sign_arr);
-        // M('yxhb_appflowproc')->addAll($all_arr);
-        // $this->sendMessage($result,$boss_id);
-    /**
-     * 通知信息发送
-     * @
-     */
-    public function sendMessage($apply_id,$boss){
-        $system = 'yxhb';
-        $mod_name = 'kfScjl';
-        $logic = D(ucfirst($system).$mod_name, 'Logic');
-        $res   = $logic->record($apply_id);
-        $systemName = array('kk'=>'建材', 'yxhb'=>'环保');
-        // 微信发送
-        $WeChat = new \Org\Util\WeChat;
-        
-        $descriptionData = $logic->getDescription($apply_id);
-     
-        $title = '生控记录(矿粉)(签收)';
-        $url = "https://www.fjyuanxin.com/WE/index.php?m=Light&c=Apply&a=applyInfo&system=".$system."&aid=".$apply_id."&modname=".$mod_name;
-      
-        $applyerName='('.$res['rdy'].'提交)';
-        $description = "您有一个流程需要签收".$applyerName;
-        $receviers = "HuangShiQi|".$boss;
-        foreach( $descriptionData as $val ){
-            $description .= "\n{$val['name']}{$val['value']}";
-        }
-        $agentid = 15;
-        $WeChat = new \Org\Util\WeChat;
-        $info = $WeChat->sendCardMessage($receviers,$title,$description,$url,$agentid,$mod_name,$system);
-    }
-
     // 水份数据
     protected function sfDataMake($sfData){
         $temp = array(

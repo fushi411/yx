@@ -682,7 +682,7 @@
                 //          获取图片大小
                 var size = file.size / 1024 > 1024 ? (~~(10 * file.size / 1024 / 1024)) / 10 + "MB" : ~~(file.size / 1024) + "KB";
                 // li.innerHTML = '<div class="progress"><span></span></div><div class="size">' + size + '</div>';
-                li.innerHTML = '<div class="weui-uploader__file-content"></div>';
+                li.innerHTML = '<div class="weui-uploader__file-content"></div><span class="weui-badge " style="position: absolute;top: 0.2em;left: 4.5em;">X</span>';
                 $(li).addClass("weui-uploader__file weui-uploader__file_status");
                 $("#uploaderFiles").append($(li));
                 reader.onload = function () {
@@ -959,7 +959,7 @@
                 // console.log(imgIndex);
             })
 
-            $(".weui-gallery__del").on('click', function () {
+            $(".imgDel").on('click', function () {
                 // 是否删除该图
                 $("#iosDialog_imgDel").fadeIn(100);
             })

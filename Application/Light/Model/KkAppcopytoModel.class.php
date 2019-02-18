@@ -161,10 +161,10 @@ class KkAppcopytoModel extends Model {
             $cpdata['fixed_copyto_id'] = $message['kk'.$mod_name]['fiexd_copy_id'];
         }
         $cpdata['copyto_id'] = $cpid;
-        $cpdata['from_id'] = session('wxid');
-        $cpdata['time'] = date('Y-m-d H:i:s');
-        $cpdata['mod_name'] = $mod_name;
-        $cpdata['type'] = $type;
+        $cpdata['from_id']   = session('wxid');
+        $cpdata['time']      = date('Y-m-d H:i:s');
+        $cpdata['mod_name']  = $mod_name;
+        $cpdata['type']      = $type;
         $insertID = $this->add($cpdata);
         return $insertID;
     }

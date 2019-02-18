@@ -431,11 +431,11 @@
                                                 </p>
                                                
                                                 <if condition="$clist.is_img eq 1">
-                                                        <p class="weui-media-box__desc viewer" style="display: block;overflow: visible; word-break:break-all; word-wrap:break-word;margin-bottom: 0px;">
-                                                            <volist name="clist.file" id="val">
-                                                                <img  src="__PUBLIC__/upload/html5uploads/{$val}"   data-original="__PUBLIC__/upload/html5uploads/{$val}" alt="" style="max-width: 95%;">
-                                                            </volist>
-                                                        </p>
+                                                    <ul class="weui-uploader__files" id="viewer" style="margin-bottom: 0px;">
+                                                        <volist name="clist.file" id="val">
+                                                            <img  src="__PUBLIC__/upload/html5uploads/{$val}" class="fjys"  data-original="__PUBLIC__/upload/html5uploads/{$val}" alt="" style="max-width: 95%;">
+                                                        </volist>
+                                                    </ul>    
                                                 </if>
                                                 
                                                 <p class="weui-media-box__desc" style="display: flex;flex-direction:row;justify-content:space-between;align-items:center;font-size: 15px;margin-bottom: 0px;">
@@ -532,7 +532,7 @@
                             </eq>
                         </eq>
                     </block>
-                    <input type="hidden" name="aid" id="aid" value="{$aid}">
+                    
                     <div class="weui-gallery" id="gallery">
                         <span class="weui-gallery__img" id="galleryImg"></span>
                         <!-- <div class="weui-gallery__opr">
@@ -541,8 +541,8 @@
                             </a>
                         </div> -->
                     </div>
-
                 </if>
+                <input type="hidden" name="aid" id="aid" value="{$aid}">
                 <block name='attention'>
                         <if condition=" (empty($atten)) and (!$CueConfig)">
                             <div id="attention" style="display:none">

@@ -456,6 +456,8 @@
 <script src="https://res.wx.qq.com/open/libs/weuijs/1.1.3/weui.min.js"></script>
 <!-- <script src="__PUBLIC__/assets/js/weui.min.js"></script> -->
 <script src="__PUBLIC__/assets/js/exif.js"></script>
+<link rel="stylesheet" href="__PUBLIC__/assets/css/viewer.css" />
+<script src="__PUBLIC__/assets/js/viewer.js"></script>
 </body>
 <script>
     if(window.name != "bencalie"){
@@ -465,8 +467,16 @@
     else{
         window.name = "";
     }
- 
-    
+    var viewer_conut = 0;
+    function createViewr(){
+        if(viewer_conut == 0){
+            $('#uploaderFiles').viewer({
+                url: 'data-original',
+            });
+            viewer_conut++;
+        }
+        $('#uploaderFiles').viewer('update');
+    }
     $('input').attr('autocomplete','off');
     
     var $tooltips = $('.js_tooltips'),
@@ -738,6 +748,7 @@
         }
     });
 
+   
 
 </script>
 <block name="js">

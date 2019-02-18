@@ -135,4 +135,20 @@ class SeekModel extends Model {
         $title = $data['mod_title'];
         return $title;
     }
+
+    /**
+     * 带系统 模块名
+     * @param  string $mod 模块名
+     * @param  string $sy  系统
+     * @return string $title 标题
+     */
+    public function getConfig($mod,$sy,$column){
+        $map = array(
+            'mod_system' => $sy,
+            'name'       => $mod,
+        );
+        $data = M('yx_config_title')->field($column)->where($map)->find();
+        $res = $data[$column];
+        return $res;
+    }
 }

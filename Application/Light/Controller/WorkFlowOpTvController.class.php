@@ -101,7 +101,7 @@ class WorkFlowOpTvController extends BaseController {
 	        $func = ucfirst($system).$mod_name.'End';
 			$funcRes = $wfClass->$func($id, $system);
 			// 用户推送
-			$res = M($system.'_appflowtable')->field('condition')->where(array('pro_mod'=>$mod_name.'_push'))->find();
+			$res = M($system.'_appflowtable')->field('condition')->where(array('pro_mod'=>$mod_name.'_push'))->find(); 
 			if(!empty($res)){
 				$pushArr = json_decode($res['condition'],true);
 				$push_id = $pushArr['push'];
@@ -306,8 +306,6 @@ class WorkFlowOpTvController extends BaseController {
      * 签收通知信息发送
      * @
      */
-   
-
 	public function sendMsg($system,$apply_id,$mod_name,$option){
         $logic = D(ucfirst($system).$mod_name, 'Logic');
         $res   = $logic->recordContent($apply_id);

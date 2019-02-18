@@ -81,7 +81,6 @@ class LoginController extends \Think\Controller {
 
     public function crontab()
     { 
-        
         if(session('wxid') != 'HuangShiQi'){
             if(get_client_ip(0) != '0.0.0.0') return '无权限操作';
         }
@@ -91,11 +90,32 @@ class LoginController extends \Think\Controller {
         $sub = array();
 
         foreach ($tab as $k => $v ) {
+            // 已退审
+            $map = array(
+                'a.app_stat'                      => 1,
+                "{$v['table_name']}.{$v['stat']}" => $v['submit']['stat'],
+                'a.mod_name'                      => $v['mod_name']
+            );
+            $res = M($v['system'].'_appflowproc a')
+                    ->join("{$v['table_name']}  on a.aid={$v['table_name']}.{$v['id']}")
+                    ->field("a.aid")
+                    ->where($map)
+                    ->select();  
+            // $aid 拼接
+            $aid = '';
+            foreach($res as $val){
+                $aid .= ",{$val['aid']}";
+            };
+            $aid = trim($aid,',');
+            // 各模块需要自动催审数据
+            $map['a.app_stat'] = 0;
+            $map['a.aid']      = array('not in',$aid);
             $res = M($v['system'].'_appflowproc a')
                     ->join("{$v['table_name']}  on a.aid={$v['table_name']}.{$v['id']}")
                     ->field("a.aid,a.per_id,a.mod_name,a.per_name")
-                    ->where(array('a.app_stat' => 0,"{$v['table_name']}.{$v['stat']}" => $v['submit']['stat'],'a.mod_name' => $v['mod_name']))
-                    ->select();    
+                    ->where($map)
+                    ->select();  
+            
             if(!empty($res)){
                 foreach($res as $key => $val){
                     $res[$key]['system']  = $v['system'];
@@ -105,7 +125,6 @@ class LoginController extends \Think\Controller {
             }
             $sub = array_merge($sub,$res);
         }
-
         $this->systemUrge($sub);
     }
 
@@ -116,76 +135,54 @@ class LoginController extends \Think\Controller {
     private function systemUrge($urgeData){
         # 为空的情况，不做处理
         if(empty($urgeData)) return 0;
-        # 不为空，遍历发送信息
-        
+        # 数量检测
+        $msgNum = $this->getMsgNum($urgeData);
+        # 遍历发送信息
+        $wx = D('WxMessage');
         foreach($urgeData as $val){
             # 系统选择
-            $system = $val['system'];
+            $system   = $val['system'];
             $mod_name = $val['mod_name'];
-            $logic = D(ucfirst($system).$mod_name, 'Logic');
-            $res = $logic->recordContent($val['aid']);
-            $this->sendApplyCardMsg($mod_name, $val['aid'], $val['per_id'], $res['applyerID'], $system);
+            $logic    = D(ucfirst($system).$mod_name, 'Logic');
+            $boss     = D($system.'_boss')->getWXFromID($val['per_id']);
+            $res      = $logic->recordContent($val['aid']);
+            $key      = $mod_name == 'CostMoney'?'isCostMoney':'notCostMoney';
+            if($msgNum[$key][$boss] >= 3){
+                $wx->autoProMoreSendMessage($val,$msgNum[$key][$boss]);
+                $msgNum[$key][$boss] = 0;
+            }elseif($msgNum[$key][$boss]>0 && $msgNum[$key][$boss] <3){
+                $wx->autoProSendMessage($val,$res['applyerName']);
+            }
+
             // 自动评论
-            $data['aid'] = $val['aid'];
-            $boss = D($system.'_boss')->getWXFromID($val['per_id']);
-            // $ctoid = $res['per_id'];
+            $data['aid']           = $val['aid'];
             $data['comment_to_id'] = $boss;
-            $data['mod_name'] = $mod_name;
-            $data['per_id'] = 9999;
-            $data['per_name'] = '系统定时任务';
-            $data['app_word'] = "系统向{$val['per_name']}发起了自动催审（每日9:30和15:30各一次）";
-            $data['app_stat'] = 1;
-            $data['time'] = date('Y-m-d H:i:s');
-            $commentRes = M($system.'_appflowcomment')->add($data);
+            $data['mod_name']      = $mod_name;
+            $data['per_id']        = 9999;
+            $data['per_name']      = '系统定时任务';
+            $data['app_word']      = "系统向{$val['per_name']}发起了自动催审（每日9:30和15:30各一次）";
+            $data['app_stat']      = 1;
+            $data['time']          = date('Y-m-d H:i:s');
+            $commentRes            = M($system.'_appflowcomment')->add($data);
         }
     }   
 
-    protected function sendApplyCardMsg($flowName, $id, $pid, $applyerid, $system, $type='' )
-    {
-        $systemName = array('kk'=>'建材', 'yxhb'=>'环保');
-      // 微信发送
-        $flowTable = M($system.'_appflowtable');
-        $mod_cname = $flowTable->getFieldByProMod($flowName, 'pro_name');
-        $mod_cname = str_replace('表','',$mod_cname);
-        $title = $systemName[$system].$mod_cname.'(催审)';
-        $url = "https://www.fjyuanxin.com/WE/index.php?m=Light&c=Apply&a=applyInfo&system=".$system."&aid=".$id."&modname=".$flowName;
-        //crontab(CLI模式)无法正确生产URL
-        // if (PHP_SAPI=='cli') {
-        //   $detailsURL = str_replace('_PHP_FILE_', '/WE/index.php', $detailsURL);
-        // }
-        $boss = D($system.'_boss');
-        $proName = $boss->getusername($pid);
-        $subName = $boss->getusername($applyerid);
-        $applyerName='('.$subName.'提交)';
-       
-        $boss = D($system.'_boss')->getWXFromID($pid);
-        switch ($type) {
-          case 'pass':
-            $description = "您有一个流程已审批通过".$applyerName;
-            $receviers = "wk|HuangShiQi|".$boss;
-            break;
-          case 'refuse':
-            $description = "您有一个流程被拒绝".$applyerName;
-            $receviers = "wk|HuangShiQi|".$boss;
-            break;
-          case 'other':
-            $description = "您有一个流程需要处理".$applyerName;
-            $receviers = "wk|HuangShiQi|".$boss;
-            break;          
-          default:
-            $description = "您有一个流程需要审批".$applyerName;
-            $receviers = "wk|HuangShiQi|".$boss;
-            break;
+    /**
+     * 系统催审个数
+     * @param array $urgeData 催审名单 
+     */
+    private function getMsgNum($urgeData){
+        $res = array();
+        foreach($urgeData as $k => $v){
+            $system = $v['system'];
+            $per_id = $v['per_id']; // 当前审批人id
+            $key    = $v['mod_name'] == 'CostMoney'?'isCostMoney':'notCostMoney';
+            $boss   = D($system.'_boss')->getWXFromID($per_id);
+            $res[$key][$boss] += 1;
         }
-        $comment_list = D($system.'Appflowcomment')->autoMessageNumber($flowName, $id,$boss);
-        $description .= "\n系统发起的第{$comment_list}次催审";
-        $agentid = 15;
-        $WeChat = new \Org\Util\WeChat;
-        $info = $WeChat->sendCardMessage($receviers,$title,$description,$url,$agentid,$flowName,$system);
-        return $info;
+        return $res;
     }
-
-
+   
     public function Sign()
     {
         if(session('wxid') != 'HuangShiQi'){
