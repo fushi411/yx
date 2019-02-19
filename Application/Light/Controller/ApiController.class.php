@@ -265,7 +265,7 @@ class ApiController extends BaseController {
         $this->ajaxReturn($res);
     }
 
-    // 发货删除
+    // 汪测试
     public function CeShiApi(){
         $system = I('system');
         $mod    = I('modname');
@@ -274,5 +274,7 @@ class ApiController extends BaseController {
         $res = $logic->$action();
         $this->ajaxReturn($res);
     }
+
+
 
 }

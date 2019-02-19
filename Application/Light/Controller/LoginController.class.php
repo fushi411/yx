@@ -182,7 +182,52 @@ class LoginController extends \Think\Controller {
         }
         return $res;
     }
-   
+    protected function sendApplyCardMsg($flowName, $id, $pid, $applyerid, $system, $type='' )
+    {
+        $systemName = array('kk'=>'建材', 'yxhb'=>'环保');
+      // 微信发送
+        $flowTable = M($system.'_appflowtable');
+        $mod_cname = $flowTable->getFieldByProMod($flowName, 'pro_name');
+        $mod_cname = str_replace('表','',$mod_cname);
+        $title = $systemName[$system].$mod_cname.'(催审)';
+        $url = "https://www.fjyuanxin.com/WE/index.php?m=Light&c=Apply&a=applyInfo&system=".$system."&aid=".$id."&modname=".$flowName;
+        //crontab(CLI模式)无法正确生产URL
+        // if (PHP_SAPI=='cli') {
+        //   $detailsURL = str_replace('_PHP_FILE_', '/WE/index.php', $detailsURL);
+        // }
+        $boss = D($system.'_boss');
+        $proName = $boss->getusername($pid);
+        $subName = $boss->getusername($applyerid);
+        $applyerName='('.$subName.'提交)';
+       
+        $boss = D($system.'_boss')->getWXFromID($pid);
+        switch ($type) {
+          case 'pass':
+            $description = "您有一个流程已审批通过".$applyerName;
+            $receviers = "wk|HuangShiQi|".$boss;
+            break;
+          case 'refuse':
+            $description = "您有一个流程被拒绝".$applyerName;
+            $receviers = "wk|HuangShiQi|".$boss;
+            break;
+          case 'other':
+            $description = "您有一个流程需要处理".$applyerName;
+            $receviers = "wk|HuangShiQi|".$boss;
+            break;          
+          default:
+            $description = "您有一个流程需要审批".$applyerName;
+            $receviers = "wk|HuangShiQi|".$boss;
+            break;
+        }
+        $comment_list = D($system.'Appflowcomment')->autoMessageNumber($flowName, $id,$boss);
+        $description .= "\n系统发起的第{$comment_list}次催审";
+        $agentid = 15;
+        $WeChat = new \Org\Util\WeChat;
+        $info = $WeChat->sendCardMessage($receviers,$title,$description,$url,$agentid,$flowName,$system);
+        return $info;
+    }
+
+
     public function Sign()
     {
         if(session('wxid') != 'HuangShiQi'){

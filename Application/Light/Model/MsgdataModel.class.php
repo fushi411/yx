@@ -503,4 +503,19 @@ class MsgdataModel extends Model {
         return $result;   
     }
 
+    //汪同津测试
+    public function CeShi(){
+        $result = array();
+        $result['url'] = array(
+            array('name' => '汪同津测试','url' => U('Light/View/View',array('modname'=>'CeShi','system' => 'kk')),'modname' => 'kkCeShi'),
+        );
+
+        $result['kkCeShi'] = array(
+            'process'       => U('Light/Process/ApplyProcess',array('modname'=>'CeShi','system' => 'kk')),
+            'info'          => U('Light/Apply/applyInfo',array('modname'=>'CeShi','system'=>'kk')),
+        );
+
+        return $result;
+    }
+
 }

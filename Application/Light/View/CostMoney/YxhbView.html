@@ -103,37 +103,10 @@
                 </select>
             </div>
         </div>
-       
-        
-        <!-- <div class="weui-cell weui-cell_select weui-cell_select-after">
-            <div class="weui-cell__hd">
-                <label class="weui-label">用款部门&nbsp;&nbsp;
-                        <span style="color:red;">*</span>
-                </label>
-            </div>
-            <div class="weui-cell__bd">
-                <select class="weui-select greyColor" name="type" id='bm'>
-                    <option value='-1' disabled selected style='display:none;'>请选择用款部门</option>
-                    <option value="建设银行">建设银行</option>
-                    
-                </select>
-            </div>
-        </div> -->
+      
     </div>
     <div class="weui-cells">
         
-       
-        <!-- <div class="weui-cell ">
-            <div class="weui-cell__hd">
-                <label class="weui-label">用款人员&nbsp;&nbsp;
-                        <span style="color:red;">*</span>
-                </label>
-            </div>
-            <div class="weui-cell__bd">
-                <input class="weui-input " type="text" id="ykry" name="custodian"  placeholder="请输入用款人员" />
-                
-            </div>
-        </div> -->
         <div class="weui-cell ">
             <div class="weui-cell__hd">
                 <label class="weui-label">用款金额&nbsp;&nbsp;
@@ -200,10 +173,9 @@
             <div class="weui-uploader__bd">
                 <ul class="weui-uploader__files" id="uploaderFiles" style="margin-bottom: 0px;float: left;">
                 </ul>
-                <div class="weui-uploader__input-box">
+                <div class="weui-uploader__input-box" style="margin-top: 5px;">
                     <input onclick="imgUpload()" class="weui-uploader__input" />
-                    <input id="uploaderInput" class="weui-uploader__input" type="file" accept="image/*" name="file_image[]" multiple style="display: none;"
-                    />
+                    <input id="uploaderInput" class="weui-uploader__input" type="file" accept="image/*" name="file_image[]" multiple style="display: none;"/>
                 </div>
             </div>
         </div>
@@ -239,42 +211,6 @@
 var label = "所属月份&nbsp;&nbsp;<span style='color:red;'>*</span>",
     show_cap = $('#show_cap'),
     datePicker = $('#showDatePicker');
-
-    //datePicker.val(null);
-    // datePicker.attr('placeholder', '请选择所属月份');
-    // $('.weui-label').eq(1).html(label);
-
-    // $('.greyColor').change(function () {
-    //     $(this).removeClass('greyColor');
-    // })
-    // function ratioTime() {
-    //         // 日期选择
-    //         var hours = [],
-    //             minites = [],
-    //             symbol = [];
-
-    //         for (var i = 1; i < 13; i++) {
-    //             var hours_item = {};
-    //             hours_item.label = i + '月';
-    //             hours_item.value = i ;
-    //             hours.push(hours_item);
-    //         }
-    //         var date=new Date;
-    //         var month=date.getMonth()+1;
-            
-    //         weui.picker(symbol, hours, minites, {
-    //             defaultValue: [0, month, 0],
-    //             onConfirm: function (result) {
-    //                 pickerValue(result);
-    //             }
-    //         });
-    //     }
-
-    //     // 日历填充
-    //     function pickerValue(dateArr) {
-    //         var val = dateArr[1] + '月';
-    //         $('#showDatePicker').val(val);
-    //     }
         
         getProHtml();
         function getProHtml(){
@@ -331,18 +267,7 @@ var label = "所属月份&nbsp;&nbsp;<span style='color:red;'>*</span>",
             html += "<option value='-1' disabled selected style='display:none;'>请选择"+text+"</option>";
             dom.html(html);
         }
-    // 图片删除
-    var $gallery = $("#gallery"),
-            $galleryImg = $("#galleryImg");
-
-        $("#uploaderFiles").on("click", '.imgsrc',function () {
-            // console.log(sty);
-            $galleryImg.attr("style", this.getAttribute("style"));
-            $gallery.fadeIn(100);
-        });
-        $gallery.on("click", function () {
-            $gallery.fadeOut(100);
-        });
+ 
 
   // 触发上传机制
   function imgUpload(){
@@ -395,14 +320,13 @@ var label = "所属月份&nbsp;&nbsp;<span style='color:red;'>*</span>",
             //          获取图片大小
             var size = file.size / 1024 > 1024 ? (~~(10 * file.size / 1024 / 1024)) / 10 + "MB" : ~~(file.size / 1024) + "KB";
             // li.innerHTML = '<div class="progress"><span></span></div><div class="size">' + size + '</div>';
-            li.innerHTML = '<div class="weui-uploader__file-content"></div>';
-            $(li).addClass("weui-uploader__file imgsrc weui-uploader__file_status");
+            li.innerHTML = '<img class="weui-selet__user" style="margin-bottom: 0px;margin-right: 6px;margin-top:10px;"><div class="weui-uploader__file-content"></div><span class="weui-badge imgDel" style="position: relative;top: -4.8em;left: 2.5em;">X</span>';
+            $(li).addClass("weui-uploader__file  weui-uploader__file_status");
             $("#uploaderFiles").append($(li));
             reader.onload = function () {
                 var result = this.result;
                 var img = new Image();
                 img.src = result;
-                $(li).css("background-image", "url(" + result + ")");
 
                 //如果图片大小小于100kb，则直接上传
                 if (result.length <= maxsize) {
@@ -632,6 +556,9 @@ var label = "所属月份&nbsp;&nbsp;<span style='color:red;'>*</span>",
                 // });
                 $li.find(".weui-uploader__file-content").html("");
                 $li.find(".weui-uploader__file-content").parent().removeClass("weui-uploader__file_status");
+                $li.find('img').attr('data-original','https://www.fjyuanxin.com/yxhb/upload/fy/'+imagepath);
+                $li.find('img').attr('src','https://www.fjyuanxin.com/yxhb/upload/fy/'+imagepath);
+                createViewr();
                 img_num++;
                 $("#upload_nums").text(img_num);
                 var file_names = $("#file_names").val() + imagedata.output_file + "|";
@@ -672,7 +599,7 @@ var label = "所属月份&nbsp;&nbsp;<span style='color:red;'>*</span>",
             // console.log(imgIndex);
         })
 
-        $(".weui-gallery__del").on('click',function(){
+        $(".imgDel").on('click',function(){
             // 是否删除该图
             $("#iosDialog_imgDel").fadeIn(100);
         })

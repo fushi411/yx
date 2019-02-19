@@ -164,7 +164,7 @@
             <div class="weui-uploader__bd">
                 <ul class="weui-uploader__files" id="uploaderFiles" style="margin-bottom: 0px;float: left;">
                 </ul>
-                <div class="weui-uploader__input-box">
+                <div class="weui-uploader__input-box" style="margin-top: 5px;">
                     <input onclick="imgUpload()" class="weui-uploader__input" />
                     <input id="uploaderInput" class="weui-uploader__input" type="file" accept="image/*" name="file_image[]" multiple style="display: none;"
                     />
@@ -172,23 +172,6 @@
             </div>
         </div>
     </div>
-    <!--<div class="weui-cells weui-cells_form">-->
-        <!--<div class="weui-cell">-->
-            <!--<div class="weui-cell__hd">-->
-                <!--<label class="weui-label">申请理由&nbsp;&nbsp;-->
-                    <!--<span style="color:red;">*</span>-->
-                <!--</label>-->
-            <!--</div>-->
-        <!--</div>-->
-        <!--<div class="weui-cell">-->
-            <!--<div class="weui-cell__bd" id="cnt">-->
-                <!--<textarea class="weui-textarea" name="reason" id="reason" placeholder="请详细说明理由；-->
-<!--至少5个字(必填)；" rows="3"></textarea>-->
-                <!--<div class="weui-textarea-counter">-->
-                    <!--<span id="reason_char">0</span>/200</div>-->
-            <!--</div>-->
-        <!--</div>-->
-    <!--</div>-->
     <input type="hidden" id="ratio" value="ratio">
     <div id="btn-all">
             <a href="javascript:;" class="weui-btn weui-btn_mini weui-btn_primary">返回</a>
@@ -573,18 +556,7 @@
             });
         });
 
-         // 图片删除
-    var $gallery = $("#gallery"),
-        $galleryImg = $("#galleryImg");
-
-        $("#uploaderFiles").on("click", '.imgsrc',function () {
-            // console.log(sty);
-            $galleryImg.attr("style", this.getAttribute("style"));
-            $gallery.fadeIn(100);
-        });
-        $gallery.on("click", function () {
-            $gallery.fadeOut(100);
-        });
+ 
 
   // 触发上传机制
     function imgUpload(){
@@ -636,15 +608,14 @@
             var li = document.createElement("li");
             //          获取图片大小
             var size = file.size / 1024 > 1024 ? (~~(10 * file.size / 1024 / 1024)) / 10 + "MB" : ~~(file.size / 1024) + "KB";
-            // li.innerHTML = '<div class="progress"><span></span></div><div class="size">' + size + '</div>';
-            li.innerHTML = '<div class="weui-uploader__file-content"></div>';
-            $(li).addClass("weui-uploader__file imgsrc weui-uploader__file_status");
+            
+            li.innerHTML = '<img class="weui-selet__user" style="margin-bottom: 0px;margin-right: 6px;margin-top:10px;"><div class="weui-uploader__file-content"></div><span class="weui-badge imgDel" style="position: relative;top: -4.8em;left: 2.5em;">X</span>';
+            $(li).addClass("weui-uploader__file  weui-uploader__file_status");
             $("#uploaderFiles").append($(li));
             reader.onload = function () {
                 var result = this.result;
                 var img = new Image();
                 img.src = result;
-                $(li).css("background-image", "url(" + result + ")");
 
                 //如果图片大小小于100kb，则直接上传
                 if (result.length <= maxsize) {
@@ -874,6 +845,9 @@
                 // });
                 $li.find(".weui-uploader__file-content").html("");
                 $li.find(".weui-uploader__file-content").parent().removeClass("weui-uploader__file_status");
+                $li.find('img').attr('data-original','https://www.fjyuanxin.com/WE/Public/upload/fh/'+imagepath);
+                $li.find('img').attr('src','https://www.fjyuanxin.com/WE/Public/upload/fh/'+imagepath);
+                createViewr();
                 img_num++;
                 $("#upload_nums").text(img_num);
                 var file_names = $("#file_names").val() + imagedata.output_file;
@@ -914,7 +888,7 @@
             // console.log(imgIndex);
         })
 
-        $(".weui-gallery__del").on('click',function(){
+        $(".imgDel").on('click',function(){
             // 是否删除该图
             $("#iosDialog_imgDel").fadeIn(100);
         })

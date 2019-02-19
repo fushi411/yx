@@ -27,53 +27,24 @@
             </div>
         </div>
         <!--  联系人 END -->
-        <!--<div class="weui-cell ">-->
-            <div class="weui-cells__title">推送名单
-                <a href="{:U('Light/Process/push_ceshi',array('system' => $system,'modname'=>$modname))}"><i class="iconfont icon-chakan" style="vertical-align: middle;" ></i></a>
-                <span style="color: #f12e2e">（审批通过后群发推送人）</span>
-            </div>
-            <div >
-                <div class="weui-cells" style="margin-top:0px;">
-                    <div class="weui-cell">
-                        <div class="weui-cell__bd">
-                            <div class="weui-uploader">
-                                <div class="weui-uploader__bd" style="min-height: 70px;">
-                                    <ul class="weui-uploader__files" id="app_pro" style="margin-bottom: 0px;">
-                                        <volist name="push" id="vo">
-                                            <li class='weui-uploader__file wk-select__user' style='min-height:70px;width: 45px; margin-bottom: 0;margin-right: 0;'>
-                                                <if condition="$vo.avatar eq ''">
-                                                    <img src="Public/assets/i/defaul.png" class='weui-selet__user' style='margin-right: 6px;margin-top:10px;width: 2em; height: 2em;'>
-                                                    <else/>
-                                                    <img src="{$vo.avatar}" class='weui-selet__user' style='margin-right: 6px;margin-top:10px; width: 2em; height: 2em;'>
-                                                </if>
-                                                <span style='margin-right: 6px;font-size: 12px;'> {$vo.name}</span>
-                                            </li>
-                                        </volist>
-                                    </ul>
-                                </div>
-
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        <!--</div>-->
+        <a class="button" onclick="getData()">获取数据</a>
     </div>
 </block>
 
 <block name="js">
 <script type="text/javascript">
-    $(function () {
+
+    function getData(){
         $.ajax({
-            type:'post',
-            url: "{:U('Light/Api/CeShiApi')}"+"&system=kk&modname=CeShi&action=push",
-            data:'',
+            // type:'post',
+            url: "{:U('Light/Api/CeShiApi')}"+"&system=kk&modname=CeShi&action=getData",
+            // data:'',
             dataType: 'json',
             success: function (res) {
-               console.log(res)
+                console.log(res)
             }
         })
-    })
+    }
 
 
 </script>
