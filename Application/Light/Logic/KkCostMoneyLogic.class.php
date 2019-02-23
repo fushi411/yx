@@ -48,7 +48,7 @@ class KkCostMoneyLogic extends Model {
                                      'color' => 'black'
                                     ); 
         if( $res['nfylx'] == 1 ){
-            $fybx = M('kk_feefy3')->where(array('dh' => $res['dh']))->find();
+            $fybx = M('kk_feefy3')->where("left(dh,13)='{$res['dh']}'" )->find();
             $fylx = M('kk_fylx')->field('id as val,fy_name as name')->where(array('id' =>$fybx['nfylx']))->order('id asc')->find(); 
         }else{
             $fylx = M('kk_fylx')->field('id as val,fy_name as name')->where(array('id' =>$res['nfylx']))->order('id asc')->find(); 
@@ -82,20 +82,20 @@ class KkCostMoneyLogic extends Model {
                                      'type'=>'number',
                                      'color' => 'black; '
                                     );
-        if($res['nfylx'] == 1){
+        if($res['nfylx'] != 1){
             $result['content'][] = array('name'=>'收款单位：',
-                                        'value'=>$res['skdw'],
+                                        'value'=>$res['skdw']?$res['skdw']:'无',
                                         'type'=>'string',
                                         'color' => 'black'
                                         );
 
             $result['content'][] = array('name'=>'收款账号：',
-                                        'value'=>$res['skzh'],
+                                        'value'=>$res['skzh']?$res['skzh']:'无',
                                         'type'=>'string',
                                         'color' => 'black'
                                         );    
             $result['content'][] = array('name'=>'开户银行：',
-                                        'value'=>$res['khyh'],
+                                        'value'=>$res['khyh']?$res['khyh']:'无',
                                         'type'=>'string',
                                         'color' => 'black'
                                         );
@@ -124,6 +124,8 @@ class KkCostMoneyLogic extends Model {
         $statArr = array(
             5 => 2,
             4 => 1,
+            3 => 2,
+            2 => 1,
             0 => 0
         );
         return $statArr[$stat];
@@ -155,7 +157,7 @@ class KkCostMoneyLogic extends Model {
     public function delRecord($id)
     {
         $data = $this->record($id);
-        $map = array('dh' => $data['dh']);
+        $map = array("left(dh,13)='{$data['dh']}'" );
         M('kk_feefy3')->field(true)->where($map)->setField('stat',0);
         if($data['nfylx'] == 1){
             M('kk_fybx')->field(true)->where($map)->setField('stat',0);
@@ -180,7 +182,7 @@ class KkCostMoneyLogic extends Model {
                                     );
           
         if( $res['nfylx'] == 1 ){
-            $fybx = M('kk_feefy3')->where(array('dh' => $res['dh']))->find();
+            $fybx = M('kk_feefy3')->where("left(dh,13)='{$res['dh']}'" )->find();
             $fylx = M('kk_fylx')->field('id as val,fy_name as name')->where(array('id' =>$fybx['nfylx']))->order('id asc')->find(); 
         }else{
             $fylx = M('kk_fylx')->field('id as val,fy_name as name')->where(array('id' =>$res['nfylx']))->order('id asc')->find(); 
@@ -230,7 +232,7 @@ class KkCostMoneyLogic extends Model {
         $res    = $this->record($id);
 
         if( $res['nfylx'] == 1 ){
-            $fybx = M('kk_feefy3')->where(array('dh' => $res['dh']))->find();
+            $fybx = M('kk_feefy3')->where("left(dh,13)='{$res['dh']}'" )->find();
             $fylx = M('kk_fylx')->field('id as val,fy_name as name')->where(array('id' =>$fybx['nfylx']))->order('id asc')->find(); 
         }else{
             $fylx = M('kk_fylx')->field('id as val,fy_name as name')->where(array('id' =>$res['nfylx']))->order('id asc')->find(); 

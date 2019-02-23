@@ -335,7 +335,7 @@ class KkfheditApplyhbLogic extends Model {
             'second_content' => $name['g_name']?$name['g_name']:'无',
             'third_title'    => '相关说明',
             'third_content'  => $res['xg_reason']?$res['xg_reason']:'无',
-            'stat'           => $this->getStat($res['id']),
+            'stat'           => $this->getStat($id),
         );
         return $result;
     }
@@ -356,7 +356,6 @@ class KkfheditApplyhbLogic extends Model {
         if($fh['fh_stat4'] == 0) return 3;
         // 审批中
         $flag = 2;
-        
         foreach($res as $v){
             if($v['app_stat'] == 1) return 1;
             if($v['app_stat'] == 0) $flag = 2;

@@ -155,7 +155,7 @@ class KkTempCreditLineApplyLogic extends Model {
         $res = $this->record($id);
         $result = array();
         $info = $this->getInfo($res['clientid'],$res['date'],$res['clientname']);
-        $clientname = M('kk_guest2')->field('g_khjc')->where(array('id' => $res['clientid']))->find();
+        $clientname = M('kk_guest2')->field('g_khjc,g_name')->where(array('id' => $res['clientid']))->find();
         $result[] = array('name'=>'提交时间：',
                                      'value'=> date('m-d H:i',strtotime($res['dtime'])) ,
                                      'type'=>'date'
@@ -165,7 +165,7 @@ class KkTempCreditLineApplyLogic extends Model {
                                      'type'=>'date'
                                     );
         $result[] = array('name'=>'客户名称：',
-                                     'value'=>$clientname['g_khjc'],
+                                     'value'=>$clientname['g_khjc']?$clientname['g_khjc']:$clientname['g_name'],
                                      'type'=>'string'
                                     );
         $result[] = array('name'=>'应收余额：',

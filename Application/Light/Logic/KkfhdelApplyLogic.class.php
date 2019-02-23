@@ -92,9 +92,9 @@ class KkfhdelApplyLogic extends Model {
     // 状态值转换
     public function transStat($id){
        $res = M('kk_fh')->where(array('id'=>$id))->find();
-       if ($res['fh_stat'] == 1 && $res['fh_stat4'] == 1) return 2;         //審批中
-       if ($res['fh_stat'] == 0) return 1;                                  //審批通過
-       if ($res['fh_stat'] == 1 && $res['fh_stat4'] == 0) return 3;         //撤銷
+       if ($res['fh_stat'] == 1 && $res['fh_stat4'] == 1) return 2;                                     //审批中
+       if ($res['fh_stat'] == 0) return 1;                                                              //审批通過
+       if ($res['fh_stat'] == 1 && ($res['fh_stat4'] == 0 || $res['fh_stat4'] == 2)) return 0;         //撤銷
     }
 
 
@@ -116,7 +116,7 @@ class KkfhdelApplyLogic extends Model {
     }
 
     /**
-     * 撤銷申請調用的方法
+     * 撤销申請調用的方法
      * @param  integer $id 记录ID
      */
     public function delRecord($id)

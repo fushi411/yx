@@ -193,6 +193,7 @@ class WxMessageModel extends Model {
         $this->wx->sendCardMessage($receviers,$title,$description,$url,$agentid,$mod,$system);
         return $receviers;
     }
+
     // 抄送推送
     public function copyTo($system,$mod,$id,$copyid){
         # 推送人员
@@ -217,10 +218,20 @@ class WxMessageModel extends Model {
         $this->wx->sendCardMessage($receviers,$title,$description,$url,$agentid,$mod,$system);
         return $receviers;
     }
-    // 推送通知 
-    public function pushTo(){
 
+    // 退审推送
+    public function refuseMsg($system,$mod,$id,$word){
+        $apply_user  = $res = D(ucfirst($system).$mod, 'Logic')->recordContent($id);
+        $apply_user  = $res['applyerName'];
+
+        $title       = '【已退审推送】';
+        $mod_cname   = D('Seek')->getModname($mod,$system);
+		$description = $mod_cname."({$apply_user}提交)\n退审意见：".$word;
+        $url         = "https://www.fjyuanxin.com/WE/index.php?m=Light&c=Apply&a=applyInfo&system=".$system."&aid=".$id."&modname=".$mod;
+        $temrecevier = $this->getAllCurrentProcessPeople($system,$mod,$id,1);
+        $this->wx->sendCardMessage($temrecevier,$title,$description,$url,15,$mod,$system);
     }
+
     // 人员获取 - 流程推送
     public function getProPeople($system,$mod,$id,$per_id,$applyerid,$type){
         $description = '您有一个流程';
@@ -232,7 +243,7 @@ class WxMessageModel extends Model {
         
         $seek  = D('Seek');
         $stat  = $seek->getConfig($mod,$system,'stat');
-        $title = $stat==3?'签收':'审批'; 
+        $title = $stat == 3?'签收':'审批'; 
 
         switch ($type) {
             case 'pass':
@@ -272,7 +283,7 @@ class WxMessageModel extends Model {
         if(!$isDel){
             $res       = D(ucfirst($system).$mod, 'Logic')->recordContent($id);
             $wxid      = D(ucfirst($system).'Boss')->getWXFromID($res['applyerID']);
-            $receviers .= $wxid.',';
+            $receviers .= $wxid.','; 
         }
         // - 流程人员
         $authArr = array();

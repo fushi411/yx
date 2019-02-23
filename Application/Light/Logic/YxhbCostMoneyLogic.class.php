@@ -48,7 +48,7 @@ class YxhbCostMoneyLogic extends Model {
                                      'color' => 'black'
                                     ); 
         if( $res['nfylx'] == 0 ){
-            $fybx = M('yxhb_feefy3')->where(array('dh' => $res['dh']))->find();
+            $fybx = M('yxhb_feefy3')->where("left(dh,13)='{$res['dh']}'" )->find();
             $fylx = M('yxhb_fylx')->field('id as val,fy_name as name')->where(array('id' =>$fybx['nfylx']))->order('id asc')->find(); 
         }else{
             $fylx = M('yxhb_fylx')->field('id as val,fy_name as name')->where(array('id' =>$res['nfylx']))->order('id asc')->find(); 
@@ -97,7 +97,7 @@ class YxhbCostMoneyLogic extends Model {
                                         'value'=>$res['khyh']?$res['khyh']:'无',
                                         'type'=>'string',
                                         'color' => 'black'
-                                        );  
+                                        );
         }
         
         $result['content'][] = array('name'=>'相关说明：',
@@ -122,6 +122,8 @@ class YxhbCostMoneyLogic extends Model {
         $statArr = array(
             5 => 2,
             4 => 1,
+            3 => 2,
+            2 => 1,
             0 => 0
         );
         return $statArr[$stat];
@@ -135,7 +137,7 @@ class YxhbCostMoneyLogic extends Model {
     public function delRecord($id)
     { 
         $data = $this->record($id);
-        $map = array('dh' => $data['dh']);
+        $map = array("left(dh,13)='{$data['dh']}'" );
         M('yxhb_feefy3')->field(true)->where($map)->setField('stat',0);
         if($data['nfylx'] == 0){
             M('yxhb_fybx')->field(true)->where($map)->setField('stat',0);
@@ -159,7 +161,7 @@ class YxhbCostMoneyLogic extends Model {
                                      'type'=>'date'
                                     );
         if( $res['nfylx'] == 0 ){
-            $fybx = M('yxhb_feefy3')->where(array('dh' => $res['dh']))->find();
+            $fybx = M('yxhb_feefy3')->where("left(dh,13)='{$res['dh']}'" )->find();
             $fylx = M('yxhb_fylx')->field('id as val,fy_name as name')->where(array('id' =>$fybx['nfylx']))->order('id asc')->find(); 
         }else{
             $fylx = M('yxhb_fylx')->field('id as val,fy_name as name')->where(array('id' =>$res['nfylx']))->order('id asc')->find(); 
@@ -208,7 +210,7 @@ class YxhbCostMoneyLogic extends Model {
     public function sealNeedContent($id){
         $res    = $this->record($id);
         if( $res['nfylx'] == 0 ){
-            $fybx = M('yxhb_feefy3')->where(array('dh' => $res['dh']))->find();
+            $fybx = M('yxhb_feefy3')->where("left(dh,13)='{$res['dh']}'" )->find();
             $fylx = M('yxhb_fylx')->field('id as val,fy_name as name')->where(array('id' =>$fybx['nfylx']))->order('id asc')->find(); 
         }else{
             $fylx = M('yxhb_fylx')->field('id as val,fy_name as name')->where(array('id' =>$res['nfylx']))->order('id asc')->find(); 

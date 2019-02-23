@@ -3,29 +3,57 @@ namespace Light\Controller;
 use  Vendor\Overtrue\Pinyin\Pinyin;
 class TestController extends \Think\Controller {
    
-    protected $avatar = 'Public/assets/i/defaul.png';
     public function Sign()
     {   
         header('Content-Type: text/html; charset=utf-8');
         // iconv('gbk','UTF-8',$v['approve']),
         //$data = D('KkAppflowtable')->getConditionStepHtml($modname,$condition);
-        $mod = 'FhfRatioApply';
-        $id = 6;
-        $authArr = array();
-        $system = 'kk';
-        $type = I('get.type');
-        $seek  = D('Seek');
-       
-        $recevier = D('WxMessage')->ProSendCarMessage($system,$mod,$id,94,94,$type);
-        dump($recevier);
     }
-
+    
+    public function PushAndCopyData($which,$limit=''){
+        $page   = I('post.page_num');
+        $page   = $page?$page:1;
+        $search = I('post.search');
+        $arr    = $this->getSearchTable($search);
+        $wx_id  = session('wxid');
+        $eq     = empty($limit)?'':'!';
+        // sql 重构
+        foreach($arr as $k => $v){
+            if($k != 0) $sql .= ' UNION all ';
+            $userId =  $idArr[$v['system']];
+            $sql .=  " select 
+                            {$v['copy_field']},{$k} 
+                        from {$v['table_name']}   
+                        inner join {$v['system']}_appcopyto b on {$v['table_name']}.{$v['id']} = b.aid
+                        where  
+                            b.mod_name='{$v['mod_name']}'
+						AND
+                            b.stat!=0 and b.type={$which} 
+                        AND 
+                            FIND_IN_SET('{$wx_id}',`copyto_id`) and {$eq}FIND_IN_SET('{$wx_id}',`readed_id`)
+                        ";
+        }
+        if(empty($sql)) return '';
+        $sql = "select * from($sql)a GROUP BY aid,`0` ORDER BY date desc";
+        if(empty($limit)){
+            $sql .= ' LIMIT '.(($page-1)*20).',20';
+        }
+        $res = M()->query($sql); 
+        foreach($res as $k => $v){
+            $key = $v['0'];
+            $res[$k]['system']  = $arr[$key]['system'];
+            $res[$k]['mod']     = $arr[$key]['mod_name'];
+            $res[$k]['modname'] = $arr[$key]['toptitle'];
+        }
+        return $res;
+    }
 
     public function reData($data){
         $result = array();
         foreach($data as $k => $v){
             if( empty($v['applyer']) ) continue;
             $res       = D(ucfirst($v['system']).$v['mod'], 'Logic')->sealNeedContent($v['aid']);
+            dump($res);
             $appStatus = D($v['system'].'Appflowproc')->getWorkFlowStatus($v['mod'], $v['aid']);
             $arr = array(
                 'first_title'    => $res['first_title'],
