@@ -230,6 +230,7 @@
                     $("#fhxz").css('display','none');
                     //console.log(res)
                     xz_show(res);
+                    clickInfo = res;
                 }
             });
         }
@@ -527,7 +528,7 @@
             if ( clickInfo == '') return tooltip('请先选择发货记录');
             var file_names = $('#file_names').val();
             var notice = $('#reason').val();
-            if (notice.length < 5) return tooltip('备注不能少于5个字');
+            if (notice.length < 5) return tooltip('相关说明不能少于5个字');
             toast.fadeIn(200);
             $.ajax({
                 type: 'POST',
