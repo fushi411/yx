@@ -241,7 +241,21 @@ class MsgdataModel extends Model {
 
     // 发货删除
     public function fh_del_Apply(){
-        return $this->fhApply();
+        $result = array();
+        $result['url'] = array(
+            array('name' => '环保发货删除','url' => U('Light/View/View',array('modname'=>'fh_del_Apply','system' => 'yxhb')),'modname' => 'yxhbfh_del_Apply'),
+            array('name' => '建材发货删除','url' => U('Light/View/View',array('modname'=>'fh_del_Apply','system' => 'kk')),'modname' => 'kkfh_del_Apply'),
+        );
+
+        $result['yxhbfh_del_Apply'] = array(
+            'process' => U('Light/Process/ApplyProcess',array('modname'=>'fh_del_Apply','system' => 'yxhb')),
+            'info'    => U('Light/Apply/applyInfo',array('modname'=>'fh_del_Apply','system'=>'yxhb'))
+        );
+        $result['kkfh_del_Apply'] = array(
+            'process' => U('Light/Process/ApplyProcess',array('modname'=>'fh_del_Apply','system' => 'kk')),
+            'info'    => U('Light/Apply/applyInfo',array('modname'=>'fh_del_Apply','system'=>'kk'))
+        );
+        return $result;
     }
 
     public function fhApply(){
@@ -251,8 +265,6 @@ class MsgdataModel extends Model {
             array('name' => '建材发货修改','url' => U('Light/View/View',array('modname'=>'fh_edit_Apply','system' => 'kk')),'modname' => 'kkfh_edit_Apply'),
             array('name' => '环保退货修改','url' => U('Light/View/View',array('modname'=>'fh_refund_Apply','system' => 'yxhb')),'modname' => 'yxhbfh_refund_Apply'),
             array('name' => '建材退货修改','url' => U('Light/View/View',array('modname'=>'fh_refund_Apply','system' => 'kk')),'modname' => 'kkfh_refund_Apply'),
-            array('name' => '环保发货删除','url' => U('Light/View/View',array('modname'=>'fh_del_Apply','system' => 'yxhb')),'modname' => 'yxhbfh_del_Apply'),
-            array('name' => '建材发货删除','url' => U('Light/View/View',array('modname'=>'fh_del_Apply','system' => 'kk')),'modname' => 'kkfh_del_Apply'),
         );
    
         $result['kkfh_edit_Apply_hb'] = array(
@@ -270,14 +282,6 @@ class MsgdataModel extends Model {
         $result['kkfh_refund_Apply'] = array(
             'process' => U('Light/Process/ApplyProcess',array('modname'=>'fh_refund_Apply','system' => 'kk')),
             'info'    => U('Light/Apply/applyInfo',array('modname'=>'fh_refund_Apply','system'=>'kk'))
-        );
-        $result['yxhbfh_del_Apply'] = array(
-            'process' => U('Light/Process/ApplyProcess',array('modname'=>'fh_del_Apply','system' => 'yxhb')),
-            'info'    => U('Light/Apply/applyInfo',array('modname'=>'fh_del_Apply','system'=>'yxhb'))
-        );
-        $result['kkfh_del_Apply'] = array(
-            'process' => U('Light/Process/ApplyProcess',array('modname'=>'fh_del_Apply','system' => 'kk')),
-            'info'    => U('Light/Apply/applyInfo',array('modname'=>'fh_del_Apply','system'=>'kk'))
         );
         return $result;  
     }
