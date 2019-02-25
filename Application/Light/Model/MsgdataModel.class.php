@@ -522,4 +522,23 @@ class MsgdataModel extends Model {
         return $result;
     }
 
+    //查询客户调价
+    public function  search_guest_tj(){
+        $result = array();
+        $result['url'] = array(
+            array('name' => '环保查询客户调价','url' => U('Light/View/View',array('modname'=>'search_guest_tj','system' => 'yxhb')),'modname' => 'yxhbsearch_guest_tj'),
+            array('name' => '建材查询客户调价','url' => U('Light/View/View',array('modname'=>'search_guest_tj','system' => 'kk')),'modname' => 'kksearch_guest_tj'),
+        );
+
+        $result['yxhbsearch_guest_tj'] = array(
+            'process'       => U('Light/Process/ApplyProcess',array('modname'=>'search_guest_tj','system' => 'yxhb')),
+            'info'          => U('Light/Apply/applyInfo',array('modname'=>'search_guest_tj','system'=>'yxhb')),
+        );
+        $result['kksearch_guest_tj'] = array(
+            'process'       => U('Light/Process/ApplyProcess',array('modname'=>'search_guest_tj','system' => 'kk')),
+            'info'          => U('Light/Apply/applyInfo',array('modname'=>'search_guest_tj','system'=>'kk')),
+        );
+        return $result;
+    }
+
 }
