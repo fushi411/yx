@@ -199,32 +199,60 @@ class MsgdataModel extends Model {
         return $result;   
     }
     
-        // 销售收款
-        public function SalesReceiptsApply(){
-            $result = array();
-            $result['url'] = array(
-                array('name' => '建材销售收款','url' => U('Light/View/View',array('modname'=>'SalesReceiptsApply','system' => 'kk')),'modname' => 'kkSalesReceiptsApply'),
-                array('name' => '环保销售收款','url' => U('Light/View/View',array('modname'=>'SalesReceiptsApply','system' => 'yxhb')),'modname' => 'yxhbSalesReceiptsApply'),
-            );
-       
-            $result['kkSalesReceiptsApply'] = array(
-                'process' => U('Light/Process/ApplyProcess',array('modname'=>'SalesReceiptsApply','system' => 'kk')),
-                'info'    => U('Light/Apply/applyInfo',array('modname'=>'SalesReceiptsApply','system'=>'kk')),
-                // 'fiexd_copy_id' => 'xly',
-                // 'copydata' => array(
-                //     array('name' =>'许丽颖','url' => 'http://shp.qpic.cn/bizmp/nFsVdIIiaLZsmAv2LEDiaFwmzW1KMfkUIA3IW1c9PibAfaPCICgibpibQNA/'),
-                // )
-            );  
-            $result['yxhbSalesReceiptsApply'] = array(
-                'process' => U('Light/Process/ApplyProcess',array('modname'=>'SalesReceiptsApply','system' => 'yxhb')),
-                'info'    => U('Light/Apply/applyInfo',array('modname'=>'SalesReceiptsApply','system'=>'yxhb')),
-                // 'fiexd_copy_id' => 'xly',
-                // 'copydata' => array(
-                //     array('name' =>'许丽颖','url' => 'http://shp.qpic.cn/bizmp/nFsVdIIiaLZsmAv2LEDiaFwmzW1KMfkUIA3IW1c9PibAfaPCICgibpibQNA/'),
-                // )
-            );    
-            return $result;   
-        }
+    // 销售收款
+    public function SalesReceiptsApply(){
+        $result = array();
+        $result['url'] = array(
+            array('name' => '建材销售收款','url' => U('Light/View/View',array('modname'=>'SalesReceiptsApply','system' => 'kk')),'modname' => 'kkSalesReceiptsApply'),
+            array('name' => '环保销售收款','url' => U('Light/View/View',array('modname'=>'SalesReceiptsApply','system' => 'yxhb')),'modname' => 'yxhbSalesReceiptsApply'),
+        );
+    
+        $result['kkSalesReceiptsApply'] = array(
+            'process' => U('Light/Process/ApplyProcess',array('modname'=>'SalesReceiptsApply','system' => 'kk')),
+            'info'    => U('Light/Apply/applyInfo',array('modname'=>'SalesReceiptsApply','system'=>'kk')),
+            // 'fiexd_copy_id' => 'xly',
+            // 'copydata' => array(
+            //     array('name' =>'许丽颖','url' => 'http://shp.qpic.cn/bizmp/nFsVdIIiaLZsmAv2LEDiaFwmzW1KMfkUIA3IW1c9PibAfaPCICgibpibQNA/'),
+            // )
+        );  
+        $result['yxhbSalesReceiptsApply'] = array(
+            'process' => U('Light/Process/ApplyProcess',array('modname'=>'SalesReceiptsApply','system' => 'yxhb')),
+            'info'    => U('Light/Apply/applyInfo',array('modname'=>'SalesReceiptsApply','system'=>'yxhb')),
+            // 'fiexd_copy_id' => 'xly',
+            // 'copydata' => array(
+            //     array('name' =>'许丽颖','url' => 'http://shp.qpic.cn/bizmp/nFsVdIIiaLZsmAv2LEDiaFwmzW1KMfkUIA3IW1c9PibAfaPCICgibpibQNA/'),
+            // )
+        );    
+        return $result;   
+    }
+
+    // 销售退款
+    public function SalesRefundApply(){
+        $result = array();
+        $result['url'] = array(
+            array('name' => '建材销售退款','url' => U('Light/View/View',array('modname'=>'SalesRefundApply','system' => 'kk')),'modname' => 'kkSalesRefundApply'),
+            array('name' => '环保销售退款','url' => U('Light/View/View',array('modname'=>'SalesRefundApply','system' => 'yxhb')),'modname' => 'yxhbSalesRefundApply'),
+        );
+
+        $result['kkSalesRefundApply'] = array(
+            'process' => U('Light/Process/ApplyProcess',array('modname'=>'SalesRefundApply','system' => 'kk')),
+            'info'    => U('Light/Apply/applyInfo',array('modname'=>'SalesRefundApply','system'=>'kk')),
+            // 'fiexd_copy_id' => 'xly',
+            // 'copydata' => array(
+            //     array('name' =>'许丽颖','url' => 'http://shp.qpic.cn/bizmp/nFsVdIIiaLZsmAv2LEDiaFwmzW1KMfkUIA3IW1c9PibAfaPCICgibpibQNA/'),
+            // )
+        );  
+        $result['yxhbSalesRefundApply'] = array(
+            'process' => U('Light/Process/ApplyProcess',array('modname'=>'SalesRefundApply','system' => 'yxhb')),
+            'info'    => U('Light/Apply/applyInfo',array('modname'=>'SalesRefundApply','system'=>'yxhb')),
+            // 'fiexd_copy_id' => 'xly',
+            // 'copydata' => array(
+            //     array('name' =>'许丽颖','url' => 'http://shp.qpic.cn/bizmp/nFsVdIIiaLZsmAv2LEDiaFwmzW1KMfkUIA3IW1c9PibAfaPCICgibpibQNA/'),
+            // )
+        );    
+        return $result;   
+    }
+
     // 发货修改
     public function fh_edit_Apply_hb(){
         return $this->fhApply(); 
@@ -504,6 +532,25 @@ class MsgdataModel extends Model {
                 array('name' =>'兰艳红','url' => 'http://p.qlogo.cn/bizmail/VniaCv2mTAjm0YEuIz9e7snSNgGykQgUGsOiarhyyDO2FHHXyNiapzibicQ/0'),
             )
         ); 
+        return $result;   
+    }
+
+    // 费用开支付款
+    public function CostMoneyPay(){
+        $result = array();
+        $result['url'] = array(
+            array('name' => '建材付款','url' => U('Light/View/View',array('modname'=>'CostMoneyPay','system' => 'kk')),'modname' => 'kkCostMoneyPay'),
+            array('name' => '环保付款','url' => U('Light/View/View',array('modname'=>'CostMoneyPay','system' => 'yxhb')),'modname' => 'yxhbCostMoneyPay'),
+        );
+
+        $result['kkCostMoneyPay'] = array(
+            'process' => U('Light/Process/ApplyProcess',array('modname'=>'CostMoneyPay','system' => 'kk')),
+            'info'    => U('Light/Apply/applyInfo',array('modname'=>'CostMoneyPay','system'=>'kk')),    
+        );  
+        $result['yxhbCostMoneyPay'] = array(
+            'process' => U('Light/Process/ApplyProcess',array('modname'=>'CostMoneyPay','system' => 'yxhb')),
+            'info'    => U('Light/Apply/applyInfo',array('modname'=>'CostMoneyPay','system'=>'yxhb')),
+        );    
         return $result;   
     }
 
