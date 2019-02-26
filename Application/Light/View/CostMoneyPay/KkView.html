@@ -1,0 +1,500 @@
+<extend name="Apply:applyBase" />
+
+<block name="system"></block>
+<!-- 去除不可选择日期 -->
+<block name="able_date"></block>
+<block name="disable_date"></block>
+<!-- 去除不可选择日期 end-->
+<block name="content_body">
+    <style>
+        body .weui-form-preview__value {
+            color: #4e4e4e;
+        }
+
+        .no-more {
+            display: none;
+            text-align: center;
+            line-height: 30px;
+            color: #cecece;
+            font-size: 12px;
+            background: #f0f0f0;
+        }
+
+        .load-more {
+            display: none;
+            text-align: center;
+            line-height: 30px;
+            color: #6ea3f3;
+            font-size: 12px;
+            border-radius: 5px;
+            width: 98%;
+            margin: 0 auto;
+            border-top: 1px solid rgb(243, 237, 237);
+        }
+
+        .load-more:active {
+            background: #97d4ff;
+            color: #fff;
+        }
+
+        #btn-all {
+            display: none;
+            right: 10px;
+            bottom: 10px;
+            position: fixed;
+            text-align: center;
+            z-index: 999;
+        }
+
+        label {
+            font-weight: 400;
+            margin-bottom: 0px;
+        }
+
+        .searchCenter {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .weui-cells:after {
+            border-bottom: 0px solid #fff;
+        }
+
+        .weui-selet__user {
+            width: 2.5em;
+            height: 2.5em;
+            margin-bottom: 5px;
+            margin-right: 16px;
+            border-radius: 5px;
+        }
+
+        .wk-select__user {
+            height: 60px;
+            width: 52px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-right: 6px;
+        }
+
+        .wk-select__css {
+            height: 100px;
+            width: 52px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-right: 6px;
+        }
+
+        .wk-comment__user {
+            height: 60px;
+            width: 52px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-right: 12px;
+        }
+
+        a:hover {
+            text-decoration: none;
+        }
+
+        .weui-tabbar {
+            position: fixed;
+        }
+
+        /* textarea 自适应父容器大小 */
+        .comment {
+            width: 100%;
+            /*自动适应父布局宽度*/
+            overflow: auto;
+            word-break: break-all;
+            margin-top: 5px;
+        }
+
+        label {
+            font-weight: 400;
+            margin-bottom: 0px;
+        }
+
+        .searchCenter {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .fjys {
+            margin-right: 9px;
+            margin-bottom: 9px;
+            width: 79px;
+            height: 79px;
+            background: no-repeat 50%;
+            background-size: cover;
+        }
+
+        @media print {
+            a:after {
+                content: "" !important;
+            }
+        }
+    </style>
+
+
+    <div class="weui-tab" style="height:auto">
+        <div class="weui-tab__panel" style="height:auto;padding-bottom: 0">
+
+            <div class="weui-panel weui-panel_access">
+                <!-- <div class="weui-panel__hd">审批信息</div> -->
+                <div class="weui-panel__bd">
+                    <div class="weui-media-box weui-media-box_small-appmsg">
+                        <div class="weui-cells">
+                            <span class="weui-media-box weui-media-box_appmsg">
+                                <div class="weui-media-box__bd" id="apply_status">
+                                    <div
+                                        style="display: flex;flex-direction: row;align-items: center;margin-bottom: 1em;">
+                                        <img class="weui-media-box__thumb" src="" alt="" id='avatar'
+                                            style="border-radius: 5px;width: 2.5em;height: 2.5em;margin-right: 1em;">
+                                        <h4 class="weui-media-box__title" style="font-weight: 800;font-size:20px;"
+                                            id='title'>
+                                            测试测试的费用开支</h4>
+                                        <span class="label label-success"
+                                            style="margin-left: 1em;padding-top: 0.3em;padding-bottom: 0.2em">已通过</span>
+                                    </div>
+                                    <div id='content_costmoney'>
+
+                                    </div>
+                                </div>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="weui-panel" style="margin-top: 0px;">
+                <div class="weui-cells" style="margin-top:0px;">
+                    <div class="weui-cell weui-cell_select weui-cell_select-after" id='bankdiv'>
+                        <div class="weui-cell__hd">
+                            <label class="weui-label">付款银行&nbsp;&nbsp;
+                                <span style="color:red;">*</span>
+                            </label>
+                        </div>
+                        <div class="weui-cell__bd">
+                            <select class="weui-select greyColor" name="type" id='bank'>
+                                <option value='-1' disabled selected style='display:none;'>请选择付款银行</option>
+                                <option value="56">PVC项目费用</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="weui-cell weui-cell_select weui-cell_select-after" id='cdhpdiv'>
+                        <div class="weui-cell__hd">
+                            <label class="weui-label">承兑汇票&nbsp;&nbsp;
+                                <span style="color:red;">*</span>
+                            </label>
+                        </div>
+                        <div class="weui-cell__bd">
+                            <select class="weui-select greyColor" name="type" id='cdhp'>
+                                <option value='-1' disabled selected style='display:none;'>请选择承兑汇票</option>
+                                <option value="56">PVC项目费用</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="weui-cell " id='bcfkdiv'>
+                        <div class="weui-cell__hd">
+                            <label class="weui-label">本次付款&nbsp;&nbsp;
+                                <span style="color:red;">*</span>
+                            </label>
+                        </div>
+                        <div class="weui-cell__bd">
+                            <input class="weui-input " type="number" id="bcfk" name="custodian" placeholder="请输入付款金额" />
+                            <div class="weui-input" id="bcfk_show" style='display: none;'></div>
+                        </div>
+                    </div>
+                    <div class="weui-cell " id='sxfydiv'>
+                        <div class="weui-cell__hd">
+                            <label class="weui-label">手续费用&nbsp;&nbsp;
+                                <span style="color:red;">*</span>
+                            </label>
+                        </div>
+                        <div class="weui-cell__bd">
+                            <input class="weui-input " type="number" id="sxfy" name="custodian" placeholder="请输入手续费用" />
+                            <div class="weui-input" id="sxfy_show" style='display: none;'></div>
+                        </div>
+                    </div>
+                    <div class="weui-cell " style="display:none;">
+                        <div class="weui-cell__hd">
+                            <label class="weui-label">已付金额&nbsp;&nbsp;
+                            </label>
+                        </div>
+                        <div class="weui-cell__bd" id='payed'>
+                            0
+                        </div>
+                    </div>
+                    <div class="weui-cell "  id="detail">
+                        <div class="weui-cell__hd">
+                            <label class="weui-label">付款记录&nbsp;&nbsp;
+                            </label>
+                        </div>
+                        <div class="weui-cell__bd" id='payedRec'>
+                            暂无
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="weui-panel" style="margin-top: 0px;" id='fj'>
+                <div class="weui-panel__hd"
+                    style="font-size: 16px;background-color: #f8f8f8;color:black;padding-top: 10px;">附件
+                    <span style="color: #f12e2e;font-size: 14px;">（点击图片，可查看附件）</span>
+                </div>
+                <div class="weui-cells" style="margin-top:0px;">
+                    <div class="weui-cell">
+                        <div class="weui-uploader__bd">
+                            <ul class="weui-uploader__files" id="viewer" style="margin-bottom: 0px;float: left;">
+
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</block>
+<block name="Process"></block>
+<block name="copyto"></block>
+<block name="pushto"></block>
+<block name="js">
+    <script src="__PUBLIC__/assets/js/AmountConversionformat.js"></script>
+    <script>
+        var $id = getQueryString('id');
+        var is_cdhp = 0;
+        // 获取内容信息
+
+        getContent($id);
+        function getContent($id) {
+            if (!$id) return tooltip('请重新选择付款单号');
+            $.ajax({
+                type: 'POST',
+                url: "{:U('Light/Api/CostMoneyPayApi')}",
+                dataType: 'json',
+                data: {
+                    id: $id,
+                    system: "{$system}",
+                    modname: 'CostMoneyPay',
+                    action: 'getContent',
+                },
+                dataType: 'json',
+                success: function (res) {
+                    $('#avatar').attr('src', res['avatar']);
+                    $('#title').text(res['applyerName'] + '的费用开支');
+                    makeHtml(res['content']);
+                    makefjHtml(res['imgsrc']);
+                    if(res['nfkfs'] == 3){ 
+                        makeCdhpHtml();
+                        is_cdhp = 1;
+                    }else{
+                        $('#cdhpdiv').remove();
+                    }
+                    isOver();
+                    getPayed($id);
+                }
+            });
+        }
+        // 付款详情
+        detail();
+        function detail(){
+            if (!$id) return tooltip('请重新选择付款单号');
+            $.ajax({
+                type: 'POST',
+                url: "{:U('Light/Api/CostMoneyPayApi')}",
+                dataType: 'json',
+                data: {
+                    id: $id,
+                    system: "{$system}",
+                    modname: 'CostMoneyPay',
+                    action: 'getPayedRec',
+                },
+                dataType: 'json',
+                success: function (res) {
+                  if(res.length>0){
+                      var html = '';
+                      for(k in res){
+                        html += '<div style="padding: 3px 0 0 0;border-bottom: 1px solid #e5e5e5; "><strong>'+res[k]['sj_date']+'('+res[k]['njbr']+')</strong></div>';
+                        html += '<div style="padding: 3px 0 0 10px;"><span class="" >'+ res[k]['money'] + '</span>：' +res[k].bank.nb+'-'+res[k].bank.ac+'-'+res[k].bank.wz+ '</div>';
+                      }
+                      $('#payedRec').html(html);
+                      $('#detail').show();
+                  }
+                }
+            });
+        }
+        // 获取是否已经付完
+        function isOver(){
+            if (!$id) return tooltip('请重新选择付款单号');
+            $.ajax({
+                type: 'POST',
+                url: "{:U('Light/Api/CostMoneyPayApi')}",
+                dataType: 'json',
+                data: {
+                    id: $id,
+                    system: "{$system}",
+                    modname: 'CostMoneyPay',
+                    action: 'isOver',
+                },
+                dataType: 'json',
+                success: function (res) {
+                   if(res == 1){
+                       $('#submit').remove();
+                       $('#cdhpdiv').remove();
+                       $('#bankdiv').remove();
+                       $('#bcfkdiv').remove();
+                       $('#sxfydiv').remove();
+                   }
+                }
+            });
+        }
+        function makeCdhpHtml(){
+            if (!$id) return tooltip('请重新选择付款单号');
+            $.ajax({
+                type: 'POST',
+                url: "{:U('Light/Api/CostMoneyPayApi')}",
+                dataType: 'json',
+                data: {
+                    id: $id,
+                    system: "{$system}",
+                    modname: 'CostMoneyPay',
+                    action: 'getCdhp',
+                },
+                dataType: 'json',
+                success: function (res) {
+                    var html = '';
+                    for( x in res ){
+                        html += '<option value="'+res[x].id+'">'+res[x].hphm+'-'+res[x].kpyh+'-'+res[x].nmoney+'</option>';
+                    }
+                    html += "<option value='-1' disabled selected style='display:none;'>请选择承兑汇票</option>";
+                    $('#cdhp').html(html);
+                }
+            });
+        }
+        // 承兑汇票
+        
+        function getPayed($id) {
+            if (!$id) return tooltip('请重新选择付款单号');
+            $.ajax({
+                type: 'POST',
+                url: "{:U('Light/Api/CostMoneyPayApi')}",
+                dataType: 'json',
+                data: {
+                    id: $id,
+                    system: "{$system}",
+                    modname: 'CostMoneyPay',
+                    action: 'getPayed',
+                },
+                dataType: 'json',
+                success: function (res) {
+                    $('#payed').html(res);
+                }
+            });
+        }
+        getBank();
+        // 获取银行
+        function getBank(){
+            if (!$id) return tooltip('请重新选择付款单号');
+            $.ajax({
+                type: 'POST',
+                url: "{:U('Light/Api/CostMoneyPayApi')}",
+                dataType: 'json',
+                data: {
+                    id:$id,
+                    system: "{$system}",
+                    modname: 'CostMoneyPay',
+                    action: 'getBank',
+                },
+                dataType: 'json',
+                success: function (res) {
+                    var html = '';
+                    for( x in res ){
+                        html += '<option value="'+res[x].id+'">'+res[x].nb+'-'+res[x].ac+'-'+res[x].wz+'</option>';
+                    }
+                    html += "<option value='-1' disabled selected style='display:none;'>请选择付款银行</option>";
+                    $('#bank').html(html);
+                }
+            });
+        }
+        
+        function makeHtml(data) {
+            $html = '';
+            for (k in data) {
+                $html += '<p class="weui-media-box__desc weui-flex">' +
+                    '<span>' + data[k].name + '</span>' +
+                    '<span class="weui-flex__item">' + data[k].value + '</span>' +
+                    '</p>';
+            }
+            $('#content_costmoney').html($html);
+        }
+        function makefjHtml(data) {
+            if (data.length == 0) return $('fj').remove();
+            $html = '';
+            for (k in data) {
+                $html += '<img src="' + data[k] + '" class="fjys" data-original="' + data[k] + '" >';
+            }
+            $('#viewer').html($html);
+        }
+        // 输入框插件
+        var init_data_1 = {
+            'input': $('#bcfk'),
+            'show_div': $('#bcfk_show'),
+            'symbol': "&yen;",
+            'input_show_bool': false
+        };
+        var forTest_1 = new AmountConversionformat(init_data_1);
+        forTest_1.init();
+
+        var init_data_2 = {
+            'input': $('#sxfy'),
+            'show_div': $('#sxfy_show'),
+            'symbol': "&yen;",
+            'input_show_bool': false
+        };
+        var forTest_2 = new AmountConversionformat(init_data_2);
+        forTest_2.init();
+        // 提交
+        $('#submit').click(function () {
+            if (!$id) return tooltip('请重新选择付款单号');
+            var bcfk = $('#bcfk').val(),
+                bank = $('#bank').val(),
+                cdhp = $('#cdhp').val(),
+                sxfy = $('#sxfy').val();
+
+            if(is_cdhp && (cdhp == -1 || !cdhp )) return tooltip('请选择承兑汇票');
+            if(bank == -1 || !bank)  return tooltip('请选择付款银行');
+            if (!bcfk || bcfk <= 0) return tooltip('付款金额不能为空或小于零');
+            if (sxfy && sxfy <= 0) return tooltip('手续费用不能小于零');
+            var reason = $('#reason').val();
+            toast.fadeIn(200);
+            $.ajax({
+                type: 'POST',
+                url: "{:U('Light/Api/CostMoneyPayApi')}",
+                dataType: 'json',
+                data: {
+                    bank:bank,
+                    cdhp:cdhp,
+                    id: $id,
+                    bcfk: bcfk,
+                    sxfy: sxfy,
+                    text: reason,
+                    system: "{$system}",
+                    modname: 'CostMoneyPay',
+                    action: 'submit',
+                    __hash__: hash
+                },
+                dataType: 'json',
+                success: function (res) {
+                    if (res.code == 200) {
+                        location.reload();
+                    } else {
+                        tooltip(res.msg);
+                    }
+                }
+            });
+        });
+    </script>
+</block>

@@ -164,6 +164,9 @@ class KkCostMoneyLogic extends Model {
         }else{
             M('kk_ykfy')->field(true)->where($map)->setField('stat',0);
         }   
+        if($data['stat'] == 2){
+            M('kk_feefy2')->where($map)->setField('stat',0);
+        }
         $map = array('id' => $id);
         return $this->field(true)->where($map)->setField('stat',0);
     }

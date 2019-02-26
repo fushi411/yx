@@ -99,6 +99,9 @@ class SeekModel extends Model {
                 'submit'     => array('name' => $val['mod_name'] ,'stat' => (int)($val['mod_stat_value'] ) ),
                 'copy_field' => $field
             );
+            if($val['map']){
+                $temp['map'] = $val['map'];
+            }
             $result[] = $temp;
         }
         return $result;

@@ -297,7 +297,7 @@ class KkContractApplyLogic extends Model {
         $touch = array(); 
         foreach($data as $k=>$v){
             $key          = $this->findNum($v['ht_cate']);
-            $inStr        = $v['ht_cate'].$v['ht_wlfs'];
+            $inStr        = $v['ht_cate'].$v['ht_wlfs'].$v['ht_bzfs'];
             if(in_array($inStr,$touch))continue;
             $touch[]      = $inStr;
             $v['cate']    = $key;
@@ -313,6 +313,7 @@ class KkContractApplyLogic extends Model {
         }
         return $res;
     }
+    
     public function findNum($str=''){
         $str=trim($str);
         if(empty($str)){return '';}
