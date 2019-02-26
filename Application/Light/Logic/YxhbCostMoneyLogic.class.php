@@ -144,6 +144,9 @@ class YxhbCostMoneyLogic extends Model {
         }else{
             M('yxhb_ykfy')->field(true)->where($map)->setField('stat',0);
         }   
+        if($data['stat'] == 2){
+            M('yxhb_feefy2')->where($map)->setField('stat',0);
+        }
         $map = array('id' => $id);
         return $this->field(true)->where($map)->setField('stat',0);
     }

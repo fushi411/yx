@@ -8,44 +8,42 @@ class TestController extends \Think\Controller {
         header('Content-Type: text/html; charset=utf-8');
         // iconv('gbk','UTF-8',$v['approve']),
         //$data = D('KkAppflowtable')->getConditionStepHtml($modname,$condition);
+        $bcfk = 1430.41;
+        $id= '6249';
+        $system = 'yxhb';
+        $payed  = $this->getPayed($id,$system);
+        $all    = $this->getAllMoney($id,$system);
+        dump($all);
+        dump($payed);
+        $nm  = $all-$payed-$bcfk;
+        if($nm<0) echo 1;
+        else echo 2;
+        
+    }
+    //获取已付金额
+    public function getPayed($id,$system){
+        $flag   = $id?1:0;
+        $id     = $id?$id:I('post.id');
+        $system = $system?$system:I('post.system');
+        $map = array(
+            'a.id' => $id,
+            'b.stat' => 1,
+        );
+        $data = M($system.'_feefy a')
+                ->join("{$system}_feefy2 b on a.dh=b.dh")
+                ->field('sum(b.nmoney) as nmoney')
+                ->where($map)
+                ->select();
+        if($flag) return $data[0]['nmoney']?-$data[0]['nmoney']:0;
+        return $data[0]['nmoney']?"&yen;".number_format(-$data[0]['nmoney'],2,'.',','):0;
     }
     
-    public function PushAndCopyData($which,$limit=''){
-        $page   = I('post.page_num');
-        $page   = $page?$page:1;
-        $search = I('post.search');
-        $arr    = $this->getSearchTable($search);
-        $wx_id  = session('wxid');
-        $eq     = empty($limit)?'':'!';
-        // sql 重构
-        foreach($arr as $k => $v){
-            if($k != 0) $sql .= ' UNION all ';
-            $userId =  $idArr[$v['system']];
-            $sql .=  " select 
-                            {$v['copy_field']},{$k} 
-                        from {$v['table_name']}   
-                        inner join {$v['system']}_appcopyto b on {$v['table_name']}.{$v['id']} = b.aid
-                        where  
-                            b.mod_name='{$v['mod_name']}'
-						AND
-                            b.stat!=0 and b.type={$which} 
-                        AND 
-                            FIND_IN_SET('{$wx_id}',`copyto_id`) and {$eq}FIND_IN_SET('{$wx_id}',`readed_id`)
-                        ";
-        }
-        if(empty($sql)) return '';
-        $sql = "select * from($sql)a GROUP BY aid,`0` ORDER BY date desc";
-        if(empty($limit)){
-            $sql .= ' LIMIT '.(($page-1)*20).',20';
-        }
-        $res = M()->query($sql); 
-        foreach($res as $k => $v){
-            $key = $v['0'];
-            $res[$k]['system']  = $arr[$key]['system'];
-            $res[$k]['mod']     = $arr[$key]['mod_name'];
-            $res[$k]['modname'] = $arr[$key]['toptitle'];
-        }
-        return $res;
+    // 获取总的付款数
+    public function getAllMoney($id,$system){
+        $id     = $id?$id:I('post.id');
+        $system = $system?$system:I('post.system');
+        $data = M("{$system}_feefy")->where(array('id' => $id))->find();
+        return -$data['nmoney'];
     }
 
     public function reData($data){
@@ -81,8 +79,7 @@ class TestController extends \Think\Controller {
     }
      // 搜索模块
      public function getSearchTable($search){
-        $tab = $this->getAppTable();
-        $tab = $this->arrayMerge($tab);
+        $tab = $this->config();
         $res = array();
         if(empty($search)) return $tab;
         foreach($tab as $k => $v){
@@ -92,7 +89,9 @@ class TestController extends \Think\Controller {
         }
         return $res;
    }
-   
+   public function config(){
+    return D('Seek')->configSign();
+}
     private function getAuthGroup($system,$type=''){
         $reArr = array(
             'group'   => '暂无',

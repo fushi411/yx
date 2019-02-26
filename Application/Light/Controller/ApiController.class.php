@@ -99,7 +99,7 @@ class ApiController extends BaseController {
         $this->ajaxReturn($res);
     }
 
-    // 量库库存
+    // 销售收款
     public function SalesReceiptsApplyApi(){
         $system = I('system');
         $mod    = I('modname');
@@ -109,6 +109,18 @@ class ApiController extends BaseController {
         $res = $logic->$action();
         $this->ajaxReturn($res);
     }
+
+    // 销售退款
+    public function SalesRefundApplyApi(){
+        $system = I('system');
+        $mod    = I('modname');
+        $action = I('action');
+        if(!$mod) list($system,$mod,$action) = array($_GET['system'],$_GET['modname'],$_GET['action']);
+        $logic = D(ucfirst($system).$mod ,'Logic');
+        $res = $logic->$action();
+        $this->ajaxReturn($res);
+    }
+    
     // 发货修改
     public function fh_edit_Apply_hbApi(){
         $system = I('system');
@@ -184,7 +196,15 @@ class ApiController extends BaseController {
         $res = $logic->$action();
         $this->ajaxReturn($res);
     }
-
+    // 费用付款
+    public function CostMoneyPayApi(){
+        $system = I('system');
+        $mod    = I('modname');
+        $action = I('action');
+        $logic = D(ucfirst($system).$mod ,'Logic');
+        $res = $logic->$action();
+        $this->ajaxReturn($res);
+    }
     // 退货修改
     public function fh_refund_ApplyApi(){
         $system = I('system');

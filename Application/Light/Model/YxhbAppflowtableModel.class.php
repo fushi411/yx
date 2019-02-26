@@ -161,7 +161,7 @@ class YxhbAppflowtableModel extends Model {
         $data = $this
                 ->field('pro_name,pro_id,per_name,per_id,stage_id,point,condition,stage_name')
                 ->where($map)
-                ->order('stage_id asc')
+                ->order('stage_id asc,role_id asc')
                 ->select();
         $data = $this->getAccordCondition($data,$condition);
         $data = $this->getProInfo($data);

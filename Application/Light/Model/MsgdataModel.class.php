@@ -199,32 +199,60 @@ class MsgdataModel extends Model {
         return $result;   
     }
     
-        // 销售收款
-        public function SalesReceiptsApply(){
-            $result = array();
-            $result['url'] = array(
-                array('name' => '建材销售收款','url' => U('Light/View/View',array('modname'=>'SalesReceiptsApply','system' => 'kk')),'modname' => 'kkSalesReceiptsApply'),
-                array('name' => '环保销售收款','url' => U('Light/View/View',array('modname'=>'SalesReceiptsApply','system' => 'yxhb')),'modname' => 'yxhbSalesReceiptsApply'),
-            );
-       
-            $result['kkSalesReceiptsApply'] = array(
-                'process' => U('Light/Process/ApplyProcess',array('modname'=>'SalesReceiptsApply','system' => 'kk')),
-                'info'    => U('Light/Apply/applyInfo',array('modname'=>'SalesReceiptsApply','system'=>'kk')),
-                // 'fiexd_copy_id' => 'xly',
-                // 'copydata' => array(
-                //     array('name' =>'许丽颖','url' => 'http://shp.qpic.cn/bizmp/nFsVdIIiaLZsmAv2LEDiaFwmzW1KMfkUIA3IW1c9PibAfaPCICgibpibQNA/'),
-                // )
-            );  
-            $result['yxhbSalesReceiptsApply'] = array(
-                'process' => U('Light/Process/ApplyProcess',array('modname'=>'SalesReceiptsApply','system' => 'yxhb')),
-                'info'    => U('Light/Apply/applyInfo',array('modname'=>'SalesReceiptsApply','system'=>'yxhb')),
-                // 'fiexd_copy_id' => 'xly',
-                // 'copydata' => array(
-                //     array('name' =>'许丽颖','url' => 'http://shp.qpic.cn/bizmp/nFsVdIIiaLZsmAv2LEDiaFwmzW1KMfkUIA3IW1c9PibAfaPCICgibpibQNA/'),
-                // )
-            );    
-            return $result;   
-        }
+    // 销售收款
+    public function SalesReceiptsApply(){
+        $result = array();
+        $result['url'] = array(
+            array('name' => '建材销售收款','url' => U('Light/View/View',array('modname'=>'SalesReceiptsApply','system' => 'kk')),'modname' => 'kkSalesReceiptsApply'),
+            array('name' => '环保销售收款','url' => U('Light/View/View',array('modname'=>'SalesReceiptsApply','system' => 'yxhb')),'modname' => 'yxhbSalesReceiptsApply'),
+        );
+    
+        $result['kkSalesReceiptsApply'] = array(
+            'process' => U('Light/Process/ApplyProcess',array('modname'=>'SalesReceiptsApply','system' => 'kk')),
+            'info'    => U('Light/Apply/applyInfo',array('modname'=>'SalesReceiptsApply','system'=>'kk')),
+            // 'fiexd_copy_id' => 'xly',
+            // 'copydata' => array(
+            //     array('name' =>'许丽颖','url' => 'http://shp.qpic.cn/bizmp/nFsVdIIiaLZsmAv2LEDiaFwmzW1KMfkUIA3IW1c9PibAfaPCICgibpibQNA/'),
+            // )
+        );  
+        $result['yxhbSalesReceiptsApply'] = array(
+            'process' => U('Light/Process/ApplyProcess',array('modname'=>'SalesReceiptsApply','system' => 'yxhb')),
+            'info'    => U('Light/Apply/applyInfo',array('modname'=>'SalesReceiptsApply','system'=>'yxhb')),
+            // 'fiexd_copy_id' => 'xly',
+            // 'copydata' => array(
+            //     array('name' =>'许丽颖','url' => 'http://shp.qpic.cn/bizmp/nFsVdIIiaLZsmAv2LEDiaFwmzW1KMfkUIA3IW1c9PibAfaPCICgibpibQNA/'),
+            // )
+        );    
+        return $result;   
+    }
+
+    // 销售退款
+    public function SalesRefundApply(){
+        $result = array();
+        $result['url'] = array(
+            array('name' => '建材销售退款','url' => U('Light/View/View',array('modname'=>'SalesRefundApply','system' => 'kk')),'modname' => 'kkSalesRefundApply'),
+            array('name' => '环保销售退款','url' => U('Light/View/View',array('modname'=>'SalesRefundApply','system' => 'yxhb')),'modname' => 'yxhbSalesRefundApply'),
+        );
+
+        $result['kkSalesRefundApply'] = array(
+            'process' => U('Light/Process/ApplyProcess',array('modname'=>'SalesRefundApply','system' => 'kk')),
+            'info'    => U('Light/Apply/applyInfo',array('modname'=>'SalesRefundApply','system'=>'kk')),
+            // 'fiexd_copy_id' => 'xly',
+            // 'copydata' => array(
+            //     array('name' =>'许丽颖','url' => 'http://shp.qpic.cn/bizmp/nFsVdIIiaLZsmAv2LEDiaFwmzW1KMfkUIA3IW1c9PibAfaPCICgibpibQNA/'),
+            // )
+        );  
+        $result['yxhbSalesRefundApply'] = array(
+            'process' => U('Light/Process/ApplyProcess',array('modname'=>'SalesRefundApply','system' => 'yxhb')),
+            'info'    => U('Light/Apply/applyInfo',array('modname'=>'SalesRefundApply','system'=>'yxhb')),
+            // 'fiexd_copy_id' => 'xly',
+            // 'copydata' => array(
+            //     array('name' =>'许丽颖','url' => 'http://shp.qpic.cn/bizmp/nFsVdIIiaLZsmAv2LEDiaFwmzW1KMfkUIA3IW1c9PibAfaPCICgibpibQNA/'),
+            // )
+        );    
+        return $result;   
+    }
+
     // 发货修改
     public function fh_edit_Apply_hb(){
         return $this->fhApply(); 
@@ -507,6 +535,25 @@ class MsgdataModel extends Model {
         return $result;   
     }
 
+    // 费用开支付款
+    public function CostMoneyPay(){
+        $result = array();
+        $result['url'] = array(
+            array('name' => '建材付款','url' => U('Light/View/View',array('modname'=>'CostMoneyPay','system' => 'kk')),'modname' => 'kkCostMoneyPay'),
+            array('name' => '环保付款','url' => U('Light/View/View',array('modname'=>'CostMoneyPay','system' => 'yxhb')),'modname' => 'yxhbCostMoneyPay'),
+        );
+
+        $result['kkCostMoneyPay'] = array(
+            'process' => U('Light/Process/ApplyProcess',array('modname'=>'CostMoneyPay','system' => 'kk')),
+            'info'    => U('Light/Apply/applyInfo',array('modname'=>'CostMoneyPay','system'=>'kk')),    
+        );  
+        $result['yxhbCostMoneyPay'] = array(
+            'process' => U('Light/Process/ApplyProcess',array('modname'=>'CostMoneyPay','system' => 'yxhb')),
+            'info'    => U('Light/Apply/applyInfo',array('modname'=>'CostMoneyPay','system'=>'yxhb')),
+        );    
+        return $result;   
+    }
+
     //汪同津测试
     public function CeShi(){
         $result = array();
@@ -519,6 +566,25 @@ class MsgdataModel extends Model {
             'info'          => U('Light/Apply/applyInfo',array('modname'=>'CeShi','system'=>'kk')),
         );
 
+        return $result;
+    }
+
+    //查询客户调价
+    public function  search_guest_tj(){
+        $result = array();
+        $result['url'] = array(
+            array('name' => '环保查询客户调价','url' => U('Light/View/View',array('modname'=>'search_guest_tj','system' => 'yxhb')),'modname' => 'yxhbsearch_guest_tj'),
+            array('name' => '建材查询客户调价','url' => U('Light/View/View',array('modname'=>'search_guest_tj','system' => 'kk')),'modname' => 'kksearch_guest_tj'),
+        );
+
+        $result['yxhbsearch_guest_tj'] = array(
+            'process'       => U('Light/Process/ApplyProcess',array('modname'=>'search_guest_tj','system' => 'yxhb')),
+            'info'          => U('Light/Apply/applyInfo',array('modname'=>'search_guest_tj','system'=>'yxhb')),
+        );
+        $result['kksearch_guest_tj'] = array(
+            'process'       => U('Light/Process/ApplyProcess',array('modname'=>'search_guest_tj','system' => 'kk')),
+            'info'          => U('Light/Apply/applyInfo',array('modname'=>'search_guest_tj','system'=>'kk')),
+        );
         return $result;
     }
 
