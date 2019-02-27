@@ -10,7 +10,7 @@ use  Vendor\Overtrue\Pinyin\Pinyin;
 
 class KkGuesttjApplyLogic extends Model {
 
-    protected $trueTableName = 'kk_guest_tj';  // 实际表名（查询基本信息）      kk_appflowproc 查询时间、审核意见、审批状态   kk_appflowtable查询关注点
+    protected $trueTableName = 'kk_guest_tj';  // 实际表名（查询基本信息） kk_appflowproc 查询时间、审核意见、审批状态   kk_appflowtable查询关注点
     /**
      * 记录内容
      * @param  integer $id 记录ID
@@ -45,15 +45,6 @@ class KkGuesttjApplyLogic extends Model {
             'color' => 'black'
         );
 
-<<<<<<< HEAD
-=======
-//        $result['content'][] = array('name'=>'提交时间：',
-//            'value'=>substr($res3['del_date'],5,11),      //从第6位开始截取
-//            'type'=>'date',
-//            'color' => 'black'
-//        );
-//
->>>>>>> c52ee8f05e25a4b07c0aa92ab9867740078cfccc
         $result['content'][] = array('name'=>'申请日期：',
             'value'=>$res['date'],
             'type'=>'date',
@@ -65,8 +56,6 @@ class KkGuesttjApplyLogic extends Model {
             'type'=>'date',
             'color' => 'black'
         );
-
-<<<<<<< HEAD
 
         $result['imgsrc'] = '';
         $result['applyerID'] =  $res['applyuser'];                                               //申请者的id
@@ -87,28 +76,11 @@ class KkGuesttjApplyLogic extends Model {
             $stat[] = $value['app_stat'];
         }
         if (in_array(0, $stat))  return 2; //审批中
-        if (in_array(1, $stat))  return 2; //退审 先2 后1就是退审
+        if (in_array(1, $stat))  return 2; //退审 先2 后1
         return 1;                                  //审批通过
     }
 
 
-=======
-//        foreach ($html as $value){
-//            $result['content'][] = array('name'=>'审批信息：',
-//                'value'=>$value,
-//                'type'=>'string',
-//                'color' => 'black'
-//            );
-//        }
-
-        $result['imgsrc'] = '';
-        $result['applyerID'] =  $res['applyuser'];                                              //申请者的id
-        $result['applyerName'] = $this->get_name($res['applyuser']);                           //申请者的姓名
-//        $result['stat'] = $this->transStat($res['id']);                                      //审批状态
-        return $result;
-    }
-
->>>>>>> c52ee8f05e25a4b07c0aa92ab9867740078cfccc
 
     /**
      * 详情html生成
@@ -140,15 +112,11 @@ class KkGuesttjApplyLogic extends Model {
 
     //查询申请者的姓名
     public function get_name($id){
-<<<<<<< HEAD
         $map = array(
             'id'=>$id,
         );
         $res= M("kk_boss")->field('name')->where($map)->find();
         return $res['name'];
-=======
-
->>>>>>> c52ee8f05e25a4b07c0aa92ab9867740078cfccc
     }
 
 

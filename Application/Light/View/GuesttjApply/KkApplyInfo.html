@@ -1,6 +1,30 @@
 <extend name="Apply:base" />
-<script>
-    $(function () {
-        
-    })
-</script>
+
+<!--<style type="text/css">-->
+    <!--.ab {-->
+        <!--cursor:pointer;-->
+    <!--}-->
+<!--</style>-->
+<block name="js">
+    <script type="text/javascript">
+        $(function () {
+            var id = getQueryString("aid");
+           // 内容过滤选择器 选取含有文本内容text的元素
+           $("p:contains('查看客户调价')").children('span :eq(1)').css('style','cursor: pointer');
+           $("p:contains('查看客户调价')").children('span :eq(1)').click(function () {
+               console.log(id)
+               alert('信息中心还在调整中，可先点击查看调价内容');
+           })
+
+
+        })
+
+        // 获取URL参数
+        function getQueryString(name) {
+            var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
+            var r = window.location.search.substr(1).match(reg);
+            if (r != null) return unescape(r[2]); return null;
+        }
+
+    </script>>
+</block>
