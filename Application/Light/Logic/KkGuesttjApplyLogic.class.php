@@ -47,11 +47,11 @@ class KkGuesttjApplyLogic extends Model {
             'color' => 'black'
         );
 
-//        $result['content'][] = array('name'=>'客户调价：',
-//            'value'=>'查看客户调价',
-//            'type'=>'date',
-//            'color' => 'black'
-//        );
+        $result['content'][] = array('name'=>'客户调价：',
+            'value'=>'查看客户调价',
+            'type'=>'date',
+            'color' => 'black'
+        );
 
         $result['imgsrc'] = '';
         $result['applyerID'] =  $res['applyuser'];                                               //申请者的id

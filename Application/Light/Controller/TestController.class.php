@@ -8,42 +8,10 @@ class TestController extends \Think\Controller {
         header('Content-Type: text/html; charset=utf-8');
         // iconv('gbk','UTF-8',$v['approve']),
         //$data = D('KkAppflowtable')->getConditionStepHtml($modname,$condition);
-        $bcfk = 1430.41;
-        $id= '6249';
         $system = 'yxhb';
-        $payed  = $this->getPayed($id,$system);
-        $all    = $this->getAllMoney($id,$system);
-        dump($all);
-        dump($payed);
-        $nm  = $all-$payed-$bcfk;
-        if($nm<0) echo 1;
-        else echo 2;
+        $mod_name = 'TempCreditLineApply';
+        $id = I('get.id');
         
-    }
-    //获取已付金额
-    public function getPayed($id,$system){
-        $flag   = $id?1:0;
-        $id     = $id?$id:I('post.id');
-        $system = $system?$system:I('post.system');
-        $map = array(
-            'a.id' => $id,
-            'b.stat' => 1,
-        );
-        $data = M($system.'_feefy a')
-                ->join("{$system}_feefy2 b on a.dh=b.dh")
-                ->field('sum(b.nmoney) as nmoney')
-                ->where($map)
-                ->select();
-        if($flag) return $data[0]['nmoney']?-$data[0]['nmoney']:0;
-        return $data[0]['nmoney']?"&yen;".number_format(-$data[0]['nmoney'],2,'.',','):0;
-    }
-    
-    // 获取总的付款数
-    public function getAllMoney($id,$system){
-        $id     = $id?$id:I('post.id');
-        $system = $system?$system:I('post.system');
-        $data = M("{$system}_feefy")->where(array('id' => $id))->find();
-        return -$data['nmoney'];
     }
 
     public function reData($data){

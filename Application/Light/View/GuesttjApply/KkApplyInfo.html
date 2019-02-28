@@ -1,18 +1,52 @@
 <extend name="Apply:base" />
 
-<block name="js">
-    <script type="text/javascript">
-        // $(function () {
-        //     var id = getQueryString("aid");
-        //    // 内容过滤选择器 选取含有文本内容text的元素
-        //    $("p:contains('查看客户调价')").children('span :eq(1)').css('style','cursor: pointer');
-        //    $("p:contains('查看客户调价')").children('span :eq(1)').click(function () {
-        //        alert('信息中心还在调整中，可先点击查看调价内容');
-        //    })
-        //
-        //
-        // })
 
+<block name="js">
+    <script src="__PUBLIC__/assets/layer/layer.js"></script>
+    <script type="text/javascript">
+        $(function () {
+            var id = getQueryString("aid");
+           // 内容过滤选择器 选取含有文本内容text的元素
+           $("p:contains('查看客户调价')").children('span :eq(1)').css('style','cursor: pointer');
+           $("p:contains('查看客户调价')").children('span :eq(1)').click(function () {
+               viewSalesPlan(id,'view');
+               // alert('信息中心还在调整中，可先点击查看调价内容');
+           })
+
+
+        })
+
+        // 获取URL参数
+        function getQueryString(name) {
+            var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
+            var r = window.location.search.substr(1).match(reg);
+            if (r != null) return unescape(r[2]); return null;
+        }
+
+
+
+
+        function viewSalesPlan(id,type){
+            var url = 'https://www.fjyuanxin.com/sngl/view_guest_tj_info.php?id='+id+"&type="+type;
+            // var url = 'view_guest_tj_info.php?id='+id+"&type="+type;
+            // var url = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx133a00915c785dec&redirect_uri=http%3a%2f%2fwww.fjyuanxin.com%2fsngl%2findex_redirect.php?url="+url+"&response_type=code&scope=snsapi_base&state=STATE#wechat_redirect";
+
+            var areaArr =  ['750px', '450px'];
+            if( window.innerHeight > 600 ) areaArr =  ['550px', '650px'];
+            layer.open({
+                type: 2,
+                title: '查看客户调价',
+                fixed: false, //不固定
+                maxmin: true,
+                area: areaArr,
+                // offset: '30px',
+                content: url,
+                zIndex: 99,     //后生成的弹出框会比前一个的z-index的值+1，要设置一个高度，设置的值需要-1
+                end: function(){
+
+                }
+            })
+        }
 
     </script>>
 </block>
