@@ -1,16 +1,16 @@
 <?php
 namespace Light\Logic;
 use Think\Model;
+use  Vendor\Overtrue\Pinyin\Pinyin;
 
 /**
- * 临时额度逻辑模型
+ * 环保客户调价查看
  * @author 
  */
 
 class YxhbGuesttjApplyLogic extends Model {
-    // 实际表名
-    protected $trueTableName = 'yxhb_guest_tj';
 
+    protected $trueTableName = 'yxhb_guest_tj';  // 实际表名（查询基本信息） yxhb_appflowproc 查询时间、审核意见、审批状态   yxhb_appflowtable查询关注点
     /**
      * 记录内容
      * @param  integer $id 记录ID
@@ -18,7 +18,9 @@ class YxhbGuesttjApplyLogic extends Model {
      */
     public function record($id)
     {
-        $map = array('pid' => $id);
+        $map = array(
+            'id' => $id,
+        );
         return $this->field(true)->where($map)->find();
     }
 
@@ -27,76 +29,63 @@ class YxhbGuesttjApplyLogic extends Model {
         return $this->trueTableName;
     }
 
+    //详情(点击查看之后显示)
     public function recordContent($id)
     {
+
         $res = $this->record($id);
         $result = array();
-        $result['content'][] = array('name'=>'申请单位：',
-                                     'value'=>'环保调价',
-                                     'type'=>'date',
-                                     'color' => 'black'
-                                    );
-        $result['content'][] = array('name'=>'调价日期：',
-                                     'value'=>$res['date'],
-                                     'type'=>'data'
-                                    );
-        // $result['content'][] = array('name'=>'申&nbsp;&nbsp;请&nbsp;&nbsp;人：',
-        //                              'value'=>$res['kp_jbr'],
-        //                              'type'=>'string'
-        //                             );
-        // $result['content'][] = array('name'=>'汇款单位：',
-        //                              'value'=>$res['kp_hkdw'],
-        //                              'type'=>'string'
-        //                             );
-        $result['content'][] = array('name'=>'品&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;种：',
-                                     'value'=>$res['ht_bzfs'].$res['ht_cate'],
-                                     'type'=>'string'
-                                    );
-        $result['content'][] = array('name'=>'申&nbsp;&nbsp;请&nbsp;&nbsp;人：',
-                                     'value'=>D('yxhb_boss')->getusername($res['applyuser']),
-                                     'type'=>'number'
-                                    );
-        // $result['content'][] = array('name'=>'&nbsp;&nbsp;额：',
-        //                              'value'=>$res['kp_je'],
-        //                              'type'=>'number'
-        //                             );
-        // $result['content'][] = array('name'=>'销&nbsp;&nbsp;售&nbsp;&nbsp;员：',
-        //                              'value'=>$res['sales'],
-        //                              'type'=>'string'
-        //                             );
-        // $result['content'][] = array('name'=>'备注：',
-        //                              'value'=>$res['notice'],
-        //                              'type'=>'text'
-        //                             );
+        $result['content'][] = array('name'=>'系统类型：',
+            'value'=>'环保客户调价',
+            'type'=>'date',
+            'color' => 'black'
+        );
+
+        $result['content'][] = array('name'=>'申请日期：',
+            'value'=>$res['date'],
+            'type'=>'date',
+            'color' => 'black'
+        );
+
+//        $result['content'][] = array('name'=>'客户调价：',
+//            'value'=>'查看客户调价',
+//            'type'=>'date',
+//            'color' => 'black'
+//        );
+
         $result['imgsrc'] = '';
-        $result['applyerID'] = $res['applyuesr'];
-        $result['applyerName'] = D('yxhb_boss')->getusername($res['applyuser']);
-        // $result['applyerName'] = $res['ht_rdy'];
-        // $result['applyerID'] = D('yxhb_boss')->getIDFromName($res['ht_rdy']);
-        $result['stat'] = $res['stat'];
+        $result['applyerID'] =  $res['applyuser'];                                               //申请者的id
+        $result['applyerName'] = $this->get_name($res['applyuser']);                            //申请者的姓名
+        $result['stat'] = $this->transStat($res['id']);                                        //审批状态
         return $result;
     }
 
-    /**
-     * 删除记录
-     * @param  integer $id 记录ID
-     * @return integer     影响行数
-     */
-    public function delRecord($id)
-    {
-        // $map = array('id' => $id);
-        // return $this->field(true)->where($map)->setField('stat',0);
+    // 状态值转换
+    public function transStat($id){
+        $map = array(
+            'aid'=>$id,
+            'mod_name'=>'GuesttjApply'
+        );
+        $res = M('yxhb_appflowproc')->field('app_stat')->where($map)->select();
+        $stat = array();
+        foreach ($res as $value){
+            $stat[] = $value['app_stat'];
+        }
+        if (in_array(0, $stat))  return 2; //审批中
+        if (in_array(1, $stat))  return 2; //退审 先2 后1
+        return 1;                                  //审批通过
     }
 
-    /**
-     * 获取申请人名/申请人ID（待定）
-     * @param  integer $id 记录ID
-     * @return string      申请人名
-     */
-    public function getApplyer($id)
-    {
-        // $map = array('id' => $id);
-        // return $this->field(true)->where($map)->getField('jbr');
+
+    //查询申请者的姓名
+    public function get_name($id){
+        $map = array(
+            'id'=>$id,
+        );
+        $res= M("yxhb_boss")->field('name')->where($map)->find();
+        return $res['name'];
     }
-    
+
+
+
 }

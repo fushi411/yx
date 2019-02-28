@@ -766,5 +766,42 @@ class WorkFlowFuncController extends Controller {
         $resArr = $res?array("status"=>"success"):array("status"=>"failure");
         return $resArr;
     }
+
+    /**
+     * 环保发货删除通过后调用函数
+     * @param  [integre] $aid [记录ID]
+     * @return [array]      [状态]
+     */
+    public function Yxhbfh_del_ApplyEnd($aid)
+    {
+        $res = M('kk_fh')->where(array('id'=>$aid))->setField('fh_stat', 0);
+        $resArr = $res?array("status"=>"success"):array("status"=>"failure");
+        return $resArr;
+    }
+
+    /**
+     * 建材客户调价审批通过后调用函数
+     * @param  [integre] $aid [记录ID]
+     * @return [array]      [状态]
+     */
+    public function KkGuesttjApplyEnd($aid)
+    {
+        $res = M('kk_guest_tj')->where(array('id'=>$aid))->setField('stat', 2);
+        $resArr = $res?array("status"=>"success"):array("status"=>"failure");
+        return $resArr;
+    }
+
+    /**
+     * 环保客户调价审批通过后调用函数
+     * @param  [integre] $aid [记录ID]
+     * @return [array]      [状态]
+     */
+    public function YxhbGuesttjApplyEnd($aid)
+    {
+        $res = M('yxhb_guest_tj')->where(array('id'=>$aid))->setField('stat', 2);
+        $resArr = $res?array("status"=>"success"):array("status"=>"failure");
+        return $resArr;
+    }
+
 // -----END------
 }

@@ -32,10 +32,6 @@ class KkGuesttjApplyLogic extends Model {
     //详情(点击查看之后显示)
     public function recordContent($id)
     {
-//        $map = array(
-//            'pro_mod'=>'GuesttjApply',
-//        );
-//        $res2 = M("kk_appflowtable")->where($map)->order('stage_id')->select();   //查询关注点
 
         $res = $this->record($id);
         $result = array();
@@ -51,11 +47,11 @@ class KkGuesttjApplyLogic extends Model {
             'color' => 'black'
         );
 
-        $result['content'][] = array('name'=>'客户调价：',
-            'value'=>'查看客户调价',
-            'type'=>'date',
-            'color' => 'black'
-        );
+//        $result['content'][] = array('name'=>'客户调价：',
+//            'value'=>'查看客户调价',
+//            'type'=>'date',
+//            'color' => 'black'
+//        );
 
         $result['imgsrc'] = '';
         $result['applyerID'] =  $res['applyuser'];                                               //申请者的id
@@ -79,8 +75,6 @@ class KkGuesttjApplyLogic extends Model {
         if (in_array(1, $stat))  return 2; //退审 先2 后1
         return 1;                                  //审批通过
     }
-
-
 
     /**
      * 详情html生成
