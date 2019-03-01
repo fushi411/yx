@@ -26,7 +26,13 @@ class ConfigController extends BaseController {
                 break;
             case 'fylxApi': 
                         $this->fylxApi(); 
-                break;   
+                break; 
+            case 'addgys': 
+                    $this->addGysPage(); 
+            break;
+            case 'addgysApi': 
+                    $this->addGysApi(); 
+            break;
         }
     }
     
@@ -263,4 +269,14 @@ class ConfigController extends BaseController {
     }
 
     // 费用类型 END====================================
+    // 添加供应商
+    protected function addGysPage(){
+        $system = I('get.system');
+        $this->assign('system',$system);
+        $this->display('Config/addgys');
+    }
+
+    public function addGys(){
+
+    }
 }

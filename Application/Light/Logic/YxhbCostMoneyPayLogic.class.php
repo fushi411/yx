@@ -13,7 +13,7 @@ class YxhbCostMoneyPayLogic extends Model {
     public function getContent(){
         $id     = I('post.id');
         $system = I('post.system');
-        $res    = D(ucfirst($system).'CostMoney','Logic')->recordContent($id);
+        $res    = D(ucfirst($system).'CostMoney','Logic')->recordContent($id,'pay');
         $boss   = D($system.'Boss');
         $avatar = $boss->getAvatar($res['applyerID']);
         $res['avatar'] = $avatar;
@@ -132,6 +132,7 @@ class YxhbCostMoneyPayLogic extends Model {
         $sxfy   = I('post.sxfy');
         $bank   = I('post.bank');
         $bz     = I('post.bz');
+        $date   = I('post.date');
         if(empty($id)) return array('code' => 404 ,'msg' => '付款单号错误');
         $payed  = $this->getPayed($id,$system);
         $all    = $this->getAllMoney($id,$system);
@@ -143,7 +144,7 @@ class YxhbCostMoneyPayLogic extends Model {
             $save = array(
                 'stat'    => 2,
                 'nbank'   => $bank,
-                'sj_date' => date('Y-m-d',time()),
+                'sj_date' => $date,
             );
             $map = array(
                 'dh' => $res['dh'],
@@ -155,8 +156,8 @@ class YxhbCostMoneyPayLogic extends Model {
             'dh'      => $res['dh'],
             'nmoney'  => -$bcfk,
             'nbank'   => $bank,
-            'sj_date' => date('Y-m-d',time()),
-            'jl_date' => date('Y-m-d',time()), 
+            'sj_date' => $date,
+            'jl_date' => $date, 
             'npeople' => $res['dh'],
             'ntext'   => $bz,
             'nfkfs'   => $res['nfkfs'],

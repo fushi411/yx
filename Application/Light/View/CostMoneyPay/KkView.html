@@ -170,8 +170,19 @@
                     </div>
                 </div>
             </div>
-            <div class="weui-panel" style="margin-top: 0px;">
-                <div class="weui-cells" style="margin-top:0px;">
+            <div>
+                <div class="weui-cells">
+                    <div class="weui-cell weui-cell_select weui-cell_select-after">
+                        <div class="weui-cell__hd">
+                            <label class="weui-label">付款日期&nbsp;&nbsp;
+                                <span style="color:red;">*</span>
+                            </label>
+                        </div>
+                        <div class="weui-cell__bd">
+                            <input class="weui-select" type="text" name="custodian" id="showDatePicker" readonly
+                                value="{$today}" />
+                        </div>
+                    </div>
                     <div class="weui-cell weui-cell_select weui-cell_select-after" id='bankdiv'>
                         <div class="weui-cell__hd">
                             <label class="weui-label">付款银行&nbsp;&nbsp;
@@ -229,7 +240,7 @@
                             0
                         </div>
                     </div>
-                    <div class="weui-cell "  id="detail">
+                    <div class="weui-cell " id="detail">
                         <div class="weui-cell__hd">
                             <label class="weui-label">付款记录&nbsp;&nbsp;
                             </label>
@@ -267,7 +278,17 @@
         var $id = getQueryString('id');
         var is_cdhp = 0;
         // 获取内容信息
-
+        $('#showDatePicker').on('click', function () {
+            weui.datePicker({
+                start: 2018,
+                end: new Date().getFullYear()+10,
+                defaultValue: [new Date().getFullYear(), new Date().getMonth()+1, new Date().getDate()],
+                onConfirm: function (result) {
+                    DateValue(result);
+                },
+                id: 'showDatePicker'
+            });
+        });
         getContent($id);
         function getContent($id) {
             if (!$id) return tooltip('请重新选择付款单号');
@@ -287,10 +308,10 @@
                     $('#title').text(res['applyerName'] + '的费用开支');
                     makeHtml(res['content']);
                     makefjHtml(res['imgsrc']);
-                    if(res['nfkfs'] == 3){ 
+                    if (res['nfkfs'] == 3) {
                         makeCdhpHtml();
                         is_cdhp = 1;
-                    }else{
+                    } else {
                         $('#cdhpdiv').remove();
                     }
                     isOver();
@@ -300,7 +321,7 @@
         }
         // 付款详情
         detail();
-        function detail(){
+        function detail() {
             if (!$id) return tooltip('请重新选择付款单号');
             $.ajax({
                 type: 'POST',
@@ -314,20 +335,20 @@
                 },
                 dataType: 'json',
                 success: function (res) {
-                  if(res.length>0){
-                      var html = '';
-                      for(k in res){
-                        html += '<div style="padding: 3px 0 0 0;border-bottom: 1px solid #e5e5e5; "><strong>'+res[k]['sj_date']+'('+res[k]['njbr']+')</strong></div>';
-                        html += '<div style="padding: 3px 0 0 10px;"><span class="" >'+ res[k]['money'] + '</span>：' +res[k].bank.nb+'-'+res[k].bank.ac+'-'+res[k].bank.wz+ '</div>';
-                      }
-                      $('#payedRec').html(html);
-                      $('#detail').show();
-                  }
+                    if (res.length > 0) {
+                        var html = '';
+                        for (k in res) {
+                            html += '<div style="padding: 3px 0 0 0;border-bottom: 1px solid #e5e5e5; "><strong>' + res[k]['sj_date'] + '(' + res[k]['njbr'] + ')</strong></div>';
+                            html += '<div style="padding: 3px 0 0 10px;"><span style="color:black;font-weight: 600;" >' + res[k]['money'] + '</span>：' + res[k].bank.nb + '-' + res[k].bank.ac + '-' + res[k].bank.wz + '</div>';
+                        }
+                        $('#payedRec').html(html);
+                        $('#detail').show();
+                    }
                 }
             });
         }
         // 获取是否已经付完
-        function isOver(){
+        function isOver() {
             if (!$id) return tooltip('请重新选择付款单号');
             $.ajax({
                 type: 'POST',
@@ -341,17 +362,18 @@
                 },
                 dataType: 'json',
                 success: function (res) {
-                   if(res == 1){
-                       $('#submit').remove();
-                       $('#cdhpdiv').remove();
-                       $('#bankdiv').remove();
-                       $('#bcfkdiv').remove();
-                       $('#sxfydiv').remove();
-                   }
+                    if (res == 1) {
+                        $('#submit').remove();
+                        $('#cdhpdiv').remove();
+                        $('#bankdiv').remove();
+                        $('#bcfkdiv').remove();
+                        $('#sxfydiv').remove();
+                        $('#fj').remove();
+                    }
                 }
             });
         }
-        function makeCdhpHtml(){
+        function makeCdhpHtml() {
             if (!$id) return tooltip('请重新选择付款单号');
             $.ajax({
                 type: 'POST',
@@ -366,8 +388,8 @@
                 dataType: 'json',
                 success: function (res) {
                     var html = '';
-                    for( x in res ){
-                        html += '<option value="'+res[x].id+'">'+res[x].hphm+'-'+res[x].kpyh+'-'+res[x].nmoney+'</option>';
+                    for (x in res) {
+                        html += '<option value="' + res[x].id + '">' + res[x].hphm + '-' + res[x].kpyh + '-' + res[x].nmoney + '</option>';
                     }
                     html += "<option value='-1' disabled selected style='display:none;'>请选择承兑汇票</option>";
                     $('#cdhp').html(html);
@@ -375,7 +397,7 @@
             });
         }
         // 承兑汇票
-        
+
         function getPayed($id) {
             if (!$id) return tooltip('请重新选择付款单号');
             $.ajax({
@@ -396,14 +418,14 @@
         }
         getBank();
         // 获取银行
-        function getBank(){
+        function getBank() {
             if (!$id) return tooltip('请重新选择付款单号');
             $.ajax({
                 type: 'POST',
                 url: "{:U('Light/Api/CostMoneyPayApi')}",
                 dataType: 'json',
                 data: {
-                    id:$id,
+                    id: $id,
                     system: "{$system}",
                     modname: 'CostMoneyPay',
                     action: 'getBank',
@@ -411,27 +433,27 @@
                 dataType: 'json',
                 success: function (res) {
                     var html = '';
-                    for( x in res ){
-                        html += '<option value="'+res[x].id+'">'+res[x].nb+'-'+res[x].ac+'-'+res[x].wz+'</option>';
+                    for (x in res) {
+                        html += '<option value="' + res[x].id + '">' + res[x].nb + '-' + res[x].ac + '-' + res[x].wz + '</option>';
                     }
                     html += "<option value='-1' disabled selected style='display:none;'>请选择付款银行</option>";
                     $('#bank').html(html);
                 }
             });
         }
-        
+
         function makeHtml(data) {
             $html = '';
             for (k in data) {
                 $html += '<p class="weui-media-box__desc weui-flex">' +
                     '<span>' + data[k].name + '</span>' +
-                    '<span class="weui-flex__item">' + data[k].value + '</span>' +
+                    '<span class="weui-flex__item" style="color:' + data[k].color + '">' + data[k].value + '</span>' +
                     '</p>';
             }
             $('#content_costmoney').html($html);
         }
         function makefjHtml(data) {
-            if (data.length == 0) return $('fj').remove();
+            if (data.length == 0) return $('#fj').remove();
             $html = '';
             for (k in data) {
                 $html += '<img src="' + data[k] + '" class="fjys" data-original="' + data[k] + '" >';
@@ -459,13 +481,14 @@
         // 提交
         $('#submit').click(function () {
             if (!$id) return tooltip('请重新选择付款单号');
-            var bcfk = $('#bcfk').val(),
-                bank = $('#bank').val(),
-                cdhp = $('#cdhp').val(),
-                sxfy = $('#sxfy').val();
-
-            if(is_cdhp && (cdhp == -1 || !cdhp )) return tooltip('请选择承兑汇票');
-            if(bank == -1 || !bank)  return tooltip('请选择付款银行');
+            var bcfk  = $('#bcfk').val(),
+                bank  = $('#bank').val(),
+                cdhp  = $('#cdhp').val(),
+                sxfy  = $('#sxfy').val(),
+                date = $('#showDatePicker').val();
+            
+            if (is_cdhp && (cdhp == -1 || !cdhp)) return tooltip('请选择承兑汇票');
+            if (bank == -1 || !bank) return tooltip('请选择付款银行');
             if (!bcfk || bcfk <= 0) return tooltip('付款金额不能为空或小于零');
             if (sxfy && sxfy <= 0) return tooltip('手续费用不能小于零');
             var reason = $('#reason').val();
@@ -475,8 +498,9 @@
                 url: "{:U('Light/Api/CostMoneyPayApi')}",
                 dataType: 'json',
                 data: {
-                    bank:bank,
-                    cdhp:cdhp,
+                    date:date,
+                    bank: bank,
+                    cdhp: cdhp,
                     id: $id,
                     bcfk: bcfk,
                     sxfy: sxfy,

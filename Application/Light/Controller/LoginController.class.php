@@ -147,10 +147,10 @@ class LoginController extends \Think\Controller {
             $boss     = D($system.'_boss')->getWXFromID($val['per_id']);
             $res      = $logic->recordContent($val['aid']);
             $key      = $mod_name == 'CostMoney'?'isCostMoney':'notCostMoney';
-            if($msgNum[$key][$boss] >= 3){
+            if($msgNum[$key][$boss]['num'] >= 3){
                 $wx->autoProMoreSendMessage($val,$msgNum[$key][$boss]);
-                $msgNum[$key][$boss] = 0;
-            }elseif($msgNum[$key][$boss]>0 && $msgNum[$key][$boss] <3){
+                $msgNum[$key][$boss]['num'] = 0;
+            }elseif($msgNum[$key][$boss]['num']>0 && $msgNum[$key][$boss]['num'] <3){
                 $wx->autoProSendMessage($val,$res['applyerName']);
             }
 
@@ -178,7 +178,9 @@ class LoginController extends \Think\Controller {
             $per_id = $v['per_id']; // 当前审批人id
             $key    = $v['mod_name'] == 'CostMoney'?'isCostMoney':'notCostMoney';
             $boss   = D($system.'_boss')->getWXFromID($per_id);
-            $res[$key][$boss] += 1;
+            $res[$key][$boss]['num'] += 1;
+            $res[$key][$boss]['data'][$v['mod_name']]['num'] +=1;
+            $res[$key][$boss]['data'][$v['mod_name']]['name']  = $v['modname'];
         }
         return $res;
     }

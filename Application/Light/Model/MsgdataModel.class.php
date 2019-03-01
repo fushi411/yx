@@ -587,5 +587,24 @@ class MsgdataModel extends Model {
         );
         return $result;
     }
+    // 添加供应商
+    public function  AddGys(){
+        $result = array();
+        $result['url'] = array(
+            array('name' => '环保新增供应商','url' => U('Light/View/View',array('modname'=>'AddGys','system' => 'yxhb')),'modname' => 'yxhbAddGys'),
+            array('name' => '建材新增供应商','url' => U('Light/View/View',array('modname'=>'AddGys','system' => 'kk')),'modname' => 'kkAddGys'),
+        );
+
+        $result['yxhbAddGys'] = array(
+            'process'       => U('Light/Process/ApplyProcess',array('modname'=>'AddGys','system' => 'yxhb')),
+            'info'          => U('Light/Apply/applyInfo',array('modname'=>'AddGys','system'=>'yxhb')),
+        );
+        $result['kkAddGys'] = array(
+            'process'       => U('Light/Process/ApplyProcess',array('modname'=>'AddGys','system' => 'kk')),
+            'info'          => U('Light/Apply/applyInfo',array('modname'=>'AddGys','system'=>'kk')),
+        );
+        return $result;
+    }
+
 
 }

@@ -1,5 +1,1 @@
-<<<<<<< HEAD
-<?php exit();?>{"expire_time":1551166003,"access_token":"ztQn5O71esupIiZDRS8nU9ch58dyI7dTyWNfOqZGpqo46fnVctWX3lmjloXh2QmNYokHbo-19iaIp0AFcY7wy6raiBbPA8C2kt_-tWFK1InOsGxjNVbk35pBgrR5_ogl4ozdW24kLZtyWFBOAP5UOBlGiCi0hmyGHIcqd9haN4ypUBtluD5cvEG2PnC-X8sIlcyWB329Nec8GU-VTVfF1zRCIiSCglrOYc-B4IipF6U"}
-=======
-<?php exit();?>{"expire_time":1551158803,"access_token":"N2uARibwhA-FGc2hUZDEcJ9hQOtYE91--RPoJTMokiweZCwonhJK6FpxduirGa2RjXoTKtzLFGVZq3WbmvJdOXUk5XV7UnvcvGFlE_1bkylrOnMprHkTTbU4WJaZQOhLNd8UPTVuvxYsCEESfwNJOz5MmMCc22JddSD82Mwi70uVyXXzJKt91_m4Z3zcIAbIrKx5pd7QFVszQNR-s4YJRdNyw0f2g1j6mnmAnY2cP9k"}
->>>>>>> c52ee8f05e25a4b07c0aa92ab9867740078cfccc
+<?php exit();?>{"expire_time":1551425203,"access_token":"LT8sZsptp44q6rRVClnJPalVOr6Vyf2W1FUjBvQKXFnERAJgVopx54e1p2Aga9B7-nDJ_A0lZSxYaAJm5i_Kf0Q5iyy9dClB8_bCVIaqaIV5U_m5KUfn3UU4sgwSVRuoahZSKhFl-ZP3veX7jkHCvqGfD-BwwLFFs2JTpRkG9jKvhajspAEd9YVswkGh-EnbFAFw6KK6xYVx11bcfrLpVE4OWNUzae-lZOb1r3C6iWA"}

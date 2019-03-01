@@ -10,7 +10,7 @@ use  Vendor\Overtrue\Pinyin\Pinyin;
 
 class KkGuesttjApplyLogic extends Model {
 
-    protected $trueTableName = 'kk_guest_tj';  // 实际表名（查询基本信息） kk_appflowproc 查询时间、审核意见、审批状态   kk_appflowtable查询关注点
+    protected $trueTableName = 'kk_guest_tj';  // 实际表名（查询基本信息）      kk_appflowproc 查询时间、审核意见、审批状态   kk_appflowtable查询关注点
     /**
      * 记录内容
      * @param  integer $id 记录ID
@@ -32,6 +32,10 @@ class KkGuesttjApplyLogic extends Model {
     //详情(点击查看之后显示)
     public function recordContent($id)
     {
+//        $map = array(
+//            'pro_mod'=>'GuesttjApply',
+//        );
+//        $res2 = M("kk_appflowtable")->where($map)->order('stage_id')->select();   //查询关注点
 
         $res = $this->record($id);
         $result = array();
@@ -53,10 +57,19 @@ class KkGuesttjApplyLogic extends Model {
             'color' => 'black'
         );
 
+//        foreach ($html as $value){
+//            $result['content'][] = array('name'=>'审批信息：',
+//                'value'=>$value,
+//                'type'=>'string',
+//                'color' => 'black'
+//            );
+//        }
+
         $result['imgsrc'] = '';
         $result['applyerID'] =  $res['applyuser'];                                               //申请者的id
-        $result['applyerName'] = $this->get_name($res['applyuser']);                            //申请者的姓名
+        $result['applyerName'] = D('KkBoss')->getNameFromID($res['applyuser']);                 //申请者的姓名
         $result['stat'] = $this->transStat($res['id']);                                        //审批状态
+        $result['url'] = "view_guest_tj_info.php?id=".$res['id']."&type=view";                 //把路径传递出去
         return $result;
     }
 
@@ -74,6 +87,17 @@ class KkGuesttjApplyLogic extends Model {
         if (in_array(0, $stat))  return 2; //审批中
         if (in_array(1, $stat))  return 2; //退审 先2 后1
         return 1;                                  //审批通过
+    }
+
+    /**
+     * 删除记录
+     * @param  integer $id 记录ID
+     * @return integer     影响行数
+     */
+    public function delRecord($id)
+    {
+        $map = array('id' => $id);
+        return $this->field(true)->where($map)->setField('stat',0);
     }
 
     /**
@@ -103,16 +127,49 @@ class KkGuesttjApplyLogic extends Model {
         }
         return $data;
     }
-
-    //查询申请者的姓名
-    public function get_name($id){
-        $map = array(
-            'id'=>$id,
-        );
-        $res= M("kk_boss")->field('name')->where($map)->find();
-        return $res['name'];
+    /**
+     * 记录内容
+     * @param  integer $id 记录ID
+     * @return array       记录数组
+     */
+    public function getDescription($id){
+        $res = $this->record($id);
+        $result[] = array('name'=>'提交时间：',
+                                     'value'=>date('m-d H:i',strtotime($res['date'])),
+                                     'type'=>'date'
+                                    );
+        $result[] = array('name'=>'申请日期：',
+                                     'value'=>date('Y-m-d',strtotime($res['date'])), 
+                                     'type'=>'date'
+                                    );
+        return $result;
     }
-
-
-
+    /**
+     * 获取申请人名/申请人ID（待定）
+     * @param  integer $id 记录ID
+     * @return string      申请人名
+     */
+    public function getApplyer($id)
+    {
+        $map = array('id' => $id);
+        return $this->field(true)->where($map)->getField('jbr');
+    }
+    /**
+     * 我的审批，抄送，提交 所需信息
+     * @param  integer $id 记录ID
+     * @return array    所需内容      
+     */
+    public function sealNeedContent($id){
+        $res = $this->record($id);
+        $result = array(
+            'first_title'    => '申请时间',
+            'first_content'  => date('Y-m-d',strtotime($res['date'])),
+            'second_title'   => '调价日期',
+            'second_content' => date('Y-m-d',strtotime($res['date'])),
+            'third_title'    => '相关说明',
+            'third_content'  => '无',
+            'stat'           => $this->transStat($res['id']),
+        );
+        return $result;
+    }
 }

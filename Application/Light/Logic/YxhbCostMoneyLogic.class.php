@@ -27,7 +27,7 @@ class YxhbCostMoneyLogic extends Model {
         return $this->trueTableName;
     }
 
-    public function recordContent($id)
+    public function recordContent($id,$params)
     {
         $res = $this->record($id);
         $result = array();
@@ -48,10 +48,10 @@ class YxhbCostMoneyLogic extends Model {
                                      'color' => 'black'
                                     ); 
         if( $res['nfylx'] == 0 ){
-            $fybx = M('yxhb_feefy3')->where("left(dh,13)='{$res['dh']}'" )->find();
-            $fylx = M('yxhb_fylx')->field('id as val,fy_name as name')->where(array('id' =>$fybx['nfylx']))->order('id asc')->find(); 
+            $fybx = M('yxhb_feefy3')->where("dh='{$res['dh']}'" )->find();
+            $fylx = M('yxhb_fylx')->field('id as val,fy_name as name')->where(array('id' =>$fybx['nfylx']?$fybx['nfylx']:''))->order('id asc')->find(); 
         }else{
-            $fylx = M('yxhb_fylx')->field('id as val,fy_name as name')->where(array('id' =>$res['nfylx']))->order('id asc')->find(); 
+            $fylx = M('yxhb_fylx')->field('id as val,fy_name as name')->where(array('id' =>$res['nfylx']?$res['nfylx']:''))->order('id asc')->find(); 
         }
  
         $result['content'][] = array('name'=>'申请类型：',
@@ -59,15 +59,21 @@ class YxhbCostMoneyLogic extends Model {
                                      'type'=>'date',
                                      'color' => 'black'
                                     );
-        $result['content'][] = array('name'=>'费用类型：',
-                                     'value'=> $fylx['name'],
+        $fpsm = array('已到','未到','无票');
+        $result['content'][] = array('name'=>'发票说明：',
+                                     'value'=> $fpsm[$res['fpsm']-1],
                                      'type'=>'date',
                                      'color' => 'black'
                                     );
-        $fkfs = M('yxhb_fkfs')->field('id as val,fk_name as name')->where(array('id' =>$res['nfkfs']))->order('id asc')->find();
+        $result['content'][] = array('name'=>'费用类型：',
+                                     'value'=> $fylx['name']?$fylx['name']:'无',
+                                     'type'=>'date',
+                                     'color' => 'black'
+                                    );
+        $fkfs = M('yxhb_fkfs')->field('id as val,fk_name as name')->where(array('id' =>$res['nfkfs']?$res['nfkfs']:''))->order('id asc')->find();
 
         $result['content'][] = array('name'=>'付款方式：',
-                                     'value'=>$fkfs['name'] ,
+                                     'value'=>$fkfs['name']?$fkfs['name']:'无',
                                      'type'=>'string',
                                      'color' => 'black'
                                     );
@@ -81,9 +87,15 @@ class YxhbCostMoneyLogic extends Model {
                                      'type'=>'number',
                                      'color' => 'black;'
                                     );
+        if( $res['nfylx'] == 0 ){
+            $textdata = M('yxhb_fybx')->field('nr as ntext')->where("left(dh,13)='{$res['dh']}'" )->find();
+        }else{
+            $textdata = M('yxhb_ykfy')->field('ykyt as ntext,skdw')->where("left(dh,13)='{$res['dh']}'" )->find();
+        }
         if($res['nfylx'] != 0){
+            $skdw = $res['skdw']?$res['skdw']:'无';
             $result['content'][] = array('name'=>'收款单位：',
-                                        'value'=>$res['skdw']?$res['skdw']:'无',
+                                        'value'=>$textdata['skdw']?$textdata['skdw']:$skdw,
                                         'type'=>'string',
                                         'color' => 'black'
                                         );
@@ -101,10 +113,22 @@ class YxhbCostMoneyLogic extends Model {
         }
         
         $result['content'][] = array('name'=>'相关说明：',
-                                     'value'=>$res['ntext']?$res['ntext']:'无',
+                                     'value'=>$textdata['ntext']?$textdata['ntext']:'无',
                                      'type'=>'text',
                                      'color' => 'black'
                                     );
+        if(empty($params)){
+            $result['content'][] = array('name'=>'付款记录：',
+                                        'value'=>$this->PayHmtl($id),
+                                        'type'=>'string',
+                                        'color' => 'black'
+                                        );    
+            $result['content'][] = array('name'=>'费用记录：',
+                                        'value'=>$this->fylxHmtl($id),
+                                        'type'=>'string',
+                                        'color' => 'black'
+                                        );
+        }
         $imgsrc = explode('|', $res['att_name']) ;
         $image = array();
         $imgsrc = array_filter($imgsrc);
@@ -128,7 +152,27 @@ class YxhbCostMoneyLogic extends Model {
         );
         return $statArr[$stat];
      }
+     public function fylxHmtl($id){
+        $data = $this->getFylxRecord($id,'yxhb');
+        $html = '';
+        foreach($data as $v){
+            $date = date('Y-m-d',strtotime($v['date']));
+            $html.="<input class='weui-input' type='text' style='color: black; font-weight: 700; ' readonly value='{$date}({$v['man']})'>";
+            $html .= "<input class='weui-input' type='text' style='color: black;' readonly value='费用类型:{$v['fylx']}'>";
+        }
+        return empty($html)?'暂无':$html;
+    }
 
+    public function PayHmtl($id){
+        $data = $this->getPayedRec($id,'yxhb');
+        $html = '';
+        foreach($data as $v){
+            $html.="<input class='weui-input' type='text' style='color: black; font-weight: 700; '  readonly value='{$v['sj_date']}:{$v['njbr']}'>";
+            $html .= "<input class='weui-input' type='text' style='color: black;' 
+                     readonly value='{$v['money']}:{$v['bank']['nb']}-{$v['bank']['ac']}-{$v['bank']['wz']}'>";
+        }
+        return empty($html)?'暂无':$html;
+    }
     /**
      * 删除记录
      * @param  integer $id 记录ID
@@ -163,19 +207,20 @@ class YxhbCostMoneyLogic extends Model {
                                      'value'=> date('m-d H:i',strtotime($res['jl_date'])),
                                      'type'=>'date'
                                     );
-        if( $res['nfylx'] == 0 ){
-            $fybx = M('yxhb_feefy3')->where("left(dh,13)='{$res['dh']}'" )->find();
-            $fylx = M('yxhb_fylx')->field('id as val,fy_name as name')->where(array('id' =>$fybx['nfylx']))->order('id asc')->find(); 
-        }else{
-            $fylx = M('yxhb_fylx')->field('id as val,fy_name as name')->where(array('id' =>$res['nfylx']))->order('id asc')->find(); 
-        }
-        $result[] = array('name'=>'费用类型：',
-                                     'value'=> $fylx['name'] ,
+        // if( $res['nfylx'] == 1 ){
+        //     $fybx = M('yxhb_feefy3')->where("dh='{$res['dh']}'" )->find();
+        //     $fylx = M('yxhb_fylx')->field('id as val,fy_name as name')->where(array('id' =>$fybx['nfylx']))->order('id asc')->find(); 
+        // }else{
+        //     $fylx = M('yxhb_fylx')->field('id as val,fy_name as name')->where(array('id' =>$res['nfylx']))->order('id asc')->find(); 
+        // }
+        $fpsm = array('已到','未到','无票');
+        $result[] = array('name'=>'发票说明：',
+                                     'value'=> $fpsm[$res['fpsm']-1],
                                      'type'=>'number'
                                     );
-        $fkfs = M('yxhb_fkfs')->field('id as val,fk_name as name')->where(array('id' =>$res['nfkfs']))->order('id asc')->find();
+        $fkfs = M('yxhb_fkfs')->field('id as val,fk_name as name')->where(array('id' =>$res['nfkfs']?$res['nfkfs']:''))->order('id asc')->find();
         $result[] = array('name'=>'付款方式：',
-                                     'value'=>$fkfs['name'],
+                                     'value'=>$fkfs['name']?$fkfs['name']:'无',
                                      'type'=>'number'
                                     );
 
@@ -188,8 +233,13 @@ class YxhbCostMoneyLogic extends Model {
                                      'value'=>$res['njbr'],
                                      'type'=>'string'
                                     );
+        if( $res['nfylx'] == 0 ){
+            $textdata = M('yxhb_fybx')->field('nr as ntext')->where("left(dh,13)='{$res['dh']}'" )->find();
+        }else{
+            $textdata = M('yxhb_ykfy')->field('ykyt as ntext')->where("left(dh,13)='{$res['dh']}'" )->find();
+        }
         $result[] = array('name'=>'用款用途：',
-                                     'value'=>$res['ntext']?$res['ntext']:'无',
+                                     'value'=>$textdata['ntext']?$textdata['ntext']:'无',
                                      'type'=>'text'
                                     );
         return $result;
@@ -212,19 +262,23 @@ class YxhbCostMoneyLogic extends Model {
      */
     public function sealNeedContent($id){
         $res    = $this->record($id);
-        if( $res['nfylx'] == 0 ){
-            $fybx = M('yxhb_feefy3')->where("left(dh,13)='{$res['dh']}'" )->find();
-            $fylx = M('yxhb_fylx')->field('id as val,fy_name as name')->where(array('id' =>$fybx['nfylx']))->order('id asc')->find(); 
-        }else{
-            $fylx = M('yxhb_fylx')->field('id as val,fy_name as name')->where(array('id' =>$res['nfylx']))->order('id asc')->find(); 
-        }
-
+        // if( $res['nfylx'] == 1 ){
+        //     $fybx = M('yxhb_feefy3')->where("dh='{$res['dh']}'" )->find();
+        //     $fylx = M('yxhb_fylx')->field('id as val,fy_name as name')->where(array('id' =>$fybx['nfylx']))->order('id asc')->find(); 
+        // }else{
+        //     $fylx = M('yxhb_fylx')->field('id as val,fy_name as name')->where(array('id' =>$res['nfylx']))->order('id asc')->find(); 
+        // }
+        $fpsm = array('已到','未到','无票');
         $first_title    = '申请类型';
         $first_content  = '用款费用';
-        $second_title   = '费用类型';
-        $second_content = $fylx['name'];
+        $second_title   = '发票说明';
+        $second_content = $fpsm[$res['fpsm']-1];
         if($res['nfylx'] == 0)$first_content  = '报销费用';
-
+        if( $res['nfylx'] == 0 ){
+            $textdata = M('yxhb_fybx')->field('nr as ntext')->where("left(dh,13)='{$res['dh']}'" )->find();
+        }else{
+            $textdata = M('yxhb_ykfy')->field('ykyt as ntext')->where("left(dh,13)='{$res['dh']}'" )->find();
+        }
         $result = array(
             'first_title'    => $first_title,
             'first_content'  => $first_content,
@@ -233,7 +287,7 @@ class YxhbCostMoneyLogic extends Model {
             'third_title'    => '用款金额',
             'third_content'  => "&yen;".number_format(-$res['nmoney'],2,'.',',')."元",
             'fourth_title'   => '相关说明',
-            'fourth_content' => $res['ntext']?$res['ntext']:'无',
+            'fourth_content' => $textdata['ntext']?$textdata['ntext']:'无',
             'stat'           => $this->transStat($res['stat']),
         );
         return $result;
@@ -244,7 +298,7 @@ class YxhbCostMoneyLogic extends Model {
      */
     public function submit(){
         $system = 'yxhb';
-        $fylx   = I('post.fylx');
+        $fpsm   = I('post.fpsm');
         $fkfs   = I('post.fkfs');
         $skzh   = I('post.skzh');
         $khyh   = I('post.khyh');
@@ -259,7 +313,7 @@ class YxhbCostMoneyLogic extends Model {
         $dh = $this->getDhId();
         $bm = D('YxDetailAuth')->authGetBmId($system);
         $stat = $sqlx == 1?3:1;
-        $fyfy = $sqlx == 1?0:$fylx;
+        $fyfy = $sqlx == 1?0:'';
         $feefy = array(
             'dh'      => $dh,
             'nmoney'  => -$ykje,
@@ -277,7 +331,8 @@ class YxhbCostMoneyLogic extends Model {
             'att_name2'=> 'image',
             'skzh'     => $skzh,
             'khyh'     => $khyh,
-            'skdw'     => $skdw
+            'skdw'     => $skdw,
+            'fpsm'     => $fpsm,
         );
 
         $feefy3 = array(
@@ -289,7 +344,7 @@ class YxhbCostMoneyLogic extends Model {
             'npeople' => session('name'),
             'ntext'   => $text,
             'nfkfs'   => $fkfs,
-            'nfylx'   => $fylx,
+            'nfylx'   => '',
             'njbr'    => session('name'),
             'nbm'     => $bm,
             'stat'    => $stat,
@@ -439,4 +494,89 @@ class YxhbCostMoneyLogic extends Model {
         $data = D('YxhbAppflowtable')->getConditionStepHtml($modname,$condition);
         return $data;
     }
+        // 费用类型
+        public function getContent(){
+            $id     = I('post.id');
+            $system = I('post.system');
+            $res    = $this->recordContent($id,'fylx');
+            $boss   = D($system.'Boss');
+            $avatar = $boss->getAvatar($res['applyerID']);
+            $res['avatar'] = $avatar;
+            $res['fylx'] = $this->getFylx();
+            $res['fylxRecord'] = $this->getFylxRecord();
+            return $res;
+        }
+        // 获取费用类型记录
+        public function getFylxRecord($id,$system){
+            $id     = $id?$id:I('post.id');
+            $system = $system?$system:I('post.system');
+            if(empty($id)) return ;
+            $tmp = array();
+            $fylxrecord = M($system.'_fylx_record a')
+                        ->join($system.'_fylx b on a.fylx=b.id')
+                        ->field('b.fy_name as fylx,a.date,a.man')
+                        ->where(array('a.stat' => 1,'a.aid' => $id))
+                        ->order('a.date desc')
+                        ->select();
+            foreach($fylxrecord as $k=>$v){
+                $fylxrecord[$k]['date'] = date('Y-m-d',strtotime($v['date']));
+            }
+            return $fylxrecord;
+        }
+        // 费用类型提交
+        public function submitoffylx(){
+            $id     = I('post.id');
+            $system = I('post.system');
+            $fylx   = I('post.fylx');
+            $data   = array(
+                'date' => date('Y-m-d H:i:s',time()),
+                'man'  => session('name'),
+                'fylx' => $fylx,
+                'aid'  => $id,
+            );
+            if(!M("{$system}_fylx_record")->autoCheckToken($_POST)) return array('code' => 404,'msg' => '网络延迟，请勿点击提交按钮！');
+            // 检查费用类型
+            $save = array('nfylx' => $fylx);
+            $res = $this->record($id);
+            if($res['nfylx'] != 0){
+                M($system.'_feefy')->where("id={$id}")->save($save);
+            }
+            M($system.'_feefy3')->where("left(dh,13)='{$res['dh']}'")->save($save);
+            $result = M("{$system}_fylx_record")->add($data);
+            if(!$result) return array('code' => 404,'msg' => '提交失败，请重新尝试！');
+            return array('code' => 200,'msg' => '提交成功' , 'aid' =>$result);
+        }
+        public function getPayedRec($id,$system)
+        {
+            $flag   = $id?1:0;
+            $id     = $id?$id:I('post.id');
+            $system = $system?$system:I('post.system');
+            $map = array(
+                'a.id' => $id,
+                'b.stat' => 1,
+            );
+            $data = M($system.'_feefy a')
+                    ->join("{$system}_feefy2 b on a.dh=b.dh")
+                    ->where($map)
+                    ->select();
+            foreach($data as $k=>$v){
+                $bank = M("{$system}_bank")->where(array('id' => $v['nbank']))->find();
+                $bl         = strlen($bank['bank_account'])-4;
+                $nbank      = $bl <=4 ? $bank['bank_account']:substr($bank['bank_account'],$bl);
+                $temp['ac'] = $nbank;
+                $temp['wz'] = $this->getbklx($bank['bank_lx_sub']);
+                $temp['nb'] = $bank['bank_name'];
+                $data[$k]['money'] = "&yen;".number_format(-$v['nmoney'],2,'.',',');
+                $data[$k]['bank'] = $temp;
+            }
+            return $data;
+        }
+        public function getbklx($lx){
+            if($lx==1) $bklx='基本户';
+            elseif($lx==2) $bklx='一般户';
+            elseif($lx==3) $bklx='临时户';
+            elseif($lx==4) $bklx='自开';
+            elseif($lx==5) $bklx='外开';
+            return $bklx;
+        }
 }

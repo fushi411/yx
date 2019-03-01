@@ -10,10 +10,7 @@
            $("p:contains('查看客户调价')").children('span :eq(1)').css('style','cursor: pointer');
            $("p:contains('查看客户调价')").children('span :eq(1)').click(function () {
                viewSalesPlan(id,'view');
-               // alert('信息中心还在调整中，可先点击查看调价内容');
            })
-
-
         })
 
         // 获取URL参数
@@ -24,15 +21,17 @@
         }
 
 
-
-
         function viewSalesPlan(id,type){
-            var url = 'https://www.fjyuanxin.com/sngl/view_guest_tj_info.php?id='+id+"&type="+type;
-            // var url = 'view_guest_tj_info.php?id='+id+"&type="+type;
-            // var url = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx133a00915c785dec&redirect_uri=http%3a%2f%2fwww.fjyuanxin.com%2fsngl%2findex_redirect.php?url="+url+"&response_type=code&scope=snsapi_base&state=STATE#wechat_redirect";
-
+            //需要判断是否是用浏览器打开这个链接的
+            if(isWeiXin()==true){
+                var url = 'view_guest_tj_info.php?id='+id+"&type="+type;
+                // https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx133a00915c785dec&redirect_uri=http%3a%2f%2fwww.fjyuanxin.com%2fsngl%2findex_index.php&response_type=code&scope=snsapi_base&state=STATE#wechat_redirect
+                var url = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx133a00915c785dec&redirect_uri=http%3a%2f%2fwww.fjyuanxin.com%2fsngl%2findex_redirect.php?url="+url+"&response_type=code&scope=snsapi_base&state=STATE#wechat_redirect";
+            }else{
+                var url = 'https://www.fjyuanxin.com/sngl/view_guest_tj_info.php?id='+id+"&type="+type;
+            }
             var areaArr =  ['750px', '450px'];
-            if( window.innerHeight > 600 ) areaArr =  ['550px', '650px'];
+            if( window.innerHeight > 600 ) areaArr =  ['550px', '650px '];
             layer.open({
                 type: 2,
                 title: '查看客户调价',
@@ -46,6 +45,16 @@
 
                 }
             })
+        }
+
+        //判断是否是微信内置的浏览器
+        function isWeiXin(){
+            var ua = window.navigator.userAgent.toLowerCase();
+            if(ua.match(/MicroMessenger/i) == 'micromessenger'){
+                return true;
+            }else{
+                return false;
+            }
         }
 
     </script>>

@@ -32,6 +32,7 @@ class SeekModel extends Model {
                 'table_name' => $val['mod_table']     , 
                 'id'         => $val['mod_id']        , 
                 'stat'       => $val['mod_stat']      , 
+                'mod'        => $val['mod_show_name'] , 
                 'submit'     => array('name' => $val['mod_name'] ,'stat' => (int)($val['mod_stat_value'] ) ),
                 'copy_field' => $field                ,
             );
@@ -69,6 +70,7 @@ class SeekModel extends Model {
                 'table_name' => $val['mod_table']     , 
                 'id'         => $val['mod_id']        , 
                 'stat'       => $val['mod_stat']      , 
+                'mod'        => $val['mod_show_name'] , 
                 'submit'     => array('name' => $val['mod_name'] ,'stat' => (int)($val['mod_stat_value'] ) ),
                 'copy_field' => $field                ,
             );
@@ -95,7 +97,8 @@ class SeekModel extends Model {
                 'mod_name'   => $val['name'] , 
                 'table_name' => $val['mod_table'] , 
                 'id'         => $val['mod_id'] , 
-                'stat'       => $val['mod_stat'] , 
+                'stat'       => $val['mod_stat'] ,
+                'mod'        => $val['mod_show_name'] ,  
                 'submit'     => array('name' => $val['mod_name'] ,'stat' => (int)($val['mod_stat_value'] ) ),
                 'copy_field' => $field
             );

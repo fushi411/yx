@@ -127,8 +127,9 @@ class KkAppflowtableModel extends Model {
                      'title'=>$res[0]['pro_name']
                     ); 
     }
-    public function getStepInfo($pro_id, $stage)
+    public function getStepInfo($pro_id, $stage,$mod)
     {
+        $map['pro_mod'] = $mod;
         $map['pro_id'] = $pro_id;
         $map['stage_id'] = $stage;
         $map['stat'] = 1;

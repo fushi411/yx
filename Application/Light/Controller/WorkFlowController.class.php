@@ -47,9 +47,9 @@ class WorkFlowController extends BaseController {
       $nowStepArr = $appflowproc->getStepInfo($flowName, $id, $pid); 
       // 获取下一审批步骤数(似乎没用了)
       $appflowtable = D($systemU.'Appflowtable');
-      $tableStepArr = $appflowtable->getStepInfo($nowStepArr['pro_id'], $nowStepArr['app_stage']);
+      $tableStepArr = $appflowtable->getStepInfo($nowStepArr['pro_id'], $nowStepArr['app_stage'],$flowName);
       //获取下一审批流程(似乎没用了)
-      $getNext = $appflowtable->getStepInfo($nowStepArr['pro_id'], $tableStepArr['stage_next']);
+      $getNext = $appflowtable->getStepInfo($nowStepArr['pro_id'], $tableStepArr['stage_next'],$flowName);
       // 更新当前审批记录
       $is_done2 = $appflowproc->updateProc($nowStepArr['id'], $option, $word,$img);
       //申请人ID  

@@ -116,7 +116,7 @@ class YxhbfhdelApplyLogic extends Model {
     }
 
     /**
-     * 撤銷申請調用的方法
+     * 撤销申请调用的方法
      * @param  integer $id 记录ID
      */
     public function delRecord($id)

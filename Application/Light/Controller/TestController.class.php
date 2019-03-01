@@ -8,10 +8,18 @@ class TestController extends \Think\Controller {
         header('Content-Type: text/html; charset=utf-8');
         // iconv('gbk','UTF-8',$v['approve']),
         //$data = D('KkAppflowtable')->getConditionStepHtml($modname,$condition);
-        $system = 'yxhb';
-        $mod_name = 'TempCreditLineApply';
-        $id = I('get.id');
         
+        $flowName ='CostMoney';
+        $id = '6260' ;
+        $pid ='';
+        $option ='2';
+        $word ='';
+        $applyUser='';
+        $system = 'yxhb';
+        $systemU = ucfirst($system);
+        $appflowproc = D($systemU.'Appflowproc');
+        $sameProcQuery = $appflowproc->getSameProcNum($flowName, $id, 2);
+        dump($sameProcQuery);
     }
 
     public function reData($data){

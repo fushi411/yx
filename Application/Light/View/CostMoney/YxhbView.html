@@ -74,23 +74,20 @@
         </div>
         <div class="weui-cell weui-cell_select weui-cell_select-after">
             <div class="weui-cell__hd">
-                <label class="weui-label">费用类型&nbsp;&nbsp;
+                <label class="weui-label">发票说明&nbsp;&nbsp;
                         <span style="color:red;">*</span>
                 </label>
             </div>
             <div class="weui-cell__bd">
-                <select class="weui-select greyColor" name="type" id='fylx'>
-                    <option value='-1' disabled selected style='display:none;'>请选择费用类型</option>
-                    <option value="56">PVC项目费用</option>
+                <select class="weui-select greyColor" name="type" id='fpsm'>
+                    <option value='-1' disabled selected style='display:none;'>请选择发票说明</option>
+                    <option value="1">已到</option>
+                    <option value="2">未到</option>
+                    <option value="3">无票</option>
                 </select>
-                <if condition="$CueConfig">
-                    <a href="{:U('Light/Config/Dispenser',array('robot'=>'fylxList','system' => $system ,'modname' => $modname))}">
-                        <i class="iconfont icon-xiugai" style="font-size: 18px;vertical-align: middle;position: absolute;top: 0.6em;right: 0.5em;z-index: 200;"></i>
-                    </a>
-                </if>
             </div>
         </div>
-        <div class="weui-cell weui-cell_select weui-cell_select-after">
+        <!-- <div class="weui-cell weui-cell_select weui-cell_select-after">
             <div class="weui-cell__hd">
                 <label class="weui-label">付款方式&nbsp;&nbsp;
                         <span style="color:red;">*</span>
@@ -102,7 +99,7 @@
                     <option value="建设银行">建设银行</option>
                 </select>
             </div>
-        </div>
+        </div> -->
       
     </div>
     <div class="weui-cells">
@@ -219,7 +216,6 @@ var label = "所属月份&nbsp;&nbsp;<span style='color:red;'>*</span>",
                 url: "{:U('Light/Api/CostMoneyApi')}",
                 dataType: 'json',
                 data: {
-                    fylx   : $('#fylx').val(),
                     system : "{$system}",
                     modname: 'CostMoney',
                     action : 'getProHtml',
@@ -230,35 +226,31 @@ var label = "所属月份&nbsp;&nbsp;<span style='color:red;'>*</span>",
                 }
             });
         }
-        $('#fylx').change(function(){
-            getProHtml();
-        }),
+        
         // 获取显示的参数 用款部门，付款方式等
-        getSomeData();
-        function getSomeData(){
-            $.ajax({
-                type: 'POST',
-                url: "{:U('Light/Api/CostMoneyApi')}",
-                dataType: 'json',
-                data: {
-                    system: "{$system}",
-                    modname: 'CostMoney',
-                    action: 'getSomeData',
-                },
-                dataType: 'json',
-                success: function (res) {
+        // getSomeData();
+        // function getSomeData(){
+        //     $.ajax({
+        //         type: 'POST',
+        //         url: "{:U('Light/Api/CostMoneyApi')}",
+        //         dataType: 'json',
+        //         data: {
+        //             system: "{$system}",
+        //             modname: 'CostMoney',
+        //             action: 'getSomeData',
+        //         },
+        //         dataType: 'json',
+        //         success: function (res) {
 
-                    makeHtml(res);
-                }
-            });
-        }
-        // 生成选项
-        function makeHtml(data){
-            //makeoption(data.bm,$('#bm'),'用款部门');
-            makeoption(data.fkfs,$('#fkfs'),'付款方式');
-            makeoption(data.fylx,$('#fylx'),'费用类型');
-
-        }
+        //             makeHtml(res);
+        //         }
+        //     });
+        // }
+        // // 生成选项
+        // function makeHtml(data){
+        //     //makeoption(data.bm,$('#bm'),'用款部门');
+        //     makeoption(data.fkfs,$('#fkfs'),'付款方式');
+        // }
         function makeoption(data,dom,text){
             var html = '';
             for( x in data ){
@@ -700,17 +692,20 @@ var label = "所属月份&nbsp;&nbsp;<span style='color:red;'>*</span>",
     $('#sqlx').change(function(){
         if($(this).val() == 1){
             $('.sqlx').hide();
+            $('#fpsm').val(-1);
+            $('#fpsm').find('option[value=2]').hide();
         }else{
             $('.sqlx').show();
             $('#skzh').val('');
             $('#khyh').val('');
             $('#skdw').val('');
+            $('#fpsm').find('option[value=2]').show();
         }
     });
     $('#submit').click(function () {
             var datetime = $('#showDatePicker').val(),
-                fylx = $('#fylx').val(),
-                fkfs = $('#fkfs').val(),
+                fpsm = $('#fpsm').val(),
+                fkfs = '',//$('#fkfs').val(),
                 skzh = $('#skzh').val(),
                 khyh = $('#khyh').val(),
                 skdw = $('#skdw').val(),
@@ -718,9 +713,9 @@ var label = "所属月份&nbsp;&nbsp;<span style='color:red;'>*</span>",
                 sqlx = $('#sqlx').val(),
                 file_names = $('#file_names').val();
             
-            if (fylx == -1 || !fylx) return tooltip('请选择费用类型');
-            if (fkfs == -1 || !fkfs) return tooltip('请选择付款方式');
-           
+            if (fpsm == -1 || !fpsm) return tooltip('请选择发票说明');
+            //if (fkfs == -1 || !fkfs) return tooltip('请选择付款方式');
+            //if(fpsm == 3 && fkfs != 4) return tooltip('无票只能选择现金支付');
             if (!ykje || ykje<=0 ) return tooltip('用款金额不能为空或小于零');
             if(sqlx != 1){
                 if (!skdw ) return tooltip('请输入收款单位');
@@ -737,7 +732,7 @@ var label = "所属月份&nbsp;&nbsp;<span style='color:red;'>*</span>",
                 dataType: 'json',
                 data: {
                     sqlx: sqlx,
-                    fylx: fylx,
+                    fpsm: fpsm,
                     fkfs: fkfs,
                     skzh: skzh,
                     khyh: khyh,

@@ -294,7 +294,15 @@ class ApiController extends BaseController {
         $res = $logic->$action();
         $this->ajaxReturn($res);
     }
-
+    // 供应商添加 
+    public function AddGysApi(){
+        $system = I('system');
+        $mod    = I('modname');
+        $action = I('action');
+        $logic = D(ucfirst($system).$mod ,'Logic');
+        $res = $logic->$action();
+        $this->ajaxReturn($res);
+    }
 
 
 }

@@ -85,14 +85,16 @@ class WxMessageModel extends Model {
         $url = $this->mUrl."m=Light&c=Seek&a=myApprove&system=kk";
         if($mod == 'CostMoney') $url = $this->mUrl.'m=Light&c=Seek&a=myApprove&cost=1&system=yxhb';
         $boss = D($system.'_boss')->getWXFromID($per_id);
-        $description = "您有{$num}个流程需要审批";
+        $description = "您有{$num['num']}个流程需要审批";
+        foreach($num['data'] as $val){
+            $description .="\n{$val['name']}:{$val['num']}次";
+        }
         $receviers = $this->getFiexMan('|');
         $receviers.= $boss;
         $agentid = $mod == 'CostMoney'?1000049:15;
         $info = $this->wx->sendCardMessage($receviers,$title,$description,$url,$agentid,$mod,$system);
         return $info;
     }
-
     // 撤销通知 - 撤销推送，排除本人
     public function delRecordSendMessage($system,$mod,$id,$reason){
         $temrecevier = $this->getAllCurrentProcessPeople($system,$mod,$id,1);
