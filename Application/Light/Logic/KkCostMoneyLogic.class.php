@@ -60,13 +60,14 @@ class KkCostMoneyLogic extends Model {
                                      'color' => 'black'
                                     );
         $fpsm = array('已到','未到','无票');
+        $color = $res['fpsm']-1==1?'#f12e2e':'black';
         $result['content'][] = array('name'=>'发票说明：',
                                      'value'=> $fpsm[$res['fpsm']-1],
                                      'type'=>'date',
-                                     'color' => 'black'
+                                     'color' => $color
                                     );
         $result['content'][] = array('name'=>'费用类型：',
-                                     'value'=> $fylx['name']?$fylx['name']:'无',
+                                     'value'=> $fylx['name']?$fylx['name']:'未提交',
                                      'type'=>'date',
                                      'color' => 'black'
                                     );
@@ -74,7 +75,7 @@ class KkCostMoneyLogic extends Model {
         $fkfs = M('kk_fkfs')->field('id as val,fk_name as name')->where(array('id' =>$res['nfkfs']?$res['nfkfs']:''))->order('id asc')->find();
         
         $result['content'][] = array('name'=>'付款方式：',
-                                     'value'=>$fkfs['name']?$fkfs['name']:'无' ,
+                                     'value'=>$fkfs['name']?$fkfs['name']:'未提交' ,
                                      'type'=>'string',
                                      'color' => 'black'
                                     );
@@ -104,7 +105,7 @@ class KkCostMoneyLogic extends Model {
             $result['content'][] = array('name'=>'收款账号：',
                                         'value'=>$res['skzh']?$res['skzh']:'无',
                                         'type'=>'string',
-                                        'color' => 'black'
+                                        'color' => $res['skzh']?'black;font-weight:550;':'black',
                                         );    
             $result['content'][] = array('name'=>'开户银行：',
                                         'value'=>$res['khyh']?$res['khyh']:'无',
@@ -183,6 +184,7 @@ class KkCostMoneyLogic extends Model {
     public function delRecord($id)
     {
         $data = $this->record($id);
+        if($data['stat'] == 2) return 'failure';
         $map = array("left(dh,13)='{$data['dh']}'" );
         M('kk_feefy3')->field(true)->where($map)->setField('stat',0);
         if($data['nfylx'] == 1){
@@ -223,12 +225,12 @@ class KkCostMoneyLogic extends Model {
                                     );
         $fkfs = M('kk_fkfs')->field('id as val,fk_name as name')->where(array('id' =>$res['nfkfs']?$res['nfkfs']:''))->order('id asc')->find();
         $result[] = array('name'=>'付款方式：',
-                                     'value'=>$fkfs['name']?$fkfs['name']:'无',
+                                     'value'=>$fkfs['name']?$fkfs['name']:'未提交',
                                      'type'=>'number'
                                     );
 
         $result[] = array('name'=>'用款金额：',
-                                     'value'=>-$res['nmoney'],
+                                     'value'=> number_format(-$res['nmoney'],2,'.',',')."元",
                                      'type'=>'number'
                                     );
 
@@ -293,6 +295,8 @@ class KkCostMoneyLogic extends Model {
             'fourth_title'   => '相关说明',
             'fourth_content' => $textdata['ntext']?$textdata['ntext']:'无',
             'stat'           => $this->transStat($res['stat']),
+            'applyerName'    => $res['njbr'],
+
         );
         return $result;
     }
@@ -312,11 +316,13 @@ class KkCostMoneyLogic extends Model {
         $sqlx   = I('post.sqlx');
         $copyto_id = I('post.copyto_id');
         $imagepath = I('post.imagepath');   
-        
+        // 流程检验
+        $pro = D('KkAppflowtable')->havePro('CostMoney','');
+        if(!$pro) return array('code' => 404,'msg' => '无审批流程,请联系管理员');
         if(!M($system.'_feefy')->autoCheckToken($_POST)) return array('code' => 404,'msg' => '网络延迟，请勿点击提交按钮！');
         $dh = $this->getDhId();
         $bm = D('YxDetailAuth')->authGetBmId($system);
-        $stat = $sqlx == 1?3:1;
+        $stat = $sqlx == 1?2:1;
         $fyfy = $sqlx == 1?1:'';
         $feefy = array(
             'dh'      => $dh,

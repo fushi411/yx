@@ -134,7 +134,7 @@ class KkContractApplyLogic extends Model {
         return $result;
     }
     public function getYyHtml($data){
-        $field = 'id,ht_bzfs,ht_cate,ht_wlfs,ht_yf,ht_dj';
+        $field = 'id,ht_bzfs,ht_cate,ht_wlfs,ht_yf,ht_dj,ht_khmc,ht_stday,ht_enday';
         $map   = array(
             'ht_stat'  => 2,
             'ht_enday' => array('gt',date('Y-m-d',strtotime($data['ht_date']))),
@@ -143,6 +143,17 @@ class KkContractApplyLogic extends Model {
         );
         $info = M('kk_ht')->field($field)->where($map)->order('ht_cate,ht_enday desc')->select();
         $info = $this->infoSort($info);
+        foreach($info as $key => $val){
+            $map  = array(
+                'tj_stat'   => 2,
+                'tj_client' => $val['ht_khmc'],
+                'tj_cate'   => $val['ht_cate'],
+                'tj_bzfs'   => $val['ht_bzfs'],
+                'tj_wlfs'   => $val['ht_wlfs'],
+            ); 
+            $res = M('kk_tj')->where($map)->order('tj_da desc')->find();
+            $info[$key]['ht_dj'] = $res['tj_dj'];
+        }
         if(empty($info)) return '无';
         $html = '';
         foreach($info as $k => $v){
@@ -154,7 +165,7 @@ class KkContractApplyLogic extends Model {
         }
         return $html;
     }
- 
+    
     public function getDetailHtml($id){
         $field = 'id,ht_bzfs,ht_cate,ht_wlfs,ht_yf,ht_dj';
         $map   = array(
@@ -191,6 +202,7 @@ class KkContractApplyLogic extends Model {
             'third_title'    => '相关说明',
             'third_content'  => $res['ht_bz']?$res['ht_bz']:'无',
             'stat'           => $this->transStat($res['ht_stat']),
+            'applyerName'    => $res['ht_rdy'],
         );
         return $result;
     }
@@ -233,15 +245,14 @@ class KkContractApplyLogic extends Model {
 
 
     /**
-     * 备案客户获取
+     * 有效+冻结 所有客户
      * @param string $data  拼音缩写
      * @return array $res   备案客户结果
      */
     public function getCustomerList(){
         $keyWord = I('math');
-        $model   = D('Guest');
-        $data    = $model->getKkrecordUser($keyWord);
-        return $data;
+        $res = D('Guest')->getGuest('kk',$keyWord,'ContractApply');
+        return $res;
     }
     
     /**
@@ -253,7 +264,7 @@ class KkContractApplyLogic extends Model {
         $id = I('post.user_id');
         $map = array(
             'reid'=>$id,
-            'g_stat3'=>1
+            //'g_stat3'=>1
         );
         $data = array();
         $res = M('kk_guest2')->field('id,g_name')->where($map)->select();
@@ -277,7 +288,7 @@ class KkContractApplyLogic extends Model {
     public function getGuestInfo(){
         $id    = I('post.user_id');
         $today = date('Y-m-d',time());
-        $field = 'id,ht_bzfs,ht_cate,ht_wlfs,ht_yf,ht_dj';
+        $field = 'id,ht_bzfs,ht_cate,ht_wlfs,ht_yf,ht_dj,ht_khmc';
         $map   = array(
             'ht_stat'  => 2,
             'ht_enday' => array('egt',$today),
@@ -289,6 +300,18 @@ class KkContractApplyLogic extends Model {
                     ->order('ht_cate,ht_enday desc')
                     ->select();
         $info = $this->infoSort($info);
+       
+        foreach($info as $key =>$val){
+            $map  = array(
+                'tj_stat'   => 2,
+                'tj_client' => $val['ht_khmc'],
+                'tj_cate'   => $val['ht_cate'],
+                'tj_bzfs'   => $val['ht_bzfs'],
+                'tj_wlfs'   => $val['ht_wlfs'],
+            ); 
+            $res = M('kk_tj')->where($map)->order('tj_da desc')->find();
+            $info[$key]['ht_dj'] = $res['tj_dj']?$res['tj_dj']:$info[$key]['ht_dj'];
+        }
         return $info; 
     }
     public function infoSort($data){
@@ -355,6 +378,9 @@ class KkContractApplyLogic extends Model {
         $idArr                = $this->getPid();
         $first_day            = date('Y-m-01',time());
         $next_month_last_day  = date("Y-m-d",strtotime("$first_day +2 month -1 day"));
+        // 流程检验
+        $pro = D('KkAppflowtable')->havePro('ContractApply','');
+        if(!$pro) return array('code' => 404,'msg' => '无审批流程,请联系管理员');
         if(!M('kk_ht')->autoCheckToken($_POST)) return array('code' => 404,'msg' => '网络延迟，请勿点击提交按钮！');
         $temp = array(
             'pid'         => $idArr[0],

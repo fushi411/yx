@@ -4,7 +4,7 @@ use Think\Model;
 use  Vendor\Overtrue\Pinyin\Pinyin;
 
 /**
- * 建材新增总客户
+ * 建材新增子客户
  * @author 
  */
 
@@ -268,6 +268,7 @@ class KkContractguestApply2Logic extends Model {
             'third_title'    => '相关说明',
             'third_content'  => $res['g_xmmc']?$res['g_xmmc']:'无',
             'stat'           => $res['g_stat3'],
+            'applyerName'    => $res['sales'],
         );
         return $result;
     }
@@ -401,6 +402,9 @@ class KkContractguestApply2Logic extends Model {
             'g_jsfs'=>$g_sljs,          //结算方式
             'g_beian'=>$check_isbeian,   //是否来自备案，备案客户的ID，空代表不是，其他数值代表是
         );
+        // 流程检验
+        $pro = D('KkAppflowtable')->havePro('Contract_guest_Apply2','');
+        if(!$pro) return array('code' => 404,'msg' => '无审批流程,请联系管理员');
         //$_POST    提交数据的方式为post
         if(!M('kk_guest2')->autoCheckToken($_POST)) return array('code' => 404,'msg' => '网络延迟，请勿点击提交按钮！');    //在Model.class.php中，自动表单令牌验证
         $result = M('kk_guest2')->add($res);
@@ -527,7 +531,8 @@ class KkContractguestApply2Logic extends Model {
         $name = I('post.name');
         $map = array(
             'g_name' => $name,
-            'g_stat3'=>1
+            'g_stat3'=>1,
+            'reid'=> array('neq',0)
         );
         $data = M('kk_guest2')->where($map)->find();
         if(empty($data)) return true;

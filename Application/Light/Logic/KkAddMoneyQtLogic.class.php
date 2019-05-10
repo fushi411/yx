@@ -250,6 +250,7 @@ class KkAddMoneyQtLogic extends Model {
             'third_title'    => '相关说明',
             'third_content'  => $res['ntext']?$res['ntext']:'无',
             'stat'           => $res['stat'],
+            'applyerName'    => $res['npeople'],
         );
         return $result;
     }
@@ -413,7 +414,6 @@ class KkAddMoneyQtLogic extends Model {
         if(!$fkfs)     return  array('code' => 404,'msg' => '请选择收款方式');
         if(!$bank) return  array('code' => 404,'msg' => '请选择收款银行');
         if(!$money || $money<0) return  array('code' => 404,'msg' => '收款金额不能为空或小于零');
-      
         $dh = $this->makeDh();
         $feeData = array(
 			'dh'      => $dh,
