@@ -61,16 +61,11 @@ class YxhbSalesRefundApplyLogic extends Model {
                                      'color' => 'black'
                                     );
        $result['content'][] = array('name'=>'退款金额：',
-                                     'value'=>"&yen;".number_format($res['nmoney'],2,'.',',')."元" ,
+                                     'value'=>"&yen;".number_format(-$res['nmoney'],2,'.',',')."元" ,
                                      'type'=>'date',
-                                     'color' => 'black'
+                                     'color' => '#f12e2e'
                                     );
-        $skfsArr = array(4 => '现金',2 => '公司账户', 3 => '承兑汇票');
-        $result['content'][] = array('name'=>'退款方式：',
-                                     'value'=> $skfsArr[$res['nfkfs']],
-                                     'type'=>'date',
-                                     'color' => 'black'
-                                    );
+      
         $result['content'][] = array('name'=>'本月累计：',
                                      'value'=> "&yen;".number_format($this->getTheMonthRec($dtg['gid'],$res['sj_date']),2,'.',',')."元",
                                      'type'=>'date',
@@ -84,33 +79,31 @@ class YxhbSalesRefundApplyLogic extends Model {
                                         'color' => '#337ab7'
                                     );
         }
-
-        list($ysye,$flag) = $this->getYsye($res);
-        $ysye = $res['ysye']?$res['ysye']:$ysye;
-        $color = 'black';
-        if($flag) $color = '#f12e2e';
+        
+        list($ysye,$color) = $this->getYsye($res);
         $result['content'][] = array('name'=>'应收余额：',
-                                     'value'=> "&yen;".number_format($ysye,2,'.',',')."元" ,
+                                     'value'=>$ysye ,
                                      'type'=>'date',
                                      'color' => $color
                                     );
-        
-        $bankinfo = M('yxhb_bank')->where(array('id' => $res['nbank']))->find();
-        $bl    = mb_strlen($bankinfo['bank_account'])-4;
-        $bname = mb_substr($bankinfo['bank_account'],$bl,mb_strlen($bankinfo['bank_account']),'utf-8');
-        
-        if(!$bname) $bname = $bankinfo['bank_account'];
-
-        if(!$bankinfo['bank_text']){
-            $name  = "{$bankinfo['bank_name']}-{$bname}";
-        }else{
-            $name  = $bankinfo['bank_name']."-".$bname."-".$this->getbklx($bankinfo['bank_lx_sub']);
-        }
-        $result['content'][] = array('name'=>'退款银行：',
-                                     'value'=>$name,
+        $sk = M('yxhb_xs_sk')->where(array('dh' => $res['dh']))->find();
+        $result['content'][] = array('name'=>'退款单位：',
+                                     'value'=>$sk['skdw']?$sk['skdw']:'无',
                                      'type'=>'date',
                                      'color' => 'black'
                                     );
+                                    
+        $result['content'][] = array('name'=>'退款账号：',
+                                     'value'=>$sk['skzh']?$sk['skzh']:'无',
+                                     'type'=>'date',
+                                     'color' => 'black'
+                                    );
+        $result['content'][] = array('name'=>'开户银行：',
+                                     'value'=>$sk['khyh']?$sk['khyh']:'无',
+                                     'type'=>'date',
+                                     'color' => 'black'
+                                    );
+
         $result['content'][] = array('name'=>'相关说明：',
                                      'value'=>$res['ntext']?$res['ntext']:'无',
                                      'type'=>'date',
@@ -122,10 +115,21 @@ class YxhbSalesRefundApplyLogic extends Model {
         $result['imgsrc'] = '';
         $result['applyerID'] = D('YxhbBoss')->getIDFromName($res['npeople']);
         $result['applyerName'] = $res['npeople'];
-        $result['stat'] = $res['stat'];
+        $result['stat'] = $this->transStat($res['stat']);
         return $result;
     }
-
+    // 状态值转换
+    public function transStat($stat){
+        $statArr = array(
+            3 => 2,
+            4 => 2,
+            5 => 1,
+            2 => 2,
+            1 => 1,
+            0 => 0
+        );
+        return $statArr[$stat];
+     }
     public function getHp($dh){
         $data = M('yxhb_cdhp')->where(array('odh' => $dh  , 'stat' => array('neq',0) ))->find();
         $data['ntext'] = $data['ntext']?$data['ntext']:'无';
@@ -208,17 +212,6 @@ class YxhbSalesRefundApplyLogic extends Model {
                                      'value'=>number_format(-$res['nmoney'],2,'.',',')."元",
                                      'type'=>'number'
                                     );
-        $skfsArr = array(4 => '现金',2 => '公司账户', 3 => '承兑汇票');
-        $result[] = array('name'=>'付款方式：',
-                                     'value'=>$skfsArr[$res['nfkfs']],
-                                     'type'=>'number'
-                                    );
-        if($res['nfkfs'] == 3 && $res['stat'] == 1){
-            $result[] = array('name'=>'剩余期限：',
-                                     'value'=>$this->gethpdate($res['dh']),
-                                     'type'=>'number'
-                                    );
-        }
         $result[] = array('name'=>'本月累计：',
                                      'value'=>number_format($this->getTheMonthRec($dtg['gid'],$res['sj_date']),2,'.',',')."元",
                                      'type'=>'number'
@@ -301,7 +294,8 @@ class YxhbSalesRefundApplyLogic extends Model {
             'third_content'  => "&yen;".number_format($this->getTheMonthRec($dtg['gid'],$res['sj_date']),2,'.',',')."元",
             'fourth_title'   => '相关说明',
             'fourth_content' => $res['ntext']?$res['ntext']:'无',
-            'stat'           => $res['stat'],
+            'stat'           => $this->transStat($res['stat']),
+            'applyerName'    => $res['npeople'],
         );
         return $result;
     }
@@ -484,8 +478,9 @@ class YxhbSalesRefundApplyLogic extends Model {
      * 数据提交
      */
     public function submit(){
-        $fkfs      = I('post.fkfs');
-        $bank      = I('post.bank');
+        $skzh   = I('post.skzh');
+        $khyh   = I('post.khyh');
+        $skdw   = I('post.skdw');
         $money     = I('post.money');
         $jbr       = I('post.jbr');
         $jbr       = str_replace('X','',$jbr);
@@ -498,11 +493,11 @@ class YxhbSalesRefundApplyLogic extends Model {
         $sign_arr  = array_filter($sign_arr);// 去空
         $sign_arr  = array_unique($sign_arr); // 去重
         if(!$datetime) return  array('code' => 404,'msg' => '请选择退款时间');
-        if(!$fkfs)     return  array('code' => 404,'msg' => '请选择退款方式');
         if(!$user)  return  array('code' => 404,'msg' => '请选择退款单位');
-        if(!$bank) return  array('code' => 404,'msg' => '请选择退款银行');
         if(!$money ) return  array('code' => 404,'msg' => '退款金额不能为空');
-        // 应收余额
+        // 流程检验
+        $pro = D('YxhbAppflowtable')->havePro('SalesRefundApply','');
+        if(!$pro) return array('code' => 404,'msg' => '无审批流程,请联系管理员');
         $ysye = I('post.ysye');
         $ysye = str_replace(',','',$ysye);
         $ysye = str_replace('¥','',$ysye);
@@ -511,18 +506,23 @@ class YxhbSalesRefundApplyLogic extends Model {
 			'dh'      => $dh,
 			'sj_date' => date('Y-m-d',strtotime($datetime)),
 			'nmoney'  => -$money,
-			'nbank'   => $bank,
+			'nbank'   => '',
 			'jl_date' => date('Y-m-d H:i:m',time()),
 			'npeople' => session('name'),
 			'ntext'   => $text,
-			'nfkfs'   => $fkfs,
-			'nfylx'   => '',
-			'njbr'    => $jbr,
+			'nfkfs'   => '',
+            'nfylx'   => '', 
+			'njbr'    => session('name'),
 			'nbm'     => 5,
-            'stat'    => 2,
+            'stat'    => 4,
             'ysye'    => $ysye
 		);
-        //return array('code' => 404,'msg' => '测试中，请稍等',$feeData);
+        $xs_sk = array(
+            'dh' => $dh,
+            'skzh' => $skzh,
+            'khyh' => $khyh,
+            'skdw' => $skdw,
+        );
         $user_other_name = I('post.user_other_name');
         $user_other_name = $user_other_name ?$user_other_name:$this->getGuest($user);
 		$dtgData = array(
@@ -530,11 +530,11 @@ class YxhbSalesRefundApplyLogic extends Model {
 			'gid' => $user,
 			'ang' => $user_other_name
         );
-        
         if(!M('yxhb_feexs')->autoCheckToken($_POST)) return array('code' => 404,'msg' => '网络延迟，请勿点击提交按钮！');
 
         $result = M('yxhb_feexs')->add($feeData);
-		M('yxhb_dtg')   -> add($dtgData);
+        M('yxhb_xs_sk')-> add($xs_sk);
+		M('yxhb_dtg')-> add($dtgData);
         if(!$result) return array('code' => 404,'msg' =>'提交失败，请刷新页面重新尝试！');
         // 抄送
         $copyto_id = trim($copyto_id,',');
@@ -542,6 +542,7 @@ class YxhbSalesRefundApplyLogic extends Model {
             // 发送抄送消息
             D('YxhbAppcopyto')->copyTo($copyto_id,'SalesRefundApply', $result);
         }
+        // 签收通知
         $wf = A('WorkFlow');
         $salesid = session('yxhb_id');
         $res = $wf->setWorkFlowSV('SalesRefundApply', $result, $salesid, 'yxhb');
@@ -569,6 +570,70 @@ class YxhbSalesRefundApplyLogic extends Model {
         $user = M('yxhb_guest2')->where(array('id' => $id))->find();
         return $user['g_name'];
     }
+        // 获取付款记录
+        public function getPay($id){
+            $res = $this->record($id);
+            $isover = empty($res['nbank'])?'no':'yes';
+            if($isover == 'no') return array('stat' => $isover);
+            $bankinfo = M('yxhb_bank')->where(array('id' => $res['nbank']))->find();
+            $bl    = mb_strlen($bankinfo['bank_account'])-4;
+            $bname = mb_substr($bankinfo['bank_account'],$bl,mb_strlen($bankinfo['bank_account']),'utf-8');
+            
+            if(!$bname) $bname = $bankinfo['bank_account'];
     
+            if(!$bankinfo['bank_text']){
+                $name  = "{$bankinfo['bank_name']}-{$bname}";
+            }else{
+                $name  = $bankinfo['bank_name']."-".$bname."-".$this->getbklx($bankinfo['bank_lx_sub']);
+            }
+            $data = array(
+                'date' => $res['sj_date'],
+                'per'  => $res['njbr'],
+                'bank' => $name, 
+            );
+            return array('stat' => $isover,'data' => $data);
+        }
+        public function getContent(){
+            $id     = I('post.id');
+            $system = I('post.system');
+            $res    = $this->recordContent($id);
+            $boss   = D($system.'Boss');
+            $avatar = $boss->getAvatar($res['applyerID']);
+            $res['avatar'] = $avatar;
+            $res['fylx'] = $this->getBankInfo();
+            $res['pay'] = $this->getPay($id);
+            return $res;
+        }
+    
+        // 付款记录
+        public function payFor(){
+            $id     = I('post.id');
+            $system = I('post.system'); 
+            $fkfs = I('post.fkfs'); 
+            $bank = I('post.bank'); 
+            $date = I('post.date'); 
+            if(empty($id)) return array('code'=> 404 ,'msg' => '请刷新重试');
+            $save = array(
+                'sj_date' => $date,
+                'nbank'   => $bank,
+                'nfkfs'   => $fkfs,
+                'jl_date' => date('Y-m-d H:i:s'),
+                'stat'    => 1,
+            );
+            $res = M('yxhb_feexs')->where(array('id' => $id))->save($save);
+            return array('code' => 200,'data' => $res);
+        }
+        // 删除付款记录
+        public function delPay(){
+            $id     = I('post.id');
+            if(empty($id)) return array('code'=> 404 ,'msg' => '请刷新重试');
+            $save = array(
+                'nbank'   => '',
+                'nfkfs'   => '',
+                'stat'    => 5,
+            );
+            $res = M('yxhb_feexs')->where(array('id' => $id))->save($save);
+            return array('code' => 200,'data' => $res);
+        }
 
 }

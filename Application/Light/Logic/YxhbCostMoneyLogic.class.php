@@ -47,7 +47,7 @@ class YxhbCostMoneyLogic extends Model {
                                      'type'=>'date',
                                      'color' => 'black'
                                     ); 
-        if( $res['nfylx'] == 0 ){
+        if( $res['nfylx'] === '0' ){
             $fybx = M('yxhb_feefy3')->where("dh='{$res['dh']}'" )->find();
             $fylx = M('yxhb_fylx')->field('id as val,fy_name as name')->where(array('id' =>$fybx['nfylx']?$fybx['nfylx']:''))->order('id asc')->find(); 
         }else{
@@ -55,25 +55,26 @@ class YxhbCostMoneyLogic extends Model {
         }
  
         $result['content'][] = array('name'=>'申请类型：',
-                                     'value'=> $res['nfylx'] == 0?'报销费用':'用款费用',
+                                     'value'=> $res['nfylx'] === '0'?'报销费用':'用款费用',
                                      'type'=>'date',
                                      'color' => 'black'
                                     );
         $fpsm = array('已到','未到','无票');
+        $color = $res['fpsm']-1==1?'#f12e2e':'black';
         $result['content'][] = array('name'=>'发票说明：',
                                      'value'=> $fpsm[$res['fpsm']-1],
                                      'type'=>'date',
-                                     'color' => 'black'
+                                     'color' => $color
                                     );
         $result['content'][] = array('name'=>'费用类型：',
-                                     'value'=> $fylx['name']?$fylx['name']:'无',
+                                     'value'=> $fylx['name']?$fylx['name']:'未提交',
                                      'type'=>'date',
                                      'color' => 'black'
                                     );
         $fkfs = M('yxhb_fkfs')->field('id as val,fk_name as name')->where(array('id' =>$res['nfkfs']?$res['nfkfs']:''))->order('id asc')->find();
 
         $result['content'][] = array('name'=>'付款方式：',
-                                     'value'=>$fkfs['name']?$fkfs['name']:'无',
+                                     'value'=>$fkfs['name']?$fkfs['name']:'未提交',
                                      'type'=>'string',
                                      'color' => 'black'
                                     );
@@ -87,12 +88,12 @@ class YxhbCostMoneyLogic extends Model {
                                      'type'=>'number',
                                      'color' => 'black;'
                                     );
-        if( $res['nfylx'] == 0 ){
+        if( $res['nfylx'] === '0' ){
             $textdata = M('yxhb_fybx')->field('nr as ntext')->where("left(dh,13)='{$res['dh']}'" )->find();
         }else{
             $textdata = M('yxhb_ykfy')->field('ykyt as ntext,skdw')->where("left(dh,13)='{$res['dh']}'" )->find();
         }
-        if($res['nfylx'] != 0){
+        if($res['nfylx'] !== '0'){
             $skdw = $res['skdw']?$res['skdw']:'无';
             $result['content'][] = array('name'=>'收款单位：',
                                         'value'=>$textdata['skdw']?$textdata['skdw']:$skdw,
@@ -103,7 +104,7 @@ class YxhbCostMoneyLogic extends Model {
             $result['content'][] = array('name'=>'收款账号：',
                                         'value'=>$res['skzh']?$res['skzh']:'无',
                                         'type'=>'string',
-                                        'color' => 'black'
+                                        'color' => $res['skzh']?'black;font-weight:550;':'black',
                                         );    
             $result['content'][] = array('name'=>'开户银行：',
                                         'value'=>$res['khyh']?$res['khyh']:'无',
@@ -111,9 +112,9 @@ class YxhbCostMoneyLogic extends Model {
                                         'color' => 'black'
                                         );
         }
-        
+        $ntext = $res['ntext']?$res['ntext']:'无';
         $result['content'][] = array('name'=>'相关说明：',
-                                     'value'=>$textdata['ntext']?$textdata['ntext']:'无',
+                                     'value'=>$textdata['ntext']?$textdata['ntext']:$ntext,
                                      'type'=>'text',
                                      'color' => 'black'
                                     );
@@ -181,9 +182,10 @@ class YxhbCostMoneyLogic extends Model {
     public function delRecord($id)
     { 
         $data = $this->record($id);
+        if($data['stat'] == 2) return 'failure';
         $map = array("left(dh,13)='{$data['dh']}'" );
         M('yxhb_feefy3')->field(true)->where($map)->setField('stat',0);
-        if($data['nfylx'] == 0){
+        if($data['nfylx'] ==='0'){
             M('yxhb_fybx')->field(true)->where($map)->setField('stat',0);
         }else{
             M('yxhb_ykfy')->field(true)->where($map)->setField('stat',0);
@@ -220,12 +222,12 @@ class YxhbCostMoneyLogic extends Model {
                                     );
         $fkfs = M('yxhb_fkfs')->field('id as val,fk_name as name')->where(array('id' =>$res['nfkfs']?$res['nfkfs']:''))->order('id asc')->find();
         $result[] = array('name'=>'付款方式：',
-                                     'value'=>$fkfs['name']?$fkfs['name']:'无',
+                                     'value'=>$fkfs['name']?$fkfs['name']:'未提交',
                                      'type'=>'number'
                                     );
 
         $result[] = array('name'=>'用款金额：',
-                                     'value'=>-$res['nmoney'],
+                                     'value'=>number_format(-$res['nmoney'],2,'.',',')."元",
                                      'type'=>'number'
                                     );
 
@@ -233,13 +235,14 @@ class YxhbCostMoneyLogic extends Model {
                                      'value'=>$res['njbr'],
                                      'type'=>'string'
                                     );
-        if( $res['nfylx'] == 0 ){
+        if( $res['nfylx'] ==='0' ){
             $textdata = M('yxhb_fybx')->field('nr as ntext')->where("left(dh,13)='{$res['dh']}'" )->find();
         }else{
             $textdata = M('yxhb_ykfy')->field('ykyt as ntext')->where("left(dh,13)='{$res['dh']}'" )->find();
         }
+        $ntext = $res['ntext']?$res['ntext']:'无';
         $result[] = array('name'=>'用款用途：',
-                                     'value'=>$textdata['ntext']?$textdata['ntext']:'无',
+                                     'value'=>$textdata['ntext']?$textdata['ntext']:$ntext,
                                      'type'=>'text'
                                     );
         return $result;
@@ -273,12 +276,13 @@ class YxhbCostMoneyLogic extends Model {
         $first_content  = '用款费用';
         $second_title   = '发票说明';
         $second_content = $fpsm[$res['fpsm']-1];
-        if($res['nfylx'] == 0)$first_content  = '报销费用';
-        if( $res['nfylx'] == 0 ){
+        if($res['nfylx'] ==='0')$first_content  = '报销费用';
+        if( $res['nfylx'] ==='0' ){
             $textdata = M('yxhb_fybx')->field('nr as ntext')->where("left(dh,13)='{$res['dh']}'" )->find();
         }else{
             $textdata = M('yxhb_ykfy')->field('ykyt as ntext')->where("left(dh,13)='{$res['dh']}'" )->find();
         }
+        $ntext = $res['ntext']?$res['ntext']:'无';
         $result = array(
             'first_title'    => $first_title,
             'first_content'  => $first_content,
@@ -287,8 +291,9 @@ class YxhbCostMoneyLogic extends Model {
             'third_title'    => '用款金额',
             'third_content'  => "&yen;".number_format(-$res['nmoney'],2,'.',',')."元",
             'fourth_title'   => '相关说明',
-            'fourth_content' => $textdata['ntext']?$textdata['ntext']:'无',
+            'fourth_content' => $textdata['ntext']?$textdata['ntext']:$ntext,
             'stat'           => $this->transStat($res['stat']),
+            'applyerName'    => $res['njbr'],
         );
         return $result;
     }
@@ -308,11 +313,13 @@ class YxhbCostMoneyLogic extends Model {
         $sqlx   = I('post.sqlx');
         $copyto_id = I('post.copyto_id');
         $imagepath = I('post.imagepath');   
-        
+        // 流程检验
+        $pro = D('YxhbAppflowtable')->havePro('CostMoney','');
+        if(!$pro) return array('code' => 404,'msg' => '无审批流程,请联系管理员');
         if(!M($system.'_feefy')->autoCheckToken($_POST)) return array('code' => 404,'msg' => '网络延迟，请勿点击提交按钮！');
         $dh = $this->getDhId();
         $bm = D('YxDetailAuth')->authGetBmId($system);
-        $stat = $sqlx == 1?3:1;
+        $stat = $sqlx == 1?2:1;
         $fyfy = $sqlx == 1?0:'';
         $feefy = array(
             'dh'      => $dh,
@@ -538,7 +545,7 @@ class YxhbCostMoneyLogic extends Model {
             // 检查费用类型
             $save = array('nfylx' => $fylx);
             $res = $this->record($id);
-            if($res['nfylx'] != 0){
+            if($res['nfylx'] !== '0'){
                 M($system.'_feefy')->where("id={$id}")->save($save);
             }
             M($system.'_feefy3')->where("left(dh,13)='{$res['dh']}'")->save($save);
@@ -546,6 +553,7 @@ class YxhbCostMoneyLogic extends Model {
             if(!$result) return array('code' => 404,'msg' => '提交失败，请重新尝试！');
             return array('code' => 200,'msg' => '提交成功' , 'aid' =>$result);
         }
+        
         public function getPayedRec($id,$system)
         {
             $flag   = $id?1:0;

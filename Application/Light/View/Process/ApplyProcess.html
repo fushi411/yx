@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="https://res.wx.qq.com/open/libs/weui/1.1.2/weui.min.css" />
     <link rel="stylesheet" href="__PUBLIC__/assets/css/weMain.css?version=201708232" />
     <link href="__PUBLIC__/assets/css/wc_select2.min.css?version=20170819" rel="stylesheet" />
+    <link rel="stylesheet" href="//at.alicdn.com/t/font_915899_6e03l1mub3m.css" />
     <style type="text/css">
         .weui-cells:after {
             border-bottom: 0px solid #fff;
@@ -69,23 +70,72 @@
 </head>
 
 <body>
+    <div class="weui-toptips weui-toptips_warn js_tooltips" style="opacity: 1;">错误提示</div>
     <div class="container" id="container">
+        <div class="js_dialog" id="delDialog" style="display: none;">
+                <div class="weui-mask"></div>
+                <div class="weui-dialog">
+                    <div class="weui-dialog__bd" style="padding:15px;color:#f12e2e;">删除确认</div>
+                    <div class="weui-dialog__bd">确定要将此流程删除？</div>
+                    <div class="weui-dialog__ft"> 
+                        <a href="javascript:;" onclick="dialog_cal()" class="weui-dialog__btn weui-dialog__btn_primary">取消</a>
+                        <a href="javascript:;"  style="color:#f12e2e;" onclick="dialog_sure()" class="weui-dialog__btn weui-dialog__btn_primary">确定</a>
+                    </div>
+                </div>
+            </div>
         <div class="page js_show">
+            
             <div class="page__bd">
                 <!-- 流程 -->
                 <h3 class="titleTab zhineng">{$show.name}</h3>
+                <if condition=" (empty($atten)) and (!$CueConfig)">
+                    <div class="weui-cells__title" style="text-align:right;margin: 0;display:none;">
+                    <else/>
+                    <div class="weui-cells__title" style="text-align:right;margin: 0;">
+                </if>
+                    <a href="{$url}" class="weui-btn weui-btn_mini weui-btn_default">关闭</a>
+                    <a href="{:U('Light/Config/Dispenser',array('robot'=>'viewProTitlePage','system'=>$system,'mod'=>$modname))}" class="weui-btn weui-btn_mini weui-btn_primary">新增</a>
+                </div>
                 <div class="zhi">
                     <volist name="show.data" id="vo">
-                        <div class="weui-cells__title">{$vo.title}</div>
+                        <div class="weui-cells__title">
+                            {$vo.title}
+                            <if condition=" (empty($atten)) and (!$CueConfig)">
+                                <span style="float:right;display:none;">
+                                <else/>
+                                <span style="float:right">
+                            </if>
+                            <span style="float:right">
+                                <i class="iconfont icon-xiugai" index="{:U('Light/Config/Dispenser',array('robot'=>'viewProTitlePage','system'=>$system,'mod'=>$modname,'id'=>$vo['id']))}" style="vertical-align: middle;margin: 0 5px" ></i>  
+                                <i class="iconfont icon-shanchu" index="{$vo['id']}" style="vertical-align: middle;margin: 0 5px" ></i>
+                            </span> 
+                        </div>
                         <div class="weui-cells" style="margin-top:0px;">
                             <div class="weui-cell">
                                 <div class="weui-cell__bd">
                                     <div class="weui-uploader">
-                                        <div class="weui-uploader__bd" style="height: 85px;">
+                                        <div class="weui-uploader__bd" style="height: 75px;">
                                             <ul class="weui-uploader__files" id="app_pro" style="margin-bottom: 0px;">
                                                {$vo.html}
                                             </ul>
                                         </div>
+                                        <div class="weui-cells__title" style="padding:0;margin:0;">
+                                            <span style="color:black;">  <if condition="!empty($vo['fiexd'])">固定抄送</if></span> 
+                                            <if condition=" (empty($atten)) and (!$CueConfig)">
+                                                <span style="float:right;display:none;">
+                                                <else/>
+                                                <span style="float:right">
+                                            </if>
+                                                <i class="iconfont icon-shezhi1" 
+                                                index="{:U('Light/Config/Dispenser',array('robot'=>'proConfig','system'=>$system,'mod'=>$modname,'id'=>$vo['id']))}" 
+                                                style="vertical-align: middle;margin: 0 5px;font-size: 20px;" ></i>  
+                                            </span> 
+                                        </div>
+                                        <if condition="!empty($vo['fiexd'])">
+                                            <div class="weui-uploader__bd" style="height: 85px;">
+                                                {$vo.fiexd}
+                                            </div>
+                                        </if>
                                     </div>
                                 </div>
                             </div>
@@ -94,7 +144,7 @@
                 </div>
                 <!-- 流程 END -->
                 <!-- 推送 -->
-                <h3 class="titleTab">抄送规则</h3>
+                <!-- <h3 class="titleTab">抄送规则</h3>
                 <div class="weui-cells__title">各个中心主管及以上职位的申请抄送</div>
                 <div class="weui-cells" style="margin-top:0px;">
                     <div class="weui-cell">
@@ -109,11 +159,11 @@
                             </div>
                         </div>
                     </div>
-                </div>
+                </div> -->
                 <!-- 推送 END -->
                 <!-- 权限详情 -->
-                <h3 class="titleTab">权限详情</h3>
-                <div class="weui-media-box weui-media-box_small-appmsg" style="padding-bottom: 10px;">
+                <h3 class="titleTab" id='auth_detail'>权限详情</h3>
+                <div class="weui-media-box weui-media-box_small-appmsg" id='auth_div' style="display:none;padding-bottom: 10px;">
 
                         <div class="weui-cells" style="margin-top:0px;">
                             <div class="weui-cell" style="padding-top: 5px;padding-bottom: 5px;border-bottom: 1px solid #f8f8f8;">
@@ -158,21 +208,74 @@
                 <!-- 权限详情 END -->
             </div>
         </div>
+        
     </div>
 </body>
 <!-- <script src="__PUBLIC__/assets/js/exif.js"></script> -->
 <script src="//cdn.bootcss.com/jquery/1.11.1/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.5/js/bootstrap.min.js"></script>
-<script src="http://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
+<script src="https://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
 <script src="https://cdn.bootcss.com/select2/4.0.3/js/select2.min.js"></script>
 <script src="https://cdn.bootcss.com/select2/4.0.3/js/i18n/zh-CN.js"></script>
+<!-- <script src="__PUBLIC__/assets/js/vconsole.min.js"></script> -->
 <script>
-  
-
+    var del_id = '';
+    var $tooltips = $('.js_tooltips');
+       
+    
+    // 错误提示
+    function tooltip(text) {
+        if ($tooltips.css('display') != 'none') return;
+        $('.page.cell').removeClass('slideIn');
+        $tooltips.text(text);
+        $tooltips.css('display', 'block');
+        setTimeout(function () {
+            $tooltips.css('display', 'none');
+        }, 2000);
+    }
     $(".zhineng").click('on', function () {
         $(".zhi").toggle(500);
     });
+    $('.icon-xiugai').click(function(){
+        var url = $(this).attr('index');
+        window.location.href = url;
+    });
+    $('.icon-shezhi1').click(function(){
+        var url = $(this).attr('index');
+        window.location.href = url;
+    });
+    $('.icon-shanchu').click(function(){
+        del_id = $(this).attr('index');
+        $('#delDialog').show();
+    });
+    function dialog_cal(){
+        del_id = '';
+        $('#delDialog').hide();
+    }
+    $('#auth_detail').click(function(){
+        $('#auth_div').toggle();
+    });
+    function dialog_sure(){
+        $('#delDialog').hide();
+        $.ajax({
+                type:'POST',
+                url: "{:U('Light/Config/Dispenser',array('robot'=>'delViewPro'))}", //&system=yxhb&modname=CgfkApply&action=getCustomerList
+                dataType: 'json',
+                data: {
+                    system : "{$system}",
+                    id     : del_id,
+                },
+                dataType: 'json',
+                success: function (res) {
+                    if (res.code == 200) {
 
+                        window.location.reload();
+                    } else {
+                        tooltip(res.msg);
+                    }
+                }
+            });
+    }
 </script>
 
 </html>

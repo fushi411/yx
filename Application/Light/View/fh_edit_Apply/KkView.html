@@ -573,6 +573,7 @@
             selectArr.text = selectArr.jc;
             fh_cate  = selectArr.cate;
             fh_wl    = selectArr.wl;
+            selectArr.text = selectArr.jc?selectArr.jc:selectArr.text;
             $('#mydiv .select2-selection__choice').text(selectArr.text);
             if (alter_user_id == clickInfo['fh_client']) tooltip('客户一致，请重新选择！');
             

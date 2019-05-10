@@ -170,7 +170,7 @@ class KkCreditLineApplyLogic extends Model {
         
         // $result['ye'] = number_format(-($ye-$res['ye']+$res['tmp']),2,'.',',')."元";
 
-        $ysye = $res['ye']-($ye+$res['tmp']);
+        $ysye = $res['ye']-($ye);
         
         $result['flag'] = $ysye<20000?true:false;
         $result['ye'] =  number_format($ysye,2,'.',',')."元";  // 应收
@@ -205,6 +205,7 @@ class KkCreditLineApplyLogic extends Model {
             'third_title'    => '相关说明',
             'third_content'  => $res['notice']?$res['notice']:'无',
             'stat'           => $res['stat'],
+            'applyerName'    => $res['sales'],
         );
         return $result;
     }
@@ -250,6 +251,9 @@ class KkCreditLineApplyLogic extends Model {
         if($money=='' || $money<0 ) return array('code' => 404,'msg' => '申请金额不能为空，且不能为负数！');
         // 字数校验
         if(strlen($reason)<5 ||strlen($reason)>200) return array('code' => 404,'msg' => '相关说明不能少于5个字，且不能多于200字！');
+        // 流程检验
+        $pro = D('KkAppflowtable')->havePro('CreditLineApply','');
+        if(!$pro) return array('code' => 404,'msg' => '无审批流程,请联系管理员');
         $model = D('Customer');
 
         $clientname = $model->getClientname($user_id,'kk');

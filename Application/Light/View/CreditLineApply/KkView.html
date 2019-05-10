@@ -223,7 +223,7 @@
                 var tmpNum = res['tmp'] == ''? 0 : parseFloat(res['tmp']);// 临时额度
                 var yeNum  = res['ye']  == ''? 0 : parseFloat(res['ye']);// 客户余额   发货的=余额+临时
                 $('#khye').val(yeNum);
-                if (-(line-yeNum+tmpNum)<20000) classNmae = 'redColor';
+                if (-(line-yeNum)<20000) classNmae = 'redColor';
 
                 ysye.removeClass('redColor').addClass(classNmae);
                 
@@ -234,7 +234,7 @@
                 lineshow.html("&yen;"+formatMoney(tmp,2));
                 exist.html("&yen;"+formatMoney(tmpNum,2));
                 ye.html("&yen;"+formatMoney(tmpNum+yeNum,2));
-                ysye.html("&yen;"+formatMoney(-(line+tmpNum-yeNum),2));
+                ysye.html("&yen;"+formatMoney(-(line-yeNum),2));
                 $('.show_number').hide();
                 toast.fadeOut(200);
             }

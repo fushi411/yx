@@ -2,24 +2,35 @@
 namespace Light\Controller;
 use  Vendor\Overtrue\Pinyin\Pinyin;
 class TestController extends \Think\Controller {
-   
+   // D('YxDetailAuth')->updateAuth();  更新申请人员
     public function Sign()
     {   
         header('Content-Type: text/html; charset=utf-8');
-        // iconv('gbk','UTF-8',$v['approve']),
-        //$data = D('KkAppflowtable')->getConditionStepHtml($modname,$condition);
+        $system ='kk';
         
-        $flowName ='CostMoney';
-        $id = '6260' ;
-        $pid ='';
-        $option ='2';
-        $word ='';
-        $applyUser='';
-        $system = 'yxhb';
-        $systemU = ucfirst($system);
-        $appflowproc = D($systemU.'Appflowproc');
-        $sameProcQuery = $appflowproc->getSameProcNum($flowName, $id, 2);
-        dump($sameProcQuery);
+    }
+    
+    public function postData($url,$data){
+        $headers = array('Content-Type: application/x-www-form-urlencoded');
+        $curl = curl_init(); // 启动一个CURL会话
+        curl_setopt($curl, CURLOPT_URL, $url); // 要访问的地址
+        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, 0); // 对认证证书来源的检查
+        curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 0); // 从证书中检查SSL加密算法是否存在
+        curl_setopt($curl, CURLOPT_USERAGENT, $_SERVER['HTTP_USER_AGENT']); // 模拟用户使用的浏览器
+        curl_setopt($curl, CURLOPT_FOLLOWLOCATION, 1); // 使用自动跳转
+        curl_setopt($curl, CURLOPT_AUTOREFERER, 1); // 自动设置Referer
+        curl_setopt($curl, CURLOPT_POST, 1); // 发送一个常规的Post请求
+        curl_setopt($curl, CURLOPT_POSTFIELDS, http_build_query($data)); // Post提交的数据包
+        curl_setopt($curl, CURLOPT_TIMEOUT, 30); // 设置超时限制防止死循环
+        curl_setopt($curl, CURLOPT_HEADER, 0); // 显示返回的Header区域内容
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1); // 获取的信息以文件流的形式返回
+        curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
+        $result = curl_exec($curl); // 执行操作
+        if (curl_errno($curl)) {
+            echo 'Errno'.curl_error($curl);//捕抓异常
+        }
+        curl_close($curl); // 关闭CURL会话
+        return $result;
     }
 
     public function reData($data){
@@ -68,42 +79,7 @@ class TestController extends \Think\Controller {
    public function config(){
     return D('Seek')->configSign();
 }
-    private function getAuthGroup($system,$type=''){
-        $reArr = array(
-            'group'   => '暂无',
-            'leaguer' => '暂无'
-        );
 
-        $res = M('auth_rule')->field('id')->where(array('title' => array('like',$system.$type.'|%')))->find();
-        if(!$res) return $reArr; // ---都无权限
-        
-        $group = M('auth_group')->field('id,title')->where(array('rules' => array('like',"%{$res['id']}%")))->select();
-        if(empty($group)) return $reArr;  // ---无部门
-
-        $groupStr = '';
-        $where = '';
-        $leaguerStr = '';
-        foreach ($group as $key => $value) {
-            if($key != 0) $where.=' or ';
-            $where .= 'group_id = '.$value['id']; 
-            $groupStr .= $value['title'].' ';
-        }
-        $reArr['group'] = $groupStr;
-
-        $leaguer = M('auth_group_access a')
-                    ->field('b.name')
-                    ->join($system.'_boss b on a.uid=b.wxid')
-                    ->where($where)
-                    ->group('a.uid')
-                    ->select();
-        if(empty($leaguer))return $reArr;
-
-        foreach($leaguer as $k=>$v){
-            $leaguerStr .= $v['name'].' ';
-        }
-        $reArr['leaguer'] = $leaguerStr;
-        return $reArr;
-    }
 
     /**
      * 流程人员数组重构

@@ -16,7 +16,8 @@ class ProcessController extends Controller
     public function ApplyProcess(){
         $pro_mod = I('get.modname');
         // $pro_mod 为空的情况
-        $system = I('get.system');
+        $system  = I('get.system');
+        $aid     = I('get.aid');
         if(!$system)$system='yxhb';
         if($pro_mod == '') die;
         $mod_name  = D('Seek')->getModname($pro_mod,$system);
@@ -28,28 +29,33 @@ class ProcessController extends Controller
         );
         $data = M('yx_config_viewpro')->where($map)->order('id desc')->select();
         $temp = array();
-        if(empty($data)){
-            $html = D(ucfirst($system).'Appflowtable')->getConditionStepHtml($pro_mod);
+        
+        foreach( $data as $k => $v){
+            $html = D(ucfirst($system).'Appflowtable')->getConditionStepHtml($pro_mod,$v['condition'],$v['id']);
+            $fiexd_copy = D(ucfirst($system).'Appcopyto')->getFiexdCopyHtml($v['fiexd_copy_id']);
+            $str = "<span class='weui-badge' style='position: relative;top: -5.2em;right: -1.2em;padding: 1px 3px;line-height: 1;'>X</span>";
+            $fiexd_copy['html'] = str_replace($str,'',$fiexd_copy['html']);
             $temp[] = array(
-                'title' => $mod_name,
+                'id'    => $v['id'],
+                'title' => $v['title'],
                 'html'  => $html, 
+                'fiexd' => $fiexd_copy['html'],
             );
-        }else{
-            foreach( $data as $k => $v){
-                $html = D(ucfirst($system).'Appflowtable')->getConditionStepHtml($pro_mod,$v['condition']);
-                $temp[] = array(
-                    'title' => $v['title'],
-                    'html'  => $html, 
-                );
-            }
         }
+        $url = $aid?U('Light/Apply/applyInfo',array('modname'=>$pro_mod,'aid'=>$aid,'system'=>$system)):U('Light/View/View',array('modname'=>$pro_mod,'system' => $system)); 
         $show['name'] = $mod_name;
         $show['data'] = $temp;
-        $authGroup =  $this->getAuthGroup($system,$pro_mod);
+        $authGroup  =  $this->getAuthGroup($system,$pro_mod);
+        $detailModel= D('YxDetailAuth');
+        $detailAuth = $detailModel->CueAuthCheck();
+        $atten      = $detailModel->ActiveAttention($system,$pro_mod);
         $this->assign('group',$authGroup);
-        //$this->assign('data',$proData);
+        $this->assign('explain',$explain);
+        $this->assign('CueConfig',$detailAuth);
         $this->assign('show',$show);
-      
+        $this->assign('url',$url);
+        $this->assign('modname',$pro_mod);
+        $this->assign('system',$system);
         $this->display('Process/ApplyProcess');
     }
 
@@ -63,33 +69,56 @@ class ProcessController extends Controller
             'group'   => '暂无',
             'leaguer' => '暂无'
         );
-
-        $res = M('auth_rule')->field('id')->where(array('title' => array('like',$system.$type.'|%')))->find();
-        if(!$res) return $reArr; // ---都无权限
-        
-        $group = M('auth_group')->field('id,title')->where(array('rules' => array('like',"%{$res['id']}%")))->select();
-        if(empty($group)) return $reArr;  // ---无部门
-
-        $groupStr = '';
-        $where = '';
-        $leaguerStr = '';
-        foreach ($group as $key => $value) {
+        # 权限rule搜索
+        $map = array(
+            'name'  => "Light/{$system}/{$type}",
+            'status' => 1,
+        );
+        $res = M('auth_rule')->field('id')->where($map)->find();
+        if(empty($res)) return $reArr; // ---都无权限
+        # 拥有权限分组
+        $map = array(
+            'rules'  => array('like',"%{$res['id']}%"),
+            'status' => 1,
+            'id'     => array('neq','2'),
+        );
+        $group = M('auth_group')->field('id,title,rules')->where($map)->select();
+        $auth_group = array(); // 是否在这个权限组中
+        foreach($group as  $v){
+            $temp = explode(',',$v['rules']);
+            if(in_array($res['id'],$temp)) $auth_group[] = $v; 
+        }
+        if(empty($auth_group)) return $reArr;  // ---无部门
+        # 权限人员获取
+        $groupStr   = '';
+        $where      = '';
+        $leaguerStr = ''; 
+        foreach ($auth_group as $key => $value) {
             if($key != 0) $where.=' or ';
             $where .= 'group_id = '.$value['id']; 
-            $groupStr .= $value['title'].' ';
         }
-        $reArr['group'] = $groupStr;
-
         $leaguer = M('auth_group_access a')
-                    ->field('b.name')
+                    ->field('b.name,a.uid')
                     ->join($system.'_boss b on a.uid=b.wxid')
                     ->where($where)
                     ->group('a.uid')
                     ->select();
         if(empty($leaguer))return $reArr;
-
+        $user = array();
         foreach($leaguer as $k=>$v){
             $leaguerStr .= $v['name'].' ';
+            $user[] = $v['uid'];
+        }
+        $map = array('a.wx_id' => array('in',implode(',',$user)));
+        $bm = M('yx_bm_access a')
+                ->field('b.bm')
+                ->join($system.'_bm b on a.bm_id=b.id')
+                ->where($map)
+                ->group('b.bm')
+                ->select();
+        foreach($bm as $v){
+            if($reArr['group'] == '暂无') $reArr['group']='';
+            $reArr['group'] .= "{$v['bm']} ";
         }
         $reArr['leaguer'] = $leaguerStr;
         return $reArr;
@@ -236,6 +265,26 @@ class ProcessController extends Controller
 
         $system = I('get.system');
         $pro_mod = I('get.modname');
+
+        //先判断_pushlist表中是否存在这个模块，没有的话先添加一条这个模块空的推送人员的数据
+        $res = M($system.'_pushlist')->where(array('stat' => 1 , 'pro_mod' => $pro_mod))->find();
+        if(empty($res)){
+            $data = M($system.'_appflowtable')->where(array('stat' => 1 , 'pro_mod' => $pro_mod))->field('pro_name')->find();
+            $res = array(
+                'pro_mod'=>$pro_mod,                      //模块名
+                'pro_name'=>$data['pro_name'],           //相关说明
+                'stage_name'=>'推送',
+                'date'=>'0000-00-00 00:00:00',
+                'push_name'=>'""',
+                'condition'=>'',                        //条件
+                'ranges'=>null,
+                'type'=>2,
+                'stat'=>1,
+                'rule'=>null,
+            );
+            M($system.'_pushlist')->add($res);
+        }
+
         $sy = array('kk' => '建材','yxhb' => '环保');
         $arr = M($system.'_pushlist')->where(array('stat' => 1 , 'pro_mod' => $pro_mod))->field('id,pro_name,pro_mod,push_name')->select();
         //不能重复添加相同的模块名
@@ -489,7 +538,8 @@ class ProcessController extends Controller
         foreach ($arr as $value){
             M($system.'_pushlist')->where(array('id'=>$value['id']))->setField('push_name',json_encode($value['push_name']));
         }
-
     }
+
+    //
 
 }

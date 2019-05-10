@@ -1,0 +1,990 @@
+<extend name="Apply:applyBase" />
+
+<!-- 去除不可选择日期 -->
+<block name="able_date"></block>
+<block name="disable_date"></block>
+<!-- 去除不可选择日期 end-->
+<block name="content_body">
+    <style>
+        body .weui-form-preview__value {
+            color: #4e4e4e;
+        }
+
+        .no-more {
+            display: none;
+            text-align: center;
+            line-height: 30px;
+            color: #cecece;
+            font-size: 12px;
+            background: #f0f0f0;
+        }
+
+        .load-more {
+            display: none;
+            text-align: center;
+            line-height: 30px;
+            color: #6ea3f3;
+            font-size: 12px;
+            border-radius: 5px;
+            width: 98%;
+            margin: 0 auto;
+            border-top: 1px solid rgb(243, 237, 237);
+        }
+
+        .load-more:active {
+            background: #97d4ff;
+            color: #fff;
+        }
+
+        #btn-all {
+            display: none;
+            right: 10px;
+            bottom: 10px;
+            position: fixed;
+            text-align: center;
+            z-index: 999;
+        }
+
+        label {
+            font-weight: 400;
+            margin-bottom: 0px;
+        }
+
+        .searchCenter {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
+    <div class="weui-cells" id="content1">
+        <div class="weui-cell weui-cell_select weui-cell_select-after">
+            <div class="weui-cell__hd">
+                <label class="weui-label">发货选择&nbsp;&nbsp;
+                </label>
+            </div>
+            <div class="weui-cell__bd">
+                <input class="weui-select " type="text" readonly id="select_ycl" style="color: #337ab7;"
+                    value="点击选择对账单" />
+            </div>
+        </div>
+        <div class="weui-cell ">
+                <div class="weui-cell__hd">
+                    <label class="weui-label">客户名称&nbsp;&nbsp;
+                    </label>
+                </div>
+                <div class="weui-cell__bd">
+                    <input class="weui-input khmc" type="text" name="custodian" readonly placeholder="自动填写" />
+                    <span id="khmc"></span>
+                </div>
+            </div>
+            <div class="weui-cell ">
+                <div class="weui-cell__hd">
+                    <label class="weui-label">期初余额&nbsp;&nbsp;
+                    </label>
+                </div>
+                <div class="weui-cell__bd">
+                    <input class="weui-input qcye" type="text" name="custodian" readonly placeholder="自动填写" />
+                    <span id="qcye"></span>
+                </div>
+            </div>
+            <div class="weui-cell ">
+                <div class="weui-cell__hd">
+                    <label class="weui-label">本期合计&nbsp;&nbsp;
+                    </label>
+                </div>
+                <div class="weui-cell__bd">
+                    <input class="weui-input bqhj" type="text" name="custodian" readonly placeholder="自动填写" />
+                    <span id="bqhj"></span>
+                </div>
+            </div>
+            <div class="weui-cell ">
+                <div class="weui-cell__hd">
+                    <label class="weui-label">本期付款&nbsp;&nbsp;
+                    </label>
+                </div>
+                <div class="weui-cell__bd">
+                    <input class="weui-input bqyf" type="text" name="custodian" readonly placeholder="自动填写" />
+                    <span id="bqyf"></span>
+                </div>
+            </div>
+            <div class="weui-cell ">
+                <div class="weui-cell__hd">
+                    <label class="weui-label">
+                        <span class="font-width">其他调整</span>&nbsp;&nbsp;
+                    </label>
+                </div>
+                <div class="weui-cell__hd">
+                    <div id="qt_content">
+                    </div>
+                    <div id="qt_div">
+                        <span class=" greyColor">自动填写</span>
+                    </div>
+                </div>
+            </div>
+            <div class="weui-cell ">
+                <div class="weui-cell__hd">
+                    <label class="weui-label">期末余额&nbsp;&nbsp;
+                    </label>
+                </div>
+                <div class="weui-cell__bd">
+                    <input class="weui-input qmqk" type="text" name="custodian" readonly placeholder="自动填写" />
+                    <span id="qmqk"></span>
+                </div>
+            </div>
+    </div>
+    <div class="other_page" id="other_page">
+        <div class="container">
+            <div class="page js_show">
+                <div class="weui-cells weui-cells_form">
+                    <div class="weui-cell weui-cell_select weui-cell_select-after">
+                        <div class="weui-cell__hd">
+                            <label class="weui-label">客户选择&nbsp;&nbsp;
+                            </label>
+                        </div>
+                        <div class="weui-cell__bd">
+                            <div class="weui-cell__bd" id='alter_div'>
+                                <select class="weui-select" name="user_name[]" id="user_name" multiple="multiple"
+                                    style="width: 95%;" data-placeholder="客户范围为合同有效客户">
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="weui-cell weui-cell_select weui-cell_select-after">
+                        <div class="weui-cell__hd">
+                            <label class="weui-label">开始日期&nbsp;&nbsp;
+                            </label>
+                        </div>
+                        <div class="weui-cell__bd">
+                                <input class="weui-select" type="text" name="custodian" id="start_date" readonly
+                                placeholder="请选择开始日期" value="" />
+                        </div>
+                    </div>
+
+                    <div class="weui-cell weui-cell_select weui-cell_select-after ">
+                        <div class="weui-cell__hd">
+                            <label class="weui-label">结束日期&nbsp;&nbsp;
+                            </label>
+                        </div>
+                        <div class="weui-cell__bd">
+                                <input class="weui-select" type="text" name="custodian" id="end_date" readonly
+                                placeholder="请选择结束日期" value="" />
+                        </div>
+                    </div>
+
+                </div>
+                <div class="weui-cells weui-cells_form" id="order_select" style="margin-top: 0;min-height: 101%">
+
+                    <div class="page__bd">
+                        <div class="weui-cells searchbar-result" id="order_searchResult"
+                            style="background-color:#f8f8f8;margin-top:0;">
+
+
+                        </div>
+                        <div class="no-more">信息已经到底...</div>
+                        <div class="load-more">点我加载更多...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="weui-cells weui-cells_form">
+        <div class="weui-cell">
+            <div class="weui-cell__hd">
+                <label class="weui-label" style="width: 100%;">附件上传&nbsp;&nbsp;
+                    <span style="color:red;">*</span>
+                    <span style="color: #f12e2e;font-size: 14px;">（点击+号，可查看或删除附件）</span>
+                </label>
+            </div>
+        </div>
+        <div class="weui-cell">
+            <div class="weui-uploader__bd">
+                <ul class="weui-uploader__files" id="uploaderFiles" style="margin-bottom: 0px;float: left;">
+                </ul>
+                <div class="weui-uploader__input-box" style="margin-top: 5px;">
+                    <input onclick="imgUpload()" class="weui-uploader__input" />
+                    <input id="uploaderInput" class="weui-uploader__input" type="file" accept="image/*"
+                        name="file_image[]" multiple style="display: none;" />
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <input type="hidden" id="ratio" value="ratio">
+    <div id="btn-all">
+        <a href="javascript:;" class="weui-btn weui-btn_mini weui-btn_primary">返回</a>
+    </div>
+</block>
+<block name="js">
+    <script src="__PUBLIC__/assets/js/AmountConversionformat.js"></script>
+    <script>
+        // 关联对账单
+        var  id = getQueryString('id');
+        if(id){
+            $.ajax({
+                type: 'POST',
+                url: "{:U('Light/Api/ClientStatementUpApi')}",
+                dataType: 'json',
+                data: {
+                    system: "{$system}",
+                    modname: 'ClientStatementUp',
+                    action: 'getInfo',
+                    id: id,
+                },
+                dataType: 'json',
+                success: function (res) {
+                    clickInfo = res;
+                    isSel = true;
+                    alter_show();
+                }
+            });
+        }
+
+        var page = 1,
+            user_id = '',
+            info = [],
+            isSel = false,
+            no_more = $('.no-more'),
+            load_more = $('.load-more'),
+            overdue = $('#overdue');
+        load_more.click(function(){
+            page++;
+            getFhList();
+        });
+        // 获取发货记录
+        getFhList();
+        function getFhList() {
+            $.ajax({
+                type: 'POST',
+                url: "{:U('Light/Api/ClientStatementUpApi')}",
+                dataType: 'json',
+                data: {
+                    stday: $('#stday').val(),
+                    enday: $('#enday').val(),
+                    system: "{$system}",
+                    modname: 'ClientStatementUp',
+                    action: 'getList',
+                    client: user_id,
+                    page: page,
+                    __hash__: hash
+                },
+                dataType: 'json',
+                success: function (res) {
+                    if (res.length < 20) {
+                        no_more.show();
+                        load_more.hide();
+                    } else {
+                        page++;
+                        load_more.show();
+                        no_more.hide();
+                    }
+                    makeHtml(res);
+                }
+            });
+        }
+        function makeHtml(data) {
+            var html = '',
+                length = info.length;
+
+            for (i = 0; i < data.length; i++) {
+                info.push(data[i]);
+                idx = length + i;
+                html += '<div class="weui-cell__bd weui-cell_primary fhindex"  index="' + idx + '">' +
+                    '<div class="weui-cells__title">' + data[i]['newdate'] + ' <span style="float: right;"></span></div>' +
+                    '<div class="weui-form-preview">' +
+                    '<div class="weui-form-preview__bd">' +
+                    '<div class="weui-form-preview__item">' +
+                    '<label class="weui-form-preview__label">客户名称</label>' +
+                    '<span class="weui-form-preview__value" style="text-align:left;">' + data[i]['client_name'] + '</span>' +
+                    '</div>' +
+                    '<div class="weui-flex">' +
+                    '<div class="weui-form-preview__item weui-flex__item">' +
+                    '<label class="weui-form-preview__label">对账日期</label>' +
+                    '<span class="weui-form-preview__value" style="text-align:left;">' + data[i]['datetime'] + '</span>' +
+                    '</div>' +
+                    '</div>' +
+                    '<div class="weui-flex">' +
+                    '<div class="weui-form-preview__item weui-flex__item">' +
+                    '<label class="weui-form-preview__label">对账提交</label>' +
+                    '<span class="weui-form-preview__value" style="text-align:left;">' + data[i]['tjr'] + '</span>' +
+                    '</div>' +
+                    '<div class="weui-form-preview__item weui-flex__item">' +
+                    '<label class="weui-form-preview__label">回执上传</label>' +
+                    '<span class="weui-form-preview__value" style="text-align:left;" > ' + data[i]['hz'] + '</span>' +
+                    '</div>' +
+                    '</div>' +
+                    '</div>' +
+                    '</div>' +
+                    '</div>';
+            }
+           
+            $('#order_searchResult').append(html);
+            $('.fhindex').click(function () {
+                var index = $(this).attr('index')
+                div_show();
+                clickInfo = info[index];
+                isSel = true;
+                alter_show();
+            });
+        }
+        function alter_show() {
+            var res = clickInfo; 
+            showdata($('#khmc'),$('.khmc'),res['client_name'],1);
+            showdata($('#qcye'),$('.qcye'),res.qcqk,2);
+            if(res.qc_int<0)$('#qcye').css('color','#f12e2e');
+            showdata($('#bqhj'),$('.bqhj'),res.totalje,2);
+            showdata($('#bqyf'),$('.bqyf'),res.bqyf,2);
+            showdata($('#qt_div'),$('#qt_content'),res.qtje,2);
+            showdata($('#qmqk'),$('.qmqk'),res.qmje,2);
+            if(res.qmje_int<0)$('#qmqk').css('color','#f12e2e');
+            $('#select_ycl').val('查看对账信息');
+        }
+        function showdata(show,hide,html,font){
+            show.show().html(html);
+            if(font == 2) {
+                show.css('font-weight','600');
+            }
+            hide.hide();
+        }
+        // 显示
+        div_show();
+        function div_show(type) {
+            if (type == 1) {
+                $('#content1').hide();
+                $('.weui-cells').eq(1).hide();
+                $('#other_page').show();
+                $('#btn-all').show();
+            } else {
+                $('#content1').show();
+                $('.weui-cells').eq(1).show();
+                $('#other_page').hide();
+                $('#btn-all').hide();
+            }
+        }
+        $('#btn-all').click(function () {
+            div_show();
+        });
+        $('#select_ycl').click(function () {
+            if(id) return tooltip('对账单已选择');
+            div_show(1);
+        });
+        // 开始时间
+        $('#start_date').on('click', function () {
+            weui.datePicker({
+                start: 2018,
+                end: new Date().getFullYear() + 10,
+                defaultValue: [new Date().getFullYear(), new Date().getMonth() + 1, new Date().getDate()],
+                onConfirm: function (result) {
+                    pickerValue(result, $('#start_date'));
+                },
+                id: 'start_date'
+            });
+        });
+        // 结束时间
+        $('#end_date').on('click', function () {
+            weui.datePicker({
+                start: 2018,
+                end: new Date().getFullYear() + 10,
+                defaultValue: [new Date().getFullYear(), new Date().getMonth() + 1, new Date().getDate()],
+                onConfirm: function (result) {
+                    pickerValue(result, $('#end_date'));
+                },
+                id: 'end_date'
+            });
+        });
+        // 日历填充
+        function pickerValue(dateArr, dom) {
+            var val = dateArr[0] + '-';
+            val += dateArr[1] > 9 ? dateArr[1] : '0' + dateArr[1];
+            val += '-';
+            val += dateArr[2] > 9 ? dateArr[2] : '0' + dateArr[2];
+            dom.val(val);
+            $('#order_searchResult').html('');
+            page = 1; getFhList();
+        }
+        // 下拉框
+        // 用户选择
+        function formatRepo(repo) { return repo.text; }
+
+        function formatRepoSelection(repo) { return repo.text }
+
+        $("#user_name").select2({
+            ajax: {
+                url: "{:U('Light/Api/ClientStatementUpApi')}" + "&system=kk&modname=ClientStatementUp&action=getCustomerList",
+                dataType: 'json',
+                delay: 350,
+                data: function (params) {
+                    $('#alter_div input').eq(0).attr('placeholder', '请选择客户或拼音缩写');
+                    return {
+                        math: params.term,
+                    };
+                },
+                processResults: function (data) {
+                    return {
+                        results: data
+                    };
+                },
+                cache: true
+            },
+            escapeMarkup: function (markup) { return markup; },
+            minimumInputLength: 0,
+            minimumResultsForSearch: 9,
+            // allowClear: true,
+            language: "zh-CN",
+            templateResult: formatRepo,
+            templateSelection: formatRepoSelection
+        });
+
+        
+        // select2 点击触发
+        $("#user_name").on("select2:selecting", function (e) {
+            $('#alter_div .select2-selection__choice__remove').click();
+            var selectArr = e.params.args.data;
+            user_id = selectArr.id;
+            selectArr.text = selectArr.jc;
+            $('#user_name .select2-selection__choice').text(selectArr.text);
+            $('#order_searchResult').html('');
+            page = 1;
+            getFhList();
+        });
+
+
+        $("#user_name").on("select2:unselecting", function (e) {
+            user_id = '';
+            $('#order_searchResult').html('');
+            page = 1;
+            getFhList();
+
+        });
+
+        var alter_user_id = '';
+        // 选择修改公司
+
+
+        $("#alter").select2({
+            ajax: {
+                url: "{:U('Light/Api/fh_edit_ApplyApi')}" + "&system=kk&modname=fh_edit_Apply&action=getCustomerList",
+                dataType: 'json',
+                delay: 350,
+                data: function (params) {
+                    $('#mydiv input').eq(0).attr('placeholder', '请选择客户或拼音缩写');
+                    return {
+                        math: params.term,
+                    };
+                },
+                processResults: function (data) {
+                    return {
+                        results: data
+                    };
+                },
+                cache: true
+            },
+            escapeMarkup: function (markup) { return markup; },
+            minimumInputLength: 0,
+            minimumResultsForSearch: 9,
+            // allowClear: true,
+            language: "zh-CN",
+            templateResult: formatRepo,
+            templateSelection: formatRepoSelection
+        });
+        
+       
+        // select2 点击触发
+        $("#alter").on("select2:selecting", function (e) {
+            $('.select2-selection__choice__remove').click();
+            var selectArr = e.params.args.data;
+            selectArr.text = selectArr.jc;
+            selectArr.text = selectArr.jc ? selectArr.jc : selectArr.text;
+            $('#mydiv .select2-selection__choice').text(selectArr.text);
+            $('#order_searchResult').html('');
+            page = 1;
+            getFhList();
+        });
+       
+        $("#alter").on("select2:unselecting", function (e) {
+            $('#order_searchResult').html('');
+            page = 1;
+            getFhList();
+        });
+
+        $('#submit').click(function () {
+            if (!isSel) return tooltip('请选择对账单');
+            // 没有修改直接提交
+            var notice = $('#reason').val(),
+                file_names = $('#file_names').val();
+            if (!file_names) return tooltip('请上传回执单');
+            if (notice.length < 5) return tooltip('备注不能少于5个字');
+            toast.fadeIn(200);
+            $.ajax({
+                type: 'POST',
+                url: "{:U('Light/Api/ClientStatementUpApi')}",
+                dataType: 'json',
+                data: {
+                    text: notice,
+                    info: clickInfo,
+                    file_names: file_names,
+                    copyto_id: $("#copyto_id").val(),
+                    system: "{$system}",
+                    modname: 'ClientStatementUp',
+                    action: 'submit',
+                    __hash__: hash
+                },
+                dataType: 'json',
+                success: function (res) {
+                    toast.fadeOut(200);
+                    if (res.code == 200) {
+                        window.location.href = "{$fixed['info']}" + "&aid=" + res.aid;
+                    } else {
+                        tooltip(res.msg);
+                    }
+                }
+            });
+        });
+
+
+        // 图片删除
+        var $gallery = $("#gallery"),
+            $galleryImg = $("#galleryImg");
+
+        $("#uploaderFiles").on("click", '.imgsrc', function () {
+            // console.log(sty);
+            $galleryImg.attr("style", this.getAttribute("style"));
+            $gallery.fadeIn(100);
+        });
+        $gallery.on("click", function () {
+            $gallery.fadeOut(100);
+        });
+
+        // 触发上传机制
+        function imgUpload() {
+            dialog_know('图片布局方向须朝上！');
+            $("#knowDialog").fadeIn(100);
+        }
+
+        // 内容提示(知道了)
+        function dialog_iknow() {
+            $("#knowDialog").fadeOut(100);
+            if ($("#knowDialogContent").text() != '图片布局方向须朝上！') return false;
+            filechooser.click();
+        }
+
+        // 图片压缩
+        var imagepath = '';
+        var filechooser = document.getElementById("uploaderInput");
+
+        // Close dialog
+        //    用于压缩图片的canvas
+        var canvas = document.createElement("canvas");
+        var ctx = canvas.getContext('2d');
+        //    瓦片canvas
+        var tCanvas = document.createElement("canvas");
+        var tctx = tCanvas.getContext("2d");
+        var maxsize = 100 * 1024;
+        var img_num = 0;
+        var imgIndex = "",
+            imgdom = "";
+        $("#upload").on("click", function () {
+            filechooser.click();
+        }).on("touchstart", function () {
+            $(this).addClass("touch")
+        })
+            .on("touchend", function () {
+                $(this).removeClass("touch")
+            });
+        filechooser.onchange = function () {
+            if (!this.files.length) return;
+            var files = Array.prototype.slice.call(this.files);
+            if (files.length > 9 || img_num > 8) {
+                alert("最多只可上传9张图片");
+                return;
+            }
+            files.forEach(function (file, i) {
+                if (!/\/(?:jpeg|png|gif)/i.test(file.type)) return;
+                // console.log(file);
+                // console.log(i);
+                // console.log(Orientation);
+                var reader = new FileReader();
+                var li = document.createElement("li");
+                //          获取图片大小
+                var size = file.size / 1024 > 1024 ? (~~(10 * file.size / 1024 / 1024)) / 10 + "MB" : ~~(file.size / 1024) + "KB";
+                // li.innerHTML = '<div class="progress"><span></span></div><div class="size">' + size + '</div>';
+                li.innerHTML = '<img class="weui-selet__user" style="margin-bottom: 0px;margin-right: 6px;margin-top:10px;"><div class="weui-uploader__file-content"></div><span class="weui-badge imgDel" style="position: relative;top: -4.8em;left: 2.5em;">X</span>';
+                $(li).addClass("weui-uploader__file  weui-uploader__file_status");
+                $("#uploaderFiles").append($(li));
+                reader.onload = function () {
+                    var result = this.result;
+                    var img = new Image();
+                    img.src = result;
+
+                    //如果图片大小小于100kb，则直接上传
+                    if (result.length <= maxsize) {
+                        img = null;
+                        // TODO：这里没有做图片旋转，小于100K可能会有问题
+                        upload(result, file.type, $(li), i);
+                        return;
+                    }
+                    //      图片加载完毕之后进行压缩，然后上传
+                    if (img.complete) {
+                        callback();
+                    } else {
+                        img.onload = callback;
+                    }
+
+                    function callback() {
+                        //获取照片方向角属性，用户旋转控制  
+                        EXIF.getData(file, function () {
+                            Orientation = EXIF.getTag(this, 'Orientation');
+                            // alert(Orientation);
+                            var data = compress(img, Orientation);
+                            upload(data, file.type, $(li), i);
+                            img = null;
+                        });
+                    }
+                };
+                reader.readAsDataURL(file);
+            })
+        };
+        //对图片旋转处理 added by lzk  
+        function rotateImg(img, direction, canvas) {
+            // alert(img);  
+            //最小与最大旋转方向，图片旋转4次后回到原方向    
+            var min_step = 0;
+            var max_step = 3;
+            //var img = document.getElementById(pid);    
+            if (img == null) return;
+            //img的高度和宽度不能在img元素隐藏后获取，否则会出错    
+            var height = img.height;
+            var width = img.width;
+            //var step = img.getAttribute('step');    
+            var step = 2;
+            if (step == null) {
+                step = min_step;
+            }
+            if (direction == 'right') {
+                step++;
+                //旋转到原位置，即超过最大值    
+                step > max_step && (step = min_step);
+            } else {
+                step--;
+                step < min_step && (step = max_step);
+            }
+            //img.setAttribute('step', step);    
+            /*var canvas = document.getElementById('pic_' + pid);   
+            if (canvas == null) {   
+                img.style.display = 'none';   
+                canvas = document.createElement('canvas');   
+                canvas.setAttribute('id', 'pic_' + pid);   
+                img.parentNode.appendChild(canvas);   
+            }  */
+            //旋转角度以弧度值为参数    
+            var degree = step * 90 * Math.PI / 180;
+            // var ctx = canvas.getContext('2d');
+            // console.log(step);
+            switch (step) {
+                case 0:
+                    canvas.width = width;
+                    canvas.height = height;
+                    ctx.drawImage(img, 0, 0);
+                    break;
+                case 1:
+                    canvas.width = height;
+                    canvas.height = width;
+                    ctx.rotate(degree);
+                    ctx.drawImage(img, 0, -height);
+                    break;
+                case 2:
+                    canvas.width = width;
+                    canvas.height = height;
+                    ctx.rotate(degree);
+                    ctx.drawImage(img, -width, -height);
+                    break;
+                case 3:
+                    canvas.width = height;
+                    canvas.height = width;
+                    ctx.rotate(degree);
+                    ctx.drawImage(img, -width, 0);
+                    break;
+            }
+        }
+        //    使用canvas对大图片进行压缩
+        function compress(img, Orientation) {
+            var initSize = img.src.length;
+            var width = img.width;
+            var height = img.height;
+            //如果图片大于四百万像素，计算压缩比并将大小压至400万以下
+            var ratio;
+            if ((ratio = width * height / 4000000) > 1) {
+                ratio = Math.sqrt(ratio);
+                width /= ratio;
+                height /= ratio;
+            } else {
+                ratio = 1;
+            }
+            canvas.width = width;
+            canvas.height = height;
+            //        铺底色
+            ctx.fillStyle = "#fff";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            //如果图片像素大于100万则使用瓦片绘制
+            var count;
+            if ((count = width * height / 1000000) > 1) {
+                count = ~~(Math.sqrt(count) + 1); //计算要分成多少块瓦片
+                //            计算每块瓦片的宽和高
+                var nw = ~~(width / count);
+                var nh = ~~(height / count);
+                tCanvas.width = nw;
+                tCanvas.height = nh;
+                for (var i = 0; i < count; i++) {
+                    for (var j = 0; j < count; j++) {
+                        tctx.drawImage(img, i * nw * ratio, j * nh * ratio, nw * ratio, nh * ratio, 0, 0, nw, nh);
+                        ctx.drawImage(tCanvas, i * nw, j * nh, nw, nh);
+                    }
+                }
+            } else {
+                ctx.drawImage(img, 0, 0, width, height);
+            }
+
+            // console.log(Orientation);
+
+            if (navigator.userAgent.match(/iphone/i)) {
+                console.log('iphone');
+                //alert(expectWidth + ',' + expectHeight);  
+                //如果方向角不为1，都需要进行旋转 added by lzk  
+                if (Orientation != "" && Orientation != 1) {
+                    console.log('旋转处理');
+                    switch (Orientation) {
+                        case 6://需要顺时针（向左）90度旋转  
+                            console.log('需要顺时针（向左）90度旋转');
+                            rotateImg(img, 'left', canvas);
+                            break;
+                        case 8://需要逆时针（向右）90度旋转  
+                            console.log('需要顺时针（向右）90度旋转');
+                            rotateImg(img, 'right', canvas);
+                            break;
+                        case 3://需要180度旋转  
+                            console.log('需要180度旋转');
+                            rotateImg(img, 'right', canvas);//转两次  
+                            rotateImg(img, 'right', canvas);
+                            break;
+                    }
+                }
+            } else {
+                //alert(Orientation);  
+                if (Orientation != "" && Orientation != 1) {
+                    //alert('旋转处理');  
+                    switch (Orientation) {
+                        case 6://需要顺时针（向左）90度旋转  
+                            console.log('需要顺时针（向左）90度旋转');
+                            rotateImg(img, 'left', canvas);
+                            break;
+                        case 8://需要逆时针（向右）90度旋转  
+                            console.log('需要顺时针（向右）90度旋转');
+                            rotateImg(img, 'right', canvas);
+                            break;
+                        case 3://需要180度旋转  
+                            console.log('需要180度旋转');
+                            rotateImg(img, 'right', canvas);//转两次  
+                            rotateImg(img, 'right', canvas);
+                            break;
+                    }
+                }
+
+            }
+
+            var srcStr = img.src;
+            var img_header = srcStr.substring(0, 23);
+            // console.log(img_header);
+            var indexSearch = img_header.indexOf('png');
+            console.log(indexSearch);
+            //进行最小压缩
+            if (indexSearch <= 0) {
+                var ndata = canvas.toDataURL('image/jpeg', 0.4);
+            }
+            else if (indexSearch > 0) {
+                var ndata = canvas.toDataURL('image/jpeg', 0.4);//'image/png'
+            }
+            // console.log('压缩前：' + initSize);
+            // console.log('压缩后：' + ndata.length);
+            // console.log('压缩率：' + ~~(100 * (initSize - ndata.length) / initSize) + "%");
+            tCanvas.width = tCanvas.height = canvas.width = canvas.height = 0;
+            return ndata;
+        }
+        //    图片上传，将base64的图片转成二进制对象，塞进formdata上传
+        function upload(basestr, file, $li, i) {
+            var text = window.atob(basestr.split(",")[1]);
+            // var buffer = new Uint8Array(text.length);
+            var pecent = 0,
+                loop = null;
+            // for (var i = 0; i < text.length; i++) {
+            //     buffer[i] = text.charCodeAt(i);
+            // }
+            // var blob = getBlob([buffer], type);
+            var xhr = new XMLHttpRequest();
+            var formdata = getFormData();
+            // console.log(blob);
+            // formdata.append('imagefile', blob);
+            formdata.append('imagefile', basestr);
+            formdata.append('system', "{$system}");
+            formdata.append('modname', "ClientStatementUp");
+            formdata.append('action', "fjsc");
+            u = "{:U('Light/Api/ClientStatementUpApi')}";
+            xhr.open('post', u);
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState == 4 && xhr.status == 200) {
+                    var jsonData = JSON.parse(xhr.responseText);
+
+                    var imagedata = jsonData[0] || {};
+                    var text = imagedata.path ? '上传成功' : '上传失败';
+                    imagepath = imagedata.output_file;
+
+                    clearInterval(loop);
+                    //当收到该消息时上传完毕
+                    // $li.find(".weui-uploader__file-content").animate({ 'width': "100%" }, pecent < 95 ? 200 : 0, function() {
+                    //     $(this).html(text);
+                    // });
+                    $li.find(".weui-uploader__file-content").html("");
+                    $li.find(".weui-uploader__file-content").parent().removeClass("weui-uploader__file_status");
+                    $li.find('img').attr('data-original', 'https://www.fjyuanxin.com/WE/Public/upload/dzd/' + imagepath);
+                    $li.find('img').attr('src', 'https://www.fjyuanxin.com/WE/Public/upload/dzd/' + imagepath);
+                    createViewr();
+                    img_num++;
+                    $("#upload_nums").text(img_num);
+                    var file_names = $("#file_names").val() + imagedata.output_file + "|";
+                    $("#file_names").val(file_names);
+
+                    if (!imagedata.path) return;
+                    // $(".pic-list").append('<a href="' + imagedata.path + '">' + imagedata.name + '（' + imagedata.size + '）<img src="' + imagedata.path + '" /></a>');
+                }
+            };
+            //数据发送进度，前50%展示该进度
+            xhr.upload.addEventListener('progress', function (e) {
+                if (loop) return;
+                pecent = ~~(100 * e.loaded / e.total) / 2;
+                // $li.find(".weui-uploader__file-content").css('width', pecent + "%");
+                $li.find(".weui-uploader__file-content").html(pecent + "%");
+                if (pecent == 50) {
+                    mockProgress();
+                }
+            }, false);
+            //数据后50%用模拟进度
+            function mockProgress() {
+                if (loop) return;
+                loop = setInterval(function () {
+                    pecent++;
+                    // $li.find(".weui-uploader__file-content").css('width', pecent + "%");
+                    $li.find(".weui-uploader__file-content").html(pecent + "%");
+                    console.log(pecent);
+                    if (pecent == 99) {
+                        clearInterval(loop);
+                    }
+                }, 100)
+            }
+            xhr.send(formdata);
+
+            $(".weui-uploader__file").on('click', function () {
+                imgIndex = $(this).index();
+                imgdom = $(this);
+                // console.log(imgIndex);
+            })
+
+            $(".imgDel").on('click', function () {
+                // 是否删除该图
+                $("#iosDialog_imgDel").fadeIn(100);
+            })
+
+        }
+
+        // 取消图片删除
+        function dialog_close_imgdelete() {
+            $("#iosDialog_imgDel").fadeOut(100);
+        }
+        // 确认图片删除
+        function dialog_confirm_imgdelete() {
+            imgdom.remove();
+            var file_names_str = $("#file_names").val();
+            var file_names_arr = file_names_str.split("|");
+            file_names_arr.splice(imgIndex, 1);
+            var file_str_1 = file_names_arr.toString();
+            var file_str_2 = file_str_1.replace(/,/g, "|");
+            // console.log(file_str_2);
+            $("#file_names").val(file_str_2);
+            $("#iosDialog_imgDel").fadeOut(100);
+        }
+
+        /**
+         * 获取blob对象的兼容性写法
+         * @param buffer
+         * @param format
+         * @returns {*}
+         */
+        function getBlob(buffer, format) {
+            try {
+                return new Blob(buffer, { type: format });
+            } catch (e) {
+                var bb = new (window.BlobBuilder || window.WebKitBlobBuilder || window.MSBlobBuilder);
+                buffer.forEach(function (buf) {
+                    bb.append(buf);
+                });
+                return bb.getBlob(format);
+            }
+        }
+        /**
+         * 获取formdata
+         */
+        function getFormData() {
+            var isNeedShim = ~navigator.userAgent.indexOf('Android') &&
+                ~navigator.vendor.indexOf('Google') &&
+                !~navigator.userAgent.indexOf('Chrome') &&
+                navigator.userAgent.match(/AppleWebKit\/(\d+)/).pop() <= 534;
+            return isNeedShim ? new FormDataShim() : new FormData()
+        }
+        /**
+         * formdata 补丁, 给不支持formdata上传blob的android机打补丁
+         * @constructor
+         */
+        function FormDataShim() {
+            console.warn('using formdata shim');
+            var o = this,
+                parts = [],
+                boundary = Array(21).join('-') + (+new Date() * (1e16 * Math.random())).toString(36),
+                oldSend = XMLHttpRequest.prototype.send;
+            this.append = function (name, value, filename) {
+                parts.push('--' + boundary + '\r\nContent-Disposition: form-data; name="' + name + '"');
+                if (value instanceof Blob) {
+                    parts.push('; filename="' + (filename || 'blob') + '"\r\nContent-Type: ' + value.type + '\r\n\r\n');
+                    parts.push(value);
+                } else {
+                    parts.push('\r\n\r\n' + value);
+                }
+                parts.push('\r\n');
+            };
+            // Override XHR send()
+            XMLHttpRequest.prototype.send = function (val) {
+                var fr,
+                    data,
+                    oXHR = this;
+                if (val === o) {
+                    // Append the final boundary string
+                    parts.push('--' + boundary + '--\r\n');
+                    // Create the blob
+                    data = getBlob(parts);
+                    // Set up and read the blob into an array to be sent
+                    fr = new FileReader();
+                    fr.onload = function () {
+                        oldSend.call(oXHR, fr.result);
+                    };
+                    fr.onerror = function (err) {
+                        throw err;
+                    };
+                    fr.readAsArrayBuffer(data);
+                    // Set the multipart content type and boudary
+                    this.setRequestHeader('Content-Type', 'multipart/form-data; boundary=' + boundary);
+                    XMLHttpRequest.prototype.send = oldSend;
+                } else {
+                    oldSend.call(this, val);
+                }
+            };
+        }
+
+    </script>
+</block>

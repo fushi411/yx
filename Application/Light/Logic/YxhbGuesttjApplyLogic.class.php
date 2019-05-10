@@ -18,7 +18,7 @@ class YxhbGuesttjApplyLogic extends Model {
      */
     public function record($id)
     {
-        $map = array('pid' => $id);
+        $map = array('id' => $id);
         return $this->field(true)->where($map)->find();
     }
 
@@ -31,6 +31,11 @@ class YxhbGuesttjApplyLogic extends Model {
     {
         $res = $this->record($id);
         $result = array();
+        $result['content'][] = array('name'=>'系统类型：',
+            'value'=>'环保客户调价',
+            'type'=>'date',
+            'color' => 'black'
+        );
          $result['content'][] = array('name'=>'申请日期：',
                                     'value'=>$res['date'],
                                     'type'=>'date',
@@ -46,7 +51,7 @@ class YxhbGuesttjApplyLogic extends Model {
 
         $result['imgsrc'] = '';
         $result['applyerID'] =  $res['applyuser'];                                               //申请者的id
-        $result['applyerName'] = D('YxhbBoss')->getNameFromID($res['applyuser']);                            //申请者的姓名
+        $result['applyerName'] = D('YxhbBoss')->getNameFromID($res['applyuser']);               //申请者的姓名
         $result['stat'] = $this->transStat($res['id']);                                        //审批状态
         return $result;
     }
@@ -84,8 +89,12 @@ class YxhbGuesttjApplyLogic extends Model {
      */
     public function getDescription($id){
         $res = $this->record($id);
+        $result[] = array('name'=>'系统类型：',
+            'value'=>'环保客户调价',
+            'type'=>'string'
+        );
         $result[] = array('name'=>'提交时间：',
-                                     'value'=>date('m-d H:i',strtotime($res['date'])),
+                                     'value'=>date('m-d H:i',strtotime($res['dtime'])),
                                      'type'=>'date'
                                     );
         $result[] = array('name'=>'申请日期：',
@@ -120,6 +129,7 @@ class YxhbGuesttjApplyLogic extends Model {
             'third_title'    => '相关说明',
             'third_content'  => '无',
             'stat'           => $this->transStat($res['id']),
+            'applyerName'    => D('YxhbBoss')->getNameFromID($res['applyuser']),
         );
         return $result;
     }

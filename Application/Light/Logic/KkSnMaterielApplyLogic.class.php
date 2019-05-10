@@ -188,6 +188,7 @@ class KkSnMaterielApplyLogic extends Model {
             'third_title'    => '相关说明',
             'third_content'  => $res['info']?$res['info']:'无',
             'stat'           => $res['stat'],
+            'applyerName'    => $res['tjr'],
         );
         return $result;
     }
@@ -206,7 +207,9 @@ class KkSnMaterielApplyLogic extends Model {
         $mod_name  = I('post.modname');
         $copyto_id = I('post.copyto_id');
         $sec = $this->getUserSection();
-     
+        // 流程检验
+        $pro = D('KkAppflowtable')->havePro('KfMaterielApply','');
+        if(!$pro) return array('code' => 404,'msg' => '无审批流程,请联系管理员');
         // 重复提交
         if(!M('yxhb_materiel')->autoCheckToken($_POST)) return array('code' => 404,'msg' => '网络延迟，请勿点击提交按钮！');
        
@@ -287,15 +290,9 @@ class KkSnMaterielApplyLogic extends Model {
     }
     // 判断是那个部门的人
     public function getUserSection(){
-        $wxid = session('wxid');
-        // 9 品管 10 生产
-        $res = M('auth_group_access a')
-                ->join('auth_group b on a.group_id=b.id')
-                ->where(array(
-                    'a.uid'      => $wxid,
-                    'a.group_id' => array('neq',2),
-                    'b.id'    => 9))
-                ->find();
+        // 110 品管
+        $wxid   = session('wxid');
+        $res   = M('yx_bm_access')->where(array('wx_id' => $wxid,'bm_id' => 110,'main' => 1))->find();
         return empty($res)?2:1; // 1 品管 2 生产
     }
 

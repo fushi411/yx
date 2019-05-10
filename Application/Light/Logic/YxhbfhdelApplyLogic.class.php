@@ -116,7 +116,7 @@ class YxhbfhdelApplyLogic extends Model {
     }
 
     /**
-     * 撤销申请调用的方法
+     * 撤銷申請調用的方法
      * @param  integer $id 记录ID
      */
     public function delRecord($id)
@@ -204,6 +204,7 @@ class YxhbfhdelApplyLogic extends Model {
             'third_title'    => '相关说明',
             'third_content'  => $res3['del_reason']?$res3['del_reason']:'无',
             'stat'           => $this->transStat($res['id']),
+            'applyerName'    => $res3['del_person'],
         );
         return $result;
     }
@@ -316,7 +317,9 @@ class YxhbfhdelApplyLogic extends Model {
         $text       = I('post.text');               //申请理由
         $copyto_id  = I('post.copyto_id');          //抄送人员的ID
         $file       = I('post.file_names');         //上传的附件
-
+        // 流程检验
+        $pro = D('YxhbAppflowtable')->havePro('fh_del_Apply','');
+        if(!$pro) return array('code' => 404,'msg' => '无审批流程,请联系管理员');
         // 重复提交
         if(!M('yxhb_fhdel')->autoCheckToken($_POST)) return array('code' => 404,'msg' => '网络延迟，请勿点击提交按钮！');
         $addData = array(

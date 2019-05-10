@@ -192,6 +192,7 @@ class YxhbCreditLineApplyLogic extends Model {
             'third_title'    => '相关说明',
             'third_content'  => $res['notice']?$res['notice']:'无',
             'stat'           => $res['stat'],
+            'applyerName'    => $res['sales'],
         );
         return $result;
     }
@@ -237,7 +238,9 @@ class YxhbCreditLineApplyLogic extends Model {
         // 字数校验
         if(strlen($reason)<5 ||strlen($reason)>200) return array('code' => 404,'msg' => '相关说明不能少于5个字，且不能多于200字！');
         $model = D('Customer');
-
+        // 流程检验
+        $pro = D('YxhbAppflowtable')->havePro('CreditLineApply','');
+        if(!$pro) return array('code' => 404,'msg' => '无审批流程,请联系管理员');
         $clientname = $model->getClientname($user_id,'yxhb');
         $sales      = session('name');
         $salesid    = session('yxhb_id');

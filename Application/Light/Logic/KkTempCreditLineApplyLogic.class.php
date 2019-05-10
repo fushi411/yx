@@ -56,9 +56,9 @@ class KkTempCreditLineApplyLogic extends Model {
                                      'color' => 'black'
                                     ); 
 
-        $color = -($info['tmpline']-$info['ye']+$res['ed']) < 20000?'#f12e2e':'black';
+        $color = -($info['tmpline']-$info['ye']) < 20000?'#f12e2e':'black';
         $result['content'][] = array('name'=>'应收余额：',
-                                     'value'=>"&yen;".number_format(-($info['tmpline']-$info['ye']+$res['ed']),2,'.',',')."元",
+                                     'value'=>"&yen;".number_format(-($info['tmpline']-$info['ye']),2,'.',',')."元",
                                      'type'=>'string',
                                      'color' =>$color
                                     ); 
@@ -68,7 +68,7 @@ class KkTempCreditLineApplyLogic extends Model {
                                      'color' => 'black'
                                     ); 
         $result['content'][] = array('name'=>'发货余额：',
-                                     'value'=>"&yen;".number_format($res['ye'],2,'.',',')."元",
+                                     'value'=>"&yen;".number_format($info['ye']+$res['ed'],2,'.',',')."元",
                                      'type'=>'string',
                                      'color' => 'black'
                                     ); 
@@ -169,7 +169,7 @@ class KkTempCreditLineApplyLogic extends Model {
                                      'type'=>'string'
                                     );
         $result[] = array('name'=>'应收余额：',
-                                     'value'=>number_format(-($info['tmpline']-$info['ye']+$res['ed']),2,'.',',')."元",
+                                     'value'=>number_format(-($info['tmpline']-$info['ye']),2,'.',',')."元",
                                      'type'=>'number'
                                     );
         $result[] = array('name'=>'已有临额：',
@@ -217,6 +217,7 @@ class KkTempCreditLineApplyLogic extends Model {
             'third_title'    => '相关说明',
             'third_content'  => $res['notice']?$res['notice']:'无',
             'stat'           => $res['stat'],
+            'applyerName'    => $res['sales'],
         );
         return $result;
     }
@@ -290,7 +291,7 @@ class KkTempCreditLineApplyLogic extends Model {
         $day = str_replace('天','',$res['yxq']);
         if(strtotime($res['dtime'].' +'.$day.' day')>time()) return array('code' => 404,'msg' => '已有同等额度在有效期内');
 
-        $stat =  $money == 0? 1:2;
+        $stat = 2;
         $clientname = $model->getClientname($user_id,$system);
         $sales = session('name');
         $salesid = session($system.'_id');
@@ -299,6 +300,9 @@ class KkTempCreditLineApplyLogic extends Model {
 
         $yxq =$yxqArr[$money];
         $line = $lineArr[$money];
+        // 流程检验
+        $pro = D('KkAppflowtable')->havePro('TempCreditLineApply','line='.$line);
+        if(!$pro) return array('code' => 404,'msg' => '无审批流程,请联系管理员');
         $ye = I('ye');
         $ed = $model->getTempCredit($user_id,$system);
 
@@ -328,21 +332,8 @@ class KkTempCreditLineApplyLogic extends Model {
             D($system.'Appcopyto')->copyTo($copyto_id,'TempCreditLineApply', $result);
         }
 
-
-        if($stat == 2)
-        {
-            $wf = A('WorkFlow');
-            $res = $wf->setWorkFlowSV('TempCreditLineApply', $result, $salesid, $system);
-        }else{ // -- 推送
-            $mod_name = 'TempCreditLineApply';          
-            $res = M($system.'_appflowtable')->field('condition')->where(array('pro_mod'=>$mod_name.'_push'))->find();
-            if(!empty($res)){
-                $pushArr = json_decode($res['condition'],true);
-                // -- 2W额度推送人  
-                $push_id = $pushArr['two'];
-                D($system.'Appcopyto')->copyTo($push_id, $mod_name, $result,2);
-            }
-        };
+        $wf = A('WorkFlow');
+        $res = $wf->setWorkFlowSV('TempCreditLineApply', $result, $salesid, $system);
         return array('code' => 200,'msg' => '提交成功' , 'aid' =>$result);
     }
 

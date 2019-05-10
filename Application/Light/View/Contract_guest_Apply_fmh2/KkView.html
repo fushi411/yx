@@ -1,0 +1,451 @@
+<extend name="Apply:applyBase" />
+<!-- 去除不可选择日期 -->
+<block name="disable_date"></block>
+<!-- 去除可选择日期 -->
+
+<block name="content_body">
+    <div class="weui-cells">
+        <block>
+            <div class="weui-cell weui-cell_select weui-cell_select-after">
+                <div class="weui-cell__hd">
+                    <label class="weui-label">上级客户&nbsp;&nbsp;
+                        <span style="color:red;">*</span>
+                    </label>
+                </div>
+                <div class="weui-cell__bd" id='alter_div'>
+                    <select class="weui-select" name="user_name[]" id="user_name" multiple="multiple" style="width: 95%;" data-placeholder="正常总客户">
+                    </select>
+                </div>
+            </div>
+            <!--  上级客户 END -->
+            <div class="weui-cell" id="zkhxx" style="display: none">
+                <div class="weui-cell__hd">
+                    <label class="weui-label" >二级详情&nbsp;&nbsp;
+                    </label>
+                </div>
+                <div class="weui-cell__bd">
+                    <div id="zkhList" name="zkhList" ></div>
+                    <span id="num2" style="display: none">无子客户</span>
+                </div>
+            </div>
+            <!--  子客户提示信息 END -->
+            <!--<div class="weui-cell" id="zkh" style="display: none">-->
+                <!--<div class="weui-cell__hd">-->
+                    <!--<label class="weui-label" >子客户&nbsp;&nbsp;-->
+                    <!--</label>-->
+                <!--</div>-->
+                <!--<div class="weui-cell__bd">-->
+                    <!--<select id="zkhList" name="zkhList" class="weui-input greyColor" onchange="select_zkh()">-->
+                        <!--<option value="-1" selected="selected" class="weui-select" disabled style='display:none;'>请选择子客户</option>-->
+                    <!--</select>-->
+                <!--</div>-->
+            <!--</div>-->
+            <!--  子客户 END -->
+        </block >
+    </div>
+    <div class="weui-cells" id="content1">
+        <div class="weui-cell ">
+            <div class="weui-cell__hd">
+                <label class="weui-label">客户名称&nbsp;&nbsp;
+                    <span style="color:red;">*</span>
+                </label>
+            </div>
+            <div class="weui-cell__bd">
+                <input id="name" name="name" class="weui-input" type="text" placeholder="完整公司名称或真实姓名" maxlength="15" onblur="checkNameIsSet()">
+            </div>
+        </div>
+        <!--  备案名称 END -->
+        <div class="weui-cell ">
+            <div class="weui-cell__hd">
+                <label class="weui-label" >客户类型&nbsp;&nbsp;
+                </label>
+            </div>
+            <div class="weui-cell__bd">
+                <input id="g_khlx" name="g_khlx" class="weui-input" type="text" placeholder="自动填写" readonly>
+            </div>
+        </div>
+        <!--  客户类型 END -->
+        <div class="weui-cell ">
+            <div class="weui-cell__hd">
+                <label class="weui-label"><span id="select_peo">联系人员</span>&nbsp;&nbsp;
+                </label>
+            </div>
+            <div class="weui-cell__bd">
+                <input id="contacts" name="contacts" class="weui-input" type="text" placeholder="自动填写" readonly>
+            </div>
+        </div>
+        <!--  联系人 END -->
+        <div class="weui-cell ">
+            <div class="weui-cell__hd">
+                <label class="weui-label">联系电话&nbsp;&nbsp;
+                </label>
+            </div>
+            <div class="weui-cell__bd">
+                <input id="telephone" name="telephone" class="weui-input" type="number" placeholder="自动填写"  required="" readonly>
+            </div>
+        </div>
+        <!--  联系电话 END -->
+    </div>
+    <div class="weui-cells">
+        <block>
+            <div class="weui-cell ">
+                <div class="weui-cell__hd">
+                    <label class="weui-label" >开票方式&nbsp;&nbsp;
+                    </label>
+                </div>
+                <div class="weui-cell__bd">
+                    <input id="ht_kpfs" name="ht_kpfs" class="weui-input" type="text" placeholder="自动填写" readonly>
+                    <select id="kpfs" name="kpfs" class="weui-input greyColor" onchange="kpfs()" style="display: none">
+                        <option value="-1" id="kpfs_1" selected="selected" class="weui-select" disabled style='display:none;'>请选择开票方式</option>
+                        <option value="出厂票价">出厂票价</option>
+                        <option value="送到票价">送到票价</option>
+                    </select>
+                </div>
+            </div>
+            <!--  开票方式 END -->
+            <div class="weui-cell ">
+                <div class="weui-cell__hd">
+                    <label class="weui-label" >结算方式&nbsp;&nbsp;
+                    </label>
+                </div>
+                <div class="weui-cell__bd">
+                    <input id="ht_sljsfs" name="ht_sljsfs" class="weui-input" type="text" placeholder="自动填写" readonly>
+                    <select id="jsfs" name="jsfs" class="weui-input greyColor" onchange="jsfs()" style="display: none">
+                        <option value="-1" selected="selected" class="reference_color" disabled style='display:none;'>请选择结算方式</option>
+                        <option value="对方数量">对方数量</option>
+                        <option value="我方数量">我方数量</option>
+                    </select>
+                </div>
+            </div>
+            <!--  数量结算 END -->
+        </block >
+        <!--  备案信息 END -->
+    </div>
+    <button class="btn btn-info btn-xs" data-toggle="modal" data-target="#myModal" id="showModal" style="display: none"></button>
+</block>
+
+<block name="js">
+<!-- <script src="__PUBLIC__/assets/js/vconsole.min.js"></script> -->
+<script type="text/javascript">
+    $(function(){
+        /**
+         * keyup         统计备注的字数，截取前200个字符
+         * len           备注的长度
+         */
+        ispc();
+    });
+
+    //判断是否从pc端点击进入页面的
+    function ispc() {
+        var id = getQueryString("id");
+        if(id != null){
+            getname(id);
+            getTempInfo(id);
+        }else{
+            sszkh();
+        }
+    }
+
+    // 获取URL参数
+    function getQueryString(name) {
+        var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
+        var r = window.location.search.substr(1).match(reg);
+        if (r != null) return unescape(r[2]); return null;
+    }
+
+    //获取总客户的名称
+    function getname(id) {
+        $.ajax({
+            type:'post',
+            url: "{:U('Light/Api/Contract_guest_Apply_fmh2Api')}" + "&system=kk&modname=Contract_guest_Apply_fmh2&action=getname",
+            data: {
+                'id':id,
+            },
+            dataType: 'json',
+            success: function (res) {
+                if (res.code != 200) {
+                    tooltip('请重新刷新页面！')
+                } else {
+                    if (res.data.g_name.substr(res.data.g_name.length-2,2)=='-总'){
+                        var html = `<input id="user_name" name="user_name" class="weui-input" type="text"  required="" readonly value="`+res.data.g_name+`">`;
+                    }else{
+                        var html = `<input id="user_name" name="user_name" class="weui-input" type="text"  required="" readonly value="`+res.data.g_name+`-总">`;
+                    }
+                    $("#alter_div").html(html);
+                    $("#alter_div").attr('style','height:45px;line-height:45px;');
+                }
+            }
+        })
+    }
+
+    //总客户搜索
+    function sszkh() {
+        var user_id = 0;
+        // 用户选择
+        function formatRepo(repo) {
+            if(repo.text.substr(repo.text.length-2,2)=='-总'){
+                return repo.text;
+            }else{
+                return repo.text+"-总";
+            }
+        }
+        function formatRepoSelection(repo) {
+            if(repo.text.substr(repo.text.length-2,2)=='-总'){
+                return repo.text;
+            }else{
+                return repo.text+"-总";
+            }
+        }
+
+        $("#user_name").select2({
+            ajax: {
+                url: "{:U('Light/Api/Contract_guest_Apply_fmh2Api')}"+"&system=kk&modname=Contract_guest_Apply_fmh2&action=getCustomerList",
+                dataType: 'json',
+                delay: 350,
+                data: function (params) {
+                    $('#alter_div input').eq(0).attr('placeholder', '请选择客户或拼音缩写');
+                    return {
+                        math: params.term,
+                    };
+                },
+                processResults: function (data) {
+                    return {
+                        results: data
+                    };
+                },
+                cache: true
+            },
+            escapeMarkup: function (markup) { return markup; },        //字符转义处理
+            minimumInputLength: 0,                                      //最小需要输入多少个字符才进行查询
+            minimumResultsForSearch: 9,
+            // allowClear: true,
+            language: "zh-CN",
+            templateResult: formatRepo,                                 //返回结果回调function formatRepo(repo){return repo.text},
+            templateSelection: formatRepoSelection                      //选中项回调function formatRepoSelection(repo){return repo.text}
+        });
+        $('#alter_div').on('blur','input',function(){
+            if(!user_id) $('#alter_div input').eq(0).attr('placeholder','正常总客户');
+        })
+        // select2 点击触发
+        $("#user_name").on("select2:selecting", function (e) {
+            $('.select2-selection__choice__remove').click();
+            var selectArr = e.params.args.data;
+            getTempInfo(selectArr.id);
+            $('.select2-selection__choice').text(selectArr.text);
+            user_id = selectArr.id;
+        });
+        $("#user_name").on("select2:unselecting", function (e) {
+            $('.color').val('');
+            user_id = 0;
+        });
+    }
+
+    /**
+     * check_kpfs         检测开票方式从数据库中获取到是否为空
+     * check_jsfs         检测结算方式从数据库中获取到是否为空
+     * check_isbeian      检测提交的信息是否来自备案客户
+     * checkItem          检测填写的内容是否有空缺的函数
+     * submit_data        验证通过后提交数据
+     * getzkh             获取子客户列表信息
+     * showzkh            显示子客户列表
+     * select_zkh         选择具体某个子客户
+     * check_isset        备案客户名是否已存在的标志位
+     * checkNameIsSet     验证新增第二子客户名称是否已存在
+     */
+
+    var check_isbeian = '';
+    var reid = '';
+        check_kpfs = false;
+        check_jsfs = false;
+
+    $('#submit').on('click',function(){
+        checkItem();
+    })
+
+
+    function checkItem() {
+        var name = $('#name').val();                           //客户名称
+        var g_khlx = $('#g_khlx').val();                     //客户类型
+        var contacts = $('#contacts').val();                //联系人员
+        var telephone = $('#telephone').val();             //联系电话
+        var info = $('#reason').val();                      //相关说明
+        var time = $('#showDatePicker').val();           //申请日期
+        var copyto_id = $("#copyto_id").val();          //抄送的姓名（拼音）
+        if (check_kpfs){
+            var ht_kpfs = $("#ht_kpfs").val();             //开票方式
+        }else{
+            var ht_kpfs = $("#kpfs").val();                //开票方式
+        }
+
+        if (check_jsfs){
+            var ht_sljsfs = $("#ht_sljsfs").val();        //结算方式
+        }else{
+            var ht_sljsfs = $("#jsfs").val();             //结算方式
+        }
+
+        if(name=='') return tooltip('请输入客户名称');
+        if(!check_isset) return tooltip('客户名称已存在，请调整后申请!');
+        if (info=='') return tooltip('请输入相关说明!');
+
+        if (info.length<5) return tooltip('字数不够!');
+        // 数据提交
+        submit_data(name,g_khlx,contacts,telephone,ht_kpfs,ht_sljsfs,info,time,copyto_id,check_isbeian,reid);
+    }
+
+
+
+    function submit_data(name,g_khlx,contacts,telephone,ht_kpfs,ht_sljsfs,info,time,copyto_id,check_isbeian,reid) {
+        toastfadeIn(200,'数据加载中');
+        $.ajax({
+            type:'post',
+            url: "{:U('Light/Api/Contract_guest_Apply_fmh2Api')}"+"&system=kk&modname=Contract_guest_Apply_fmh2&action=add",
+            data:{'name':name,'g_khlx':g_khlx,'contacts':contacts,'telephone':telephone,'ht_kpfs':ht_kpfs,'ht_sljsfs':ht_sljsfs,'info':info,'time':time,'copyto_id':copyto_id, '__hash__': hash,'check_isbeian':check_isbeian,'reid':reid},
+            dataType: 'json',
+            success: function (res) {
+                toast.fadeOut(200);
+                if (res.code == 200){
+                    window.location.href = "{$fixed['info']}"+"&aid="+res.aid;
+                }else{
+                    tooltip(res.msg);
+                }
+            }
+        })
+    }
+
+    function getTempInfo(user_id) {
+        toastfadeIn(200,'数据加载中');
+        $.ajax({
+            type:'post',
+            url: "{:U('Light/Api/Contract_guest_Apply_fmh2Api')}" + "&system=kk&modname=Contract_guest_Apply_fmh2&action=getCustomerInfo",
+            dataType: 'json',
+            data: {
+                'user_id': user_id
+            },
+            dataType: 'json',
+            success: function (res) {
+                toast.fadeOut(200);
+                if (res.code != 200) {
+                    tooltip('请重新刷新页面！')
+                } else {
+                    $('#telephone').val(res.data.g_phone);
+                    $('#contacts').val(res.data.g_man);
+                    //把黑色去掉
+                    $("#kpfs").attr('style','');
+                    $("#jsfs").attr('style','');
+                    if(res.data.g_jsfs == ''){
+                        $('#jsfs').show();
+                        $('#ht_sljsfs').hide();
+                        var html = `<option value="-1" selected="selected" class="reference_color" disabled style='display:none;'>请选择结算方式</option>
+                            <option value="对方数量">对方数量</option>
+                            <option value="我方数量">我方数量</option>`;
+                        $('#jsfs').html(html);
+                    }else{
+                        check_jsfs = true;
+                        $('#jsfs').hide();
+                        $('#ht_sljsfs').show();
+                        $('#ht_sljsfs').val(res.data.g_jsfs);
+                    }
+
+                    if(res.data.g_kpfs == ''){
+                        $('#kpfs').show();
+                        $('#ht_kpfs').hide();
+                        var html = `<option value="-1" id="kpfs_1" selected="selected" class="weui-select" disabled style='display:none;'>请选择开票方式</option>
+                            <option value="出厂票价">出厂票价</option>
+                            <option value="送到票价">送到票价</option>`;
+                        $('#kpfs').html(html);
+                    }else{
+                        check_kpfs = true;
+                        $('#kpfs').hide();
+                        $('#ht_kpfs').show();
+                        $('#ht_kpfs').val(res.data.g_kpfs);
+                    }
+
+                    $('#g_khlx').val(res.data.g_khlx);
+                    reid = res.data.id;
+                    getzkh(reid);
+                    $("#zkhList").html('');
+                }
+            }
+        })
+    }
+
+    function getzkh(id) {
+        toastfadeIn(200,'数据加载中');
+        $.ajax({
+            type:'post',
+            url: "{:U('Light/Api/Contract_guest_Apply_fmh2Api')}" + "&system=kk&modname=Contract_guest_Apply_fmh2&action=getzkh",
+            data: {
+                'id': id,
+            },
+            dataType: 'json',
+            success: function (res) {
+                toast.fadeOut(200);
+                if (res.code != 200) {
+                    $("#zkhxx").show();
+                    $("#num2").show();
+                    $("#zkhList").hide();
+                } else {
+                    $("#num").text(res.data.length);
+                    $("#zkhxx").show();
+                    $("#num2").hide();
+                    $("#zkhList").show();
+
+                    for(var i=0;i<res.data.length;i++){
+                        var html = `<div>`+res.data[i].g_name+`</div>`;
+                        $("#zkhList").append(html);
+                    }
+                }
+            }
+        })
+    }
+
+    function kpfs(){
+        $("#kpfs").attr('style','color:black');
+    }
+
+    function jsfs(){
+        $("#jsfs").attr('style','color:black');
+    }
+
+
+    // function select_zkh() {
+    //     var id = $("#zkhList").val();
+    //     toastfadeIn(200,'数据加载中');
+    //     $.ajax({
+    //         type:'post',
+    //         url: "{:U('Light/Api/Contract_guest_Apply2Api')}" + "&system=kk&modname=Contract_guest_Apply2&action=getzkhInfo",
+    //         data: {
+    //             'id': id,
+    //         },
+    //         dataType: 'json',
+    //         success: function (res) {
+    //             toast.fadeOut(200);
+    //             if (res.code != 200) {
+    //                 tooltip('请重新刷新页面！')
+    //             } else {
+    //                console.log(res.data);
+    //                $("#showModal").click();
+    //             }
+    //         }
+    //     })
+    // }
+
+
+    var check_isset = true;
+    function checkNameIsSet() {
+        var name = $('#name').val();
+        $.ajax({
+            type:'post',
+            url: "{:U('Light/Api/Contract_guest_Apply_fmh2Api')}"+"&system=kk&modname=Contract_guest_Apply_fmh2&action=checkNameIsSet",
+            data:{'name':name},
+            dataType: 'json',
+            success: function (res) {
+                check_isset = res;
+                if (res == false) return tooltip('客户名称已存在，请调整后申请!');
+            }
+        })
+    }
+
+
+</script>
+</block>

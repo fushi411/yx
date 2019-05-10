@@ -254,6 +254,7 @@ class YxhbAddMoneyQtLogic extends Model {
             'third_title'    => '相关说明',
             'third_content'  => $res['ntext']?$res['ntext']:'无',
             'stat'           => $res['stat'],
+            'applyerName'    => $res['npeople'],
         );
         return $result;
     }

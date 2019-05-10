@@ -126,7 +126,6 @@
 </head>
 <body>
     <div class="weui-toptips weui-toptips_warn js_tooltips" style="opacity: 1;">错误提示</div>
-    
     <div class="container" id="container">
         <div class="page js_show">
             <!-- 系统选择 -->
@@ -235,25 +234,21 @@
                             <div class="weui-cell">
                                 <div class="weui-cell__bd">
                                     <div class="weui-uploader">
-                                        <div class="weui-uploader__bd" style="height: 70px;">
+                                        <div class="weui-uploader__bd" style="min-height: 70px;">
                                             <ul class="weui-uploader__files" id="app_pro" style="margin-bottom: 0px;">
                                                     <volist name="appflow" id="vo">
-                                                            <neq name="i" value="1">                                                   
-                                                                <li class='weui-uploader__file wk-select__user' style='height:90px;margin-left:8px'>
+                                                            <li class='weui-uploader__file wk-select__user' style='height:70px;'>
+                                                            <if condition="$vo.avatar eq ''">    
+                                                                <img src="Public/assets/i/defaul.png" class='weui-selet__user' style='margin-bottom: 0px;margin-right: 6px;margin-top:10px;width: 2em;height: 2em;'>
                                                                 <else/>
-                                                                <li class='weui-uploader__file wk-select__user' style='height:90px;'>
-                                                            </neq>
-                                                            <if condition="$vo.avatar eq ''">
-                                                                <img src="Public/assets/i/defaul.png" class='weui-selet__user' style='margin-bottom: 0px;margin-right: 6px;margin-top:10px;'>
-                                                                <else/>
-                                                                <img src="{$vo.avatar}" class='weui-selet__user' style='margin-bottom: 0px;margin-right: 6px;margin-top:10px;'>
+                                                                <img src="{$vo.avatar}" class='weui-selet__user' style='margin-bottom: 0px;margin-right: 6px;margin-top:10px;width: 2em;height: 2em;'>
                                                             </if>
-                                                            <span style='margin-right: 6px;font-size: 14px;'> {$vo.name}</span>
+                                                            <span style='margin-right: 6px;font-size: 12px;'> {$vo.name}</span>
                                                             <if condition="count($appflow) gt $i">
                                                                     <if condition="$vo.sign eq 1">
-                                                                            <span style="border-radius: 3px;position: relative;top: -2.5em;right: -1.8em;width: 6px;height: 6px;background-color: #333333"></span>
+                                                                            <span style="border-radius: 3px;position: relative;top: -2.5em;right: -1.8em;width: 6px;height: 6px;background-color: #333333;font-size: 14px;"></span>
                                                                         <else/>
-                                                                            <span class="glyphicon glyphicon-arrow-right" style="position: relative;top: -2.8em;right: -1.8em;"></span>
+                                                                            <span class="glyphicon glyphicon-arrow-right" style="position: relative;top: -2.8em;right: -1.8em;font-size: 14px;"></span>
                                                                     </if>
                                                             </if>
                                                             </li>
@@ -468,13 +463,13 @@
 <script src="__PUBLIC__/assets/js/viewer.js"></script>
 </body>
 <script>
-    if(window.name != "bencalie"){
-        location.reload();
-        window.name = "bencalie";
+    var ishttps = 'https:' == document.location.protocol ? true : false;
+    if(ishttps == false){
+        httpsUrl = document.location.href;
+        httpsUrl = httpsUrl.replace('http:',"https:");
+        window.location.href = httpsUrl;
     }
-    else{
-        window.name = "";
-    }
+ 
     var viewer_conut = 0;
     function createViewr(){
         if(viewer_conut == 0){
@@ -755,8 +750,34 @@
             getDepartment(id);
         }
     });
+    function formatBankNo (BankNo){
+        if (BankNo.value == "") return  BankNo.style.setProperty('font-weight','500');
+        BankNo.style.setProperty('font-weight','550')
+        var account = new String (BankNo.value);
+        account = account.substring(0,30); /*帐号的总数, 包括空格在内 */
+        if (account.match (".[0-9]{4}-[0-9]{4}-[0-9]{4}-[0-9]{7}") == null){
+            /* 对照格式 */
+            if (account.match (".[0-9]{4}-[0-9]{4}-[0-9]{4}-[0-9]{7}|" + ".[0-9]{4}-[0-9]{4}-[0-9]{4}-[0-9]{7}|" +
+            ".[0-9]{4}-[0-9]{4}-[0-9]{4}-[0-9]{7}|" + ".[0-9]{4}-[0-9]{4}-[0-9]{4}-[0-9]{7}") == null){
+                var accountNumeric = accountChar = "", i;
+                for (i=0;i<account.length;i++){
+                    accountChar = account.substr (i,1);
+                    if (!isNaN (accountChar) && (accountChar != " ")) accountNumeric = accountNumeric + accountChar;
+                }
+                account = "";
+                for (i=0;i<accountNumeric.length;i++){   
+                    if (i!= 0 && i%4==0) account = account + " "; /* 帐号第四位数后加空格 */
+                    account = account + accountNumeric.substr (i,1)
+                }
+            }
+        }
+        else
+        {
+            account = " " + account.substring (1,5) + " " + account.substring (6,10) + " " + account.substring (14,18) + "-" + account.substring(18,25);
+        }
+        if (account != BankNo.value) BankNo.value = account;
+    }
 
-   
 
 </script>
 <block name="js">

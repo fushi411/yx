@@ -33,7 +33,7 @@ class KkPjCgfkApplyLogic extends Model {
         $result = array();
         if($res['fylx'] == 1){
             $clientname = M('kk_gys')->field('g_name')->where(array('id' => $res['gys']))->find();
-        }elseif($res['fylx'] == 2 || $res['fylx'] == 7){
+        }elseif($res['fylx'] == 2 || $res['fylx'] == 7 || $res['fylx'] == 4){
             $clientname = M('kk_wl')->field('g_name')->where(array('id' => $res['gys']))->find();
         }elseif($res['fylx'] == 6){
             $clientname = array( 'g_name' => $res['pjs']);
@@ -78,6 +78,19 @@ class KkPjCgfkApplyLogic extends Model {
                                      'type'=>'string',
                                      'color' => 'black'
                                     );
+        $fpsm = array('已到','未到','无票');
+        $color = $res['fpsm']-1==1?'#f12e2e':'black';
+        $result['content'][] = array('name'=>'发票说明：',
+                                     'value'=> $fpsm[$res['fpsm']-1],
+                                     'type'=>'date',
+                                     'color' => $color
+                                    );
+        $yssm = array('未定义','已验收','未验收');
+        $result['content'][] = array('name'=>'验收说明：',
+                                     'value'=> $yssm[$res['yssm']],
+                                     'type'=>'date',
+                                     'color' => 'black'
+                                    );
         $fkfs = '暂无';
         if($res['fkfs'] == 4 ){
             $fkfs = '现金';
@@ -96,7 +109,13 @@ class KkPjCgfkApplyLogic extends Model {
                                      'type'=>'text',
                                      'color' => 'black'
                                     );
-        $result['imgsrc'] = '';
+        $imgsrc = explode('|', $res['fj']) ;
+        $image = array();
+        $imgsrc = array_filter($imgsrc);
+        foreach ($imgsrc as $key => $value) {
+            $image[] = 'http://www.fjyuanxin.com/WE/Public/upload/cg/'.$value;
+        }
+        $result['imgsrc'] = $image;
         $result['applyerID'] =  D('KkBoss')->getIDFromName($res['rdy']);
         $result['applyerName'] = $res['rdy'];
         $result['stat'] = $this->transStat($res['stat']);
@@ -133,7 +152,7 @@ class KkPjCgfkApplyLogic extends Model {
         $result = array();
         if($res['fylx'] == 1){
             $clientname = M('kk_gys')->field('g_name')->where(array('id' => $res['gys']))->find();
-        }elseif($res['fylx'] == 2 || $res['fylx'] == 7){
+        }elseif($res['fylx'] == 2 || $res['fylx'] == 7 || $res['fylx'] == 4){
             $clientname = M('kk_wl')->field('g_name')->where(array('id' => $res['gys']))->find();
         }elseif($res['fylx'] == 6){
             $clientname = array( 'g_name' => $res['pjs']);
@@ -160,6 +179,11 @@ class KkPjCgfkApplyLogic extends Model {
 
         $result[] = array('name'=>'申请额度：',
                                      'value'=>number_format($res['fkje'],2,'.',',')."元",
+                                     'type'=>'number'
+                                    );
+        $fpsm = array('已到','未到','无票');
+        $result[] = array('name'=>'发票说明：',
+                                     'value'=> $fpsm[$res['fpsm']-1],
                                      'type'=>'number'
                                     );
         $result[] = array('name'=>'申请人员：',
@@ -194,7 +218,7 @@ class KkPjCgfkApplyLogic extends Model {
             $name = M('kk_gys')->field('g_name')->where(array('id' => $res['gys']))->find();
             $modname = 'CgfkApply';
             $title = '供货单位';
-        }elseif($res['fylx'] == 2 || $res['fylx'] == 7){
+        }elseif($res['fylx'] == 2 || $res['fylx'] == 7 || $res['fylx'] == 4){
             $name = M('kk_wl')->field('g_name')->where(array('id' => $res['gys']))->find();
             $modname = 'WlCgfkApply';
             $title = '运输公司';
@@ -211,6 +235,7 @@ class KkPjCgfkApplyLogic extends Model {
             'third_title'    => '相关说明',
             'third_content'  => $res['zy'],
             'stat'           => $this->transStat($res['stat']),
+            'applyerName'    => $res['rdy'],
         );
         return $result;
     }
@@ -242,9 +267,15 @@ class KkPjCgfkApplyLogic extends Model {
         $ysye  = I('post.ysye');
         $bank  = I('post.type');
         $gyszh = I('post.gyszh');
+        $fpsm  = I('post.fpsm');
+        $yssm  = I('post.yssm');
+        $file_names = I('post.imagepath');
         $copyto_id = I('post.copyto_id');
         if(!$val['bool']) return $val;
         list($user_id, $notice,$money,$system) = $val['data'];
+        // 流程检验
+        $pro = D('KkAppflowtable')->havePro('PjCgfkApply','');
+        if(!$pro) return array('code' => 404,'msg' => '无审批流程,请联系管理员');
         // 重复提交
         if(!M('kk_cgfksq')->autoCheckToken($_POST)) return array('code' => 404,'msg' => '网络延迟，请勿点击提交按钮！');
         $name = M('kk_gys')->field('g_name')->where(array('id' => $user_id ))->find();
@@ -270,7 +301,10 @@ class KkPjCgfkApplyLogic extends Model {
             'fylx'    => 6,
             'htlx'    => '汽运',
             'yfye'    =>  0,
-            'pjs'     => $name['g_name']
+            'pjs'     => $name['g_name'],
+            'fpsm'    => $fpsm,
+            'fj'      => $file_names,
+            'yssm'    => $yssm,
         );   
         
         $result = M('kk_cgfksq')->add($addData);
@@ -354,4 +388,53 @@ class KkPjCgfkApplyLogic extends Model {
 
         return array('bool'=> true, 'data' => array($user_id, $notice,$money,$system));
     }  
+    /**
+     * 附件上传
+     */
+    public function fjsc(){
+        $uploader = new \Think\Upload\Driver\Local;
+        if(!$uploader){
+            E("不存在上传驱动");
+        }
+        // 生成子目录名
+        $savePath = date('Y-m-d')."/";
+
+        // 生成文件名
+        $img_str = I('post.imagefile');
+        $order = I('post.order');
+        $img_header = substr($img_str, 0, 23);
+        // echo $img_header;exit();
+        if (strpos($img_header, 'png')) {
+            $output_file = uniqid('comment_').'_'.$order.'.png';
+        }else{
+            $output_file = uniqid('comment_').'_'.$order.'.jpg';
+        }
+        //  $base_img是获取到前端传递的src里面的值，也就是我们的数据流文件
+        $base_img = I('post.imagefile');
+        if (strpos($img_header, 'png')) {
+            $base_img = str_replace('data:image/png;base64,', '', $base_img);
+        }else{
+            $base_img = str_replace('data:image/jpeg;base64,', '', $base_img);
+        }
+
+        //  设置文件路径和文件前缀名称
+        $rootPath = "/www/web/default/WE/Public/upload/cg/";
+        /* 检测上传根目录 */
+        if(!$uploader->checkRootPath($rootPath)){
+            $error = $uploader->getError();
+            return $error;
+        }
+        /* 检查上传目录 */
+        if(!$uploader->checkSavePath($savePath)){
+            $error = $uploader->getError();
+            return $error;
+        }
+        $path = $rootPath.$savePath.$output_file;
+        //  创建将数据流文件写入我们创建的文件内容中
+        file_put_contents($path, base64_decode($base_img));
+        $val['path'] = $path;
+        $val['output_file'] = $savePath.$output_file;
+        $res[] = $val;
+        return $res;
+    }
 }

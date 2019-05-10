@@ -24,6 +24,7 @@ class KkAppflowprocModel extends Model {
         $isRefuse = 0;
         $isFlowBegin = 0;
         $boss = D('kk_boss');
+        $per_word = '';
         foreach ($resArr as $k=> $val) {
             if ($val['app_stat']==0 && $val['per_id']==$uid) {
                 $isApplyer = 1;
@@ -31,7 +32,9 @@ class KkAppflowprocModel extends Model {
             // 是否为审批人之一
             if ($val['per_id']==$uid) {
                 $isPasser = 1;
+                $per_word = $val['app_word'];
             }
+            
             $wxid = $boss->getWXFromID($val['per_id']);
             array_push($authArr, $wxid);
             $val['avatar'] = $boss->getAvatar($val['per_id']);
@@ -41,8 +44,6 @@ class KkAppflowprocModel extends Model {
             $proc_time = strtotime($val['approve_time']);
             if($proc_time < $now && $proc_time+300 >$now) $val['able_del'] = 1;
             $resApply[] = $val;
-
-            
 
             // 是否被拒绝
             if ($val['app_stat']==1) {
@@ -54,7 +55,16 @@ class KkAppflowprocModel extends Model {
             }
             
         }
-        $procArr = array('isCopyto'=>$isCopyto,'process'=>$resApply,'isApplyer'=>$isApplyer,'isPasser'=>$isPasser,'isRefuse'=>$isRefuse,'isFlowBegin'=>$isFlowBegin,'authArr'=>$authArr);
+        $procArr = array(
+                    'isCopyto'   => $isCopyto,
+                    'process'    => $resApply,
+                    'isApplyer'  => $isApplyer,
+                    'isPasser'   => $isPasser,
+                    'isRefuse'   => $isRefuse,
+                    'isFlowBegin'=> $isFlowBegin,
+                    'authArr'    => $authArr,
+                    'per_word'   => $per_word
+                );
         return $procArr;
     }
 
@@ -92,8 +102,9 @@ class KkAppflowprocModel extends Model {
             $uid = session('kk_id');
         }
         $map['mod_name'] = $mod_name;
-        $map['aid'] = $aid;
-        $map['per_id'] = $uid;
+        $map['app_stat'] = 0;
+        $map['aid']      = $aid;
+        $map['per_id']   = $uid;
         $map['app_stat'] = array('lt',3);
         $res = $this->field(true)->where($map)->order('app_stage desc')->find();
         return $res;
@@ -102,8 +113,10 @@ class KkAppflowprocModel extends Model {
     // 审批记录保存
     public function updateProc($rid, $option, $word,$img)
     {
-        $map['id'] = $rid;
+        $per_id = session('kk_id');
+        $map['per_id'] = $per_id;
         $map['app_stat'] = 0;
+        $map['aid'] = $rid;
         $data['app_stat'] = $option;
         $data['app_word'] = $word;
         $data['sign'] = $img;
@@ -138,6 +151,25 @@ class KkAppflowprocModel extends Model {
         return $res;
     }
 
+    /**
+     * 获取人员已在审批中
+     * @param  [string]  $mod_name [流程名]
+     * @param  [integer] $stage_id [审批ID]
+     * @param  [integer] $uid      [用户ID]
+     * @return [array]             [流程信息]
+     */
+    public function getPerSameProcNum($per_name,$per_id,$mod_name, $aid, $stage_id)
+    {
+        $map['mod_name']  = $mod_name;
+        $map['aid']       = $aid;
+        $map['app_stage'] = $stage_id;
+        $map['per_name']  = $per_name;
+        $map['per_id']    = $per_id;
+        $map['app_stat']  = array(array('eq',2),array('eq',0),'or');
+        $res = $this->field(true)->where($map)->count();
+        return $res;
+    }
+    
     public function addProc($data, $aid, $per_name, $per_id, $stageID)
     {
       $record['pro_id'] = $data['pro_id'];
@@ -169,15 +201,22 @@ class KkAppflowprocModel extends Model {
         $name = session('name');
         
         // 查看下一级是否已经审批
-        $sql = "SELECT id,app_stat,per_name FROM  kk_appflowproc WHERE  mod_name = '{$mod_name}' AND aid = {$aid}
+        $sql = "SELECT id,app_stat,per_name,app_stage FROM  kk_appflowproc WHERE  mod_name = '{$mod_name}' AND aid = {$aid}
                 AND app_stage = (
                     SELECT  app_stage  FROM kk_appflowproc WHERE  mod_name = '{$mod_name}' AND aid = {$aid}   
-                    AND per_name = '{$name}'  ) + 1";
+                    AND per_name = '{$name}'  ) + 1 ORDER BY app_stat desc";
         $res = M()->query($sql);
         if($res[0]['app_stat'] != 0)  return array('code' => 404, 'msg' => '下一流程人已批复,无法撤回');
-        // 撤销-> 下一步置3，本人置0
-        $this->where(array('id' => $res[0]['id']))->setInc('app_stat', 3);
+         // 撤销-> 会审阶段  下一阶段 置 3
+         if(!empty($res) ) $this->where(array('app_stage' => $res[0]['app_stage'],'aid'=>$aid,'mod_name' => $mod_name))->setInc('app_stat', 3);
+         // 撤销-> 自身置0
         $this->where(array('mod_name' => $mod_name,'aid' => $aid, 'per_name' => $name))->setField('app_stat', 0);
         return array('code' => 200, 'msg' => '撤回成功');
+    }
+
+    // 更新审批字段
+    public function setApp_word($mod_name,$aid,$id,$word){
+        $res = $this -> where(array('mod_name'=>$mod_name,'aid'=>$aid, 'per_id' => $id,'app_stat' => 0)) ->setField('app_word', $word);
+        return $res;
     }
 }

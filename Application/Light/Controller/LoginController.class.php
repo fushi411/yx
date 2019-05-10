@@ -78,7 +78,28 @@ class LoginController extends \Think\Controller {
         $verify = new \Think\Verify();
         return $verify->check($code, $id);
     }
-
+    public function  unReadComments(){
+        if(session('wxid') != 'HuangShiQi'){
+            if(get_client_ip(0) != '0.0.0.0') return '无权限操作';
+        }
+        $system = array('kk','yxhb');
+        foreach($system as $val){
+            $this->PushMsg($val);
+        }
+    }
+    private function PushMsg($system){
+        $wx = D('WxMessage');
+        $map = array(
+            'per_id' => array('not in','8888,9999'),
+            'app_word' => array('notlike','%@所有人%'),
+            'app_stat' => 1,
+            'INSTR(comment_ready,comment_to_id)' => 0,
+        );
+        $data = M($system.'_appflowcomment')->where($map)->select();
+        foreach ($data as $val) {
+           // $wx->comPush($system,$val['mod_name'],$val['aid'],$val['comment_to_id'],$val['per_name']);
+        }
+    }
     public function crontab()
     { 
         if(session('wxid') != 'HuangShiQi'){

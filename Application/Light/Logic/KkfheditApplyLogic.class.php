@@ -337,6 +337,7 @@ class KkfheditApplyLogic extends Model {
             'third_title'    => '相关说明',
             'third_content'  => $res['xg_reason']?$res['xg_reason']:'无',
             'stat'           => $this->getStat($id),
+            'applyerName'    =>  $res['fh_kpy'],
         );
         return $result;
     }
@@ -520,6 +521,9 @@ class KkfheditApplyLogic extends Model {
         $file_names = I('post.file_names');
         // 简单校验
         if(!$user_id) return array('code' => 404,'msg' => '请选择客户名称');
+        // 流程检验
+        $pro = D('KkAppflowtable')->havePro('fh_edit_Apply','');
+        if(!$pro) return array('code' => 404,'msg' => '无审批流程,请联系管理员');
         // 重复提交
         if(!M('kk_fhxg')->autoCheckToken($_POST)) return array('code' => 404,'msg' => '网络延迟，请勿点击提交按钮！');
         $count      = M('kk_fhxg')->where(array('fh_num' => $fhinfo['fh_num']))->find();
@@ -593,13 +597,18 @@ class KkfheditApplyLogic extends Model {
         $res  = M('kk_config_kh_child')->where(array( 'clientid' => $user_id , 'dtime' => array('lt',$fhinfo['fh_date'])))->order('dtime desc')->find();
         $kh   = explode(',',$res['kh']);
         if(!in_array($fhinfo['fh_kh'],$kh)){
+            $pg_is_set = M('kk_fhxg_pg')->where(array('id'=>$result))->find();
             $pgData = array(
                 'id'      => $result,
                 'aid'     => $result,
                 'flag'    => 1,
                 'modname' => 'fh_edit_Apply'
             );
-            M('kk_fhxg_pg')->add($pgData);
+            if(empty($pg_is_set)){
+                M('kk_fhxg_pg')->add($pgData);
+            }else{
+                M('kk_fhxg_pg')->where(array('id'=>$result))->save($pgData);
+            }
         }
         // 抄送
         $copyto_id = trim($copyto_id,',');

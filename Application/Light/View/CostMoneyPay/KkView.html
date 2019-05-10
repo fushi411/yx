@@ -183,6 +183,19 @@
                                 value="{$today}" />
                         </div>
                     </div>
+                    <div class="weui-cell weui-cell_select weui-cell_select-after" id='fkfsdiv'>
+                        <div class="weui-cell__hd">
+                            <label class="weui-label">付款方式&nbsp;&nbsp;
+                                <span style="color:red;">*</span>
+                            </label>
+                        </div>
+                        <div class="weui-cell__bd">
+                            <select class="weui-select greyColor" name="type" id='fkfs'>
+                                <option value='-1' disabled selected style='display:none;'>请选择付款方式</option>
+                                <option value="56">PVC项目费用</option>
+                            </select>
+                        </div>
+                    </div>
                     <div class="weui-cell weui-cell_select weui-cell_select-after" id='bankdiv'>
                         <div class="weui-cell__hd">
                             <label class="weui-label">付款银行&nbsp;&nbsp;
@@ -192,7 +205,6 @@
                         <div class="weui-cell__bd">
                             <select class="weui-select greyColor" name="type" id='bank'>
                                 <option value='-1' disabled selected style='display:none;'>请选择付款银行</option>
-                                <option value="56">PVC项目费用</option>
                             </select>
                         </div>
                     </div>
@@ -273,6 +285,17 @@
 <block name="copyto"></block>
 <block name="pushto"></block>
 <block name="js">
+    <div class="js_dialog" id="delDialog" style="display: none;">
+        <div class="weui-mask"></div>
+        <div class="weui-dialog">
+            <div class="weui-dialog__bd" style="padding:15px;color:#f12e2e;">删除确认</div>
+            <div class="weui-dialog__bd">确定要将此付款删除？</div>
+            <div class="weui-dialog__ft"> 
+                <a href="javascript:;" onclick="dialog_cal()" class="weui-dialog__btn weui-dialog__btn_primary">取消</a>
+                <a href="javascript:;"  style="color:#f12e2e;" onclick="dialog_sure()" class="weui-dialog__btn weui-dialog__btn_primary">确定</a>
+            </div>
+        </div>
+    </div>
     <script src="__PUBLIC__/assets/js/AmountConversionformat.js"></script>
     <script>
         var $id = getQueryString('id');
@@ -308,6 +331,7 @@
                     $('#title').text(res['applyerName'] + '的费用开支');
                     makeHtml(res['content']);
                     makefjHtml(res['imgsrc']);
+                    makefkfsHtml(res['fkfs']);
                     if (res['nfkfs'] == 3) {
                         makeCdhpHtml();
                         is_cdhp = 1;
@@ -318,6 +342,14 @@
                     getPayed($id);
                 }
             });
+        }
+        function makefkfsHtml(data){
+            var html = '';
+            for( x in data ){
+                html += '<option value="'+data[x].val+'">'+data[x].name+'</option>';
+            }
+            html += "<option value='-1' disabled selected style='display:none;'>请选择付款方式</option>";
+            $('#fkfs').html(html);
         }
         // 付款详情
         detail();
@@ -338,11 +370,41 @@
                     if (res.length > 0) {
                         var html = '';
                         for (k in res) {
-                            html += '<div style="padding: 3px 0 0 0;border-bottom: 1px solid #e5e5e5; "><strong>' + res[k]['sj_date'] + '(' + res[k]['njbr'] + ')</strong></div>';
+                            html += '<div style="padding: 3px 0 0 0;border-bottom: 1px solid #e5e5e5; "><strong>' + res[k]['sj_date'] + '(' + res[k]['njbr'] + ')</strong><i class="iconfont icon-shanchu" index="'+ res[k].id +'" style="vertical-align: middle;margin: 0 10px;float: right;" ></i></div>';
                             html += '<div style="padding: 3px 0 0 10px;"><span style="color:black;font-weight: 600;" >' + res[k]['money'] + '</span>：' + res[k].bank.nb + '-' + res[k].bank.ac + '-' + res[k].bank.wz + '</div>';
                         }
                         $('#payedRec').html(html);
                         $('#detail').show();
+                    }
+                }
+            });
+        }
+        $('#payedRec').on('click','.icon-shanchu',function(){
+            delid = $(this).attr('index');
+            $('#delDialog').show();
+        });
+        function dialog_cal(){
+            $('#delDialog').hide();
+        }
+        function dialog_sure(){
+            toastfadeIn(200, '数据提交中');
+            $.ajax({
+                type: 'POST',
+                url: "{:U('Light/Api/CostMoneyPayApi')}", //&system=yxhb&modname=CgfkApply&action=getCustomerList
+                dataType: 'json',
+                data: {
+                    id: delid,
+                    system: "{$system}",
+                    modname: 'CostMoneyPay',
+                    action: 'delPay',
+                },
+                dataType: 'json',
+                success: function (res) {
+                    toast.fadeOut(200);
+                    if (res.code == 200) {
+                        location.reload();
+                    } else {
+                        tooltip(res.msg);
                     }
                 }
             });
@@ -368,6 +430,7 @@
                         $('#bankdiv').remove();
                         $('#bcfkdiv').remove();
                         $('#sxfydiv').remove();
+                        $('#fkfsdiv').remove();
                         $('#fj').remove();
                     }
                 }
@@ -416,7 +479,11 @@
                 }
             });
         }
-        getBank();
+
+        $('#fkfs').change(function(){
+            getBank();
+        })
+        
         // 获取银行
         function getBank() {
             if (!$id) return tooltip('请重新选择付款单号');
@@ -425,6 +492,7 @@
                 url: "{:U('Light/Api/CostMoneyPayApi')}",
                 dataType: 'json',
                 data: {
+                    fkfs: $('#fkfs').val(),
                     id: $id,
                     system: "{$system}",
                     modname: 'CostMoneyPay',
@@ -498,6 +566,7 @@
                 url: "{:U('Light/Api/CostMoneyPayApi')}",
                 dataType: 'json',
                 data: {
+                    fkfs: $('#fkfs').val(),
                     date:date,
                     bank: bank,
                     cdhp: cdhp,

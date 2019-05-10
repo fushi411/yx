@@ -16,6 +16,7 @@ class TaskController extends \Think\Controller {
         // 微信登录判断
         $state = I('get.state');
         $system = I('get.system');
+        A('Base')->pc_to_web_login();
         // 是否来自微信
         if ($state == 'YUANXIN') {
             $User = D($system.'Boss');

@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>流程标题配置</title>
+    <link href="__PUBLIC__/assets/css/bootstrap.min.css" rel="stylesheet">
+    <!-- 引入 WeUI -->
+    <!-- <link rel="stylesheet" href="https://res.wx.qq.com/open/libs/weui/1.1.2/weui.min.css" /> -->
+    <link rel="stylesheet" href="__PUBLIC__/assets/css/weui.min.css" />
+    <link rel="stylesheet" href="__PUBLIC__/assets/css/weMain.css?version=201709012" />
+    <style type="text/css">
+        .weui-cells:after {
+            border-bottom: 0px solid #fff;
+        }
+
+        .weui-selet__user {
+            width: 2.5em;
+            height: 2.5em;
+            margin-bottom: 5px;
+            margin-right: 16px;
+            border-radius: 5px;
+        }
+
+        .wk-select__user {
+            height: 60px;
+            width: 52px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-right: 6px;
+        }
+
+        .no-select__user {
+            height: 60px;
+            width: 52px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-right: 6px;
+        }
+
+        .wk-comment__user {
+            height: 60px;
+            width: 52px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-right: 12px;
+        }
+
+        a:hover {
+            text-decoration: none;
+        }
+
+        label {
+            font-weight: 400;
+            margin-bottom: 0px;
+        }
+
+        .select2-results__option {
+            font-size: 16px;
+        }
+
+        .select2-search__field {
+            line-height: normal;
+        }
+
+        /* end */
+        .redColor {
+            color: #e64340;
+        }
+
+        .greenColor {
+            color: #16b517;
+        }
+
+        .weui-form-preview__value span {
+            display: inline-block;
+            width: 80px;
+            text-align: center;
+        }
+
+        .font-width {
+            display: inline-block;
+            width: 68px;
+            text-align: right;
+
+        }
+
+        .greyColor {
+            color: #757575;
+        }
+
+        .select2-container--default .select2-selection--multiple .select2-selection__rendered {
+            padding: 0;
+        }
+
+        .other_page {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #fff;
+            z-index: 999;
+        }
+
+        .searchCenter {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="weui-toptips weui-toptips_warn js_tooltips" style="opacity: 1;">错误提示</div>
+
+    <div class="container" id="container">
+        <h3 class="titleTab" style="text-align: center;">流程标题配置</h3>
+        <div class="weui-cells" id="content1">
+            <div class="weui-cell sqlx">
+                <div class="weui-cell__hd">
+                    <label class="weui-label" style="width:120px">标题名称&nbsp;&nbsp;
+                            <span style="color:red;">*</span>
+                    </label>
+                </div>
+                <div class="weui-cell__bd">
+                    <input class="weui-input " type="text" id="title" value="{$title}" name="custodian"  placeholder="请输入标题名称" />
+                </div>
+            </div>
+            <div class="weui-cell weui-cell_select weui-cell_select-after">
+                <div class="weui-cell__hd">
+                    <label class="weui-label" style="width:120px">条件说明&nbsp;&nbsp;
+                        <span style="color:red;">*</span>
+                    </label>
+                </div>
+                <div class="weui-cell__bd">
+                    <select class="weui-select greyColor" name="type" id='gys_type'>
+                        <option value='-1' disabled selected style='display:none;'>请选择条件说明</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="weui-cell sqlx">
+                <div class="weui-cell__hd">
+                    <label class="weui-label" style="width:120px">条件选择&nbsp;&nbsp;
+                            <span style="color:red;">*</span>
+                    </label>
+                </div>
+                <div class="weui-cell__bd">
+                    <input class="weui-input " type="text" id="" name="custodian"  disabled  placeholder="暂无" />
+                </div>
+            </div>
+        </div>
+        <div class="button-sp-area" style="margin-bottom: 20px;display: flex;flex-direction: row;width: 100%;justify-content: space-around;align-items: baseline;">
+            <a href="javascript:;" id="ratio-refuse" class="weui-btn weui-btn_warn" style="width: 40%;">取消</a>
+            <a href="javascript:;" id="ratio-agree" class="weui-btn weui-btn_primary" style="width: 40%">确定</a>
+        </div>
+    </div>
+
+    <div id="loadingToast" style=" display: none;">
+        <div class="weui-mask_transparent"></div>
+        <div class="weui-toast">
+            <i class="weui-loading weui-icon_toast"></i>
+            <p class="weui-toast__content" id="toast__content">数据提交中</p>
+        </div>
+    </div>
+    <div id="toast" style="display: none;">
+        <div class="weui-mask_transparent"></div>
+        <div class="weui-toast">
+            <i class="weui-icon-success-no-circle weui-icon_toast"></i>
+            <p class="weui-toast__content">已完成</p>
+        </div>
+    </div>
+</body>
+<script src="__PUBLIC__/assets/js/jquery-1.11.1.min.js"></script>
+<script src="__PUBLIC__/assets/js/bootstrap.min.js"></script>
+<script src="__PUBLIC__/assets/js/select2.min.js"></script>
+<script src="__PUBLIC__/assets/js/zh-CN.js"></script>
+<script src="https://res.wx.qq.com/open/libs/weuijs/1.1.3/weui.min.js"></script>
+<script>
+    var $tooltips = $('.js_tooltips'),
+        reason    = $('#reason'),
+        toast     = $('#loadingToast');
+   // 数据提交与加载提示
+   function toastfadeIn(time,text){
+        $('#toast__content').text(text);
+        toast.fadeIn(time);
+    }
+    // 错误提示
+    function tooltip(text) {
+        if ($tooltips.css('display') != 'none') return;
+        $('.page.cell').removeClass('slideIn');
+        $tooltips.text(text);
+        $tooltips.css('display', 'block');
+        setTimeout(function () {
+            $tooltips.css('display', 'none');
+        }, 2000);
+    }
+    // 取消返回
+    $('#ratio-refuse').click(function(){
+        window.location.href = document.referrer;
+    })
+    // 点击提交
+    $('#ratio-agree').on('click',function(){
+        var title = $('#title').val(),
+            title_old = "{$title}";
+        if(title == title_old)  return tooltip('标题无变动');
+        if( !title)  return tooltip('请输入标题名称');
+        toastfadeIn(200,'数据提交中');
+        $.ajax({
+                type:'POST',
+                url: "{:U('Light/Config/Dispenser',array('robot'=>'changeViewProTitle'))}", //&system=yxhb&modname=CgfkApply&action=getCustomerList
+                dataType: 'json',
+                data: {
+                    title  : title,
+                    system : "{$system}",
+                    mod    : "{$mod}",
+                    id     : "{$id}",
+                },
+                dataType: 'json',
+                success: function (res) {
+                    toast.fadeOut(200);
+                    if (res.code == 200) {
+                        window.location.href = document.referrer;
+                    } else {
+                        tooltip(res.msg);
+                    }
+                }
+            });
+
+    });
+</script>
+
+</html>

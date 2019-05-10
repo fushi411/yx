@@ -503,7 +503,7 @@
             $('#other_page').fadeOut(200);
             $('#apply_status').html(html);
             var td_length = $('#app td').length; 
-            for(let i=0;i<td_length;i++){
+            for(i=0;i<td_length;i++){
                 var td_val = $('#app td').eq(i).text();
                 if( td_val < 0) $('#app td').eq(i).css({'color':'#f12e2e'});
             }
@@ -632,7 +632,7 @@
                 ids = $("#sign_id").val() + ",",
                 old_ids_arr = ids.split(","),
                 flag = 1;
-            for (let i = 0; i < old_ids_arr.length; i++) {
+            for (i = 0; i < old_ids_arr.length; i++) {
                 if (old_ids_arr[i] != '') flag = 0;
             }
             if (flag) return tooltip('请选择签收人');

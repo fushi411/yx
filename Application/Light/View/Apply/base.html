@@ -84,6 +84,15 @@
                     content:""!important;
                 }
             }
+        .ready-btn{
+            text-align: center;
+            padding: 10px;
+            font-size: 16px;
+            background: #fff;
+        }
+        .ready-btn-on{
+            font-weight: 600;
+        }
     </style>
 </head>
 
@@ -95,7 +104,7 @@
                         <div class="weui-tab">
                             <div class="weui-tab__panel">
                     
-                    <div class="weui-panel weui-panel_access">
+                    <div class="weui-panel weui-panel_access" id='weui_panel_content'>
                         <!-- <div class="weui-panel__hd">审批信息</div> -->
                         <div class="weui-panel__bd">
                             <div class="weui-media-box weui-media-box_small-appmsg">
@@ -133,7 +142,7 @@
                                                 <volist name="content" id="val">
                                                     <p class="weui-media-box__desc weui-flex">
                                                         <span class="font-width" >{$val.name}</span>
-                                                        <span class="weui-flex__item" style="color:{$val.color} ">{$val.value}</span>
+                                                        <span class="weui-flex__item" id="{$val.id}" style="color:{$val.color} ">{$val.value}</span>
                                                     </p>
                                                 </volist>
                                             </block>
@@ -143,8 +152,8 @@
                             </div>
                         </div>
                     </div> 
-                    <if condition="$imgsrc neq ''">
-                        <div class="weui-panel" style="margin-top: 0px;">
+                    <if condition="!empty($imgsrc)">
+                        <div class="weui-panel" id='weui_panel_fj' style="margin-top: 0px;">
                             <div class="weui-panel__hd" style="font-size: 16px;background-color: #f8f8f8;color:black;padding-top: 10px;">附件
                                     <span style="color: #f12e2e;font-size: 14px;">（点击图片，可查看附件）</span>
                                 </div>
@@ -166,9 +175,9 @@
                     <block name="table"></block>      
                           
                 <block name="work_flow">
-                    <div class="weui-panel" style="margin-top: 0px;">
+                    <div class="weui-panel" style="margin-top: 0px;" id='weui_panel_table'>
                         <div class="weui-panel__hd" style="font-size: 16px;background-color: #f8f8f8;color:black;padding-top: 10px;">审批流程
-                            <a href="{:U('Light/Process/ApplyProcess',array('modname'=>$mod_name,'system'=>$system))}">
+                            <a href="{:U('Light/Process/ApplyProcess',array('modname'=>$mod_name,'system'=>$system,'aid' => $aid))}">
                                 <i class="iconfont icon-chakan" style="vertical-align: middle;" ></i>
                             </a> 
                         </div>
@@ -211,7 +220,7 @@
                 </block>
 
                 <block name="process_record">
-                    <div class="weui-panel" style="margin-top: 0px;">
+                    <div class="weui-panel" style="margin-top: 0px;" id='weui_panel_proc'>
                         <div class="weui-panel__hd" style="font-size: 16px;background-color: #f8f8f8;color:black;padding-top: 10px;">审批记录</div>
                         <div class="weui-panel__bd">
                             <div class="weui-media-box weui-media-box_small-appmsg" style="padding-bottom: 10px;">
@@ -247,6 +256,7 @@
                                                                     </eq>
                                                             </if>
                                                         </eq>
+                                                        <span  style="float: right;font-size: 15px;line-height: 18px;">{$proc.approve_time|substr=2,14}</span> 
                                                     </h4>
                                                     <p class="weui-media-box__desc" style="display: block;overflow: visible; word-break:break-all; word-wrap:break-word;margin-bottom: 0px;color:black;">
                                                        <if condition="$proc.sign neq '' " >
@@ -255,7 +265,7 @@
                                                         {$proc.app_word}
                                                     </p>
                                                     <p class="weui-media-box__desc" style="display: block;overflow: visible; word-break:break-all; word-wrap:break-word;font-size: 15px;margin-bottom: 0px;">
-                                                        <span>{$proc.approve_time|substr=2,14}</span> 
+                                                        
                                                         <neq name="proc.app_stat" value="0">
                                                             <eq name="Think.session.name" value="$proc.per_name">
                                                                 <eq name="proc.able_del" value="1">
@@ -340,7 +350,7 @@
                 <block name="push">
                         <div class="weui-panel" style="margin-top: 0px;">
                             <div class="weui-panel__hd" style="font-size: 16px;background-color: #f8f8f8;color:black;padding-top: 10px;">推送名单
-                                <a href="{:U('Light/Process/PushProcess',array('system' => $system,'modname'=>$mod_name))}">
+                                <a href="{:U('Light/Process/PushProcess',array('system' => $system,'modname'=>$mod_name,'aid'=>$aid))}">
                                     <i class="iconfont icon-chakan" style="vertical-align: middle;" ></i>
                                 </a>
                                 <span style="color: #f12e2e;">（审批通过后群发推送人）</span>
@@ -419,12 +429,18 @@
                                                     </span>
                                             <else/>
                                     <volist name="comment_list" id="clist">
-                                        <span class="weui-media-box weui-media-box_appmsg" style="    align-items: flex-start;padding-top: 10px;">
+                                        <if condition="$clist.class eq 'dn'">
+                                            <span class="weui-media-box weui-media-box_appmsg {$clist.class}"  style="align-items: flex-start;padding-top: 10px;display: none;">
+                                        <else/>
+                                            <span class="weui-media-box weui-media-box_appmsg {$clist.class}"  style="align-items: flex-start;padding-top: 10px;">
+                                        </if>
                                             <div class="weui-media-box__hd" style="width: 2.5em;height: 2.5em;">
                                                 <img class="weui-media-box__thumb" src="{$clist.avatar}" alt="" style="border-radius: 5px;">
                                             </div>
                                             <div class="weui-media-box__bd">
-                                                <h4 class="weui-media-box__title" style="/*font-weight: 800;*/margin-top: 0px;margin-bottom: 5px;color:grey;">{$clist.name}
+                                                <h4 class="weui-media-box__title" style="/*font-weight: 800;*/margin-top: 0px;margin-bottom: 5px;color:grey;">
+                                                    <span>{$clist.name}</span>
+                                                    <span style="float: right;font-size: 15px;line-height: 18px;">{$clist.time|substr=2,14}</span>
                                                 </h4>
                                                 <p class="weui-media-box__desc" style="display: block;overflow: visible; word-break:break-all; word-wrap:break-word;margin-bottom: 0px;color:black;">
                                                     {$clist.word}
@@ -437,21 +453,31 @@
                                                         </volist>
                                                     </ul>    
                                                 </if>
-                                                
-                                                <p class="weui-media-box__desc" style="display: flex;flex-direction:row;justify-content:space-between;align-items:center;font-size: 15px;margin-bottom: 0px;">
-                                                    <span>{$clist.time|substr=2,14}</span>
-                                                    <eq name="Think.session.wxid" value="$clist.wxid">
-                                                        <eq name="clist.del_able" value="1">
-                                                            <span style="color:red;" class="comment_del" data-id="{$clist.id}">
-                                                                <span style="color:grey;">（2小时内）</span>删除</span>
+                                                <if condition="($clist.pid neq 9999) AND ($clist.pid neq 8888) ">
+                                                    <p class="weui-media-box__desc" style="display: flex;flex-direction:row;justify-content:space-between;align-items:center;font-size: 15px;margin-bottom: 0px;">
+                                                        <switch name="clist.comment_ready">
+                                                                <case value="no_this_param"><span>&nbsp;</span> </case>
+                                                                <case value="readynone"><span>未读</span></case>
+                                                                <case value="readyall"><span >全部已读</span></case>
+                                                                <default /><span class="comment_id" style='color:#337ab7;' index="{$clist.id}" data-toggle="modal" data-target="#myModal3">{$clist.comment_ready}</span> 
+                                                            </switch>
+    
+                                                        <eq name="Think.session.wxid" value="$clist.wxid">
+                                                            <eq name="clist.del_able" value="1">
+                                                                <span style="color:red;" class="comment_del" data-id="{$clist.id}">
+                                                                    <span style="color:grey;">（2小时内）</span>删除</span>
+                                                            </eq>
                                                         </eq>
-                                                    </eq>
-                                                    <neq name="clist.pid" value="9999">
-                                                        <neq name="clist.pid" value="8888">
-                                                            <span style="color:red;" realname="{$clist.name}" wxid="{$clist.wxid}" avatar="{$clist.avatar}" data-toggle="modal" data-target="#myModal2" class="reply">回复</span>
-                                                        </neq>
-                                                    </neq>
-                                                </p>
+                                                        <neq name="clist.pid" value="9999">
+                                                            <neq name="clist.pid" value="8888">
+                                                                <span style="color:red;" realname="{$clist.name}" wxid="{$clist.wxid}" avatar="{$clist.avatar}" data-toggle="modal" data-target="#myModal2" class="reply">回复</span>
+                                                            </neq>
+                                                        </neq> 
+                                                    </p>
+                                                </if>
+                                                <eq name="clist.class" value="up">
+                                                    <p style="font-size: 15px;margin-bottom: 0px;float: right;"><span style="color:#337ab7;"  id="{$clist.class}">展开</span></p>
+                                                </eq>
                                             </div>
                                         </span>
                                     </volist>
@@ -514,7 +540,6 @@
                                         <div class="button-sp-area" style="margin-bottom: 20px;display: flex;flex-direction: row;width: 100%;justify-content: space-around;align-items: baseline;">
                                             <button id="apply-change" class="weui-btn weui-btn_primary" style="width: 90%">转审</button>
                                         </div>
-                                        <div class="weui-cells__title">注意事项</div>
                                         <!-- <div class="weui-cells__title">各个中心主管及以上职位的申请抄送</div> -->
                                         <div class="weui-cells" style="margin-top:0px;">
                                             <div class="weui-cell">
@@ -550,9 +575,11 @@
                             <div id="attention" >
                         </if>
                             <div class="weui-cells__title">注意事项  
-                                <a href="{:U('Light/Config/Dispenser',array('robot'=>'attention','system' => $system ,'modname' => $mod_name))}">
-                                    <i class="iconfont icon-xiugai" style="vertical-align: middle;" ></i>
-                                </a>
+                                <if condition="$CueConfig">
+                                    <a href="{:U('Light/Config/Dispenser',array('robot'=>'attention','system' => $system ,'modname' => $mod_name,'aid'=> $aid))}">
+                                        <i class="iconfont icon-xiugai" style="vertical-align: middle;" ></i>
+                                    </a>
+                                </if>
                              </div>
                             <!-- <div class="weui-cells__title">各个中心主管及以上职位的申请抄送</div> -->
                             <div class="weui-cells" style="margin-top:0px;">
@@ -683,8 +710,9 @@
                             <div class="page__bd">
                                 <textarea name="comment_content" id="comment_content" class="comment" data-aid="{$aid}" placeholder="请输入评论内容;
 评论内容可@指定人;
+@指定人未读每30分钟自动提醒;
 无指定默认@所有人（含抄送）;
-任意流程均可评论;" rows="5" cols="30"></textarea> {__TOKEN__}
+任意流程均可评论;" rows="6" cols="30"></textarea> {__TOKEN__}
                             </div>
                         </div>
                         <div class="weui-tabbar" style="padding-top: 8px;position: initial;">
@@ -703,8 +731,6 @@
                         </div>
                         <div class="page js_show" id="comment_at" style="position: relative;display: none;">
                             <div class="page__bd">
-                                
-
                                 <div class="weui-cells" id="" style="margin-top: 5px;margin-bottom: 5px;">
                                     <div class="weui-uploader">
                                         <div class="weui-uploader__bd" style="margin-right: 0px;margin-bottom: 0px;padding-top: 12px;">
@@ -752,6 +778,38 @@
             </div>
         </div>
         <!-- Modal END-->
+        <!-- Modal -->
+        <div class="modal fade" id="myModal3" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"
+            width="100%">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">
+                            <span aria-hidden="true">&times;</span>
+                            <span class="sr-only ">Close</span>
+                        </button>
+                        <h4 class="modal-title" id="myModalLabel">信息详情</h4>
+                    </div>
+                    <div class="modal-body" id="select_content" style="padding-top: 0px;padding-bottom: 0px;">
+                        <div class="page js_show" style="position: relative;">
+                            <div class="page__bd">
+                                <div class="weui-flex">
+                                    <div class="weui-flex__item"><div index='read' class="placeholder ready-btn ready-btn-on ready-btn-read">已读</div></div>
+                                    <div class="weui-flex__item"><div index='noread' class="placeholder ready-btn">未读</div></div>
+                                </div>
+                                <div class="weui-cells searchbar-result" id="readHtml" style="margin-top: 0px;">
+                                        
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default " data-dismiss="modal">关闭</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Modal END-->            
         <!--BEGIN dialog-->
         <div id="dialogs">
             <div class="js_dialog" id="iosDialog" style="display: none;">
@@ -828,17 +886,17 @@
                 </div>
             </div>
             <div class="js_dialog" id="iosDialog_approve_del" style="display: none;">
-                    <div class="weui-mask"></div>
-                    <div class="weui-dialog">
-                        <div class="weui-dialog__hd">
-                            <strong class="weui-dialog__title">是否删除审批评论人</strong>
-                        </div>
-                        <div class="weui-dialog__ft">
-                            <a href="javascript:;" onclick="dialog_approve_del_close()" class="weui-dialog__btn weui-dialog__btn_default">取消</a>
-                            <a href="javascript:;" onclick="dialog_approve_del_confirm()" class="weui-dialog__btn weui-dialog__btn_primary">确认</a>
-                        </div>
+                <div class="weui-mask"></div>
+                <div class="weui-dialog">
+                    <div class="weui-dialog__hd">
+                        <strong class="weui-dialog__title">是否删除审批评论人</strong>
+                    </div>
+                    <div class="weui-dialog__ft">
+                        <a href="javascript:;" onclick="dialog_approve_del_close()" class="weui-dialog__btn weui-dialog__btn_default">取消</a>
+                        <a href="javascript:;" onclick="dialog_approve_del_confirm()" class="weui-dialog__btn weui-dialog__btn_primary">确认</a>
                     </div>
                 </div>
+            </div>
             <div class="js_dialog" id="iosDialog_comment_record_del" style="display: none;">
                 <div class="weui-mask"></div>
                 <div class="weui-dialog">
@@ -852,17 +910,33 @@
                 </div>
             </div>
             <div class="js_dialog" id="iosDialog_proc_del" style="display: none;">
-                    <div class="weui-mask"></div>
-                    <div class="weui-dialog">
-                        <div class="weui-dialog__hd">
-                            <strong class="weui-dialog__title">是否撤回该审批</strong>
-                        </div>
-                        <div class="weui-dialog__ft">
-                            <a href="javascript:;" onclick="dialog_proc_del_close()" class="weui-dialog__btn weui-dialog__btn_default">取消</a>
-                            <a href="javascript:;" onclick="dialog_proc_del_confirm()" class="weui-dialog__btn weui-dialog__btn_primary">确认</a>
-                        </div>
+                <div class="weui-mask"></div>
+                
+                <div class="weui-dialog">
+                    <div class="weui-dialog__hd">
+                        <strong class="weui-dialog__title">是否撤回该审批</strong>
+                    </div>
+                    <div class="weui-dialog__ft">
+                        <a href="javascript:;" onclick="dialog_proc_del_close()" class="weui-dialog__btn weui-dialog__btn_default">取消</a>
+                        <a href="javascript:;" onclick="dialog_proc_del_confirm()" class="weui-dialog__btn weui-dialog__btn_primary">确认</a>
                     </div>
                 </div>
+            </div>
+            <div class="js_dialog" id="iosDialog_sign" style="display: none;">
+                <div class="weui-mask"></div>
+                <div class="weui-dialog">
+                    <div class="weui-dialog__hd">
+                        <strong class="weui-dialog__title" style="color: #f12e2e" id="delete_cue">签收推送</strong>
+                    </div>
+                    <div class="weui-dialog__bd" style="color: #333">
+                        发送信息至手机端签收？
+                    </div>
+                    <div class="weui-dialog__ft">
+                        <a href="javascript:;" onclick="dialog_sign_close()" class="weui-dialog__btn weui-dialog__btn_default">取消</a>
+                        <a href="javascript:;" onclick="dialog_sign_confirm()" class="weui-dialog__btn weui-dialog__btn_primary">确认</a>
+                    </div>
+                </div>
+            </div>
         </div>
         <!--END dialog-->
          <!--BEGIN dialog-->
@@ -896,6 +970,17 @@
                     <div class="weui-dialog__ft"> 
                         <a href="javascript:;" onclick="jSignatureTest()" class="weui-dialog__btn weui-dialog__btn_primary">提交</a>
                         <a href="javascript:;" style="color:#f12e2e;" onclick="dialog_imageSure_del()"  class="weui-dialog__btn weui-dialog__btn_primary">重签</a>
+                    </div>
+                </div>
+            </div>
+            <div class="js_dialog" id="refuseDialog" style="display: none;">
+                <div class="weui-mask"></div>
+                <div class="weui-dialog">
+                    <div class="weui-dialog__bd" style="padding:15px;color:#f12e2e;">退审确认</div>
+                    <div class="weui-dialog__bd">确定要将此申请退审？</div>
+                    <div class="weui-dialog__ft"> 
+                        <a href="javascript:;" onclick="dialog_refuse_cal()" class="weui-dialog__btn weui-dialog__btn_primary">取消</a>
+                        <a href="javascript:;"  style="color:#f12e2e;" onclick="dialog_refuse()" class="weui-dialog__btn weui-dialog__btn_primary">确定</a>
                     </div>
                 </div>
             </div>
@@ -950,6 +1035,55 @@
 <!-- <script src="__PUBLIC__/assets/js/vconsole.min.js"></script> -->
 
 <script>
+    var ishttps = 'https:' == document.location.protocol ? true : false;
+    if(ishttps == false){
+        httpsUrl = document.location.href;
+        httpsUrl = httpsUrl.replace('http:',"https:");
+        window.location.href = httpsUrl;
+    }
+    // 自动催审信息 收起
+    $('#up').click(function(){
+        var upflag = $(this).text();
+        if(upflag == '展开'){
+            $('.dn').show();
+            $(this).text('收起');
+        }else{
+            $('.dn').hide();
+            $(this).text('展开');
+        }
+        
+    });
+    // 已读未读 
+    $('.ready-btn').click(function(){
+        $('.ready-btn').removeClass('ready-btn-on');
+        $(this).addClass('ready-btn-on');
+        var param = $(this).attr('index');
+        getReadMan(param);
+    });
+
+    var comment_id = '';
+    $('.comment_id').click(function(){
+        comment_id = $(this).attr('index');
+        $('.ready-btn').removeClass('ready-btn-on');
+        $('.ready-btn-read').addClass('ready-btn-on');
+        getReadMan('read');
+    });
+   
+    function getReadMan(param){
+        var $dtoast = $('#doingToast');
+        $('#doing').text('加载中...');
+        $('#readHtml').html('<div class="weui-loadmore"><i class="weui-loading"></i><span class="weui-loadmore__tips">正在加载</span></div>');
+        $.post("{:U('Light/Apply/getReadMan')}",
+            {
+                comment_id: comment_id,
+                param     : param,
+                mod_name  : "{$mod_name}",
+                system    : "{$system}",
+            }, function (data) {
+                 $('#readHtml').html(data);
+            }
+        );
+    }
     // 查看插件
     $(function () { 
         $('#viewer').viewer({
@@ -960,13 +1094,13 @@
         });
     });
 
-    if(window.name != "bencalie"){
-        location.reload();
-        window.name = "bencalie";
-    }
-    else{
-        window.name = "";
-    }
+    // if(window.name != "bencalie"){
+    //     location.reload();
+    //     window.name = "bencalie";
+    // }
+    // else{
+    //     window.name = "";
+    // }
     // 强制横屏
     var signoutput_file = ''; 
     
@@ -1025,10 +1159,123 @@
         var datapair = $sigdiv.jSignature("getData", "image"); //设置输出的格式，具体可以参考官方文档
         $('#signImgSure').attr('src',"data:" + datapair[0] + "," + datapair[1]); 
     }
-
+    // 退审确认 取消按钮
+    function dialog_refuse_cal(){
+            $('#refuseDialog').fadeOut();
+    }
+    // 退审确认 确定按钮
+    function dialog_refuse(){
+        applySubmit('apply-refuse');
+    }
     function dialog_imageSure_del(){
         $('#imgDialogSure').fadeOut();
         reset();
+    }
+    //提交方法
+    function applySubmit(type){
+        if(type.length == 0) {
+            $("#alert_content").text('提交失败，请联系信息中心');
+            $("#iosDialog_alert").show();
+            return false;
+        }
+        var option = 0;
+        $('#signImg').attr('src');
+        //审批值传入
+        var comment = $("#comment").val();
+        var apply_user = $("#apply_user").val();
+        var copyto_id = $("#copyto_id").val();
+        var id = $("#aid").val();
+        var hash = $(":input[name='__hash__']").val();
+        var approve_id = $("#approve_to_id").val();
+            //console.log(approve_id);
+            // 审批类型
+        if (type == "apply-agree") {
+            option = 2;
+        } else {
+            option = 1;
+        }
+        // 退审无需签字
+        if(option == 2){
+            // 签名判断
+            if("{$mod_name}" == 'CostMoney'  || "{$mod_name}" == 'CgfkApply' || "{$mod_name}" == 'PjCgfkApply' || "{$mod_name}" == 'WlCgfkApply' || "{$mod_name}" == 'SalesRefundApply'|| "{$mod_name}" == 'ClientStatementApply' ){
+                if('{$ismoble}'=='false'){
+                    return $("#iosDialog_sign").show();
+                }
+                if(signoutput_file == ''){
+                    $("#alert_content").text('请先签字！');
+                    $("#iosDialog_alert").show();
+                    return false;
+                }
+            }
+        }
+        $('#loadingToast').fadeIn(100);
+        //保存数据
+        $.ajax({
+            type: "POST",
+            url: "{:U('Light/WorkFlowOpTv/WorkFlowSubmit')}",
+            dataType: "json",
+            data: {
+                id: id,
+                approve_id:approve_id,
+                mod_name: "{$mod_name}",
+                system: "{$system}",
+                signoutput_file:signoutput_file,
+                apply_user: apply_user, //中文申请人姓名，用于发送审批结果 
+                option: option,
+                copyto_id: copyto_id,
+                word: comment,
+                status: "submit",
+                __hash__: hash
+            },
+            complete: function (data) {
+                //审批完成后操作
+                // alert('审批通过');
+                // console.log(data);
+                $('#loadingToast').hide();
+                var $toast = $('#toast');
+                if ($toast.css('display') != 'none') return;
+
+                $toast.fadeIn(100);
+                // console.log(id);
+                setTimeout(function () {
+                    $toast.fadeOut(100);
+                    window.location = "{:U('Light/Apply/applyInfo?aid=')}" + id + "&modname=" + '{$mod_name}' + "&system=" + '{$system}';
+                }, 500);
+            }
+        });
+    }
+    // 签名催收 隐藏
+    function dialog_sign_close(){
+        $("#iosDialog_sign").hide();
+    }
+    $("#comment").val("{$per_word}");
+    // 签名催收 确定
+    function dialog_sign_confirm(){
+        var comment = $("#comment").val();
+        var id = $("#aid").val();
+        var apply_user = $("#apply_user").val();
+        var hash = $(":input[name='__hash__']").val();
+        
+        $("#iosDialog_sign").hide();
+        $('#loadingToast').fadeIn(100);
+        $.ajax({
+            type: "POST",
+            url: "{:U('Light/Apply/signUrge')}",
+            dataType: "json",
+            data: {
+                id: id,
+                mod_name: "{$mod_name}",
+                system: "{$system}",
+                apply_user: apply_user, //中文申请人姓名，用于发送审批结果 
+                word: comment,
+                __hash__: hash
+            },
+            complete: function (data) {
+                $('#loadingToast').hide();   
+                window.reload();
+            }
+        });
+
     }
     function dialog_image(){
         $('#imgDialog').fadeOut();
@@ -1037,6 +1284,7 @@
         $('#imgDialog').fadeIn();
    });
    $('#btn-qz').click(function(){
+        if('{$ismoble}'=='false') return  $("#iosDialog_sign").show();
         $("#alert_content").text('建议使用横屏签名！');
         $("#iosDialog_alert").show();
         $('#other_page').fadeIn();
@@ -1835,69 +2083,15 @@ var filechooser = document.getElementById("uploaderInput");
                 }
             );
         });
+        
         // apply
         $("#apply-area").on("click", "#apply-agree,#apply-refuse", function () {
-           
             var type = $(this).attr("id");
-            var option = 0;
-            $('#signImg').attr('src');
-            //审批值传入
-            var comment = $("#comment").val();
-            var apply_user = $("#apply_user").val();
-            var copyto_id = $("#copyto_id").val();
-            var id = $("#aid").val();
-            var hash = $(":input[name='__hash__']").val();
-            var approve_id = $("#approve_to_id").val();
-             //console.log(approve_id);
-            // 签名判断
-            if("{$mod_name}" == 'CostMoney' ){
-                if(signoutput_file == ''){
-                    $("#alert_content").text('请先签字！');
-                    $("#iosDialog_alert").show();
-                    return false;
-                }
+            if(type == "apply-agree"){
+                applySubmit(type);
+            }else{
+                $('#refuseDialog').show();
             }
-            $('#loadingToast').fadeIn(100);
-            // 审批类型
-            if (type == "apply-agree") {
-                option = 2;
-            } else {
-                option = 1;
-            }
-            //保存数据
-            $.ajax({
-                type: "POST",
-                url: "{:U('Light/WorkFlowOpTv/WorkFlowSubmit')}",
-                dataType: "json",
-                data: {
-                    id: id,
-                    approve_id:approve_id,
-                    mod_name: "{$mod_name}",
-                    system: "{$system}",
-                    signoutput_file:signoutput_file,
-                    apply_user: apply_user, //中文申请人姓名，用于发送审批结果 
-                    option: option,
-                    copyto_id: copyto_id,
-                    word: comment,
-                    status: "submit",
-                    __hash__: hash
-                },
-                complete: function (data) {
-                    //审批完成后操作
-                    // alert('审批通过');
-                    // console.log(data);
-                    $('#loadingToast').hide();
-                    var $toast = $('#toast');
-                    if ($toast.css('display') != 'none') return;
-
-                    $toast.fadeIn(100);
-                    // console.log(id);
-                    setTimeout(function () {
-                        $toast.fadeOut(100);
-                        window.location = "{:U('Light/Apply/applyInfo?aid=')}" + id + "&modname=" + '{$mod_name}' + "&system=" + '{$system}';
-                    }, 500);
-                }
-            });
         });
         // apply-change
         $("#apply-change").on("click", function (e) {

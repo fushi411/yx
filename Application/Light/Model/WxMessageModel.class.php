@@ -104,10 +104,11 @@ class WxMessageModel extends Model {
         // - 模块名
         $modName     = D('Seek')->getModname($mod,$system);
         $title       = '【已撤销推送】';
-        $description = $modName."({$apply_user}提交)\n撤销理由：".$reason;
+        $description = $modName."( {$apply_user} 提交)\n<div class=\"highlight\">撤销理由：".$reason."</div>";
         $url         = $this->mUrl."m=Light&c=Apply&a=applyInfo&system=".$system."&aid=".$id."&modname=".$mod;
+        $agentid = $mod == 'CostMoney'?1000049:15;
         # 信息发送
-        $this->wx->sendCardMessage($temrecevier,$title,$description,$url,15,$mod,$system);
+        $this->wx->sendCardMessage($temrecevier,$title,$description,$url,$agentid,$mod,$system);
         return $temrecevier;
     }
 
@@ -116,14 +117,19 @@ class WxMessageModel extends Model {
         $per_name    = session('name');
         # 流程所有人员
         $recevier = $this->getFiexMan('|');
-        $recevier.= str_replace(',', '|', $ctoid);
-        if(empty($copyid)) $recevier    = $this->getAllCurrentProcessPeople($system,$mod,$id,0);
+        $recevier.= str_replace(',', '|', $copyid);
+        $plug = '@了你!';
+        if(empty($copyid)) {
+            $recevier    = $this->getAllCurrentProcessPeople($system,$mod,$id,0);
+            $plug = '@所有人!';
+        }
         // - 模块名
         $title       = D('Seek')->getModname($mod,$system);
-        $description = "您有新的评论：".$per_name."@了你!";
+        $description = "您有新的评论：".$per_name.$plug;
         $url         = $this->mUrl."m=Light&c=Apply&a=applyInfo&system=".$system."&aid=".$id."&modname=".$mod;
         # 信息发送
-        $this->wx->sendCardMessage($recevier,$title,$description,$url,15,$mod,$system);
+        $agentid = $mod == 'CostMoney'?1000049:15;
+        $this->wx->sendCardMessage($recevier,$title,$description,$url,$agentid,$mod,$system);
         return $recevier;
     }
 
@@ -133,21 +139,21 @@ class WxMessageModel extends Model {
         $boss           = D(ucfirst($system).'Boss');
         $wxid           = $boss->getWXFromID($per_id);
         $receviers      = $this->getFiexMan('|');
-        $receviers     .= $boss;
-        $tmpRecevierArr = explode('|',$receviers);  
-        $tmpRecevierArr = array_filter($tmpRecevierArr); // ---- 去除空值
-        $tmpRecevierArr = array_unique($tmpRecevierArr); // -- 去除重复
-        $receviers      = implode('|',$tmpRecevierArr);
+        $tmpRecevierArr   = explode('|',$receviers);  
+        $tmpRecevierArr[] = $wxid;
+        $tmpRecevierArr   = array_filter($tmpRecevierArr); // ---- 去除空值
+        $tmpRecevierArr   = array_unique($tmpRecevierArr); // -- 去除重复
+        $receviers        = implode('|',$tmpRecevierArr);
         # title
         $title  = D('Seek')->getModname($mod,$system);
         $title .= '(催审)'; 
         # contents
-        $applyerName = '('.session('name').'提交)';
+        $applyerName = '( '.session('name').' 提交)';
         $description = "您有一个流程需要审批".$applyerName;
         if(!empty($reason)) $description .= "\n催审理由：".$reason;
         # url
         $url  = $this->mUrl."m=Light&c=Apply&a=applyInfo&system=".$system."&aid=".$id."&modname=".$mod;
-        $agentid = 15;
+        $agentid = $mod == 'CostMoney'?1000049:15;
         # 信息发送
         $this->wx->sendCardMessage($receviers,$title,$description,$url,$agentid,$mod,$system);
         return $receviers;
@@ -184,7 +190,7 @@ class WxMessageModel extends Model {
         $logic       = D(ucfirst($system).$mod, 'Logic');
         $res         = $logic->recordContent($id);
         $apply_user  = $res['applyerName'];
-        $description.= "({$apply_user}提交)\n";
+        $description.= "( {$apply_user} 提交)\n";
         $content     = $logic->sealNeedContent($id);
         $template    = $this->CarReDescription($content);
         $description.= $template;
@@ -210,12 +216,12 @@ class WxMessageModel extends Model {
         $title  = D('Seek')->getModname($mod,$system);
         $title .= '(催审)'; 
         # contents
-        $applyerName = '('.session('name').'提交)';
+        $applyerName = '( '.session('name').' 提交)';
         $description = "您有一个流程需要审批".$applyerName;
         if(!empty($reason)) $description .= "\n催审理由：".$reason;
         # url
         $url  = $this->mUrl."m=Light&c=Apply&a=applyInfo&system=".$system."&aid=".$id."&modname=".$mod;
-        $agentid = 15;
+        $agentid = $mod == 'CostMoney'?1000049:15;
         # 信息发送
         $this->wx->sendCardMessage($receviers,$title,$description,$url,$agentid,$mod,$system);
         return $receviers;
@@ -228,9 +234,9 @@ class WxMessageModel extends Model {
 
         $title       = '【已退审推送】';
         $mod_cname   = D('Seek')->getModname($mod,$system);
-		$description = $mod_cname."({$apply_user}提交)\n退审意见：".$word;
+		$description = $mod_cname."( {$apply_user} 提交)\n<div class=\"highlight\">退审意见：".$word."</div>";
         $url         = "https://www.fjyuanxin.com/WE/index.php?m=Light&c=Apply&a=applyInfo&system=".$system."&aid=".$id."&modname=".$mod;
-        $temrecevier = $this->getAllCurrentProcessPeople($system,$mod,$id,1);
+        $temrecevier = $this->getAllCurrentProcessPeople($system,$mod,$id,0);
         $this->wx->sendCardMessage($temrecevier,$title,$description,$url,15,$mod,$system);
     }
 
@@ -344,16 +350,45 @@ class WxMessageModel extends Model {
         $description = '';
         foreach($arr as $k => $v){
             if(empty($data[$k])) continue;
-            $description .= "{$data[$k]}：{$data[$v]}\n";
+            $val = str_replace('&yen;','',$data[$v]);
+            $description .= "{$data[$k]}：{$val}\n";
         }
         return $description;
     }
 
     // 获取固定推送人员
     public function getFiexMan($glue){
-        $FiexMan = array('HuangShiQi','wk','WangTongJin');
+        $FiexMan = array('HuangShiQi','wk');
         if(empty($glue)) return $FiexMan;
         return implode($glue,$FiexMan).$glue;
     }
-
+    // 签字推送
+    public function signUrge($system,$mod,$aid,$wxid,$per_id,$word){
+        $applyerName = D($system.'Boss')->getNameFromID($per_id);
+        // 微信发送
+        $title = '签字推送';
+        $url = $this->mUrl."m=Light&c=Apply&a=applyInfo&system=".$system."&aid=".$aid."&modname=".$mod;
+        $applyerName='('.$applyerName.'提交)';
+        $description = "您有一个流程需要签字".$applyerName;
+        //$receviers = $this->getFiexMan('|');
+        $receviers = $wxid;
+        $agentid = $mod == 'CostMoney'?1000049:15;
+        $info = $this->wx->sendCardMessage($receviers,$title,$description,$url,$agentid,$mod,$system);
+        return $info;
+    }
+    // 评论未读推送
+    public function comPush($system,$mod,$aid,$wxid,$com_name){
+        // 微信发送
+        $title  = D('Seek')->getModname($mod,$system);
+        $url = $this->mUrl."m=Light&c=Apply&a=applyInfo&system=".$system."&aid=".$aid."&modname=".$mod;
+        $description = "您有一条评论未读：{$com_name}@了你！";
+        //$receviers = $this->getFiexMan('|');
+        $wxid = explode(',',$wxid);
+        $wxid = array_filter($wxid);
+        $wxid = implode('|',$wxid);
+        $receviers = $wxid;
+        $agentid = $mod == 'CostMoney'?1000049:15;
+        $info = $this->wx->sendCardMessage($receviers,$title,$description,$url,$agentid,$mod,$system);
+        return $info;
+    }
 }

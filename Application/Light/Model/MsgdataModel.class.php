@@ -40,6 +40,30 @@ class MsgdataModel extends Model {
                 $array['title'] = $v['name'];
             }
         }
+        $copy = $this->getFiexdCopy($system,$mod_name);
+        if(!empty($copy)){
+            $array[$system.$mod_name]['fiexd_copy_id'] = $copy['fiexd_copy_id'];
+            foreach($copy['copydata'] as $k=>$v){
+                $copy['copydata'][$k]['url'] = $v['avatar'];
+            }
+            $array[$system.$mod_name]['copydata'] = $copy['copydata'];
+        }
+    }
+    // 获取固定抄送人员
+    public function getFiexdCopy($system,$mod){
+        $data = M($system.'_appflowtable')->where(array('pro_mod' => $mod,'stat' => 1))->select();
+        $view_id = 0;
+        foreach ($data as $k => $v) {
+            $view_id = $v['view_id'];
+            if( empty($v['condition'])) continue;
+            $condition = explode(',',trim($condition,','));
+            if(in_array(session('wxid'),$condition)) {
+                $view_id = $v['view_id'];break;
+            }            
+        }
+        $copy = M('yx_config_viewpro')->where(array('id' => $view_id))->order('id desc')->find();
+        $fiexd_copy = D(ucfirst($system).'Appcopyto')->getFiexdCopyHtml($copy['fiexd_copy_id']);
+        return $fiexd_copy;
     }
     /**
      * 签收模式排除
@@ -402,10 +426,19 @@ class MsgdataModel extends Model {
 
     // 费用用款
     public function CostMoney(){
+        return $this->CostMoneyUrl();
+    }
+
+    public function unProCostMoney(){
+        return $this->CostMoneyUrl();
+    }
+    public function CostMoneyUrl(){
         $result = array();
         $result['url'] = array(
             array('name' => '建材费用开支','url' => U('Light/View/View',array('modname'=>'CostMoney','system' => 'kk')),'modname' => 'kkCostMoney'),
             array('name' => '环保费用开支','url' => U('Light/View/View',array('modname'=>'CostMoney','system' => 'yxhb')),'modname' => 'yxhbCostMoney'),
+            array('name' => '建材自动审批费用开支','url' => U('Light/View/View',array('modname'=>'unProCostMoney','system' => 'kk')),'modname' => 'kkunProCostMoney'),
+            array('name' => '环保自动审批费用开支','url' => U('Light/View/View',array('modname'=>'unProCostMoney','system' => 'yxhb')),'modname' => 'yxhbunProCostMoney'),
         );
    
         $result['yxhbCostMoney'] = array(
@@ -416,7 +449,15 @@ class MsgdataModel extends Model {
             'process' => U('Light/Process/ApplyProcess',array('modname'=>'CostMoney','system' => 'kk')),
             'info'    => U('Light/Apply/applyInfo',array('modname'=>'CostMoney','system'=>'kk'))
         ); 
-        return $result;   
+        $result['yxhbunProCostMoney'] = array(
+            'process' => U('Light/Process/ApplyProcess',array('modname'=>'unProCostMoney','system' => 'yxhb')),
+            'info'    => U('Light/Apply/applyInfo',array('modname'=>'unProCostMoney','system'=>'yxhb'))
+        );   
+        $result['kkunProCostMoney'] = array(
+            'process' => U('Light/Process/ApplyProcess',array('modname'=>'unProCostMoney','system' => 'kk')),
+            'info'    => U('Light/Apply/applyInfo',array('modname'=>'unProCostMoney','system'=>'kk'))
+        ); 
+        return $result; 
     }
     // 生控记录(矿粉)
     public function kfScjl(){
@@ -462,6 +503,9 @@ class MsgdataModel extends Model {
             array('name' => '建材新增子客户'  ,'url' => U('Light/View/View',array('modname'=>'Contract_guest_Apply2','system' => 'kk')),'modname' => 'kkContract_guest_Apply2'),
             array('name' => '环保新增备案客户'  ,'url' => U('Light/View/View',array('modname'=>'NewGuestApply','system' => 'yxhb')),'modname' => 'yxhbNewGuestApply'),
             array('name' => '建材新增备案客户'  ,'url' => U('Light/View/View',array('modname'=>'NewGuestApply','system' => 'kk')),'modname' => 'kkNewGuestApply'),
+            array('name' => '粉煤灰新增总客户'  ,'url' => U('Light/View/View',array('modname'=>'Contract_guest_Apply_fmh','system' => 'kk')),'modname' => 'kkContract_guest_Apply_fmh'),
+            array('name' => '粉煤灰新增子客户'  ,'url' => U('Light/View/View',array('modname'=>'Contract_guest_Apply_fmh2','system' => 'kk')),'modname' => 'kkContract_guest_Apply_fmh2'),
+            array('name' => '粉煤灰新增备案客户'  ,'url' => U('Light/View/View',array('modname'=>'NewGuestApply_fmh','system' => 'kk')),'modname' => 'kkNewGuestApply_fmh'),
         );
 
         $result['kkContract_guest_Apply'] = array(
@@ -488,7 +532,18 @@ class MsgdataModel extends Model {
             'process' => U('Light/Process/ApplyProcess',array('modname'=>'NewGuestApply','system' => 'kk')),
             'info'    => U('Light/Apply/applyInfo',array('modname'=>'NewGuestApply','system'=>'kk'))
         );
-
+        $result['kkContract_guest_Apply_fmh'] = array(
+            'process' => U('Light/Process/ApplyProcess',array('modname'=>'Contract_guest_Apply_fmh','system' => 'kk')),
+            'info'    => U('Light/Apply/applyInfo',array('modname'=>'Contract_guest_Apply_fmh','system'=>'kk'))
+        );
+        $result['kkContract_guest_Apply_fmh2'] = array(
+            'process' => U('Light/Process/ApplyProcess',array('modname'=>'Contract_guest_Apply_fmh2','system' => 'kk')),
+            'info'    => U('Light/Apply/applyInfo',array('modname'=>'Contract_guest_Apply_fmh2','system'=>'kk'))
+        );
+        $result['kkNewGuestApply_fmh'] = array(
+            'process' => U('Light/Process/ApplyProcess',array('modname'=>'NewGuestApply_fmh','system' => 'kk')),
+            'info'    => U('Light/Apply/applyInfo',array('modname'=>'NewGuestApply_fmh','system'=>'kk'))
+        );
         return $result;
     }
     // 新增备案客户
@@ -506,33 +561,62 @@ class MsgdataModel extends Model {
         return $this->GuestApply();
     }
 
+    //粉煤灰新增总客户
+    public function Contract_guest_Apply_fmh(){
+        return $this->GuestApply();
+    }
+
+    //粉煤灰新增子客户
+    public function Contract_guest_Apply_fmh2(){
+        return $this->GuestApply();
+    }
+
+    //粉煤灰新增备案客户
+    public function NewGuestApply_fmh(){
+        return $this->GuestApply();
+    }
+
     // 新增价格合同
     public function  ContractApply(){
         $result = array();
         $result['url'] = array(
             array('name' => '环保新增合同价格','url' => U('Light/View/View',array('modname'=>'ContractApply','system' => 'yxhb')),'modname' => 'yxhbContractApply'),
             array('name' => '建材新增合同价格','url' => U('Light/View/View',array('modname'=>'ContractApply','system' => 'kk')),'modname' => 'kkContractApply'),
+            array('name' => '粉煤灰新增合同价格','url' => U('Light/View/View',array('modname'=>'ContractApply_fmh','system' => 'kk')),'modname' => 'kkContractApply_fmh'),
         );
-    
         $result['yxhbContractApply'] = array(
             'process'       => U('Light/Process/ApplyProcess',array('modname'=>'ContractApply','system' => 'yxhb')),
             'info'          => U('Light/Apply/applyInfo',array('modname'=>'ContractApply','system'=>'yxhb')),
-            'fiexd_copy_id' => 'csl,LanYanHong',
-            'copydata'      => array(
-                array('name' =>'陈尚霖','url' => 'http://shp.qpic.cn/bizmp/nFsVdIIiaLZsDpCS95SJ0M61tqqOJG9IriaiaZzaMzJfZ11YZy68j90ow/'),
-                array('name' =>'兰艳红','url' => 'http://p.qlogo.cn/bizmail/VniaCv2mTAjm0YEuIz9e7snSNgGykQgUGsOiarhyyDO2FHHXyNiapzibicQ/0'),
-            )
+            // 'fiexd_copy_id' => 'csl,LanYanHong',
+            // 'copydata'      => array(
+            //     array('name' =>'陈尚霖','url' => 'http://shp.qpic.cn/bizmp/nFsVdIIiaLZsDpCS95SJ0M61tqqOJG9IriaiaZzaMzJfZ11YZy68j90ow/'),
+            //     array('name' =>'兰艳红','url' => 'http://p.qlogo.cn/bizmail/VniaCv2mTAjm0YEuIz9e7snSNgGykQgUGsOiarhyyDO2FHHXyNiapzibicQ/0'),
+            // )
         );   
         $result['kkContractApply'] = array(
             'process'       => U('Light/Process/ApplyProcess',array('modname'=>'ContractApply','system' => 'kk')),
             'info'          => U('Light/Apply/applyInfo',array('modname'=>'ContractApply','system'=>'kk')),
-            'fiexd_copy_id' => 'csl,LanYanHong',
-            'copydata'      => array(
-                array('name' =>'陈尚霖','url' => 'http://shp.qpic.cn/bizmp/nFsVdIIiaLZsDpCS95SJ0M61tqqOJG9IriaiaZzaMzJfZ11YZy68j90ow/'),
-                array('name' =>'兰艳红','url' => 'http://p.qlogo.cn/bizmail/VniaCv2mTAjm0YEuIz9e7snSNgGykQgUGsOiarhyyDO2FHHXyNiapzibicQ/0'),
-            )
-        ); 
+            // 'fiexd_copy_id' => 'csl,LanYanHong',
+            // 'copydata'      => array(
+            //     array('name' =>'陈尚霖','url' => 'http://shp.qpic.cn/bizmp/nFsVdIIiaLZsDpCS95SJ0M61tqqOJG9IriaiaZzaMzJfZ11YZy68j90ow/'),
+            //     array('name' =>'兰艳红','url' => 'http://p.qlogo.cn/bizmail/VniaCv2mTAjm0YEuIz9e7snSNgGykQgUGsOiarhyyDO2FHHXyNiapzibicQ/0'),
+            // )
+        );
+        $result['kkContractApply_fmh'] = array(
+            'process'       => U('Light/Process/ApplyProcess',array('modname'=>'ContractApply_fmh','system' => 'kk')),
+            'info'          => U('Light/Apply/applyInfo',array('modname'=>'ContractApply_fmh','system'=>'kk')),
+            // 'fiexd_copy_id' => 'csl,LanYanHong',
+            // 'copydata'      => array(
+            //     array('name' =>'陈尚霖','url' => 'http://shp.qpic.cn/bizmp/nFsVdIIiaLZsDpCS95SJ0M61tqqOJG9IriaiaZzaMzJfZ11YZy68j90ow/'),
+            //     array('name' =>'兰艳红','url' => 'http://p.qlogo.cn/bizmail/VniaCv2mTAjm0YEuIz9e7snSNgGykQgUGsOiarhyyDO2FHHXyNiapzibicQ/0'),
+            // )
+        );
         return $result;   
+    }
+
+    //粉煤灰新增合同价格
+    public function ContractApply_fmh(){
+        return $this->ContractApply();
     }
 
     // 费用开支付款
@@ -605,6 +689,41 @@ class MsgdataModel extends Model {
         );
         return $result;
     }
+    // 新增对账单
+    public function  ClientStatementApply(){
+        $result = array();
+        $result['url'] = array(
+            array('name' => '环保新增对账单','url' => U('Light/View/View',array('modname'=>'ClientStatementApply','system' => 'yxhb')),'modname' => 'yxhbClientStatementApply'),
+            array('name' => '建材新增对账单','url' => U('Light/View/View',array('modname'=>'ClientStatementApply','system' => 'kk')),'modname' => 'kkClientStatementApply'),
+        );
 
+        $result['yxhbClientStatementApply'] = array(
+            'process'       => U('Light/Process/ApplyProcess',array('modname'=>'ClientStatementApply','system' => 'yxhb')),
+            'info'          => U('Light/Apply/applyInfo',array('modname'=>'ClientStatementApply','system'=>'yxhb')),
+        );
+        $result['kkClientStatementApply'] = array(
+            'process'       => U('Light/Process/ApplyProcess',array('modname'=>'ClientStatementApply','system' => 'kk')),
+            'info'          => U('Light/Apply/applyInfo',array('modname'=>'ClientStatementApply','system'=>'kk')),
+        );
+        return $result;
+    }
+    // 上传对账回执
+    public function ClientStatementUp(){
+        $result = array();
+        $result['url'] = array(
+            array('name' => '环保上传对账回执','url' => U('Light/View/View',array('modname'=>'ClientStatementUp','system' => 'yxhb')),'modname' => 'yxhbClientStatementUp'),
+            array('name' => '建材上传对账回执','url' => U('Light/View/View',array('modname'=>'ClientStatementUp','system' => 'kk')),'modname' => 'kkClientStatementUp'),
+        );
 
+        $result['yxhbClientStatementUp'] = array(
+            'process'       => U('Light/Process/ApplyProcess',array('modname'=>'ClientStatementUp','system' => 'yxhb')),
+            'info'          => U('Light/Apply/applyInfo',array('modname'=>'ClientStatementUp','system'=>'yxhb')),
+        );
+        $result['kkClientStatementUp'] = array(
+            'process'       => U('Light/Process/ApplyProcess',array('modname'=>'ClientStatementUp','system' => 'kk')),
+            'info'          => U('Light/Apply/applyInfo',array('modname'=>'ClientStatementUp','system'=>'kk')),
+        );
+        return $result;
+    }
+    
 }

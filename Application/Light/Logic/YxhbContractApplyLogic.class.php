@@ -135,7 +135,7 @@ class YxhbContractApplyLogic extends Model {
         return $result;
     }
     public function getYyHtml($data){
-        $field = 'id,ht_bzfs,ht_cate,ht_wlfs,ht_yf,ht_dj';
+        $field = 'id,ht_bzfs,ht_cate,ht_wlfs,ht_yf,ht_dj,ht_khmc,ht_stday,ht_enday';
         $map   = array(
             'ht_stat'  => 2,
             'ht_enday' => array('gt',date('Y-m-d',strtotime($data['ht_date']))),
@@ -151,6 +151,17 @@ class YxhbContractApplyLogic extends Model {
             $res[]        = $v;
         }
         $info = $res;
+        foreach($info as $key =>$val){
+            $map  = array(
+                'tj_stat'   => 2,
+                'tj_client' => $val['ht_khmc'],
+                'tj_cate'   => $val['ht_cate'],
+                'tj_bzfs'   => $val['ht_bzfs'],
+                'tj_wlfs'   => $val['ht_wlfs'],
+            ); 
+            $res = M('yxhb_tj')->where($map)->order('tj_da desc')->find();
+            $info[$key]['ht_dj'] = $res['tj_dj'];
+        }
         if(empty($info)) return '无';
         $html = '';
         foreach($info as $k => $v){
@@ -199,6 +210,7 @@ class YxhbContractApplyLogic extends Model {
             'third_title'    => '相关说明',
             'third_content'  => $res['ht_bz']?$res['ht_bz']:'无',
             'stat'           => $this->transStat($res['ht_stat']),
+            'applyerName'    => $res['ht_rdy'],
         );
         return $result;
     }
@@ -247,9 +259,8 @@ class YxhbContractApplyLogic extends Model {
      */
     public function getCustomerList(){
         $keyWord = I('math');
-        $model   = D('Guest');
-        $data    = $model->getYxhbrecordUser($keyWord);
-        return $data;
+        $res = D('Guest')->getGuest('yxhb',$keyWord,'ContractApply');
+        return $res;
     }
     
     /**
@@ -261,7 +272,7 @@ class YxhbContractApplyLogic extends Model {
         $id = I('post.user_id');
         $map = array(
             'reid'=>$id,
-            'g_stat3'=>1
+            //'g_stat3'=>1
         );
         $data = array();
         $res = M('yxhb_guest2')->field('id,g_name')->where($map)->select();
@@ -286,7 +297,7 @@ class YxhbContractApplyLogic extends Model {
     public function getGuestInfo(){
         $id    = I('post.user_id');
         $today = date('Y-m-d',time());
-        $field = 'id,ht_bzfs,ht_cate,ht_wlfs,ht_yf,ht_dj';
+        $field = 'id,ht_bzfs,ht_cate,ht_wlfs,ht_yf,ht_dj,ht_khmc';
         $map   = array(
             'ht_stat'  => 2,
             'ht_enday' => array('egt',$today),
@@ -304,7 +315,19 @@ class YxhbContractApplyLogic extends Model {
             $touch[]      = $v['ht_cate'];
             $res[]        = $v;
         }
-        return $res; 
+        $info = $res;
+        foreach($info as $key =>$val){
+            $map  = array(
+                'tj_stat'   => 2,
+                'tj_client' => $val['ht_khmc'],
+                'tj_cate'   => $val['ht_cate'],
+                'tj_bzfs'   => $val['ht_bzfs'],
+                'tj_wlfs'   => $val['ht_wlfs'],
+            ); 
+            $res = M('yxhb_tj')->where($map)->order('tj_da desc')->find();
+            $info[$key]['ht_dj'] = $res['tj_dj']?$res['tj_dj']:$info[$key]['ht_dj'];
+        }
+        return $info; 
     }
     // 获取材料 
     public function getStuff(){
@@ -324,12 +347,20 @@ class YxhbContractApplyLogic extends Model {
         $data      = I('post.data');
         $copyto_id = I('post.copyto_id');
         $bz        = I('post.notice');
+        // 更新 总客户
+        $id        = I('post.id');
+        $jsfs      = I('post.jsfs');
+        $kpfs      = I('post.kpfs');
+
         if(!$uid) return  array('code' => 404,'msg' =>'请选择二级客户');
         if( !count($data) ) return  array('code' => 404,'msg' =>'请配置价格');
-
+        
         $idArr                = $this->getPid();
         $first_day            = date('Y-m-01',time());
         $next_month_last_day  = date("Y-m-d",strtotime("$first_day +2 month -1 day"));
+        // 流程检验
+        $pro = D('YxhbAppflowtable')->havePro('ContractApply','');
+        if(!$pro) return array('code' => 404,'msg' => '无审批流程,请联系管理员');
         if(!M('yxhb_ht')->autoCheckToken($_POST)) return array('code' => 404,'msg' => '网络延迟，请勿点击提交按钮！');
         $temp = array(
             'pid'         => $idArr[0],
@@ -356,6 +387,14 @@ class YxhbContractApplyLogic extends Model {
         }
         $result = M('yxhb_ht')->addAll($addData);
         if(!$result) return array('code' => 404,'msg' =>'提交失败，请重新尝试！');
+        // 更新客户表
+        $guest = array();
+        if($jsfs) $guest['g_jsfs'] = $jsfs;
+        if($kpfs) $guest['g_kpfs'] = $kpfs;
+        if(!empty($guest)){
+            $map = array('id' => $id);
+            M('yxhb_guest2')->where($map)->save($guest);
+        }
         // 抄送
         $copyto_id = trim($copyto_id,',');
         if (!empty($copyto_id)) {

@@ -215,6 +215,7 @@ class SeekController  extends BaseController
         $tab = $this->arrayMerge($tab);
         $sub = array();
         foreach ($tab as $k => $v ) {
+            $wh = $v['map']?$v['map']:'';
             $id = session($v['system'].'_id');
             $map = array(
                 'a.app_stat'                      => 1,
@@ -222,7 +223,7 @@ class SeekController  extends BaseController
                 'a.mod_name'                      => $v['mod_name']
             );
             $res = M($v['system'].'_appflowproc a')
-                    ->join("{$v['table_name']}  on a.aid={$v['table_name']}.{$v['id']}")
+                    ->join("{$v['table_name']}  on a.aid={$v['table_name']}.{$v['id']} {$wh}")
                     ->field("a.aid")
                     ->where($map)
                     ->select();  
@@ -237,7 +238,7 @@ class SeekController  extends BaseController
             $map['a.aid']      = array('not in',$aid);
 
             $res = M($v['system'].'_appflowproc a')
-                    ->join("{$v['table_name']}  on a.aid={$v['table_name']}.{$v['id']}")
+                    ->join("{$v['table_name']}  on a.aid={$v['table_name']}.{$v['id']} {$wh}")
                     ->field($v['copy_field'])
                     ->where($map)
                     ->select();    
@@ -271,13 +272,14 @@ class SeekController  extends BaseController
         $idArr['kk']   = session('kk_id');
         // sql 重构
         foreach($arr as $k => $v){
+            $wh = $v['map']?$v['map']:'';
             $map = array(
                 'a.app_stat'                      => 1,
                 "{$v['table_name']}.{$v['stat']}" => $v['submit']['stat'],
                 'a.mod_name'                      => $v['mod_name']
             );
             $res = M($v['system'].'_appflowproc a')
-                    ->join("{$v['table_name']}  on a.aid={$v['table_name']}.{$v['id']}")
+                    ->join("{$v['table_name']}  on a.aid={$v['table_name']}.{$v['id']} {$wh}")
                     ->field("a.aid")
                     ->where($map)
                     ->select();  
@@ -297,6 +299,7 @@ class SeekController  extends BaseController
                             b.mod_name='{$v['mod_name']}'
 						AND
                             b.per_id = {$userId}
+                            {$wh}
                         AND (
                             b.app_stat = 1
                             OR b.app_stat = 2
@@ -333,13 +336,14 @@ class SeekController  extends BaseController
         $and    = empty($limit)?'or':'and';
         // sql 重构
         foreach($arr as $k => $v){
+            $wh = $v['map']?$v['map']:'';
             $map = array(
                 'a.app_stat'                      => 1,
                 "{$v['table_name']}.{$v['stat']}" => $v['submit']['stat'],
                 'a.mod_name'                      => $v['mod_name']
             );
             $res = M($v['system'].'_appflowproc a')
-                    ->join("{$v['table_name']}  on a.aid={$v['table_name']}.{$v['id']}")
+                    ->join("{$v['table_name']}  on a.aid={$v['table_name']}.{$v['id']} {$wh}")
                     ->field("a.aid")
                     ->where($map)
                     ->select();  
@@ -355,7 +359,7 @@ class SeekController  extends BaseController
                         {$v['table_name']} 
                     where 
                         {$v['submit']['name']}='{$name}' 
-                    AND ( {$v['stat']}{$eq}{$v['submit']['stat']} {$aid})  {$v['map']}";
+                    AND ( {$v['stat']}{$eq}{$v['submit']['stat']} {$aid})  {$v['map']} {$wh}";
         }
         if(empty($sql)) return '';
         $sql = "select * from($sql)a GROUP BY aid,`0` ORDER BY date desc";
@@ -467,7 +471,7 @@ class SeekController  extends BaseController
                 'aid'            => $v['aid'],
                 'stat'           => $res['stat'],
                 'toptitle'       => $v['modname'],
-                'applyer'        => $v['applyer'],
+                'applyer'        => $res['applyerName'],
                 'apply'          => $appStatus,
             );
             if(!empty($res['fourth_title'])){

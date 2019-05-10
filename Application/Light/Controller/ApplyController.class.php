@@ -60,11 +60,14 @@ class ApplyController extends BaseController {
         $this->assign('first',$allArr['first']);
         $this->assign('title',D('seek')->getTitle($mod_name,$system));
         $this->assign('proInfo',$allArr['proInfo']);
-
+        // 手机还是电脑
+        $ismoble = isMobile()?'true':'false';
+        $this->assign('ismoble',$ismoble);
         //审批内容
         $process = D($system.'Appflowproc');
         $procArr = $process->contentProc($mod_name, $apply_id, $authArr);
         $this->assign('process', $procArr['process']);      //审批流程
+        $this->assign('per_word',$procArr['per_word']);
         $isSigntemp = $procArr['process'];
         $isSigntemp = end($isSigntemp);
         $isSigning  = $isSigntemp['app_name'];
@@ -83,7 +86,8 @@ class ApplyController extends BaseController {
         //评论内容
         $comment_list = D($system.'Appflowcomment')->contentComment($mod_name, $apply_id);
         $this->assign('comment_list', $comment_list);
-
+        // 评论标记为已读
+        D($system.'Appflowcomment')->readCommentApply($mod_name, $apply_id);
         //抄送内容
         $copyTo = D($system.'Appcopyto');
         $copyArr = $copyTo->contentCopyto($mod_name, $apply_id, $authArr);
@@ -120,6 +124,31 @@ class ApplyController extends BaseController {
         $this->display($mod_name.':'.ucfirst($system).'ApplyInfo');
     }
 
+    // 签字推送
+    public function signUrge(){
+        $aid      = I('post.id');
+        $mod_name = I('post.mod_name');
+        $system   = I('post.system');
+        $word     = I('post.word');
+        $per_id   = I('post.apply_user');
+        $wxid     = session('wxid');
+        $id       = session($system.'_id');
+        if(!M()->autoCheckToken($_POST)) $this->ajaxReturn(array('code' => 404,'msg' => '网络延迟，请勿点击提交按钮！'));
+        // 更新审批app_word字段
+        $res = D($system.'Appflowproc')->setApp_word($mod_name,$aid,$id,$word);
+        // 信息发送
+        D('WxMessage')->signUrge($system,$mod_name,$aid,$wxid,$per_id,$word);
+        $this->ajaxReturn($res);
+    }
+    // 获取评论读取消息
+    public function getReadMan(){
+        $comment_id = I('post.comment_id');
+        $param      = I('post.param');
+        $mod_name   = I('post.mod_name');
+        $system     = I('post.system');
+        $res = D(ucfirst($system).'Appflowcomment')->getReadManHtml($comment_id);
+        $this->ajaxReturn($res[$param]);
+    }
     // 获取当前目录
     public function getDeptHtml()
     {
@@ -326,6 +355,7 @@ class ApplyController extends BaseController {
         if (!$id) $this->ajaxReturn('failure');
         # 撤销处理
         $res = D(ucfirst($system).$mod_name, 'Logic')->delRecord($id);
+        if($res == 'failure') $this->ajaxReturn('failure');
         # 信息发送以及保存
         $receviers             = D('WxMessage')->delRecordSendMessage($system,$mod_name,$id,$reason);
         $receviers             = str_replace('|',',',$receviers);

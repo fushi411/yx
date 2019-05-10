@@ -202,6 +202,9 @@ class KkNewGuestApplyLogic extends Model {
             'stat2'=>1,                         //1代表未转为合同客户的备案客户，2表示已经转为合同客户
             'stat3'=>1,
         );
+        // 流程检验
+        $pro = D('KkAppflowtable')->havePro('NewGuestApply','');
+        if(!$pro) return array('code' => 404,'msg' => '无审批流程,请联系管理员');
         //$_POST    提交数据的方式为post
         if(!M('kk_newguest')->autoCheckToken($_POST)) return array('code' => 404,'msg' => '网络延迟，请勿点击提交按钮！');    //在Model.class.php中，自动表单令牌验证
         $result = M('kk_newguest')->add($res);
@@ -222,7 +225,7 @@ class KkNewGuestApplyLogic extends Model {
         $name = I('post.name');
         $map = array(
             'name' => $name,
-            'stat'=>2
+            'stat'=>array('neq',0)
         );
         $data = M('kk_newguest')->where($map)->find();
         if(empty($data)) return true;

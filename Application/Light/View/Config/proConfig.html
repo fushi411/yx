@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>流程配置</title>
+    <link href="__PUBLIC__/assets/css/bootstrap.min.css" rel="stylesheet">
+    <!-- 引入 WeUI -->
+    <!-- <link rel="stylesheet" href="https://res.wx.qq.com/open/libs/weui/1.1.2/weui.min.css" /> -->
+    <link rel="stylesheet" href="__PUBLIC__/assets/css/weui.min.css" />
+    <link rel="stylesheet" href="__PUBLIC__/assets/css/weMain.css?version=201709012" />
+    <link rel="stylesheet" href="//at.alicdn.com/t/font_915899_55h0sykfz5i.css" />
+    <style type="text/css">
+        .weui-cells:after {
+            border-bottom: 0px solid #fff;
+        }
+
+        .weui-selet__user {
+            width: 2.5em;
+            height: 2.5em;
+            margin-bottom: 5px;
+            margin-right: 16px;
+            border-radius: 5px;
+        }
+
+        .wk-select__user {
+            height: 60px;
+            width: 52px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-right: 6px;
+        }
+
+        .no-select__user {
+            height: 60px;
+            width: 52px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-right: 6px;
+        }
+
+        .wk-comment__user {
+            height: 60px;
+            width: 52px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-right: 12px;
+        }
+
+        a:hover {
+            text-decoration: none;
+        }
+
+        label {
+            font-weight: 400;
+            margin-bottom: 0px;
+        }
+
+        .select2-results__option {
+            font-size: 16px;
+        }
+
+        .select2-search__field {
+            line-height: normal;
+        }
+
+        /* end */
+        .redColor {
+            color: #e64340;
+        }
+
+        .greenColor {
+            color: #16b517;
+        }
+
+        .weui-form-preview__value span {
+            display: inline-block;
+            width: 80px;
+            text-align: center;
+        }
+
+        .font-width {
+            display: inline-block;
+            width: 68px;
+            text-align: right;
+
+        }
+
+        .greyColor {
+            color: #757575;
+        }
+
+        .select2-container--default .select2-selection--multiple .select2-selection__rendered {
+            padding: 0;
+        }
+
+        .other_page {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #fff;
+            z-index: 999;
+        }
+
+        .searchCenter {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="weui-toptips weui-toptips_warn js_tooltips" style="opacity: 1;">错误提示</div>
+  <!-- Modal -->
+  <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" width="100%">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only copy_to_close">Close</span></button>
+                    <h4 class="modal-title" id="myModalLabel">选择人员</h4>
+                </div>
+                
+                <div class="modal-body" id="select_content" style="padding-top: 0px;padding-bottom: 0px;">
+                    <div class="page js_show" style="position: relative;">
+                        <div class="page__bd">
+                            <div class="weui-search-bar" id="searchBar">
+                                <form class="weui-search-bar__form">
+                                    <div class="weui-search-bar__box">
+                                        <i class="weui-icon-search"></i>
+                                        <input type="search" class="weui-search-bar__input " id="searchInput" placeholder="请输入姓名或拼音缩写搜索" required="">
+                                        <a href="javascript:" class="weui-icon-clear" id="searchClear"></a>
+                                    </div>
+                                    <label class="weui-search-bar__label searchCenter" id="searchText">
+                                        <i class="weui-icon-search"></i>
+                                        <span>请输入姓名或拼音缩写搜索</span>
+                                    </label>
+                                </form>
+                                <a href="javascript:" class="weui-search-bar__cancel-btn" id="searchCancel">搜索</a>
+                            </div>
+                            <div class="weui-cells searchbar-result" id="searchResult" style="margin-top: 0px;">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default copy_to_close" data-dismiss="modal" >关闭</button>
+                    <button type="button" class="btn btn-success" id="pre-level" data-pid="">上一级</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="sign_dialogs">
+        <div class="js_dialog" id="Dialog" style="display: none;">
+            <div class="weui-mask"></div>
+            <div class="weui-dialog">
+                <div class="weui-dialog__hd">
+                    <strong class="weui-dialog__title" id='dialog_text'>是否删除该人员</strong>
+                </div>
+                <div class="weui-dialog__ft">
+                    <a href="javascript:;" onclick="del_dialog_close()" class="weui-dialog__btn weui-dialog__btn_default">取消</a>
+                    <a href="javascript:;" onclick="del_dialog_confirm()" class="weui-dialog__btn weui-dialog__btn_primary">确认</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Modal END-->
+    <div class="container" id="container">
+        <div class="page js_show">
+            <h3 class="titleTab" style="text-align: center;">{$name}</h3>
+            <div class="weui-cells__title pro_title">
+                审批层级
+                <span style="float:right">
+                    <i class="iconfont icon-tianjia" onclick="tianjia()" style="vertical-align: middle;margin: 0 5px"></i>
+                    <i class="iconfont icon-shanchu" onclick="shanchu(this)" style="vertical-align: middle;margin: 0 5px"></i>
+                </span>
+            </div>
+            <div id='pro_div'>
+                <if condition="empty($data)">
+                      <div class="weui-cells pro_html" style="margin-top:0px;">
+                        <div class="weui-cell" style="padding:5px 15px;">
+                            <div class="weui-cell__bd">
+                                <div class="weui-uploader">
+                                    <div class="weui-uploader__bd" style="height: 75px;">
+                                        <ul class="weui-uploader__files app_pro"  style="margin-bottom: 0px;">
+                                        </ul>
+                                        <div class="weui-uploader__input-box"
+                                            style="width: 35px;height: 35px;margin: 10px 0 0 8px;">
+                                            <input onclick="selUser(this)" class="weui-uploader__input pro_model"  type="button" name="copyto" readonly="" autocomplete="off">
+                                            <input type="hidden" class="pro_id" value="" autocomplete="off">
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </if>
+                <volist name="data" id="vo" key="k">
+                    <if condition="$k neq 1">
+                        <div class="weui-cells__title pro_title" style="margin:0;">
+                            <i class="iconfont icon-arrowdown"></i>
+                            <span style="float:right">
+                                <i class="iconfont icon-tianjia" onclick="tianjia()" style="vertical-align: middle;margin: 0 5px"></i>
+                                <i class="iconfont icon-shanchu" onclick="shanchu(this)" index="{$vo['id']}" style="vertical-align: middle;margin: 0 5px"></i>
+                            </span>
+                        </div>
+                    </if>
+                    <div class="weui-cells pro_html" style="margin-top:0px;">
+                        <div class="weui-cell" style="padding:5px 15px;">
+                            <div class="weui-cell__bd">
+                                <div class="weui-uploader">
+                                    <div class="weui-uploader__bd" style="height: 75px;">
+                                        <ul class="weui-uploader__files app_pro"  style="margin-bottom: 0px;">
+                                            {$vo.html}
+                                        </ul>
+                                        <div class="weui-uploader__input-box"
+                                            style="width: 35px;height: 35px;margin: 10px 0 0 8px;">
+                                            <input onclick="selUser(this)" class="weui-uploader__input pro_model"  type="button" name="copyto" readonly="" autocomplete="off">
+                                            <input type="hidden" class="pro_id" value="{$vo['wxid']}" autocomplete="off">
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </volist>
+            </div>
+            <div class="weui-cells__title">固定抄送</div>
+            <div class="weui-cells" style="margin-top:0px;">
+                <div class="weui-cell">
+                    <div class="weui-cell__bd">
+                        <div class="weui-uploader">
+                            <div class="weui-uploader__bd" style="height: 75px;">
+                                <ul class="weui-uploader__files app_copy"  style="margin-bottom: 0px;">
+                                    {$copy.html}
+                                </ul>
+                                <div class="weui-uploader__input-box"
+                                    style="width: 35px;height: 35px;margin: 10px 0 0 8px;">
+                                    <input onclick="selCopyUser()" class="weui-uploader__input copy_model" type="button"
+                                        name="copyto" readonly="" autocomplete="off">
+                                    <input type="hidden" class="copy_id" value="{$copy['wxid']}" autocomplete="off">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="weui-cells__title">申请人员</div>
+            <div class="weui-cells" style="margin-top:0px;">
+                <div class="weui-cell">
+                    <div class="weui-cell__bd">
+                        <div class="weui-uploader">
+                            <div class="weui-uploader__bd" >
+                                <ul class="weui-uploader__files app_auth" id="app_auth" style="margin-bottom: 0px;">
+                                        {$auth.html}
+                                </ul>
+                                <div class="weui-uploader__input-box"
+                                    style="width: 35px;height: 35px;margin: 10px 0 0 8px;">
+                                    <input onclick="selAuthUser()" class="weui-uploader__input auth_model" type="button"
+                                        name="copyto" readonly="" autocomplete="off">
+                                    <input type="hidden" class="auth_id" value="{$auth['fiexd_copy_id']}" autocomplete="off">
+                                    <input type="hidden" id="other_auth" value="{$other_auth}" autocomplete="off">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="button-sp-area"
+                style="margin-bottom: 20px;display: flex;flex-direction: row;width: 100%;justify-content: space-around;align-items: baseline;">
+                <a href="javascript:;" id="ratio-refuse" class="weui-btn weui-btn_warn" style="width: 40%;">取消</a>
+                <a href="javascript:;" id="ratio-agree" class="weui-btn weui-btn_primary" style="width: 40%">确定</a>
+            </div>
+            <div id="attention" >
+                <div class="weui-cells__title">操作说明 
+                    <a href="{:U('Light/Config/Dispenser',array('robot'=>'attention','system' => 'kk' ,'modname' => 'CostMoney_config'))}">
+                        <i class="iconfont icon-xiugai" style="vertical-align: middle;" ></i>
+                    </a>
+                 </div>
+                <!-- <div class="weui-cells__title">各个中心主管及以上职位的申请抄送</div> -->
+                <div class="weui-cells" style="margin-top:0px;">
+                    <div class="weui-cell">
+                        <div class="weui-cell__bd">
+                            <div class="weui-uploader">
+                                <div class="weui-uploader__bd" >
+                                    <div id="attentionContent" style="font-size: 15px;color: #f12e2e;white-space: pre-wrap;">{$atten.content}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+   
+    <div id="loadingToast" style=" display: none;">
+        <div class="weui-mask_transparent"></div>
+        <div class="weui-toast">
+            <i class="weui-loading weui-icon_toast"></i>
+            <p class="weui-toast__content" id="toast__content">数据提交中</p>
+        </div>
+    </div>
+    <div id="toast" style="display: none;">
+        <div class="weui-mask_transparent"></div>
+        <div class="weui-toast">
+            <i class="weui-icon-success-no-circle weui-icon_toast"></i>
+            <p class="weui-toast__content">已完成</p>
+        </div>
+    </div>
+</body>
+<script src="__PUBLIC__/assets/js/jquery-1.11.1.min.js"></script>
+<script src="__PUBLIC__/assets/js/bootstrap.min.js"></script>
+<script src="__PUBLIC__/assets/js/select2.min.js"></script>
+<script src="__PUBLIC__/assets/js/zh-CN.js"></script>
+<script src="https://res.wx.qq.com/open/libs/weuijs/1.1.3/weui.min.js"></script>
+<script>
+    var $tooltips = $('.js_tooltips'),
+        reason = $('#reason'),
+        toast = $('#loadingToast'),
+        type = '',
+        idx = 0;
+    // 数据提交与加载提示
+    function toastfadeIn(time, text) {
+        $('#toast__content').text(text);
+        toast.fadeIn(time);
+    }
+    // 错误提示
+    function tooltip(text) {
+        if ($tooltips.css('display') != 'none') return;
+        $('.page.cell').removeClass('slideIn');
+        $tooltips.text(text);
+        $tooltips.css('display', 'block');
+        setTimeout(function () {
+            $tooltips.css('display', 'none');
+        }, 2000);
+    }
+    // 取消返回
+    $('#ratio-refuse').click(function () {
+        window.location.href = document.referrer;
+    })
+    // 点击提交
+    $('#ratio-agree').on('click', function () {
+        var pro_arr = [],
+            copy_id = $('.copy_id').val(),
+            auth_id = $('.auth_id').val(),
+            pro_id  = $('.pro_id');
+        for(i=0;i<pro_id.length;i++){
+            pro_arr[i] = pro_id.eq(i).val();
+        } 
+        $.ajax({
+            type: 'POST',
+            url: "{:U('Light/Config/Dispenser',array('robot'=>'ConfigSubmit'))}", //&system=yxhb&modname=CgfkApply&action=getCustomerList
+            dataType: 'json',
+            data: {
+                pro_arr:pro_arr,
+                copy_id:copy_id,
+                auth_id:auth_id,
+                system: "{$system}",
+                mod: "{$modname}",
+                id: "{$id}",
+            },
+            dataType: 'json',
+            success: function (res) {
+                toast.fadeOut(200);
+                if (res.code == 200) {
+                    window.location.href = document.referrer;
+                } else {
+                    tooltip(res.msg);
+                }
+            }
+        });
+    });
+    proClick();
+    // 点击添加图标
+    function tianjia(){
+        var html = '<div class="weui-cells__title pro_title" style="margin:0;">'+
+                            '<i class="iconfont icon-arrowdown"></i>'+
+                            '<span style="float:right">'+
+                                '<i class="iconfont icon-tianjia" onclick="tianjia()" style="vertical-align: middle;margin: 0 5px"></i>'+
+                                '<i class="iconfont icon-shanchu" onclick="shanchu(this)" style="vertical-align: middle;margin: 0 5px"></i>'+
+                            '</span>'+
+                        '</div>';
+        html +='<div class="weui-cells pro_html" style="margin-top:0px;">'+
+                        '<div class="weui-cell" style="padding:5px 15px;">'+
+                            '<div class="weui-cell__bd">'+
+                                '<div class="weui-uploader">'+
+                                    '<div class="weui-uploader__bd" style="height: 75px;">'+
+                                        '<ul class="weui-uploader__files app_pro"  style="margin-bottom: 0px;"> '+
+                                       '</ul>'+
+                                        '<div class="weui-uploader__input-box" style="width: 35px;height: 35px;margin: 10px 0 0 8px;">'+
+                                            '<input onclick="selUser()" class="weui-uploader__input pro_model" type="button" name="copyto" readonly="" autocomplete="off">'+
+                                            '<input type="hidden" class="pro_id" value="" autocomplete="off">'+
+                                        '</div>'+
+                                    '</div>'+
+                                '</div>'+
+                            '</div>'+
+                        '</div>'+
+                    '</div>';
+        $('#pro_div').append(html);
+        proClick();
+    }
+    var del_type = '',
+        del_inidex = '',
+        del_dom = '',
+        del_id = '';
+    // 点击删除图标
+    function shanchu(e){
+        del_index = $(e).index('.icon-shanchu');
+        del_type = 'pro';
+        Conform('删除该层级？');
+    }
+
+    // conform 自定义
+    function Conform(text){
+        $('#dialog_text').text(text);
+        $('#Dialog').show();
+    }
+    function del_dialog_close(){
+        $('#Dialog').hide();
+    }
+    function del_dialog_confirm(){
+        if(del_type == '') return tooltip('请刷新重新重试');
+        if(del_type == 'pro'){
+            if($('.pro_html').length == 1) {
+                $('.app_pro').html('');
+                $('.pro_id').eq(0).val('');
+                return false;
+            }
+            $('.pro_html').eq(del_index).remove();
+            $('.pro_title').eq(del_index==0?1:del_index).remove();
+        }else if(del_type == 'user'){
+            del_dom.remove();
+            del_inidex.val(del_id);
+        }
+        $('#Dialog').hide();
+    }
+    // 选择人员
+    function selUser(e){
+        type='pro';
+        $('#myModal').modal('show');
+    }
+    // 人员删除
+    $('.js_show').on('click','.weui-badge',function(){
+        up_dom = $(this).parent().parent();
+        
+        if(up_dom.hasClass('app_pro')){
+            id  = $(this).parent().attr('id');
+            dom = up_dom.parent().find('.pro_id');
+            ids = dom.val();
+        }else if(up_dom.hasClass('app_copy')){
+            id  = $(this).parent().attr('id');
+            dom = $('.copy_id');
+            ids = dom.val();
+        }else{
+            id  = $(this).parent().attr('id');
+            dom = $('.auth_id');
+            ids = dom.val();
+        }
+        ids = ids.split(',');
+        var val = '';
+        for(i = 0;i<ids.length;i++){
+            if(id!=ids[i]){
+                val = val+','+ids[i];
+            }
+        }
+        del_type = 'user';
+        del_dom = $(this).parent();
+        del_id = val;
+        del_inidex = dom;
+        Conform('删除该人员？');
+        
+    })
+
+
+
+
+
+   function proClick(){
+        $('.pro_model').click(function(){
+            idx = $(this).index('.pro_model');
+        });
+   }
+    function selCopyUser(e){
+        type='copy';
+        $('#myModal').modal('show');
+    }
+    function selAuthUser(e){
+        $('#myModal').modal('show');
+        type='auth';
+    }
+
+    var loading = '<div class="weui-loadmore"><i class="weui-loading"></i><span class="weui-loadmore__tips">正在加载</span></div>';
+    var noresult = '<div class="weui-loadmore weui-loadmore_line"><span class="weui-loadmore__tips">暂无数据</span></div>';
+    var $selectUser = $("#selectUser");
+ // Modal
+    $('#myModal').on('show.bs.modal', function (e) {
+        var id = 1;
+        $("#pre-level").attr("data-pid", 0);
+        getDepartment(id);
+    });
+    $('.open_model').on('click',function(){
+        $('#myModal').modal('show');
+    });
+    function getDepartment(id) {
+        $('#searchResult').empty();
+        $('#searchResult').append(loading);
+        $.post("{:U('Light/Apply/getDeptHtml')}",
+                {
+                    "id":id
+                },function(data){
+                    $('#searchResult').empty();
+                    // console.log(data);
+                    if (data=='') {
+                        $('#searchResult').append(noresult);
+                    } else {
+                        $('#searchResult').append(data);
+                    }
+                }
+        );
+    }
+    // up pre-level
+    $("#pre-level").on("click", function () {
+        $('#searchResult').empty();
+        $('#searchResult').append(loading);
+        var pid = $(this).attr("data-pid");
+        // console.log(pid);
+        $.post("{:U('Light/Apply/getParentDeptHtml')}",
+            {
+                "id": pid
+            }, function (data) {
+                $('#searchResult').empty();
+                // console.log(data);
+                if (data == '') {
+                    $('#searchResult').append(noresult);
+                } else {
+                    $('#searchResult').append(data.html);
+                    // console.log(data.pid);
+                    $("#pre-level").attr("data-pid", data.pid);
+                }
+            }
+        );
+    });
+    // select department
+    $("#searchResult").on("click", ".select-department", function () {
+        var id = $(this).attr('data-id');
+        // console.log(id);
+        getDepartment(id);
+        $("#pre-level").attr("data-pid", id);
+    });
+
+    // 用户选取
+    $("#searchResult").on("click", ".select-user", function () {
+        // var tmpl = '<li class="weui-uploader__file weui-selet__user" style="background-image:url(#url#)" id="#id#"></li>';
+        var tmpl = "<li class='weui-uploader__file wk-select__user' id='#id#' style='min-height:70px;width: 45px; margin:0 8px 0 0 ;'>"+
+                        "<img src='#url#' class='weui-selet__user' style='margin-right: 6px;margin-top:10px; width: 2em; height: 2em;'>"+
+                        "<span style='margin-right: 6px;font-size: 12px;'>#name#</span>"+
+                       "<span class='weui-badge' style='position: relative;top: -5.2em;right: -1.2em;padding: 1px 3px;line-height: 1;'>X</span>"+
+                       "</li>";
+        var id = $(this).attr('data-id');
+        var img = $(this).attr('data-img');
+        var name = $(this).attr('data-name');
+        tmpl = tmpl.replace('#id#', id);
+        tmpl = tmpl.replace('#name#', name);
+        tmpl = tmpl.replace('#url#', img);
+        
+        if(type=='pro'){
+            pro_id = $('.pro_id').eq(idx).val()+','+id;
+            html_dom = '.app_pro';
+            id_dom   = '.pro_id';
+        }else if(type=='copy'){
+            pro_id = $('.copy_id').eq(0).val()+','+id;
+            html_dom = '.app_copy';
+            id_dom   = '.copy_id';
+            idx = 0;
+        }else{
+            pro_id = $('.auth_id').eq(0).val()+','+id;
+            html_dom = '#app_auth';
+            id_dom   = '.auth_id';
+            idx = 0;
+            other_auth = $('#other_auth').val();
+            other_auth = other_auth.split(',');
+            if(other_auth.indexOf(id) != -1) return  tooltip('该人员已有同条件流程');
+        }
+        auth = [];
+        for(i=0;i<$(id_dom).length;i++){
+            arr = $(id_dom).eq(i).val().split(',');
+            auth.push.apply(auth,arr);
+        }
+        if( auth.indexOf(id) == -1) {
+            $(html_dom).eq(idx).append(tmpl);
+            $(id_dom).eq(idx).val(pro_id)
+        }
+        
+        $('#searchInput').val(null);
+        $('#myModal').modal('hide')
+    });
+    // delete copyto user
+    $("#selectUser").on("click", ".wk-select__user", function () {
+        $li_dom = $(this);
+        $("#iosDialog").fadeIn(200);
+    });
+
+        // Close dialog
+        function dialog_close() {
+        $("#iosDialog").fadeOut(100);
+    }
+      // 抄送搜索
+  $(function(){
+        var $searchBar = $('#searchBar'),
+            $searchResult = $('#searchResult'),
+            $searchText = $('#searchText'),
+            $searchInput = $('#searchInput'),
+            $searchClear = $('#searchClear'),
+            $searchCancel = $('#searchCancel');
+
+        function hideSearchResult(){
+            // $searchResult.hide();
+            $searchInput.val('');
+        }
+        function cancelSearch(){
+            hideSearchResult();
+            $searchBar.removeClass('weui-search-bar_focusing');
+            $searchText.show();
+        }
+
+        $searchText.on('click', function(){
+            $searchBar.addClass('weui-search-bar_focusing');
+            $searchInput.focus();
+        });
+        $searchInput
+            .on('blur', function () {
+                if(!this.value.length) cancelSearch();
+            })
+            .on('input', function(){
+                if(this.value.length) {
+                    $searchResult.show();
+                    searchCopyUser();
+                } else {
+                    modelIni()
+                }
+            })
+        ;
+        $searchClear.on('click', function(){
+            hideSearchResult();
+            $searchInput.focus();
+        });
+        $searchCancel.on('click', function(){
+            searchCopyUser();
+        });
+        $searchInput.on('keypress',function(e) {  
+            var keycode = e.keyCode;  
+            var searchName = $(this).val();
+            if(keycode=='13') {  
+            e.preventDefault();    
+
+            searchCopyUser();
+            }         
+        });
+        function searchCopyUser(){
+            word = $searchInput.val();
+            if(!word.length) return modelIni();
+            $('#searchResult').empty();
+            $('#searchResult').append(loading);
+            $.post("{:U('Light/Apply/getDeptHtml')}",
+                {
+                    "type": 1,
+                    'search':word
+                }, function (data) {
+                    $('#searchResult').empty();
+                    // console.log(data);
+                    if(data == '') {
+                        console.log(1);
+                        $('#searchResult').append(noresult);
+                    } else {
+                        console.log(2);
+                        $('#searchResult').append(data);
+                        // console.log(data.pid);
+                        $("#pre-level").attr("data-pid", 17);
+                    }
+                }
+            );
+        }
+
+        function modelIni(){
+            var id = 1;
+            $searchInput.val(null);
+            $("#pre-level").attr("data-pid", 0);
+            getDepartment(id);
+        }
+    });
+
+</script>
+
+</html>

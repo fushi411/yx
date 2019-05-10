@@ -51,7 +51,7 @@ class WorkFlowController extends BaseController {
       //获取下一审批流程(似乎没用了)
       $getNext = $appflowtable->getStepInfo($nowStepArr['pro_id'], $tableStepArr['stage_next'],$flowName);
       // 更新当前审批记录
-      $is_done2 = $appflowproc->updateProc($nowStepArr['id'], $option, $word,$img);
+      $is_done2 = $appflowproc->updateProc($id, $option, $word,$img);
       //申请人ID  
       // $applyUser=iconv('UTF-8', 'GBK', $applyUser);
       // $applyUserid=$this->getUserID($applyUser,$db);   
@@ -114,6 +114,21 @@ class WorkFlowController extends BaseController {
         $appflowtable = D($systemU.'Appflowtable');
         $getInit = $appflowtable->getAllStepInfo($flowName, $stageID);
         $done=0;
+        // 查找所属流程 有指定流程 没有指定流程
+        $info = D(ucfirst($system).$flowName,'Logic')->recordContent($id);
+        $flow = array();
+        $boss = D(ucfirst($system).'Boss');
+        $wxid = $boss->getWxiDFromName($info['applyerName']);
+        $flag = 'defalt';
+        foreach($getInit as $v){
+            if(empty($v['auth_id'])) $flow['defalt'][]=$v;
+            $auth = explode(',',$v['auth_id']);
+            if(in_array($wxid,$auth)){
+                $flow['auth'][] = $v;
+                $flag = 'auth';
+            }
+        }
+        $getInit = $flow[$flag];
         //初始化审批流程
         foreach($getInit as $values){
           //对应步骤条件判断
@@ -152,9 +167,19 @@ class WorkFlowController extends BaseController {
             }
             //不满足条件结束本次循环
             if($con_flag==0) continue;
-            // echo "con_flag:<br>".$con_flag."<br>";
-            // echo $con_query;
           }
+          // 自动审批 系统
+          if( $boss->getWXFromID($values['per_id']) == 'Admin_XiTong'){
+            // 直接调用-》结束方法
+            
+            $wfClass = new WorkFlowFuncController();
+            $func = ucfirst($system).$flowName.'End';
+            $funcRes = $wfClass->$func($id, $system);
+            $push_id = D($system.'Appcopyto')->getPushId($system, $flowName, $id);
+            if(!empty($push_id)) D($system.'Appcopyto')->copyTo($push_id, $flowName, $id,2);
+            return true;
+          }
+
           if($values['per_id']==0){
              // 解决手动指定固定步骤的审批流程，增加$id获取记录--用章申请--15.12.10
              // $per_id=$this->$values['per_name']($pid,$db);
@@ -168,12 +193,12 @@ class WorkFlowController extends BaseController {
           // 审批人为空则跳过当前审批人
           if(!empty($per_id)&&$per_id!=0){
             //防止记录重复插入
-            $sameProcNum = $appflowproc->getSameProcNum($flowName, $id, $stageID);
-            // if(!$sameProcNum){
+            $sameProcNum = $appflowproc->getPerSameProcNum($per_name,$per_id,$flowName, $id, $stageID);
+             if($sameProcNum == 0){
               $is_done = $appflowproc->addProc($values, $id, $per_name, $per_id, $stageID);
               $done++;
               $msgInfo = $this->sendApplyMsg($flowName, $id, $per_id, $pid, $system);
-            // }            
+             }            
           }
         }
 
@@ -277,13 +302,16 @@ class WorkFlowController extends BaseController {
       }
     }
 
+
+    //卡片推送样式
     public function sendApplyMsg($flowName, $id, $pid, $applyerid, $system, $type='')
     {
       $wx = D('WxMessage');
-      if($flowName != 'CostMoney'){
-        $recevier = $wx->ProSendMessage($system,$flowName,$id,$pid,$applyerid,$type);
-      }else{
+      $arr = array('CostMoney','GuesttjApply');
+      if( in_array($flowName,$arr) ){
         $recevier = $wx->ProSendCarMessage($system,$flowName,$id,$pid,$applyerid,$type);
+      }else{
+        $recevier = $wx->ProSendMessage($system,$flowName,$id,$pid,$applyerid,$type);
       }
       return $receiver;
     }
@@ -313,8 +341,8 @@ class WorkFlowController extends BaseController {
       //   $flag = 0;
       // }
       // 2.查找审批人姓名
-        $boss = D($system.'_boss');
-        $per_name = $boss->getusername($others_id);
+      $boss = D($system.'_boss');
+      $per_name = $boss->getusername($others_id);
       // 3.设置stage为当前审批步骤的前一步骤
       if ($stage_id > 1) {
         $pre_stage = $stage_id-1;
@@ -322,13 +350,14 @@ class WorkFlowController extends BaseController {
         $pre_stage = $stage_id;
       }
       // 4.app_word和app_name为转审
+      $per_id = session($system.'_id');
       $setProcQuery = M($system."_appflowproc");
       $sdata['app_word'] = $reason.'(转审->'.$per_name.')';
       $sdata['app_stat'] = 2;
       $sdata['app_name'] = '已转审';
       $sdata['app_stage'] = $pre_stage; //将当前步骤退一个stage_id,为了排序 
       $sdata['approve_time'] = date('Y-m-d H:i',time());
-      $setProcQuery->where(array('aid'=>$aid, 'pro_id'=>$pro_id, 'app_stat'=>0))->save($sdata);
+      $setProcQuery->where(array('aid'=>$aid, 'pro_id'=>$pro_id, 'app_stat'=>0,'per_id'=> $per_id))->save($sdata);
       // 5.设置转审流程
       $data['pro_id']    = $pro_id;
       $data['aid']       = $aid;

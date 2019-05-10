@@ -325,7 +325,7 @@ extends BaseController {
                 'aid'            => $v['aid'],
                 'stat'           => $res['stat'],
                 'toptitle'       => $v['modname'],
-                'applyer'        => $v['applyer'],
+                'applyer'        => $res['applyerName'],
                 'apply'          => $appStatus,
             );
             if(!empty($res['fourth_title'])){

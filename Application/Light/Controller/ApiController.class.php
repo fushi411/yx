@@ -303,6 +303,82 @@ class ApiController extends BaseController {
         $res = $logic->$action();
         $this->ajaxReturn($res);
     }
+    // 添加返利 
+    public function SalesRebatesApplyApi(){
+        $system = I('system');
+        $mod    = I('modname');
+        $action = I('action');
+        $logic = D(ucfirst($system).$mod ,'Logic');
+        $res = $logic->$action();
+        $this->ajaxReturn($res);
+    }
 
+    // 粉煤灰新增备案客户
+    public function NewGuestApply_fmhApi(){
+        $system = I('get.system');
+        $mod    = I('get.modname');
+        $action = I('get.action');
+        $logic = D(ucfirst($system).$mod ,'Logic');
+        $res = $logic->$action();
+        $this->ajaxReturn($res);
+    }
 
+    // 粉煤灰新增总客户
+    public function Contract_guest_Apply_fmhApi(){
+        $system = I('get.system');
+        $mod    = I('get.modname');
+        $action = I('get.action');
+        $logic = D(ucfirst($system).$mod ,'Logic');
+        $res = $logic->$action();
+        $this->ajaxReturn($res);
+    }
+
+    // 粉煤灰新增子客户
+    public function Contract_guest_Apply_fmh2Api(){
+        $system = I('get.system');
+        $mod    = I('get.modname');
+        $action = I('get.action');
+        $logic = D(ucfirst($system).$mod ,'Logic');
+        $res = $logic->$action();
+        $this->ajaxReturn($res);
+    }
+
+    // 粉煤灰新增合同价格
+    public function ContractApply_fmhApi(){
+        $system = I('system');
+        $mod    = I('modname');
+        $action = I('action');
+        $logic = D(ucfirst($system).$mod ,'Logic');
+        $res = $logic->$action();
+        $this->ajaxReturn($res);
+    }
+
+     // 新增对账单
+     public function ClientStatementApplyApi(){
+        $system = I('system');
+        $mod    = I('modname');
+        $action = I('action');
+        $logic = D(ucfirst($system).$mod ,'Logic');
+        $res = $logic->$action();
+        $this->ajaxReturn($res);
+    }
+
+    // 上传对账回执
+    public function ClientStatementUpApi(){
+        $system = I('system');
+        $mod    = I('modname');
+        $action = I('action');
+        $logic = D(ucfirst($system).$mod ,'Logic');
+        $res = $logic->$action();
+        $this->ajaxReturn($res);
+    }
+    //无需审批 费用申请
+    public function unProCostMoneyApi(){
+        $system = I('system');
+        $mod    = I('modname');
+        $action = I('action');
+        $logic = D(ucfirst($system).$mod ,'Logic');
+        $res = $logic->$action();
+        $this->ajaxReturn($res);
+    }
 }

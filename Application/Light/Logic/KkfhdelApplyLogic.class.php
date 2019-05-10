@@ -198,8 +198,7 @@ class KkfhdelApplyLogic extends Model {
             'id'=>$aid,
         );
         $res2 = M("kk_guest2")->where($map)->find();                          //客户表
-        $res3 = M("kk_fhdel")->where(array('fh_id'=>$res['id']))->find();    //发货删除记录表
-       
+        $res3 = M("kk_fhdel")->order('del_date DESC')->where(array('fh_id'=>$res['id']))->find();    //发货删除记录表
         $result = array(
             'first_title'    => '提货单位',
             'first_content'  => $res2['g_name']?$res2['g_name']:'无',
@@ -208,6 +207,7 @@ class KkfhdelApplyLogic extends Model {
             'third_title'    => '相关说明',
             'third_content'  => $res3['del_reason']?$res3['del_reason']:'无',
             'stat'           => $this->transStat($res['id']),
+            'applyerName'    =>  $res3['del_person'],
         );
         return $result;
     }
@@ -320,7 +320,9 @@ class KkfhdelApplyLogic extends Model {
         $text       = I('post.text');               //申请理由
         $copyto_id  = I('post.copyto_id');          //抄送人员的ID
         $file       = I('post.file_names');         //上传的附件
-
+        // 流程检验
+        $pro = D('KkAppflowtable')->havePro('fh_del_Apply','');
+        if(!$pro) return array('code' => 404,'msg' => '无审批流程,请联系管理员');
         // 重复提交
         if(!M('kk_fhdel')->autoCheckToken($_POST)) return array('code' => 404,'msg' => '网络延迟，请勿点击提交按钮！');
         $addData = array(

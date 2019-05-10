@@ -213,6 +213,7 @@ class KkSnRatioApplyLogic extends Model {
             'third_title'    => '相关说明',
             'third_content'  => $res['tznr']?$res['tznr']:'无',
             'stat'           => $res['STAT'],
+            'applyerName'    => $res['zby'],
         );
         return $result;
     }

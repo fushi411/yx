@@ -32,16 +32,11 @@ class KkGuesttjApplyLogic extends Model {
     //详情(点击查看之后显示)
     public function recordContent($id)
     {
-//        $map = array(
-//            'pro_mod'=>'GuesttjApply',
-//        );
-//        $res2 = M("kk_appflowtable")->where($map)->order('stage_id')->select();   //查询关注点
-
         $res = $this->record($id);
         $result = array();
         $result['content'][] = array('name'=>'系统类型：',
             'value'=>'建材客户调价',
-            'type'=>'date',
+            'type'=>'string',
             'color' => 'black'
         );
 
@@ -64,12 +59,12 @@ class KkGuesttjApplyLogic extends Model {
 //                'color' => 'black'
 //            );
 //        }
-
+//        $result['abc'] = 'view_guest_tj_info.php?id='.$res['id'].'&type=view';                 //把路径传递出去
         $result['imgsrc'] = '';
         $result['applyerID'] =  $res['applyuser'];                                               //申请者的id
         $result['applyerName'] = D('KkBoss')->getNameFromID($res['applyuser']);                 //申请者的姓名
         $result['stat'] = $this->transStat($res['id']);                                        //审批状态
-        $result['url'] = "view_guest_tj_info.php?id=".$res['id']."&type=view";                 //把路径传递出去
+
         return $result;
     }
 
@@ -134,8 +129,12 @@ class KkGuesttjApplyLogic extends Model {
      */
     public function getDescription($id){
         $res = $this->record($id);
+        $result[] = array('name'=>'系统类型：',
+            'value'=>'建材客户调价',
+            'type'=>'string'
+        );
         $result[] = array('name'=>'提交时间：',
-                                     'value'=>date('m-d H:i',strtotime($res['date'])),
+                                     'value'=>date('m-d H:i',strtotime($res['dtime'])),
                                      'type'=>'date'
                                     );
         $result[] = array('name'=>'申请日期：',
@@ -169,6 +168,7 @@ class KkGuesttjApplyLogic extends Model {
             'third_title'    => '相关说明',
             'third_content'  => '无',
             'stat'           => $this->transStat($res['id']),
+            'applyerName'    => D('KkBoss')->getNameFromID($res['applyuser']),
         );
         return $result;
     }

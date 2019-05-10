@@ -291,6 +291,7 @@ class YxhbfhrefundApplyLogic extends Model {
             'third_title'    => '相关说明',
             'third_content'  => $res['xg_reason']?$res['xg_reason']:'无',
             'stat'           => $this->getStat($id),
+            'applyerName'    => $res['fh_kpy'],
         );
         return $result;
     }
@@ -459,7 +460,9 @@ class YxhbfhrefundApplyLogic extends Model {
         $zl         = I('post.zl');
         $copyto_id  = I('post.copyto_id');
         $file       = I('post.file_names');
-        
+        // 流程检验
+        $pro = D('YxhbAppflowtable')->havePro('fh_refund_Apply','');
+        if(!$pro) return array('code' => 404,'msg' => '无审批流程,请联系管理员');
         // 重复提交
         if(!M('yxhb_fhxg')->autoCheckToken($_POST)) return array('code' => 404,'msg' => '网络延迟，请勿点击提交按钮！');
         $count = M('yxhb_fhxg')->where(array('fh_num' => $fhinfo['fh_num']))->find();

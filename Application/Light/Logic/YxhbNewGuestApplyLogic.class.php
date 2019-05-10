@@ -201,6 +201,9 @@ class YxhbNewGuestApplyLogic extends Model {
             'stat2'=>1,
             'stat3'=>1,
         );
+        // 流程检验
+        $pro = D('YxhbAppflowtable')->havePro('NewGuestApply','');
+        if(!$pro) return array('code' => 404,'msg' => '无审批流程,请联系管理员');
         //$_POST    提交数据的方式为post
         if(!M('yxhb_newguest')->autoCheckToken($_POST)) return array('code' => 404,'msg' => '网络延迟，请勿点击提交按钮！');    //在Model.class.php中，自动表单令牌验证
         $result = M('yxhb_newguest')->add($res);
@@ -221,7 +224,7 @@ class YxhbNewGuestApplyLogic extends Model {
         $name = I('post.name');
         $map = array(
             'name' => $name,
-            'stat'=>2
+            'stat'=>array('neq',0)
         );
         $data = M('yxhb_newguest')->where($map)->find();
         if(empty($data)) return true;

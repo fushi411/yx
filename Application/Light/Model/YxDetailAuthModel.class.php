@@ -92,7 +92,7 @@ class YxDetailAuthModel extends Model
         return $authArray;
     }
 
-        /**
+    /**
      * 获取是有效配置
      * @param string $system
      * @param string $modname
@@ -136,12 +136,84 @@ class YxDetailAuthModel extends Model
     public function authGetBmId($system){
         if(empty($system)) return false;
         $wxid   = session('wxid');
-        $data   = M('auth_group_access a')
-                ->join('auth_group b on a.group_id=b.id')
-                ->join($system.'_bm c on c.id=b.bm')
-                ->field('c.id')
-                ->where(array('a.uid' => $wxid))
-                ->find();
-        return $data['id'];
+        $data   = M('yx_bm_access')->where(array('wx_id' => $wxid,'main' => 1))->find();
+        return $data['bm_id'];
+    }
+
+    // 获取所有的权限
+    public function getAuthWxid($system,$type){
+        $reArr = array();
+        $auth_group = $this->getAuthGroup($system,$type);
+        if(empty($auth_group)) return $reArr;  // ---无部门
+        # 权限人员获取
+        $groupStr   = '';
+        $where      = '';
+        $leaguerStr = ''; 
+        foreach ($auth_group as $key => $value) {
+            if($key != 0) $where.=' or ';
+            $where .= 'group_id = '.$value['id']; 
+        }
+        $leaguer = M('auth_group_access a')
+                    ->field('b.name,a.uid')
+                    ->join($system.'_boss b on a.uid=b.wxid')
+                    ->where($where)
+                    ->group('a.uid')
+                    ->select();
+        if(empty($leaguer))return $reArr;
+        $user = array();
+        foreach($leaguer as $k=>$v){
+            $leaguerStr .= $v['name'].' ';
+            $user[] = $v['uid'];
+        }
+        return $user;
+    }
+
+    // 获取权限所在功能组
+    public function getAuthGroup($system,$type){
+        $reArr = array();
+        $map = array(
+            'title' => array('like',$system.$type.'|%'),
+            'status' => 1,
+        );
+        $res = M('auth_rule')->field('id')->where($map)->find();
+        if(empty($res)) return $reArr; // ---都无权限
+        # 拥有权限分组
+        $map = array(
+            'rules'  => array('like',"%{$res['id']}%"),
+            'status' => 1,
+            'id'     => array('neq','2'),
+        );
+        $group = M('auth_group')->field('id,title,rules')->where($map)->select();
+        $auth_group = array(); // 是否在这个权限组中
+        foreach($group as  $v){
+            $temp = explode(',',$v['rules']);
+            if(in_array($res['id'],$temp) && $v['id'] !='7' ) $auth_group[] = $v; 
+        }
+        return $auth_group;
+    }
+
+    // 更新申请人员
+    public function updateAuth(){
+        $data = M('yx_config_title')->where('stat=1 or stat=2')->select();
+        $res  = M('auth_group')->where('id>=18')->select();
+        $auth = array(); 
+        foreach($data as $val){
+            foreach($res as $v){
+                if($val['mod_title'] != $v['title'])continue;
+                $uid = M('auth_group_access')->where(array('group_id' => $v['id']))->select();
+                $auth_id = '';
+                foreach($uid as $idval){
+                    $auth_id .= ','.$idval['uid'];
+                }
+                $flag = M($val['mod_system'].'_appflowtable')->where(array('pro_mod' => $val['name'],'stat' => 1))->setField('auth_id',trim($auth_id,','));
+                $auth[] = array(
+                    'system' => $val['mod_system'],
+                    'mod' => $val['name'],
+                    'group' => $v['id'],
+                    'auth' => trim($auth_id,','),
+                );
+            }
+        } 
+        dump($auth);
     }
 }

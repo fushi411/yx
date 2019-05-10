@@ -31,10 +31,10 @@ class CustomerModel extends Model
         list($reid,$result,$tmp) = $this->getKkCustomerNews();
         $res = $tmp[$client_id];
         if($res['reid'] == 0){
-            return $res['qmje'];
+            return $res['fhje'];
         } 
         else{
-            return $tmp[$res['reid']]['qmje'];
+            return $tmp[$res['reid']]['fhje'];
         } 
     }
 
@@ -239,14 +239,6 @@ class CustomerModel extends Model
         $reid = array_unique($reid); // 去重
         return array($reid,$result,$tmp);
     } 
-
-
-
-
-
-
-
-
 
 
     /**

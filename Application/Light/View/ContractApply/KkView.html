@@ -142,7 +142,7 @@
                         </div>
                         <div class="weui-cell__bd ">
                             <select class="weui-select greyColor" name="type" id='cate'>
-                                <option value='-1' disabled selected style='display:none;'>请选择水泥品种</option>
+                                <option value='-1' disabled selected style='display:none;'>请选择产品品种</option>
                                 <!-- <option value="P.C32.5R">P.C32.5R</option> -->
                                 <option value="A#">A#生产线</option>
                                 <option value="B#">B#生产线</option>
@@ -235,7 +235,7 @@
         });
         
         $('#alter_div').on('blur','input',function(){
-            if(!user_id) $('#alter_div input').eq(0).attr('placeholder', '客户范围为正常总客户');
+            if(!user_id) $('#alter_div input').eq(0).attr('placeholder', '客户范围为总客户-正常/冻结');
         })
         // select2 点击触发
         $("#user_name").on("select2:selecting", function (e) {
@@ -337,9 +337,11 @@
         // 选择颜色改变
         $('#jsfs_sel').change(function(){
             $(this).attr('style','color:black');
+            $('#jsfs').val($(this).val());
         });
         $('#kpfs_sel').change(function(){
             $(this).attr('style','color:black');
+            $('#kpfs').val($(this).val());
         });
         $('#ejkh_sel').change(function(){
             $(this).attr('style','color:black');
@@ -401,7 +403,7 @@
                 },
                 dataType: 'json',
                 success: function (res) {
-                    var html = '<option value="-1"  selected="selected" class="weui-select" disabled style="display:none;">请选择水泥品种</option>';
+                    var html = '<option value="-1"  selected="selected" class="weui-select" disabled style="display:none;">请选择产品品种</option>';
                     for( key in res){
                         html += '<option value="'+res[key]+'">'+res[key]+'</option>'
                     }
@@ -430,7 +432,7 @@
                 wlfs = $('#wlfs').val(),
                 yf   = $('#yf').val();
             if(!bzfs) return tooltip('请先选择包装方式');
-            if(!cate) return tooltip('请先选择水泥品种');
+            if(!cate) return tooltip('请先选择产品品种');
             if(!dj) return tooltip('请输入产品价格');
             if(!wlfs) return tooltip('请先选择物流方式');
             if( wlfs == '包运' && !yf) return tooltip('请先输入运费价格');

@@ -128,9 +128,6 @@
         $iosDialog2 = $('#iosDialog2'),
         app_pro = $('#app_pro');
 
-
-    var appflow = {$appflow};
-
     // diog提示
     $('#dialogs').on('click', '.weui-dialog__btn', function () {
         $(this).parents('.js_dialog').hide();
@@ -148,29 +145,31 @@
             $('#detail').html(html);
         }
         
-        if(val==0) return app_pro.html(html);;
-        html = app_proHtml(val-1);
-        $('#app_pro .wk-select__user').eq(0).toggle();
+        html = app_proHtml(val);
+        
          
-        app_pro.html(html);
+        
     });
 
     // 审批流程显示
     function app_proHtml(val){
-        var html = '';
-        console.log(val);
-        for(i=0;i<=val;i++){
-            
-            html += "<li class='weui-uploader__file wk-select__user' id='"+appflow[i]['id']+"' style='height:90px;";        
-            if(i != 0) html+= "margin-left:8px";
-            html += "'><img src='"+appflow[i]['avatar']+"' class='weui-selet__user' style='margin-bottom: 0px;margin-right: 6px;margin-top:10px;'>"+
-                             "<span style='margin-right: 6px;font-size: 14px;'>"+appflow[i]['name']+"</span>";
-            if(i<=val-1){
-                html+="<span class='glyphicon glyphicon-arrow-right' style='position: relative;top: -2.8em;right: -1.8em;'></span>";
-            }                    
-            html +=  "</li>";
-        }
-        return html;
+        $.ajax({
+            type:'POST',
+            url: "{:U('Light/Api/TempCreditLineApplyApi')}",
+            dataType: 'json',
+            data: {
+                money: val,
+                system:"{$system}",
+                modname:'TempCreditLineApply',
+                action:'getAppPro',
+                __hash__: hash
+            },
+            dataType: 'json',
+            success: function (res) {
+                $('#app_pro .wk-select__user').eq(0).toggle();
+                app_pro.html(res);
+            }
+        });
     }
         
     $(function () {
@@ -311,7 +310,7 @@
                 var tmpNum = res['tmp'] == ''? 0 : parseFloat(res['tmp']);// 临时额度
                 var yeNum  = res['ye']  == ''? 0 : parseFloat(res['ye']);// 客户余额   发货的=余额+临时
                 $('#khye').val(yeNum);
-                if (-(line-yeNum+tmpNum)<20000) classNmae = 'redColor';
+                if (-(line-yeNum)<20000) classNmae = 'redColor';
 
                 ysye.removeClass('redColor').addClass(classNmae);
                 
@@ -322,7 +321,7 @@
                 lineshow.html("&yen;"+formatMoney(tmp,2));
                 exist.html("&yen;"+formatMoney(tmpNum,2));
                 ye.html("&yen;"+formatMoney(tmpNum+yeNum,2));
-                ysye.html("&yen;"+formatMoney(-(line+tmpNum-yeNum),2));
+                ysye.html("&yen;"+formatMoney(-(line-yeNum),2));
                 $('.show_number').hide();
                 toast.fadeOut(200);
             }

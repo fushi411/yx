@@ -245,6 +245,7 @@ class YxhbKfRatioApplyLogic extends Model {
             'third_title'    => '相关说明',
             'third_content'  => $res['bz']?$res['bz']:'无',
             'stat'           => $res['state'],
+            'applyerName'    => $res['name'],
         );
         return $result;
     }

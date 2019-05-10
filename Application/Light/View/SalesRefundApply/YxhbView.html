@@ -40,46 +40,37 @@
         </div>
     </div>
     <div class="weui-cells weui-cells_form">
-        <div class="weui-cell weui-cell_select weui-cell_select-after">
+        <div class="weui-cell sqlx">
             <div class="weui-cell__hd">
-                <label class="weui-label">
-                    <span class="font-width">退款方式</span>&nbsp;&nbsp;
-                    <span style="color:red;">*</span>
+                <label class="weui-label">退款单位&nbsp;&nbsp;
+                        <span style="color:red;">*</span>
                 </label>
             </div>
             <div class="weui-cell__bd">
-                <select class="weui-select greyColor" name="type" id='fkfs'>
-                    <option value='-1' disabled selected style='display:none;'>请选择退款方式</option>
-                    <option value="4">现金</option>
-                    <option value="2">公司账户</option>
-                    <option value="3">承兑汇票</option>
-                </select>
+                <input class="weui-input " type="text" id="skdw" name="custodian"  placeholder="请输入收款单位或个人" />
+                
             </div>
         </div>
-        <div class="weui-cell weui-cell_select weui-cell_select-after" id="btnhp" style="display:none;">
+        <div class="weui-cell sqlx">
             <div class="weui-cell__hd">
-                <label class="weui-label">汇票详情&nbsp;&nbsp;
-                    <span style="color:red;">*</span>
+                <label class="weui-label">退款账号&nbsp;&nbsp;
+                        <span style="color:red;">*</span>
                 </label>
             </div>
             <div class="weui-cell__bd">
-                <input class="weui-select " type="text" readonly id="select_ycl" style="color: #337ab7;" value="点击进入汇票页面" />
+                <input class="weui-input " type="text" onkeyup="formatBankNo(this)" onkeydown="formatBankNo(this)" id="skzh" name="custodian"  placeholder="请输入收款账号" />
+                
             </div>
         </div>
-        <div class="weui-cell weui-cell_select weui-cell_select-after">
+        <div class="weui-cell sqlx">
             <div class="weui-cell__hd">
-                <label class="weui-label">
-                    <span class="font-width">退款银行</span>&nbsp;&nbsp;
-                    <span style="color:red;">*</span>
+                <label class="weui-label">开户银行&nbsp;&nbsp;
+                        <span style="color:red;">*</span>
                 </label>
             </div>
             <div class="weui-cell__bd">
-                <select class="weui-select greyColor" name="type" id='bank'>
-                    <option value='-1' disabled selected style='display:none;'>请选择退款银行</option>
-                    <option value="4">现金</option>
-                    <option value="2">公司账户</option>
-                    <option value="3">承兑汇票</option>
-                </select>
+                <input class="weui-input " type="text" id="khyh" name="custodian"  placeholder="请输入开户银行" />
+                
             </div>
         </div>
 
@@ -94,200 +85,14 @@
                 <div class="weui-select" id="show_number"></div>
             </div>
         </div>
-    </div>
 
- 
-    <div class="other_page" id="other_page" style="display: none;">
-        <div class="container">
-            <div class="page js_show">
-                <h3 class="titleTab" style="text-align: center">汇票录入</h3>
-                <div class="weui-cells weui-cells_form">
-                    <div class="weui-cell weui-cell_select weui-cell_select-after">
-                        <div class="weui-cell__hd">
-                            <label class="weui-label">退票日期&nbsp;&nbsp;
-                                <span style="color:red;">*</span>
-                            </label>
-                        </div>
-                        <div class="weui-cell__bd">
-                            <input class="weui-select" type="text" name="custodian" id="hpDatePicker_1" readonly value="{$today}" />
-                        </div>
-                    </div>
-                    <div class="weui-cell weui-cell_select weui-cell_select-after">
-                        <div class="weui-cell__hd">
-                            <label class="weui-label">开票日期&nbsp;&nbsp;
-                                <span style="color:red;">*</span>
-                            </label>
-                        </div>
-                        <div class="weui-cell__bd">
-                            <input class="weui-select" type="text" name="custodian" id="hpDatePicker_2" readonly value="{$today}" />
-                        </div>
-                    </div>
-                    <div class="weui-cell weui-cell_select weui-cell_select-after">
-                        <div class="weui-cell__hd">
-                            <label class="weui-label">到期日期&nbsp;&nbsp;
-                                <span style="color:red;">*</span>
-                            </label>
-                        </div>
-                        <div class="weui-cell__bd">
-                            <input class="weui-select" type="text" name="custodian" id="hpDatePicker_3" readonly value="{$today}" />
-                        </div>
-                    </div>
-                </div>
-                <div class="weui-cells weui-cells_form">
-                    <div class="weui-cell weui-cell_select weui-cell_select-after ">
-                        <div class="weui-cell__hd">
-                            <label class="weui-label">
-                                <span class="font-width">汇票号码</span>&nbsp;&nbsp;
-                                <span style="color:red;">*</span>
-                            </label>
-                        </div>
-                        <div class="weui-cell__bd">
-                            <input class="weui-select peibi scale" type="text" name="" id="hphm" placeholder="仅填写汇票号码的下面一行">
-                        </div>
-                    </div>
-                </div>
-
-                <div class="weui-cells weui-cells_form">
-                    <div class="weui-cell weui-cell_select weui-cell_select-after">
-                        <div class="weui-cell__hd">
-                            <label class="weui-label">
-                                <span class="font-width">汇票媒介</span>&nbsp;&nbsp;
-                                <span style="color:red;">*</span>
-                            </label>
-                        </div>
-                        <div class="weui-cell__bd">
-                            <select class="weui-select greyColor" name="type" id='mj'>
-                                <option value='-1' disabled selected style='display:none;'>请选择汇票媒介</option>
-                                <option value="纸质汇票">纸质汇票</option>
-                                <option value="电子汇票">电子汇票</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="weui-cell weui-cell_select weui-cell_select-after">
-                        <div class="weui-cell__hd">
-                            <label class="weui-label">
-                                <span class="font-width">汇票性质</span>&nbsp;&nbsp;
-                                <span style="color:red;">*</span>
-                            </label>
-                        </div>
-                        <div class="weui-cell__bd">
-                            <select class="weui-select greyColor" name="type" id='xz'>
-                                <option value='-1' disabled selected style='display:none;'>请选择汇票性质</option>
-                                <option value="银行">银行</option>
-                                <option value="商业">商业</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="weui-cell weui-cell_select weui-cell_select-after">
-                        <div class="weui-cell__hd">
-                            <label class="weui-label">
-                                <span class="font-width">开票银行</span>&nbsp;&nbsp;
-                                <span style="color:red;">*</span>
-                            </label>
-                        </div>
-                        <div class="weui-cell__bd">
-                            <select class="weui-select greyColor" name="type" id='kpyh1'>
-                                <option value='-1' disabled selected style='display:none;'>请选择开票银行</option>
-                                <option value="建设银行">建设银行</option>
-                                <option value="工商银行">工商银行</option>
-                                <option value="中国银行">中国银行</option>
-                                <option value="农业银行">农业银行</option>
-                                <option value="交通银行">交通银行</option>
-                                <option value="民生银行">民生银行</option>
-                                <option value="光大银行">光大银行</option>
-                                <option value="兴业银行">兴业银行</option>
-                                <option value="海峡银行">海峡银行</option>
-                                <option value="农商银行">农商银行</option>
-                                <option value="厦门银行">厦门银行</option>
-                                <option value="其他银行">其他银行</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="weui-cell weui-cell_select weui-cell_select-after " id="bank_name_div">
-                        <div class="weui-cell__hd">
-                            <label class="weui-label">
-                                <span class="font-width">银行名称</span>&nbsp;&nbsp;
-                                <span style="color:red;">*</span>
-                            </label>
-                        </div>
-                        <div class="weui-cell__bd">
-                            <input class="weui-select peibi scale" type="text" name="" id="bank_name" placeholder="名称不一致,填入汇款单位名称">
-                        </div>
-                    </div>
-
-                    <div class="weui-cell weui-cell_select weui-cell_select-after">
-                        <div class="weui-cell__hd">
-                            <label class="weui-label">出票金额&nbsp;&nbsp;
-                                <span style="color:red;">*</span>
-                            </label>
-                        </div>
-                        <div class="weui-cell__bd">
-                            <input class="weui-select" type="number" name="custodian" id="money_1" placeholder="请输入出票金额" />
-                            <div class="weui-select" id="show_number_1"></div>
-                        </div>
-                    </div>
-                    <div class="weui-cell weui-cell_select weui-cell_select-after">
-                            <div class="weui-cell__hd">
-                                <label class="weui-label">背书情况&nbsp;&nbsp;
-                                    <span style="color:red;">*</span>
-                                </label>
-                            </div>
-                            <div class="weui-cell__bd">
-                                <input class="weui-select" type="number" name="custodian" id="bsqk" placeholder="请输入背书次数" />
-                            </div>
-                        </div>
-                </div>
-                <div class="weui-cells weui-cells_form">
-
-                    <div class="weui-cell">
-                        <div class="weui-cell__hd">
-                            <label class="weui-label">附件上传&nbsp;&nbsp;
-                            </label>
-                        </div>
-                    </div>
-                    <div class="weui-cell">
-                        <div class="weui-uploader__bd">
-                            <ul class="weui-uploader__files" id="uploaderFiles" style="margin-bottom: 0px;float: left;">
-                            </ul>
-                            <div class="weui-uploader__input-box">
-                                <input onclick="imgUpload()" class="weui-uploader__input" />
-                                <input id="uploaderInput" class="weui-uploader__input" type="file" accept="image/*" name="file_image[]" multiple style="display: none;"
-                                />
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="weui-cells weui-cells_form">
-                    <div class="weui-cell">
-                        <div class="weui-cell__hd">
-                            <label class="weui-label">相关说明&nbsp;&nbsp;
-                            </label>
-                        </div>
-                    </div>
-                    <div class="weui-cell">
-                        <div class="weui-cell__bd" id="cnt">
-                            <textarea class="weui-textarea" name="reason" id="hpsm" placeholder="请输入相关说明；
-            " rows="2"></textarea>
-                            <div class="weui-textarea-counter">
-                                <span id="reason_char">0</span>/200</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="button-sp-area" style="margin-bottom: 20px;display: flex;flex-direction: row;width: 100%;justify-content: space-around;align-items: baseline;">
-                    <a href="javascript:;" id="ratio-refuse" class="weui-btn weui-btn_warn" style="width: 40%;">取消</a>
-                    <a href="javascript:;" id="ratio-agree" class="weui-btn weui-btn_primary" style="width: 40%">确定</a>
-                </div>
-            </div>
-        </div>
     </div>
 </block>
+
 <block name="js">
-    <!-- <script src="__PUBLIC__/assets/js/vconsole.min.js"></script> -->
     <script src="__PUBLIC__/assets/js/AmountConversionformat.js"></script>
     <script>
-        
-        function placeholderChange(dom,arr_placeholder){
+    function placeholderChange(dom,arr_placeholder){
             var phr = dom.attr('placeholder'),
                 phr_count = arr_placeholder.length;
             var phr_times = 0;
@@ -306,7 +111,11 @@
         }
         phr_arr = ['名称不一致,填入汇款单位名称','个人转公户需委托函'];
         placeholderChange($('#user_other_name'),phr_arr);
-        
+
+
+     
+
+       
         // 汇票时间
     // 日期选择
     var hp_date = '';
@@ -344,6 +153,7 @@
             defaultValue: [new Date().getFullYear(), new Date().getMonth()+1, new Date().getDate()],
             onConfirm: function (result) {
                 DateValue(result);
+                
             },
             id: 'hpDatePicker_3'
         });
@@ -366,7 +176,7 @@
             function formatRepoSelection(repo) { return repo.text }
             $("#user_name").select2({
                 ajax: {
-                    url: "{:U('Light/Api/SalesReceiptsApplyApi')}" + "&system=yxhb&modname=SalesReceiptsApply&action=getCustomerList",
+                    url: "{:U('Light/Api/SalesRefundApplyApi')}" + "&system=yxhb&modname=SalesRefundApply&action=getCustomerList",
                     dataType: 'json',
                     delay: 350,
                     data: function (params) {
@@ -397,6 +207,9 @@
             $("#user_name").on("select2:selecting", function (e) {
                 $('.select2-selection__choice__remove').click();
                 var selectArr = e.params.args.data;
+
+                getAuth(selectArr.id,selectArr.text);
+
                 if (selectArr.text.length > 9) {
                     selectArr.text = selectArr.text.replace(/有限/, "");
                     selectArr.text = selectArr.text.replace(/责任/, "");
@@ -405,54 +218,41 @@
                 $('.select2-selection__choice').text(selectArr.text);
                 user_id = selectArr.id;
                 money.val('');
-                getTempInfo(selectArr.id)
+                
             });
             $("#user_name").on("select2:unselecting", function (e) {
                 $('.color').val('');
                 user_id = 0;
-
             });
 
         });
-
-    // 获取客户用户 各项余额
-    function getTempInfo(user_id) {
-        toastfadeIn(200,'数据加载中');
-        $.ajax({
-            url: "{:U('Light/Api/SalesReceiptsApplyApi')}"+"&system=yxhb&modname=SalesReceiptsApply&action=getCustomerInfo",
-            dataType: 'json',
-            data: {
-                user_id: user_id
-            },
-            dataType: 'json',
-            success: function (res) {
-                if (res.code != 200) {
-                    tooltip('请重新刷新页面！')
-                } else {
-                    var data = res.data,
-                        ysye = $('#ysye'),
-                        classNmae = '';
+        
+        
+        // 获取
+        function getAuth(user_id,clientname){
+            toastfadeIn(200,'数据加载中');
+            $.ajax({
+                url: "{:U('Light/Api/SalesRefundApplyApi')}"+"&system=yxhb&modname=SalesRefundApply&action=getCustomerInfo",
+                dataType: 'json',
+                data: {
+                    user_id: user_id
+                },
+                dataType: 'json',
+                success: function (res) {
                     
-                    ysye.html("&yen;"+data.ysye);
+                       
+                    var  classNmae = '';
+                    if (res<20000) classNmae = 'redColor';
+                    $('#ysye').removeClass('redColor').addClass(classNmae);
+                    $('#ysye').html("&yen;"+formatMoney(res,2));
+                    
                     $('.show_number').hide();
-
-                    
-                    if (data.ysflag) classNmae = 'redColor';
-                    
-                    ysye.removeClass('redColor').addClass(classNmae);
-                    if (data.fhye >= 10000) {
-                        $iosDialog2.fadeIn(200);
-                    }
-                    $('.color').removeClass('redColor greenColor');
-
                     toast.fadeOut(200);
+                    $('.color').removeClass('redColor greenColor');
+                    
                 }
-            }
-        })
-
-    }
-
-
+            })
+        }
 
         // bank获取
         var bankInfo = '',imagepath='';
@@ -460,11 +260,11 @@
         function getBank() {
             $.ajax({
                 type: 'POST',
-                url: "{:U('Light/Api/SalesReceiptsApplyApi')}",
+                url: "{:U('Light/Api/SalesRefundApplyApi')}",
                 dataType: 'json',
                 data: {
                     system: "{$system}",
-                    modname: 'SalesReceiptsApply',
+                    modname: 'SalesRefundApply',
                     action: 'getBankInfo',
                 },
                 success: function (res) {
@@ -766,9 +566,9 @@
         // formdata.append('imagefile', blob);
         formdata.append('imagefile', basestr);
         formdata.append('system', "{$system}");
-        formdata.append('modname', "SalesReceiptsApply");
+        formdata.append('modname', "SalesRefundApply");
         formdata.append('action', "hpsc");
-        u = "{:U('Light/Api/SalesReceiptsApplyApi')}";
+        u = "{:U('Light/Api/SalesRefundApplyApi')}";
         xhr.open('post', u);
         xhr.onreadystatechange = function () {
             if (xhr.readyState == 4 && xhr.status == 200) {
@@ -938,7 +738,6 @@
                 bsqk       = $('#bsqk').val(),
                 money_1    = $('#money_1').val();
                 
-            if (!imagepath)                          return tooltip('请上传附件');
             if (!hphm)                               return tooltip('请填写汇票号码');
             if (mj == -1 || !mj)                     return tooltip('请选择汇票媒介');
             if (xz == -1 || !xz)                     return tooltip('请选择汇票性质');
@@ -949,7 +748,7 @@
             toast.fadeIn(200);
             $.ajax({
                 type: 'POST',
-                url: "{:U('Light/Api/SalesReceiptsApplyApi')}",
+                url: "{:U('Light/Api/SalesRefundApplyApi')}",
                 dataType: 'json',
                 data: {
                     hphm: hphm,
@@ -965,7 +764,7 @@
                     reason: $('#hpsm').val(),
                     imagepath:imagepath,
                     system: "{$system}",
-                    modname: 'SalesReceiptsApply',
+                    modname: 'SalesRefundApply',
                     action: 'hptj',
                     __hash__: hash
                 },
@@ -1053,53 +852,43 @@
 
         $('#submit').click(function () {
             var datetime = $('#showDatePicker').val(),
-                fkfs = $('#fkfs').val(),
-                bank = $('#bank').val(),
+                skzh = $('#skzh').val(),
+                khyh = $('#khyh').val(),
+                skdw = $('#skdw').val(),
                 money = $('#money').val();
             if (!datetime) return tooltip('请选择退款时间');
             if (!user_id) return tooltip('请选择退款单位');
-            if (fkfs == -1 || !fkfs) return tooltip('请选择退款方式');
-            if (bank == -1 || !bank) return tooltip('请选择退款银行');
+            if (!skdw ) return tooltip('请输入收款单位');
+            if (!skzh ) return tooltip('请输入收款账号');
+            if (!khyh ) return tooltip('请输入开户银行');
             if (!money ) return tooltip('退款金额不能为空或小于零');
             // 留言判断
             var reason = $('#reason').val(),
                 ids = $("#sign_id").val() + ",",
                 old_ids_arr = ids.split(","),
                 flag = 1;
-            for (let i = 0; i < old_ids_arr.length; i++) {
+            for (i = 0; i < old_ids_arr.length; i++) {
                 if (old_ids_arr[i] != '') flag = 0;
             }
-            if (flag) return tooltip('请选择签退人');
-
-            str = $selectSign.eq(0).text();
-            str = str.replace(/\s+/g, "");
-            if (str == 0) return tooltip('请选择财务部签退人');
-
-            str = $selectSign.eq(1).text();
-            var jbr = str;
-            str = str.replace(/\s+/g, "");
-            if (str == 0) return tooltip('请选择销售部签退人');
-
-
             toast.fadeIn(200);
             $.ajax({
                 type: 'POST',
-                url: "{:U('Light/Api/SalesReceiptsApplyApi')}",
+                url: "{:U('Light/Api/SalesRefundApplyApi')}",
                 dataType: 'json',
                 data: {
                     sign: ids,
-                    fkfs: fkfs,
                     user_id: user_id,
-                    bank: bank,
+                    skzh: skzh,
+                    khyh: khyh,
+                    skdw:skdw,
                     money: money,
-                    ysye:$('#ysye').html(),
                     text: reason,
+                    ysye: $('#ysye').html(),
                     user_other_name: $('#user_other_name').val(),
-                    jbr: jbr,
                     datetime: datePicker.val(),
                     copyto_id: $("#copyto_id").val(),
                     system: "{$system}",
-                    modname: 'SalesReceiptsApply',
+                    modname: 'SalesRefundApply',
                     action: 'submit',
                     __hash__: hash
                 },

@@ -141,7 +141,7 @@
                 </label>
             </div>
             <div class="weui-cell__bd">
-                <input class="weui-input " type="text" id="skzh" name="custodian"  placeholder="请输入收款账号" />
+                <input class="weui-input " type="text" onkeyup="formatBankNo(this)" onkeydown="formatBankNo(this)" id="skzh" name="custodian"  placeholder="请输入收款账号" />
                 
             </div>
         </div>
@@ -209,23 +209,23 @@ var label = "所属月份&nbsp;&nbsp;<span style='color:red;'>*</span>",
     show_cap = $('#show_cap'),
     datePicker = $('#showDatePicker');
         
-        getProHtml();
-        function getProHtml(){
-            $.ajax({
-                type: 'POST',
-                url: "{:U('Light/Api/CostMoneyApi')}",
-                dataType: 'json',
-                data: {
-                    system : "{$system}",
-                    modname: 'CostMoney',
-                    action : 'getProHtml',
-                },
-                dataType: 'json',
-                success: function (res) {
-                    $('#app_pro').html(res);
-                }
-            });
-        }
+        // getProHtml();
+        // function getProHtml(){
+        //     $.ajax({
+        //         type: 'POST',
+        //         url: "{:U('Light/Api/CostMoneyApi')}",
+        //         dataType: 'json',
+        //         data: {
+        //             system : "{$system}",
+        //             modname: 'CostMoney',
+        //             action : 'getProHtml',
+        //         },
+        //         dataType: 'json',
+        //         success: function (res) {
+        //             $('#app_pro').html(res);
+        //         }
+        //     });
+        // }
         
         // 获取显示的参数 用款部门，付款方式等
         // getSomeData();
@@ -298,7 +298,7 @@ var label = "所属月份&nbsp;&nbsp;<span style='color:red;'>*</span>",
     filechooser.onchange = function () {
         if (!this.files.length) return;
         var files = Array.prototype.slice.call(this.files);
-        if (files.length > 9 || img_num > 8) {
+        if (files.length > 20 || img_num > 19) {
             alert("最多只可上传9张图片");
             return;
         }
@@ -712,7 +712,9 @@ var label = "所属月份&nbsp;&nbsp;<span style='color:red;'>*</span>",
                 ykje = $('#ykje').val(),
                 sqlx = $('#sqlx').val(),
                 file_names = $('#file_names').val();
-            
+                ykje_y = String(ykje).indexOf(".")+1;
+                ykje_count = String(ykje).length - ykje_y;
+            if(ykje_y>0 && ykje_count>2) return tooltip('金额错误，小数点后面保留2位数');
             if (fpsm == -1 || !fpsm) return tooltip('请选择发票说明');
             //if (fkfs == -1 || !fkfs) return tooltip('请选择付款方式');
             //if(fpsm == 3 && fkfs != 4) return tooltip('无票只能选择现金支付');
@@ -772,6 +774,9 @@ var label = "所属月份&nbsp;&nbsp;<span style='color:red;'>*</span>",
         // 金额输入 显示大写
         $('#ykje').keyup(function(){
             var money = $(this).val();
+            ykje_y = String(money).indexOf(".")+1;
+            ykje_count = String(money).length - ykje_y;
+            if(ykje_y>0 && ykje_count>2) return tooltip('金额错误，小数点后面保留2位数');
             if(money.length > 15){
                 money = money.substr(0,15);
                 $(this).val(money);

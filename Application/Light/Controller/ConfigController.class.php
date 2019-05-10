@@ -33,6 +33,21 @@ class ConfigController extends BaseController {
             case 'addgysApi': 
                     $this->addGysApi(); 
             break;
+            case 'viewProTitlePage': 
+                    $this->viewProTitlePage(); 
+            break;
+            case 'changeViewProTitle': 
+                    $this->changeViewProTitle(); 
+            break;
+            case 'delViewPro': 
+                    $this->delViewPro(); 
+            break;
+            case 'proConfig': 
+                    $this->proConfigPage(); 
+            break;
+            case 'ConfigSubmit': 
+                    $this->ConfigSubmit(); 
+            break;
         }
     }
     
@@ -42,8 +57,11 @@ class ConfigController extends BaseController {
     protected function attentionPage(){
         $system  = I('get.system');
         $modname = I('get.modname');
+        $data = explode('_',$modname);
+        $name = end($data) == 'config'?'操作说明':'注意事项';
         $data = $this->HasAttention($system,$modname);
         $this->assign('data',$data);
+        $this->assign('name',$name);
         $this->display('Config/attention');
     }
 
@@ -278,5 +296,167 @@ class ConfigController extends BaseController {
 
     public function addGys(){
 
+    }
+    // 流程可视化，标题设置
+    protected function viewProTitlePage(){
+        $system = I('get.system');
+        $mod    = I('get.mod');
+        $id     = I('get.id');
+        $name   = array(
+            'title' => '',
+            'id'    => '',
+        );
+        if($id) $name = M('yx_config_viewpro')->where("`system`='$system' and `mod`='$mod' and `id`='$id' and `stat`=1")->find();
+        $this->assign('title',$name['title']);
+        $this->assign('mod',$mod);
+        $this->assign('id',$name['id']);
+        $this->assign('system',$system);
+        $this->display('Config/viewProTitlePage');
+    }
+
+    // 修改标题
+    public function changeViewProTitle(){
+        $system = I('post.system');
+        $mod    = I('post.mod');
+        $id     = I('post.id');
+        $title  = I('post.title');
+        if(empty($system)||empty($mod)||empty($title)) $this->ajaxReturn(array('code' => 404 ,'msg' => '修改失败','data' => '参数错误'));
+        $name = M('yx_config_viewpro')->where("`system`='$system' and `mod`='$mod' and `id`='$id' and `stat`=1")->find();
+        $data = array(
+            'system' => $system,
+            'mod'    => $mod,
+            'stat'   => 1,
+            'datetime' => date('Y-m-d H:i:s'),
+            'man'   => session('name'),
+            'title' => $title,
+        );
+        if(empty($name)){
+            $res = M('yx_config_viewpro')->add($data);
+        }else{
+            $res = M('yx_config_viewpro')->where("`id`='$id'")->save($data);
+        }
+        $retuenData = $res !== false ?array('code' => 200):array('code' => 404 ,'msg' => '插入失败'); 
+        $this->ajaxReturn($retuenData);
+    }
+
+    // 删除对应的id
+    public function delViewPro(){
+        $id     = I('post.id');
+        $system = I('post.system');
+        if(empty($id)) $this->ajaxReturn(array('code' => 404 ,'msg' => '修改失败','data' => '参数错误'));
+        $config = M('yx_config_viewpro')->where(array('id' => $id))->setField('stat', 0);
+        $table  = M($system.'_appflowtable')->where(array('view_id' => $id))->setField('stat', 0);
+        $this->ajaxReturn(array('code' => 200,'config' => $config,'table' => $table));
+    }
+
+    // 流程设置
+    public function proConfigPage(){
+        $system = I('get.system');
+        $mod    = I('get.mod');
+        $id     = I('get.id');
+        $aid     = I('get.aid');
+        // 获取所有流程
+        $data = D(ucfirst($system).'Appflowtable')->getProStep($id);
+        // 固定抄送
+        $copy = M('yx_config_viewpro')->where(array('id' => $id))->order('id desc')->find();
+        $fiexd_copy = D(ucfirst($system).'Appcopyto')->getFiexdCopyHtml($copy['fiexd_copy_id']);
+        $fiexd_copy['wxid'] = $copy['fiexd_copy_id'];
+        // 权限人员
+        $auth = D(ucfirst($system).'Appcopyto')->getFiexdCopyHtml($data[1]['auth_id']);
+        // 其他同条件流程 人员
+        $other_auth = D(ucfirst($system).'Appflowtable')->getOtherProBycondition($copy['condition'],$id,$mod);
+        //dump($auth);
+        // 注意事项
+        $detailModel= D('YxDetailAuth');
+        $atten      = $detailModel->ActiveAttention('kk','CostMoney_config');
+        $this->assign('name',$copy['title']);
+        $this->assign('copy',$fiexd_copy);
+        $this->assign('data',$data);
+        $this->assign('modname',$mod);
+        $this->assign('auth',$auth);
+        $this->assign('other_auth',$other_auth);
+        $this->assign('atten',$atten);
+        $this->assign('id',$id);
+        $this->assign('aid',$aid);
+        $this->assign('system',$system);
+        $this->display('Config/proConfig');
+    }
+
+    // 流程设置提交
+    public function ConfigSubmit()
+    {
+        $system  = I('post.system');
+        $mod     = I('post.mod');
+        $id      = I('post.id');
+
+        $pro_arr = I('post.pro_arr');
+        $copy_id = I('post.copy_id');
+        $copy_id = explode(',',trim($copy_id,','));
+        $copy_id = implode(',',$copy_id);
+        $auth_id = I('post.auth_id');
+        $auth = explode(',',trim($auth_id,','));
+        $auth = implode(',',$auth);
+        
+        if(empty($auth)) $this->ajaxReturn(array('code' => 404,'msg' => '请选择申请人员'));
+        if(empty($id)) $this->ajaxReturn(array('code' => 404,'msg' => '无效提交'));
+        $table = D(ucfirst($system).'Appflowtable');
+        $pro_id   = $table->getProIdByViewid($id);
+        //$this->ajaxReturn(array('code' => 404,'msg' => '请选择申请人员','data' => $pro_id,$id,2));
+        if(!empty($copy_id)){
+            M('yx_config_viewpro')->where(array('id' => $id))->setField('fiexd_copy_id', $copy_id);
+        }
+        M($system.'_appflowtable')->where(array('view_id' => $id))->setField('stat', 0);
+        $flow  = array();
+        $data  = M('yx_config_title')->where(array('mod_system' => $system,'name' =>$mod))->find();
+        
+        $boss  = D(ucfirst($system).'Boss');
+        $role_id  = 1;
+        $last_key = end(array_keys($pro_arr));
+        // 权限人员
+        
+        foreach($pro_arr as $k => $v){
+            $wx = explode(',',trim($v,','));
+            $wx = array_filter($wx);
+            $stage_name = count($wx)>1?'会审':($k == $last_key?'审批':'审核');
+            $stage_next = $k == $last_key?0:$k+2;
+            foreach($wx as $val){
+                $flow[] = array(
+                    'pro_name' => $data['mod_show_name'],
+                    'pro_mod'  => $mod,
+                    'view_id'  => $id,
+                    'pro_id'   => $pro_id,
+                    'per_name' => $boss->getNameFromWX($val),
+                    'per_id'   => $boss->getIDFromWX($val),
+                    'role_id'  => $role_id,
+                    'stage_id' => $k+1,
+                    'stage_name' => $stage_name,
+                    'stage_next' => $stage_next,
+                    'date'       => date('Y-m-d H:i:s'),
+                    'condition'  => $data['condition']?$data['condition']:'',
+                    'stat'  => 1,
+                    'type'  => 0,
+                    'rank'  => 0,
+                    'auth_id' => $auth,
+                );
+                $role_id++;
+            } 
+        }
+        $res = M($system.'_appflowtable')->addAll($flow);
+        // 权限关联
+        $user = D('YxDetailAuth')->getAuthWxid($system,$mod);
+        $group = D('YxDetailAuth')->getAuthGroup($system,$mod);
+        $auth = explode(',',$auth);
+        $access = array();
+        foreach($auth as $v){
+            if(in_array($v,$user)) continue;
+            foreach($group as $val){
+                $access[] = array(
+                    'uid' => $v,
+                    'group_id' => $val['id'],
+                );
+            }
+        }
+        if(!empty($access)) M('auth_group_access')->addAll($access);
+        $this->ajaxReturn(array('code' => $res?200:404,'msg' => '测试','table' => $flow));
     }
 }

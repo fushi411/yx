@@ -211,7 +211,7 @@ class WeChat {
         return $sendInfo;
         // return $data;
     }
-
+    
     //将数据保存到数据库中
     private function saveSendMessage($sender,$receiver,$title,$content,$system,$sendInfo)
     {

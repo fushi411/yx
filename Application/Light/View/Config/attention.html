@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>注意事项配置</title>
+    <title>{$name}配置</title>
     <link href="__PUBLIC__/assets/css/bootstrap.min.css" rel="stylesheet">
     <!-- 引入 WeUI -->
     <!-- <link rel="stylesheet" href="https://res.wx.qq.com/open/libs/weui/1.1.2/weui.min.css" /> -->
@@ -120,7 +120,7 @@
     <div class="weui-toptips weui-toptips_warn js_tooltips" style="opacity: 1;">错误提示</div>
 
     <div class="container" id="container">
-            <h3 class="titleTab" style="text-align: center;">注意事项配置</h3>
+            <h3 class="titleTab" style="text-align: center;">{$name}配置</h3>
             <div class="weui-cells weui-cells_form">
                 <div class="weui-cell weui-cell_switch">
                     <div class="weui-cell__bd">启用配置</div>
@@ -154,10 +154,12 @@
                 </div>
             </div>
         </div>
-        <div class="weui-btn-area">
-            <input type="hidden" name="file_names" id="file_names">
-            <a class="weui-btn weui-btn_primary" href="javascript:" id="submit">提交</a>
-        </div>
+      
+        <div class="button-sp-area" style="margin-bottom: 20px;display: flex;flex-direction: row;width: 100%;justify-content: space-around;align-items: baseline;">
+                <input type="hidden" name="file_names" id="file_names">
+                <a href="javascript:;" id="ratio-refuse" class="weui-btn weui-btn_warn" style="width: 40%;">取消</a>
+                <a href="javascript:;" id="submit" class="weui-btn weui-btn_primary" style="width: 40%">确定</a>
+            </div>
     </div>
 
     <div id="loadingToast" style=" display: none;">
@@ -212,6 +214,10 @@
          switchVal == 'on' ?$(this).val('off'):$(this).val('on');
 
     });
+    // 取消
+    $('#ratio-refuse').click(function(){
+        window.location.href = document.referrer;
+    });
     // 点击提交
     $('#submit').on('click',function(){
         var reasonVal = reason.val();
@@ -236,7 +242,7 @@
                     if (res.code == 200) {
                         $('#toast').fadeIn();
                         setTimeout(function () {
-                            window.history.go(-1);
+                            window.location.href = document.referrer;
                         }, 1500);
                     } else {
                         tooltip(res.msg);

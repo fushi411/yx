@@ -67,7 +67,7 @@ class KkAddGysLogic extends Model {
                                      'color' => 'black'
                                     );                                 
         $result['content'][] = array('name'=>'相关说明：',
-                                     'value'=>$res['bz']?$res['bz']:'无',
+                                     'value'=>$res['gys_bz']?$res['gys_bz']:'无',
                                      'type'=>'text',
                                      'color' => 'black'
                                     );
@@ -83,7 +83,7 @@ class KkAddGysLogic extends Model {
         }
         $result['applyerID'] =  $applyerId;
         $result['applyerName'] = $applyerName;
-        $result['stat'] = $res['stat'];
+        $result['stat'] = $res['gys_stat'];
         return $result;
     }
 
@@ -96,7 +96,7 @@ class KkAddGysLogic extends Model {
     public function delRecord($id)
     {
         $map = array('id' => $id);
-        return $this->field(true)->where($map)->setField('stat',0);
+        return $this->field(true)->where($map)->setField('gys_stat',0);
     }
 
     /**
@@ -133,7 +133,7 @@ class KkAddGysLogic extends Model {
                                      'type'=>'string'
                                     );
         $result[] = array('name'=>'相关说明：',
-                                     'value'=>$res['bz']?$res['bz']:'无',
+                                     'value'=>$res['gys_bz']?$res['gys_bz']:'无',
                                      'type'=>'text'
                                     );
         return $result;
@@ -156,14 +156,23 @@ class KkAddGysLogic extends Model {
      */
     public function sealNeedContent($id){
         $res = $this->record($id);
+        if(preg_match('/[\x{4e00}-\x{9fa5}]/u', $res['g_people'])>0){
+            $applyerId   = D('KkBoss')->getIDFromName($res['g_people']);
+            $applyerName = $res['g_people'];
+        }else{
+            $data = M('kk_boss')->where(array('boss' => $res['g_people']))->find();
+            $applyerName = $data['name'];
+        }
+        
         $result = array(
             'first_title'    => '商户全称',
             'first_content'  => $res['g_name']?$res['g_name']:'无',
             'second_title'   => '商户类型',
             'second_content' => $res['g_type']?$res['g_type']:'无',
             'third_title'    => '相关说明',
-            'third_content'  => $res['bz']?$res['bz']:'无',
-            'stat'           => $res['stat'],
+            'third_content'  => $res['gys_bz']?$res['gys_bz']:'无',
+            'stat'           => $res['gys_stat'],
+            'applyerName'    => $applyerName,
         );
         return $result;
     }
@@ -182,7 +191,9 @@ class KkAddGysLogic extends Model {
         if(!$man) return  array('code' => 404,'msg' => '请输入联系人员','data' => $man);
         $py = new PinYin();
         $g_helpword = $py->abbr($name);
-
+        // 流程判断
+        $pro = D('KkAppflowtable')->havePro('AddGys','');
+        if(!$pro) return array('code' => 404,'msg' => '无审批流程,请联系管理员');
         if(!M('kk_gys')->autoCheckToken($_POST)) return array('code' => 404,'msg' => '网络延迟，请勿点击提交按钮！');
         $data = array(
             'g_name'     => $name,
@@ -200,8 +211,8 @@ class KkAddGysLogic extends Model {
             'g_ye'       => 0,
             'g_type'     => $type,
             'reid'       => 0,
-            'stat'       => 2,
-            'bz'         => $text,
+            'gys_stat'       => 2,
+            'gys_bz'         => $text,
         );
         $result = M('kk_gys')->add($data);
         if(!$result) return array('code' => 404,'msg' =>'提交失败，请重新尝试！');

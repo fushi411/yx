@@ -170,10 +170,11 @@
                 </div>
             </div>
         </div>
-        <div class="weui-btn-area">
-            <input type="hidden" name="file_names" id="file_names">
-            <a class="weui-btn weui-btn_primary" href="javascript:" id="submit">提交</a>
+        <div class="weui-btn-area" style="margin-bottom: 20px;display: flex;flex-direction: row;width: 100%;justify-content: space-around;align-items: baseline;">
+            <a href="javascript:;" id="ratio-refuse" class="weui-btn weui-btn_warn" style="width: 40%;">取消</a>
+            <a class="weui-btn weui-btn_primary" href="javascript:" id="submit" style="width: 40%;">确定</a>
         </div>
+
     </div>
 
     <div id="loadingToast" style=" display: none;">
@@ -232,6 +233,11 @@
        
          switchVal == 'on' ?$(this).val('off'):$(this).val('on');
     });
+    // 点击取消
+    
+    $('#ratio-refuse').on('click',function(){
+        window.location.href = document.referrer;
+    });
     // 点击提交
     $('#submit').on('click',function(){
         var reasonVal = reason.val();
@@ -257,7 +263,7 @@
                     if (res.code == 200) {
                         $('#toast').fadeIn();
                         setTimeout(function () {
-                            window.history.go(-1);
+                            window.location.href = document.referrer;
                         }, 1500);
                     } else {
                         tooltip(res.msg);

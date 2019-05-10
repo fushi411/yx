@@ -18,7 +18,7 @@ class YxhbCostMoneyPayLogic extends Model {
         $avatar = $boss->getAvatar($res['applyerID']);
         $res['avatar'] = $avatar;
         $data = $this->getDh($id,$system);
-        $res['nfkfs']  =  $data['nfkfs'];
+        $res['fkfs']  =  $this->getFkfs();
         return $res;
     }
     // 获取 cdhp 
@@ -62,20 +62,22 @@ class YxhbCostMoneyPayLogic extends Model {
         }
         return $data;
     }
-    //获取已付金额
-    public function getPayed($id,$system){
+     //获取已付金额
+     public function getPayed($id,$system){
         $flag   = $id?1:0;
         $id     = $id?$id:I('post.id');
         $system = $system?$system:I('post.system');
         $map = array(
             'a.id' => $id,
             'b.stat' => 1,
+            'b.nfylx' => array('neq',27),
         );
         $data = M($system.'_feefy a')
                 ->join("{$system}_feefy2 b on a.dh=b.dh")
                 ->field('sum(b.nmoney) as nmoney')
                 ->where($map)
                 ->select();
+
         if($flag) return $data[0]['nmoney']?-$data[0]['nmoney']:0;
         return $data[0]['nmoney']?"&yen;".number_format(-$data[0]['nmoney'],2,'.',','):0;
     }
@@ -98,8 +100,8 @@ class YxhbCostMoneyPayLogic extends Model {
     public function getBank(){
         $id     = I('post.id');
         $system = I('post.system');
-        $res  = $this->getDh($id,$system);
-        $data = M("{$system}_bank")->where(array('bank_lx' => $res['nfkfs']))->order('id asc')->select();
+        $fkfs   = I('post.fkfs');
+        $data = M("{$system}_bank")->where(array('bank_lx' => $fkfs))->order('id asc')->select();
         $result = array();
 
         foreach($data as $k=>$v){
@@ -122,6 +124,16 @@ class YxhbCostMoneyPayLogic extends Model {
         elseif($lx==5) $bklx='外开';
         return $bklx;
     }
+
+    /**
+     * 获取付款方式
+     */
+    public function getFkfs(){
+        $system = I('post.system');
+        $tmp = array();
+        $fkfs = M($system.'_fkfs')->field('id as val,fk_name as name')->order('id asc')->select();
+        return $fkfs;
+    }
     // 提交
     public function submit()
     {
@@ -132,6 +144,7 @@ class YxhbCostMoneyPayLogic extends Model {
         $sxfy   = I('post.sxfy');
         $bank   = I('post.bank');
         $bz     = I('post.bz');
+        $fkfs   = I('post.fkfs');
         $date   = I('post.date');
         if(empty($id)) return array('code' => 404 ,'msg' => '付款单号错误');
         $payed  = $this->getPayed($id,$system);
@@ -140,29 +153,33 @@ class YxhbCostMoneyPayLogic extends Model {
         if($nm<0) return array('code' => 404 ,'msg' => '付款金额不能超过申请金额');
         $res = $this->getDh($id,$system);
         if(!M($system.'_feefy2')->autoCheckToken($_POST)) return array('code' => 404,'msg' => '网络延迟，请勿点击提交按钮！');
+        $save = array(
+            'nfkfs'   => $fkfs,
+        );
         if($nm == 0){
             $save = array(
+                'nfkfs'   => $fkfs,
                 'stat'    => 2,
                 'nbank'   => $bank,
                 'sj_date' => $date,
             );
-            $map = array(
-                'dh' => $res['dh'],
-                'stat' => 4,
-            );
-            M("{$system}_feefy")->where($map)->save($save);
         }
+        $map = array(
+            'dh' => $res['dh'],
+            'stat' => 4,
+        );
+        M("{$system}_feefy")->where($map)->save($save);
         $map = array(
             'dh'      => $res['dh'],
             'nmoney'  => -$bcfk,
             'nbank'   => $bank,
             'sj_date' => $date,
             'jl_date' => $date, 
-            'npeople' => $res['dh'],
+            'npeople' => session('name'),
             'ntext'   => $bz,
-            'nfkfs'   => $res['nfkfs'],
+            'nfkfs'   => $fkfs,
             'nfylx'   => $res['nfylx'],
-            'njbr'    => session('name'),
+            'njbr'    => $res['njbr'],
             'nbm'     => $res['nbm'],
             'stat'    => 1,
         );
@@ -177,5 +194,15 @@ class YxhbCostMoneyPayLogic extends Model {
         }
         return array('code' => 200,'msg' => '提交成功' , 'aid' =>$result);
     }
-
+    // 删除记录
+    public function delPay(){
+        $id     = I('post.id');
+        $system = I('post.system');
+        if(empty($id)) return array('code'=> 404 ,'msg' => '请刷新重试');
+        $data = M($system.'_feefy2')->where(array('id' => $id))->find();
+        M($system.'_feefy')->where(array('dh' => $data['dh']))->save(array('nbank' => '','nfkfs' =>''));
+        $res = M($system.'_feefy2')->where(array('id' => $id))->save(array('stat' => '0'));
+        return array('code' => 200,'data' => $res);
+    }
+    
 }

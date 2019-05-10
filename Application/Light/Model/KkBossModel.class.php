@@ -146,6 +146,18 @@ class KkBossModel extends Model {
         return $this->where(array('name'=>$name))->getField('id');
     }
 
+    public function getWxiDFromName($name){
+        return $this->where(array('name'=>$name))->getField('wxid');
+    }
+    
+    public function getNameFromWX($id){
+        return $this->where(array('wxid'=>$id))->getField('name');
+    }
+
+    public function getAvatarFromWX($id){
+        return $this->where(array('wxid'=>$id))->getField('avatar');
+    }
+
     public function getWXInfo($wxid='')
     {
         $wxInfoArr = array();

@@ -17,9 +17,8 @@ class KkAppflowtableModel extends Model {
     {
         $proInfo = array();
         $temp    = array();
-        $res = $this->field('pro_name,pro_id,per_name,per_id,stage_id,point')->where(array('pro_mod'=>$modname, 'stat'=>1))->order('stage_id asc')->select();
+        $res = $this->field('pro_name,pro_id,per_name,per_id,stage_id,point,auth_id')->where(array('pro_mod'=>$modname, 'stat'=>1))->order('stage_id asc')->select();
         $boss = D('kk_boss');
-        
         foreach($res as $key => $value){
             $k = $value['stage_id']-1;
             $temp[$k][] = $value;
@@ -58,9 +57,21 @@ class KkAppflowtableModel extends Model {
     {
         $proInfo = array();
         $temp    = array();
-        $res = $this->field('pro_name,pro_id,per_name,per_id,stage_id,point,condition,stage_name')->where(array('pro_mod'=>$modname, 'stat'=>1))->order('stage_id asc')->select();
+        $res = $this->field('pro_name,pro_id,per_name,per_id,stage_id,point,condition,stage_name,auth_id')->where(array('pro_mod'=>$modname, 'stat'=>1))->order('stage_id asc')->select();
         $boss = D('kk_boss');
-        
+        $info = D('Kk'.$modname,'Logic')->recordContent($aid);
+        $flow = array();
+        $wxid = $boss->getWxiDFromName($info['applyerName']);
+        $flag = 'defalt';
+        foreach($res as $v){
+            if(empty($v['auth_id'])) $flow['defalt'][]=$v;
+            $auth = explode(',',$v['auth_id']);
+            if(in_array($wxid,$auth)){
+                $flow['auth'][] = $v;
+                $flag = 'auth';
+            }
+        }
+        $res = $flow[$flag];
         foreach($res as $key => $value){
             $conditions=explode(";",$value['condition']);
             $conditions = array_filter($conditions);
@@ -157,14 +168,16 @@ class KkAppflowtableModel extends Model {
      * 获取条件流程html（建议一个条件为一整套流程，不使用公用审批人）
      * @param string $modname 模块名
      * @param string $condition 当前状态
+     * @param string $view_id 显示对应
      * @return array $res 
      */
-    public function getConditionStepHtml($modname,$condition)
+    public function getConditionStepHtml($modname,$condition,$view_id)
     {
         $map = array(
             'pro_mod' => $modname, 
             'stat'    => 1,
         );
+        if(!empty($view_id)) $map['view_id'] = $view_id;
         $data = $this
                 ->field('pro_name,pro_id,per_name,per_id,stage_id,point,condition,stage_name')
                 ->where($map)
@@ -212,5 +225,87 @@ class KkAppflowtableModel extends Model {
             );
         }
         return $info;
+    }
+    /**
+     * 获取各级流程
+     */
+    public function getProStep($id){
+        $data = $this->where(array('stat' => 1,'view_id' => $id))->order('stage_id')->select();
+        $res = array();
+        $wx  = array();
+        $boss = D('KkBoss');
+        foreach($data as $v){
+            $wxid = $boss->getWXFromID($v['per_id']);
+            $res[$v['stage_id']][] = array(
+                'wxid'   => $wxid,
+                'name'   => $v['per_name'],
+                'avatar' => $boss->getAvatar($v['per_id']),
+                'parallel' => 1,
+            );
+            $wx[$v['stage_id']]['wxid'] .= "$wxid,";
+            $wx[$v['stage_id']]['auth_id'] = $v['auth_id'];
+        }
+        foreach($res as $k=>$v){
+            $res[$k]['html'] = D('Html')->getProConfigHtml($v);
+            $res[$k]['wxid'] = trim($wx[$k]['wxid'],',');
+            $res[$k]['auth_id'] = trim($wx[$k]['auth_id'],',');
+        }
+        return $res;
+    }
+    public function getProIdByViewid($id){
+        $data = $this->where(array('view_id' => $id))->order('stat desc')->find();
+        return empty($data)?$this->getProId():$data['pro_id'];
+    }
+
+    /**
+     * 获取最新pro_id
+     */
+    public function getProId(){
+        $data = $this->where(array('stat' => 1))->order('pro_id desc')->find();
+        return $data['pro_id']+1;
+    }
+    // 获取同条件 人员
+    public function getOtherProBycondition($condition,$id,$mod){
+        $res = '';
+        $data = $this->where(array('view_id'=> array('neq',$id),'condition' => $condition,'stat' => 1,'pro_mod'=>$mod))->group('auth_id')->select();
+        if(empty($data)) return $res;
+        foreach($data as $v){
+            $res .= ','.$v['auth_id'];
+        }
+        $res = explode(',',trim($res,','));
+        $res = array_unique($res);
+        $res = implode(',',array_filter($res));
+        return $res;
+    }
+
+    // 是否有审批流程 判断
+    public function havePro($flowName,$condition){
+        $system = 'kk';
+        $systemU = ucfirst($system);
+        $boss = D($systemU.'Boss');
+        $appflowtable = D($systemU.'Appflowtable');
+        $getInit = $appflowtable->getAllStepInfo($flowName, 1);
+        // 查找所属流程 有指定流程 没有指定流程
+        $wxid = session('wxid');
+        $flow = array();
+        $flag = 'defalt';
+        foreach($getInit as $v){
+            if(empty($v['auth_id'])) $flow['defalt'][]=$v;
+            $auth = explode(',',$v['auth_id']);
+            if(in_array($wxid,$auth)){
+                $flow['auth'][] = $v;
+                $flag = 'auth';
+            }
+        }
+        $getInit = $flow[$flag];
+        // 无审批流 return false
+        if(empty($getInit)) return false;
+        if(empty($condition)) return true;
+        $temp = array();
+        foreach($getInit as $v){
+            if(strrpos($v['condition'],$condition) === false) $temp[] = $v;
+        }
+        if(empty($temp)) return false;
+        return true;
     }
 }

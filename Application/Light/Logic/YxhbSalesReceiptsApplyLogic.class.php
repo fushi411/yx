@@ -301,6 +301,7 @@ class YxhbSalesReceiptsApplyLogic extends Model {
             'fourth_title'   => '相关说明',
             'fourth_content' => $res['ntext']?$res['ntext']:'无',
             'stat'           => $res['stat'],
+            'applyerName'    => $res['npeople'],
         );
         return $result;
     }
