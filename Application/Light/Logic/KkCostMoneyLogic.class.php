@@ -171,7 +171,7 @@ class KkCostMoneyLogic extends Model {
         $data = $this->getPayedRec($id,'kk');
         $html = '';
         foreach($data as $v){
-            $html.="<input class='weui-input' type='text' style='color: black; font-weight: 700; '  readonly value='{$v['sj_date']}:{$v['njbr']}'>";
+            $html.="<input class='weui-input' type='text' style='color: black; font-weight: 700; '  readonly value='{$v['sj_date']}:{$v['npeople']}'>";
             $html .= "<input class='weui-input' type='text' style='color: black;'  readonly value='{$v['money']}:{$v['bank']['nb']}-{$v['bank']['ac']}-{$v['bank']['wz']}'>";
         }
         return empty($html)?'暂无':$html;

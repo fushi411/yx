@@ -371,7 +371,7 @@
                     if (res.length > 0) {
                         var html = '';
                         for (k in res) {
-                            html += '<div style="padding: 3px 0 0 0;border-bottom: 1px solid #e5e5e5; "><strong>' + res[k]['sj_date'] + '(' + res[k]['njbr'] + ')</strong><i class="iconfont icon-shanchu" index="'+ res[k].id +'" style="vertical-align: middle;margin: 0 10px;float: right;" ></i></div>';
+                            html += '<div style="padding: 3px 0 0 0;border-bottom: 1px solid #e5e5e5; "><strong>' + res[k]['sj_date'] + '(' + res[k]['npeople'] + ')</strong><i class="iconfont icon-shanchu" index="'+ res[k].id +'" style="vertical-align: middle;margin: 0 10px;float: right;" ></i></div>';
                             html += '<div style="padding: 3px 0 0 10px;"><span style="color:black;font-weight: 600;" >' + res[k]['money'] + '</span>：' + res[k].bank.nb + '-' + res[k].bank.ac + '-' + res[k].bank.wz + '</div>';
                         }
                         $('#payedRec').html(html);

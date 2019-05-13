@@ -8,6 +8,9 @@ class TestController extends \Think\Controller {
         header('Content-Type: text/html; charset=utf-8');
         $system ='kk';
         
+
+
+        
     }
     
     public function postData($url,$data){
@@ -64,6 +67,7 @@ class TestController extends \Think\Controller {
         }
         return $result;
     }
+
      // 搜索模块
      public function getSearchTable($search){
         $tab = $this->config();
