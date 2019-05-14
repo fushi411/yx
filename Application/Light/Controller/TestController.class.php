@@ -6,11 +6,10 @@ class TestController extends \Think\Controller {
     public function Sign()
     {   
         header('Content-Type: text/html; charset=utf-8');
-        $system ='kk';
-        
-
-
-        
+        $system = 'kk';
+        $mod_name  = 'CostMoney';
+        $data = GetAppFlow($system,$mod_name);
+        dump($data);
     }
     
     public function postData($url,$data){

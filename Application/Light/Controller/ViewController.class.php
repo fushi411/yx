@@ -33,7 +33,11 @@ class ViewController  extends BaseController
         $detailAuth = $detailModel->CueAuthCheck();
         $atten      = $detailModel->ActiveAttention($system,$mod_name);
         $explain    = $detailModel->ActiveExplain($system,$mod_name);
-        
+        // 无审批流程 提示 签收模式排除
+        $flag = empty($appflow)?'true':'false';
+        $flag = $this->isSign($system,$mod_name)?$flag:'false';
+        $this -> assign('noAppProHtml', D('Html')->noAppProHtml());
+        $this -> assign('flag', $flag);
         $this -> assign('system', $system);
         $this -> assign('modname', $mod_name);
         $this -> assign('push',$push['data']);
@@ -41,9 +45,7 @@ class ViewController  extends BaseController
         $appflow = $this->appflowJson($appflow,$mod_name);
         $this -> assign('appflow',$appflow);
         $this -> assign('info',$this->PageArr);
-
         $this -> assign('fixed',$this->PageArr[$viewtype.$system.$mod_name]);
-
         $this -> assign('today',$this->today);
         $this -> assign('title',$this->PageArr['title']);
         $this -> assign('atten',$atten);
@@ -56,7 +58,16 @@ class ViewController  extends BaseController
         }
     }
      
-    
+    // 签收判断
+    public function isSign($system,$mod){
+        $map = array(
+            'name'       => $mod,
+            'mod_system' => $system,
+            'stat'       => 3,
+        );
+        $data = M('yx_config_title')->where($map)->find();
+        return empty($data)?true:false;
+    }
     /**
      * 审批流程转化成json格式字符串
      * @param  array   $appflow 审批数组

@@ -443,7 +443,15 @@
                 </div>
             </div>
         </div>
-        
+        <div class="js_dialog" id="iosDialog_alert" style="display: none;">
+                <div class="weui-mask"></div>
+                <div class="weui-dialog">
+                    <div class="weui-dialog__bd" id="alert_content">错误</div>
+                    <div class="weui-dialog__ft">
+                        <a href="javascript:;" onclick="dialog_alert_close()" class="weui-dialog__btn weui-dialog__btn_primary">知道了</a>
+                    </div>
+                </div>
+            </div>
         <!-- END dialog -->  
         <block name="other"></block> 
 <script src="__PUBLIC__/assets/js/jquery-1.11.1.min.js"></script>
@@ -463,6 +471,16 @@
 <script src="__PUBLIC__/assets/js/viewer.js"></script>
 </body>
 <script>
+    var proFlag = "{$flag}";
+    
+    if(proFlag == 'true'){
+        $("#alert_content").text('无审批流程，请联系管理员');
+        $("#iosDialog_alert").show();
+        $('#app_pro').html("{$noAppProHtml}");
+    }
+    function dialog_alert_close() {
+        $("#iosDialog_alert").hide();
+    }
     var ishttps = 'https:' == document.location.protocol ? true : false;
     if(ishttps == false){
         httpsUrl = document.location.href;

@@ -140,4 +140,9 @@ class HtmlModel extends Model
         }
         return $html;
     }
+
+    // 无审批流程html
+    public function noAppProHtml(){
+        return "<li style='font-size: 28px;line-height: 60px;color: #f12e2e;'>无审批流程</li>";
+    }
 }
