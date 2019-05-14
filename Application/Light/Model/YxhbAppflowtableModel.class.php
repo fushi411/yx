@@ -53,7 +53,7 @@ class YxhbAppflowtableModel extends Model {
      * @param  string $modname 流程名
      * @return array   摘要数组
      */
-    public function getAllProc_new($modname,$aid,$wxid)
+    public function getAllProc_new($modname,$aid)
     {
         $proInfo = array();
         $temp    = array();
@@ -303,5 +303,16 @@ class YxhbAppflowtableModel extends Model {
             }
             if(empty($temp)) return false;
             return true;
+        }
+        // 获取当前审批 流程
+        public function getStepNow($mod,$pro_id,$per_id){
+            $map = array(
+                'pro_id' => $pro_id,
+                'pro_mod' => $mod,
+                'stat' => 1,
+                'per_id' => $per_id,
+            );
+            $res = $this->field('sign')->where($map)->find();
+            return empty($res)?0:$res['sign'];
         }
 }

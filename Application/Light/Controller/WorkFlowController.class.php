@@ -51,7 +51,7 @@ class WorkFlowController extends BaseController {
       //获取下一审批流程(似乎没用了)
       $getNext = $appflowtable->getStepInfo($nowStepArr['pro_id'], $tableStepArr['stage_next'],$flowName);
       // 更新当前审批记录
-      $is_done2 = $appflowproc->updateProc($id, $option, $word,$img);
+      $is_done2 = $appflowproc->updateProc($flowName,$id, $option, $word,$img);
       //申请人ID  
       // $applyUser=iconv('UTF-8', 'GBK', $applyUser);
       // $applyUserid=$this->getUserID($applyUser,$db);   
@@ -171,7 +171,6 @@ class WorkFlowController extends BaseController {
           // 自动审批 系统
           if( $boss->getWXFromID($values['per_id']) == 'Admin_XiTong'){
             // 直接调用-》结束方法
-            
             $wfClass = new WorkFlowFuncController();
             $func = ucfirst($system).$flowName.'End';
             $funcRes = $wfClass->$func($id, $system);

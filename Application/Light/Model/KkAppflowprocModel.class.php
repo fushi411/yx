@@ -111,9 +111,18 @@ class KkAppflowprocModel extends Model {
     }
 
     // 审批记录保存
-    public function updateProc($rid, $option, $word,$img)
+    public function updateProc($mod_name,$rid, $option, $word,$img)
     {
         $per_id = session('kk_id');
+        $flowtable = D('KkAppflowtable');
+        // 查看是否免签
+        $StepInfo = $this->getStepInfo($mod_name,$rid,$per_id);
+        $signIsNeed = $flowtable->getStepNow($mod_name,$StepInfo['pro_id'],$per_id);
+        if($signIsNeed == 1){
+            $res = M('yx_config_sign')->where(array('wxid' => session('wxid') ,'stat' => 1))->find();
+            $img = empty($img)?$res['url']:$img;
+        }
+        $map['mod_name'] = $mod_name;
         $map['per_id'] = $per_id;
         $map['app_stat'] = 0;
         $map['aid'] = $rid;

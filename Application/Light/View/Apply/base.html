@@ -1195,17 +1195,20 @@
             option = 1;
         }
         // 退审无需签字
-        if(option == 2){
+        if(option == 2 ){
             // 签名判断
             if("{$mod_name}" == 'CostMoney'  || "{$mod_name}" == 'CgfkApply' || "{$mod_name}" == 'PjCgfkApply' || "{$mod_name}" == 'WlCgfkApply' || "{$mod_name}" == 'SalesRefundApply'|| "{$mod_name}" == 'ClientStatementApply' ){
-                if('{$ismoble}'=='false'){
-                    return $("#iosDialog_sign").show();
-                }
-                if(signoutput_file == ''){
-                    $("#alert_content").text('请先签字！');
-                    $("#iosDialog_alert").show();
-                    return false;
-                }
+                // 判断是否可以免签
+                if('{$signIsNeed}'==0){
+                    if('{$ismoble}'=='false'){
+                        return $("#iosDialog_sign").show();
+                    }
+                    if(signoutput_file == ''){
+                        $("#alert_content").text('请先签字！');
+                        $("#iosDialog_alert").show();
+                        return false;
+                    }
+                } 
             }
         }
         $('#loadingToast').fadeIn(100);

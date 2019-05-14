@@ -55,7 +55,8 @@ class ApplyController extends BaseController {
         $this->assign('isApplyUser', $isApplyUser);
 
         //审批全流程
-        $allArr = D($system.'Appflowtable')->getAllProc_new($mod_name,$apply_id);
+        $flowtable = D($system.'Appflowtable');
+        $allArr = $flowtable->getAllProc_new($mod_name,$apply_id);
         // dump($allArr);
         $this->assign('first',$allArr['first']);
         $this->assign('title',D('seek')->getTitle($mod_name,$system));
@@ -82,7 +83,10 @@ class ApplyController extends BaseController {
         $StepStatus = $StepInfo['app_name'];
         $this->assign('stepStatus', $StepStatus);
         $authArr = $procArr['authArr'];
-        
+        // 是否免签
+
+        $signIsNeed = $flowtable->getStepNow($mod_name,$StepInfo['pro_id'],$StepInfo['per_id']);
+        $this->assign('signIsNeed', $signIsNeed);
         //评论内容
         $comment_list = D($system.'Appflowcomment')->contentComment($mod_name, $apply_id);
         $this->assign('comment_list', $comment_list);

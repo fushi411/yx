@@ -97,7 +97,16 @@ class LoginController extends \Think\Controller {
         );
         $data = M($system.'_appflowcomment')->where($map)->select();
         foreach ($data as $val) {
-           // $wx->comPush($system,$val['mod_name'],$val['aid'],$val['comment_to_id'],$val['per_name']);
+            $comment = explode(',',$val['comment_to_id']);
+            $reads = explode(',',$val['comment_ready']);
+            $temp = array();
+            foreach($comment as $v){
+                if(in_array($v,$reads)) continue;
+                $temp[] = $v;
+            }
+            if(empty($temp))continue;
+            $val['comment_to_id'] = implode(',',$temp);
+            $wx->comPush($system,$val['mod_name'],$val['aid'],$val['comment_to_id'],$val['per_name']);
         }
     }
     public function crontab()

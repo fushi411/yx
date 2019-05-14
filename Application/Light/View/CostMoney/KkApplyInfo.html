@@ -48,18 +48,25 @@
                                                 @ 指定人
                                             </p>
                                         </a>
-                                        <a href="#" class="weui-tabbar__item" id="btn-qz-div" style=" text-decoration: none;">
-                                            <p class="weui-tabbar__label" style="font-size: 15px;color:black;" id="btn-qz">
-                                                <span class="glyphicon glyphicon-pencil" aria-hidden="true" style="margin-right: 5px;"></span> 
-                                                签字
-                                            </p>  
-                                        </a>
-                                        <a href="#" class="weui-tabbar__item" id="btn-yl-div"  style="display: none;text-decoration: none;">
-                                            <p class="weui-tabbar__label" style="font-size: 15px;color:#1aad19;" id="btn-yl">
-                                                <span class="glyphicon glyphicon-paperclip" aria-hidden="true" style="margin-right: 5px;"></span> 
-                                                已签字（点击预览）
-                                            </p>  
-                                        </a>
+                                            <a href="#" class="weui-tabbar__item" id="btn-qz-div" style=" text-decoration: none;">
+                                                <eq name="signIsNeed" value="0">
+                                                    <p class="weui-tabbar__label" style="font-size: 15px;color:black;" id="btn-qz">
+                                                        <span class="glyphicon glyphicon-pencil" aria-hidden="true" style="margin-right: 5px;"></span> 
+                                                        签字
+                                                    </p> 
+                                                    <else/>
+                                                    <p class="weui-tabbar__label" style="font-size: 15px;color:red;" id="btn-qz">
+                                                        <span class="glyphicon glyphicon-pencil" aria-hidden="true" style="margin-right: 5px;"></span> 
+                                                        签字(可免签)
+                                                    </p> 
+                                                </eq> 
+                                            </a>
+                                            <a href="#" class="weui-tabbar__item" id="btn-yl-div"  style="display: none;text-decoration: none;">
+                                                <p class="weui-tabbar__label" style="font-size: 15px;color:#1aad19;" id="btn-yl">
+                                                    <span class="glyphicon glyphicon-paperclip" aria-hidden="true" style="margin-right: 5px;"></span> 
+                                                    已签字（点击预览）
+                                                </p>  
+                                            </a>
                                     </div>
                                     <div class="page js_show" id="approve_at" style="position: relative;display: none;">
                                         <div class="page__bd">
