@@ -6,21 +6,13 @@ class TestController extends \Think\Controller {
     public function Sign()
     {   
         header('Content-Type: text/html; charset=utf-8');
-        $mod_name = 'CostMoney';
-        $rid = 6396;
-        $per_id = session('yxhb_id');
-        $flowtable = D('YxhbAppflowtable');
-        // 查看是否免签
-        $StepInfo = D('YxhbAppflowproc')->getStepInfo($mod_name,$rid,$per_id);
-        $signIsNeed = $flowtable->getStepNow($mod_name,$StepInfo['pro_id'],$per_id);
-
-        if($signIsNeed == 1){
-            $res = M('yx_config_sign')->where(array('wxid' => session('wxid') ,'stat' => 1))->find();
-            $img = $res['url'];
-            dump($res);
-        }
-        dump($StepInfo);
-        dump($signIsNeed);
+        $map = array(
+            'per_id' => 18,
+            'stat' => 1,
+            'sign' => array('neq',''),
+        );
+        $res = M('kk_appflowproc')->where($map)->order('time desc')->find();
+        dump($res);
     }
     
     public function postData($url,$data){

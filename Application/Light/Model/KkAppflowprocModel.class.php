@@ -120,6 +120,16 @@ class KkAppflowprocModel extends Model {
         $signIsNeed = $flowtable->getStepNow($mod_name,$StepInfo['pro_id'],$per_id);
         if($signIsNeed == 1){
             $res = M('yx_config_sign')->where(array('wxid' => session('wxid') ,'stat' => 1))->find();
+            // 无指定签字  选取上一次签字
+            if(empty($res)){
+                $signMap = array(
+                    'per_id' => session('kk_id'),
+                    'stat' => 1,
+                    'sign' => array('neq',''),
+                );
+                $res = $this->where($signMap)->order('time desc')->find();
+                $res['url'] = $res['sign'];
+            }
             $img = empty($img)?$res['url']:$img;
         }
         $map['mod_name'] = $mod_name;

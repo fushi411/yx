@@ -60,6 +60,7 @@ class ViewController  extends BaseController
      
     // 签收判断
     public function isSign($system,$mod){
+        if($mod == 'CostMoneyPay') return false;
         $map = array(
             'name'       => $mod,
             'mod_system' => $system,

@@ -464,6 +464,7 @@ class SeekController  extends BaseController
                 'third_title'    => $res['third_title'],
                 'first_content'  => $res['first_content'],
                 'second_content' => $res['second_content'],
+                'second_color'   => $res['second_color'],
                 'third_content'  => $res['third_content'],
                 'date'           => $v['date'],
                 'system'         => $v['system'],

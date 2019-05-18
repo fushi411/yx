@@ -49,17 +49,14 @@
                                             </p>
                                         </a>
                                             <a href="#" class="weui-tabbar__item" id="btn-qz-div" style=" text-decoration: none;">
-                                                <eq name="signIsNeed" value="0">
-                                                    <p class="weui-tabbar__label" style="font-size: 15px;color:black;" id="btn-qz">
-                                                        <span class="glyphicon glyphicon-pencil" aria-hidden="true" style="margin-right: 5px;"></span> 
-                                                        签字
-                                                    </p> 
+                                                <p class="weui-tabbar__label" style="font-size: 15px;color:black;" id="btn-qz">
+                                                    <span class="glyphicon glyphicon-pencil" aria-hidden="true" style="margin-right: 5px;"></span> 
+                                                    <eq name="signIsNeed" value="0">
+                                                        签字(必签)
                                                     <else/>
-                                                    <p class="weui-tabbar__label" style="font-size: 15px;color:red;" id="btn-qz">
-                                                        <span class="glyphicon glyphicon-pencil" aria-hidden="true" style="margin-right: 5px;"></span> 
-                                                        签字(可免签)
-                                                    </p> 
-                                                </eq> 
+                                                        签字<strong style="color:red;">(可免签)</strong>
+                                                    </eq> 
+                                                </p> 
                                             </a>
                                             <a href="#" class="weui-tabbar__item" id="btn-yl-div"  style="display: none;text-decoration: none;">
                                                 <p class="weui-tabbar__label" style="font-size: 15px;color:#1aad19;" id="btn-yl">

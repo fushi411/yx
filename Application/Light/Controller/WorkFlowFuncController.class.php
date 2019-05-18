@@ -934,6 +934,7 @@ class WorkFlowFuncController extends Controller {
         $save = array(
             'att_sel' => '有',
             'att_name' => $data['file'],
+            'att_time' => date('Y-m-d H:i:s'),
             'stat' => 3,
         );
         M('kk_clientstatement')->where(array('id'=>$data['aid']))->save($save);
@@ -952,6 +953,7 @@ class WorkFlowFuncController extends Controller {
         $save = array(
             'att_sel' => '有',
             'att_name' => $data['file'],
+            'att_time' => date('Y-m-d H:i:s'),
             'stat' => 3,
         );
         M('yxhb_clientstatement')->where(array('id'=>$data['aid']))->save($save);

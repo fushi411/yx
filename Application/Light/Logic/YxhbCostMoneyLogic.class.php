@@ -275,6 +275,7 @@ class YxhbCostMoneyLogic extends Model {
         $first_title    = '申请类型';
         $first_content  = '用款费用';
         $second_title   = '发票说明';
+        $second_color = $res['fpsm']-1==1?"style='color:#f12e2e'":'';
         $second_content = $fpsm[$res['fpsm']-1];
         if($res['nfylx'] ==='0')$first_content  = '报销费用';
         if( $res['nfylx'] ==='0' ){
@@ -288,6 +289,7 @@ class YxhbCostMoneyLogic extends Model {
             'first_content'  => $first_content,
             'second_title'   => $second_title,
             'second_content' => $second_content,
+            'second_color'   => $second_color,
             'third_title'    => '用款金额',
             'third_content'  => "&yen;".number_format(-$res['nmoney'],2,'.',',')."元",
             'fourth_title'   => '相关说明',

@@ -277,6 +277,8 @@ class YxhbAppflowtableModel extends Model {
         // 是否有审批流程 判断
         public function havePro($flowName,$condition){
             $system = 'yxhb';
+            // 非审批流程 return true
+            if($flowName == 'CostMoneyPay') return true;
             $systemU = ucfirst($system);
             $boss = D($systemU.'Boss');
             $appflowtable = D($systemU.'Appflowtable');

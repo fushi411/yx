@@ -69,7 +69,7 @@ class HtmlModel extends Model
                         </div>
                     </div>
                     <p class='weui-media-box__desc ' style='margin-bottom: 0px;'><span>{$v['first_title']}：</span><span>{$v['first_content']}</span></p>
-                    <p class='weui-media-box__desc ' style='margin-bottom: 0px;'><span>{$v['second_title']}：</span><span>{$v['second_content']}</span></p>
+                    <p class='weui-media-box__desc ' style='margin-bottom: 0px;'><span>{$v['second_title']}：</span><span {$v['second_color']}>{$v['second_content']}</span></p>
                     <p class='weui-media-box__desc ' style='margin-bottom: 0px;'><span>{$v['third_title']}：</span><span>{$v['third_content']}</span></p>
                     {$fourth}
                 </div>
