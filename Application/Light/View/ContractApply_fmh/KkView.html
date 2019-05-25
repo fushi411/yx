@@ -130,6 +130,7 @@
                                 <option value='-1' disabled selected style='display:none;'>请选择产品品种</option>
                                 <option value="环保统灰">环保统灰</option>
                                 <option value="粗灰">粗灰</option>
+                                <option value="电厂粗灰">电厂粗灰</option>
                                 <option value="建材二级灰">建材二级灰</option>
                                 <option value="建材一级灰">建材一级灰</option>
                                 <option value="电厂二级灰">电厂二级灰</option>
@@ -371,7 +372,7 @@
                 for(k in data){
                    var yf = '';
                    if(data[k].ht_yf != 0) yf='<span style="color:red;">('+data[k].ht_yf+')</span>';
-                   html += '<div style="padding: 3px 0 0 0;border-bottom: 1px solid #e5e5e5; "><strong >'+data[k].ht_bzfs+data[k].cate+'('+data[k].ht_wlfs+')</strong></div>';
+                   html += '<div style="padding: 3px 0 0 0;border-bottom: 1px solid #e5e5e5; "><strong >'+data[k].ht_bzfs+data[k].ht_cate+'('+data[k].ht_wlfs+')</strong></div>';
                    html += '<div style="padding: 3px 0 0 10px;"><span class="" >单价(运费)</span>:' + data[k].ht_dj+yf+ '</div>';
                    html += '<div style="padding: 3px 0 0 10px;"><span class="" >合计</span>:' +data[k].total + '</div>';
                    

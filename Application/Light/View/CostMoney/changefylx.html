@@ -111,7 +111,7 @@
                 </div>
                 <div class="weui-cell">
                     <div class="weui-uploader__bd">
-                        <ul class="weui-uploader__files " id="uploaderFiles" style="margin-bottom: 0px;float: left;">
+                        <ul class="weui-uploader__files " id="viewer"  style="margin-bottom: 0px;float: left;">
                         </ul>
                     </div>
                 </div>
@@ -211,7 +211,10 @@
             for (k in data) {
                 $html += '<img src="' + data[k] + '" class="fjys" data-original="' + data[k] + '" >';
             }
-            $('#uploaderFiles').html($html);
+            $('#viewer').html($html);
+            $('#viewer').viewer({
+                url: 'data-original',
+            });
         }
         function makeHtml(data) {
             $html = '';

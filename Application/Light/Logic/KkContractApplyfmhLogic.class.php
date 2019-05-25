@@ -148,16 +148,16 @@ class KkContractApplyfmhLogic extends Model {
                 'tj_stat'   => 2,
                 'tj_client' => $val['ht_khmc'],
                 'tj_cate'   => $val['ht_cate'],
-                'tj_bzfs'   => $val['ht_bzfs'],
+                //'tj_bzfs'   => $val['ht_bzfs'],
                 'tj_wlfs'   => $val['ht_wlfs'],
             ); 
             $res = M('kk_tj_fmh')->where($map)->order('tj_da desc')->find();
-            $info[$key]['ht_dj'] = $res['tj_dj'];
+            if(!empty($res))$info[$key]['ht_dj'] = $res['tj_dj'];
         }
         if(empty($info)) return '无';
         $html = '';
         foreach($info as $k => $v){
-            $html   .= "<input class='weui-input' type='text' style='color: black; font-weight: 700;border-bottom: 1px solid #e5e5e5; '  readonly value='{$v['ht_bzfs']}{$v['cate']}({$v['ht_wlfs']})'>";
+            $html   .= "<input class='weui-input' type='text' style='color: black; font-weight: 700;border-bottom: 1px solid #e5e5e5; '  readonly value='{$v['ht_cate']}({$v['ht_wlfs']})'>";
             $tempStr = $v['ht_yf'] == 0? '':'('.$v['ht_yf'].')';
             $html   .= "<input class='weui-input' type='text' style='color: black;'  readonly value='单价(运费)：{$v['ht_dj']}{$tempStr}'>";
             $total   = $v['ht_yf']+$v['ht_dj'];
@@ -176,7 +176,7 @@ class KkContractApplyfmhLogic extends Model {
         if(empty($info)) return '无';
         $html = '';
         foreach($info as $k => $v){
-            $html   .= "<input class='weui-input' type='text' style='color: black; font-weight: 700;border-bottom: 1px solid #e5e5e5; '  readonly value='{$v['ht_bzfs']}{$v['cate']}({$v['ht_wlfs']})'>";
+            $html   .= "<input class='weui-input' type='text' style='color: black; font-weight: 700;border-bottom: 1px solid #e5e5e5; '  readonly value='{$v['ht_cate']}({$v['ht_wlfs']})'>";
             $tempStr = $v['ht_yf'] == 0? '':'('.$v['ht_yf'].')';
             $html   .= "<input class='weui-input' type='text' style='color: black;'  readonly value='单价(运费)：{$v['ht_dj']}{$tempStr}'>";
             $total   = $v['ht_yf']+$v['ht_dj'];
@@ -311,7 +311,9 @@ class KkContractApplyfmhLogic extends Model {
                 'tj_wlfs'   => $val['ht_wlfs'],
             ); 
             $res = M('kk_tj_fmh')->where($map)->order('tj_da desc')->find();
-            $info[$key]['ht_dj'] = $res['tj_dj'];
+            if(!empty($res))$info[$key]['ht_dj'] = $res['tj_dj'];
+            if(!empty($res))$info[$key]['total'] = $info[$key]['ht_dj']+$info[$key]['ht_yf'];
+            $info[$key]['ht_bzfs'] = '';
         }
         return $info; 
     }

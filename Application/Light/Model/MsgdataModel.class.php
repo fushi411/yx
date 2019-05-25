@@ -426,19 +426,10 @@ class MsgdataModel extends Model {
 
     // 费用用款
     public function CostMoney(){
-        return $this->CostMoneyUrl();
-    }
-
-    public function unProCostMoney(){
-        return $this->CostMoneyUrl();
-    }
-    public function CostMoneyUrl(){
         $result = array();
         $result['url'] = array(
             array('name' => '建材费用开支','url' => U('Light/View/View',array('modname'=>'CostMoney','system' => 'kk')),'modname' => 'kkCostMoney'),
             array('name' => '环保费用开支','url' => U('Light/View/View',array('modname'=>'CostMoney','system' => 'yxhb')),'modname' => 'yxhbCostMoney'),
-            array('name' => '建材自动审批费用开支','url' => U('Light/View/View',array('modname'=>'unProCostMoney','system' => 'kk')),'modname' => 'kkunProCostMoney'),
-            array('name' => '环保自动审批费用开支','url' => U('Light/View/View',array('modname'=>'unProCostMoney','system' => 'yxhb')),'modname' => 'yxhbunProCostMoney'),
         );
    
         $result['yxhbCostMoney'] = array(
@@ -449,16 +440,28 @@ class MsgdataModel extends Model {
             'process' => U('Light/Process/ApplyProcess',array('modname'=>'CostMoney','system' => 'kk')),
             'info'    => U('Light/Apply/applyInfo',array('modname'=>'CostMoney','system'=>'kk'))
         ); 
+        return $result; 
+    }
+
+    public function unProCostMoney(){
+        $result = array();
+        $system = I('get.system');
+        $result['url'] = array();
+        if($system=='kk') $result['url'][] = array('name' => '建材自动审批费用开支','url' => U('Light/View/View',array('modname'=>'unProCostMoney','system' => 'kk')),'modname' => 'kkunProCostMoney');
+        if($system=='yxhb') $result['url'][] = array('name' => '环保自动审批费用开支','url' => U('Light/View/View',array('modname'=>'unProCostMoney','system' => 'yxhb')),'modname' => 'yxhbunProCostMoney');
+        
         $result['yxhbunProCostMoney'] = array(
             'process' => U('Light/Process/ApplyProcess',array('modname'=>'unProCostMoney','system' => 'yxhb')),
             'info'    => U('Light/Apply/applyInfo',array('modname'=>'unProCostMoney','system'=>'yxhb'))
         );   
+
         $result['kkunProCostMoney'] = array(
             'process' => U('Light/Process/ApplyProcess',array('modname'=>'unProCostMoney','system' => 'kk')),
             'info'    => U('Light/Apply/applyInfo',array('modname'=>'unProCostMoney','system'=>'kk'))
         ); 
         return $result; 
     }
+
     // 生控记录(矿粉)
     public function kfScjl(){
         $result = array();

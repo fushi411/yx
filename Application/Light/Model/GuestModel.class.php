@@ -268,6 +268,7 @@ class GuestModel extends Model {
      */ 
     public function getGuestData($system,$keyWord){
         $today=date("Y-m-d",time()+8*3600);
+        $thisday = date("Y-m-d",time());
         if(!isset($action)) 
         {
             $action = "";
@@ -411,6 +412,13 @@ class GuestModel extends Model {
        
         // 调整一级客户状态
         foreach ($father as $ck => &$v) {
+            // 当天注册客户 == 正常
+            if( date('Y-m-d',strtotime($v['g_jltime'])) == $thisday){
+                $v['status'] = '总正常';
+                $v['name'] =    $v['g_name'];     
+                $res[] = $v;  
+                continue;
+            }
             // 余额非0==正常
             if ($v['ye'] != 0) {
                 $v['status'] = '总正常';
@@ -446,6 +454,7 @@ class GuestModel extends Model {
         $res = $this->addTailAffix($father);
         return array($father,$child);
     }
+
     // 给备案总客户 添加尾缀
     public function addTailAffix($data){
         $tailAffix = '-总';

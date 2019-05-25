@@ -152,7 +152,7 @@ class KkContractApplyLogic extends Model {
                 'tj_wlfs'   => $val['ht_wlfs'],
             ); 
             $res = M('kk_tj')->where($map)->order('tj_da desc')->find();
-            $info[$key]['ht_dj'] = $res['tj_dj'];
+            if(!empty($res))$info[$key]['ht_dj'] = $res['tj_dj'];
         }
         if(empty($info)) return '无';
         $html = '';

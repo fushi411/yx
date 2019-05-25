@@ -55,14 +55,14 @@ class HtmlModel extends Model
             list($lable,$pro) = $type == 1 ? $this->pro_stat($v['stat'],$v['apply']) : $this->sign_stat($v['stat'],$v['apply']);
             $fourth = empty($v['fourth_title'])?'':"<p class='weui-media-box__desc ' style='margin-bottom: 0px;'><span>{$v['fourth_title']}：</span><span>{$v['fourth_content']}</span></p>";
             
-            $html .= "<a href='{$url}'
+            $html .= "<a href='{$url}' target='_blank'
                 class='weui-cell weui-cell_access weui-cell_link' style='text-decoration: none;'>
                 <div class='weui-media-box weui-media-box_text' style='width: 100%;padding-left: 0px;padding-right: 0px;'>
                     <div class='weui-flex' style='align-items: center;'>
                         <div class='weui-flex__item'>
                             <h4 class='weui-media-box__title'>{$v['applyer']}的{$v['toptitle']}</h4>
                         </div>
-                        <div class='weui-flex__item'><span class='label {$lable}' style='margin-left: 1em;padding-top: 0.3em;padding-bottom: 0.2em'>{$pro}</span></div>
+                        <div class='weui-flex__item'><span class='label {$lable}' style='margin-left: 1em;padding-top: 0.3em;padding-bottom: 0.2em;font-weight:300;'>{$pro}</span></div>
                         {$dot}
                         <div class='weui-flex__item' style='text-align: right;'>
                             <h5>{$date}</h5>

@@ -402,6 +402,7 @@ class ConfigController extends BaseController {
         $table = D(ucfirst($system).'Appflowtable');
         $pro_id   = $table->getProIdByViewid($id);
         //$this->ajaxReturn(array('code' => 404,'msg' => '请选择申请人员','data' => $pro_id,$id,2));
+        $view = M('yx_config_viewpro')->where(array('id' => $id))->find();
         if(!empty($copy_id)){
             M('yx_config_viewpro')->where(array('id' => $id))->setField('fiexd_copy_id', $copy_id);
         }
@@ -432,7 +433,7 @@ class ConfigController extends BaseController {
                     'stage_name' => $stage_name,
                     'stage_next' => $stage_next,
                     'date'       => date('Y-m-d H:i:s'),
-                    'condition'  => $data['condition']?$data['condition']:'',
+                    'condition'  => $view['condition']?$view['condition']:'',
                     'stat'  => 1,
                     'type'  => 0,
                     'rank'  => 0,
