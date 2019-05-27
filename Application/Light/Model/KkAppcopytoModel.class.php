@@ -29,6 +29,7 @@ class KkAppcopytoModel extends Model {
 
         foreach ($cp as $v) {
             $idArr = explode(',', $v['copyto_id']);
+            $idArr = array_unique($idArr);
             foreach($idArr as $key => $val){
                $temp[$key]['wxid'] = $val;
                $temp[$key]['sortwxid'] = strtolower($val); 
@@ -46,8 +47,10 @@ class KkAppcopytoModel extends Model {
            $idArr = array_filter($array);
           if ($v['fixed_copyto_id']) {
               $fixedArr = explode(",", $v['fixed_copyto_id']);    //固定抄送人
+              $fixedArr = array_unique($fixedArr);
           }
           $readedArr =explode(",", $v['readed_id']);          //已读抄送ID
+          $readedArr = array_unique($readedArr);
           foreach ($idArr as $cid) {
             if($cid){
               $cpid = $boss->getIDFromWX($cid);
@@ -84,6 +87,7 @@ class KkAppcopytoModel extends Model {
         $copytoRes = $this->field('readed_id')->where("mod_name='{$mod_name}' and aid='{$aid}' and stat='1' and find_in_set('{$wxid}', copyto_id) and type='{$type}'")->select();
         foreach ($copytoRes as $key => $value) {
             $readedArr = explode(',', $value['readed_id']);
+            $readedArr = array_unique($readedArr);
             $mergeReader = array_merge($mergeReader, $readedArr);
         }
         unset($value);
@@ -123,6 +127,7 @@ class KkAppcopytoModel extends Model {
               $applyerID   = D('KkBoss')->getWXFromID($applyerArr['applyerID']); // -- 申请人id
               // -- 去除是提交人的推送的人
               $recevierArr = explode('|',$recevier);
+              $recevierArr = array_unique($recevierArr);
               $recevierArr = array_merge(array_diff($recevierArr, array($applyerID)));
               $recevier     = implode('|',$recevierArr);
               $cpid = implode(',',$recevierArr);

@@ -69,8 +69,9 @@ class YxhbAppflowcommentModel extends Model {
         }
         $delArr = $this->field('id,app_word,time,per_name,per_id,comment_to_id,comment_img,comment_ready')->where(array('aid'=>$aid, 'mod_name'=>$mod_name, 'app_stat'=>1,'per_id' =>8888))->order('time desc')->select();
         $cl = $this->field('id,pro_id,app_word,time,per_name,per_id,comment_to_id,comment_img,comment_ready')->where(array('aid'=>$aid, 'mod_name'=>$mod_name, 'app_stat'=>1,'per_id' =>array('not in',array(9999,8888))))->order('time desc')->select();
-        $cl = array_merge($pushArr,$cl);
         $cl = array_merge($delArr,$cl);
+        list_sort_by($cl,'time','desc');
+        $cl = array_merge($pushArr,$cl);
         $boss = D('yxhb_boss');
         foreach ($cl as $v) {
               $cwxUID = $boss->getWXFromID($v['per_id']);
@@ -128,7 +129,7 @@ class YxhbAppflowcommentModel extends Model {
                             'comment_ready' => $comment_ready         
                         );
             }
-        return list_sort_by($comment_list,'time','desc');
+        return $comment_list;
     }
 
     /**

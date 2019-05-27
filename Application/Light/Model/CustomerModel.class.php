@@ -31,10 +31,10 @@ class CustomerModel extends Model
         list($reid,$result,$tmp) = $this->getKkCustomerNews();
         $res = $tmp[$client_id];
         if($res['reid'] == 0){
-            return $res['fhje'];
+            return $res['qmje'];
         } 
         else{
-            return $tmp[$res['reid']]['fhje'];
+            return $tmp[$res['reid']]['qmje'];
         } 
     }
 
