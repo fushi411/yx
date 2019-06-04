@@ -746,4 +746,23 @@ class MsgdataModel extends Model {
         );
         return $result;
     }
+
+    // 采购发票上传
+    public function CgFpsm(){
+        $result = array();
+        $result['url'] = array(
+            array('name' => '环保采购发票上传','url' => U('Light/View/View',array('modname'=>'CgFpsm','system' => 'yxhb')),'modname' => 'yxhbCgFpsm'),
+            array('name' => '建材采购发票上传','url' => U('Light/View/View',array('modname'=>'CgFpsm','system' => 'kk')),'modname' => 'kkCgFpsm'),
+        );
+
+        $result['yxhbCgFpsm'] = array(
+            'process'       => U('Light/Process/ApplyProcess',array('modname'=>'CgFpsm','system' => 'yxhb')),
+            'info'          => U('Light/Apply/applyInfo',array('modname'=>'CgFpsm','system'=>'yxhb')),
+        );
+        $result['kkCgFpsm'] = array(
+            'process'       => U('Light/Process/ApplyProcess',array('modname'=>'CgFpsm','system' => 'kk')),
+            'info'          => U('Light/Apply/applyInfo',array('modname'=>'CgFpsm','system'=>'kk')),
+        );
+        return $result;
+    }
 }

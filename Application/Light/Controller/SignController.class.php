@@ -130,6 +130,7 @@ extends BaseController {
                 $aid .= ",{$val['aid']}";
             };
             // $aid 退审记录
+            $id                = session($v['system'].'_id');
             $aid               = trim($aid,',');
             $map['a.app_stat'] = 0;
             $map['a.per_id']   = $id;

@@ -35,18 +35,19 @@ class KkFpsmLogic extends Model {
                                      'type'=>'date',
                                      'color' => 'black'
                                     );
-        $result['content'][] = array('name'=>'提交时间：',
-                                     'value'=> date('m-d H:i',strtotime($res['date']))  ,
-                                     'type'=>'string',
-                                     'color' => 'black'
-                                    );
-        $result['content'][] = array('name'=>'执行时间：',
-                                     'value'=>date('Y-m-d',strtotime($res['date'])),
-                                     'type'=>'string',
-                                     'color' => 'black'
-                                    );
         $logic  = D('KkCostMoney','Logic');
         $data =  $logic->record($res['dh']);
+        $result['content'][] = array('name'=>'提交时间：',
+                                     'value'=> date('m-d H:i',strtotime($data['jl_date']))  ,
+                                     'type'=>'string',
+                                     'color' => 'black'
+                                    );
+        
+        $result['content'][] = array('name'=>'执行时间：',
+                                     'value'=>date('Y-m-d',strtotime($data['jl_date'])),
+                                     'type'=>'string',
+                                     'color' => 'black'
+                                    );
         if( $data['nfylx'] == 1 ){
             $fybx = M('kk_feefy3')->where("left(dh,13)='{$data['dh']}'" )->find();
             $fylx = M('kk_fylx')->field('id as val,fy_name as name')->where(array('id' =>$fybx['nfylx']?$fybx['nfylx']:''))->order('id asc')->find(); 
@@ -59,10 +60,19 @@ class KkFpsmLogic extends Model {
                                      'type'=>'date',
                                      'color' => 'black'
                                     );
+                                    
+        $result['content'][] = array('name'=>'提交人员：',
+                                     'value'=> $data['njbr'],
+                                     'type'=>'date',
+                                     'color' => 'black'
+                                    );
         $fpsm = array('已到','未到','无票');
         $color = $data['fpsm']-1==1?'#f12e2e':'black';
+        // 补到
+        $showFpsm = $fpsm[$data['fpsm']-1];
+        if($res['stat'] == 1) $showFpsm = '补到';
         $result['content'][] = array('name'=>'发票说明：',
-                                     'value'=> $fpsm[$data['fpsm']-1],
+                                     'value'=> $showFpsm,
                                      'type'=>'date',
                                      'color' => $color
                                     );
@@ -113,12 +123,18 @@ class KkFpsmLogic extends Model {
                                         'color' => 'black'
                                         );
         }
-
+        $xgsm = $textdata['ntext']."<br/>".$res['text'];
         $result['content'][] = array('name'=>'相关说明：',
-                                     'value'=>$res['text'],
+                                     'value'=>$xgsm?$xgsm:'无',
                                      'type'=>'string',
                                      'color' => 'black'
-                                    );   
+                                    );  
+        $result['content'][] = array('name'=>'付款记录：',
+                                        'value'=>$logic->PayHmtl($res['dh']),
+                                        'type'=>'string',
+                                        'color' => 'black'
+                                        );    
+
         $imgsrc = explode('|', $res['file']) ;
         $image = array();
         $imgsrc = array_filter($imgsrc);
@@ -152,6 +168,7 @@ class KkFpsmLogic extends Model {
         $map = array('id' => $id);
         return $this->field(true)->where($map)->setField('stat',3);
     }
+  
      /**
      * 记录内容
      * @param  integer $id 记录ID
@@ -164,15 +181,13 @@ class KkFpsmLogic extends Model {
                                      'value'=> date('m-d H:i',strtotime($res['date'])) ,
                                      'type'=>'date'
                                     );
-        $result[] = array('name'=>'申请日期：',
-                                     'value'=> date('m-d',strtotime($res['date'])) ,
-                                     'type'=>'date'
-                                    );
         $logic  = D('KkCostMoney','Logic');
         $data =  $logic->record($res['dh']);
         $fpsm = array('已到','未到','无票');
+        $showFpsm = $fpsm[$data['fpsm']-1];
+        if($res['stat'] == 1) $showFpsm = '补到';
         $result[] = array('name'=>'发票说明：',
-                                        'value'=> $fpsm[$data['fpsm']-1],
+                                        'value'=> $showFpsm,
                                         'type'=>'number'
                                     );
         $fkfs = M('kk_fkfs')->field('id as val,fk_name as name')->where(array('id' =>$data['nfkfs']?$data['nfkfs']:''))->order('id asc')->find();
@@ -190,8 +205,14 @@ class KkFpsmLogic extends Model {
                                         'value'=>$res['jbr'],
                                         'type'=>'string'
                                     );
+        if( $data['nfylx'] == 1 ){
+            $textdata = M('kk_fybx')->field('nr as ntext')->where("left(dh,13)='{$data['dh']}'" )->find();
+        }else{
+            $textdata = M('kk_ykfy')->field('ykyt as ntext,skdw')->where("left(dh,13)='{$data['dh']}'" )->find();
+        }
+        $xgsm = $textdata['ntext']."<br/>".$res['text'];
         $result[] = array('name'=>'相关说明：',
-                                        'value'=>$res['text']?$res['text']:'无',
+                                        'value'=>$xgsm?$xgsm:'无',
                                         'type'=>'text'
                                     );
                                    
@@ -221,6 +242,7 @@ class KkFpsmLogic extends Model {
         $fpsm = array('已到','未到','无票');
         $second_color = $data['fpsm']-1==1?"style='color:#f12e2e'":'';
         $second_content = $fpsm[$data['fpsm']-1];
+        if($res['stat'] == 1) $second_content = '补到';
 
         $result = array(
             'first_title'    => '用款金额',
@@ -306,12 +328,63 @@ class KkFpsmLogic extends Model {
     // 费用开支内容
     public function FYrecordContent($id,$system){
         $logic  = D(ucfirst($system).'CostMoney','Logic');
-        $res    = $logic->recordContent($id,'fylx');
+        $res    = $logic->recordContent($id);
         $boss   = D($system.'Boss');
         $avatar = $boss->getAvatar($res['applyerID']);
         $res['avatar'] = $avatar;
         $res['fylx'] = $logic->getFylx();
         $res['fylxRecord'] = $logic->getFylxRecord();
+        return $res;
+    }
+    /**
+     * 获取未到发票数据
+     */
+    public function getDataOfFp(){
+        $system = I('post.system');
+        $fylx   = I('post.fylx');
+        $money  = I('post.money');
+        // 排除退审的费用开支
+        $map = array(
+            'app_stat' => 1,
+            'mod_name' => 'CostMoney',
+        );
+        $feefy = M("{$system}_appflowproc")->field('aid')->where($map)->select();
+        $feefy = array_unique($feefy);
+        $fee = array();
+        foreach($feefy as $val){
+            $fee[] = $val['aid'];
+        }
+        // 未到发票
+        $map = array(
+            'fpsm' => 2,
+            'stat' => array('gt',0),
+            'njbr' => session('name'),
+        );
+        if($fylx){
+            $map['nfylx'] = $fylx == 'bx'?1:array('gt',1);
+        }
+        if($money){
+            $map['nmoney'] = -$money;
+        }
+
+        $data = M("{$system}_feefy")->where($map)->order('jl_date desc')->select();
+        $res = array();
+        foreach($data as $val){
+            if( in_array($val['id'],$fee)) continue;
+            if( $val['nfylx'] == 1 ){
+                $textdata = M($system.'_fybx')->field('nr as ntext')->where("left(dh,13)='{$val['dh']}'" )->find();
+            }else{
+                $textdata = M($system.'_ykfy')->field('ykyt as ntext,skdw')->where("left(dh,13)='{$val['dh']}'" )->find();
+            }
+            $res[] = array(
+                'id'   => $val['id'],
+                'date' => date('Y-m-d H:i:s',strtotime($val['jl_date'])),
+                'sqlx' => $val['nfylx'] == 1?'报销费用':'用款费用',
+                'money'=> "&yen;".number_format(-$val['nmoney'],2,'.',',')."元",
+                'dh'   => $val['dh'],
+                'text' => $textdata['ntext']?$textdata['ntext']:'无',
+            );
+        }
         return $res;
     }
 

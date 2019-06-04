@@ -141,8 +141,9 @@
                         <div class="weui-cell__bd">
                             <select class="weui-select greyColor" name="type" id='fylx'>
                                 <option value='-1' disabled selected style='display:none;'>请选择费用类型</option>
-                                <option value="bx">报销费用</option>
-                                <option value="yk">用款费用</option>
+                                <option value="ycl">原材料付款申请</option>
+                                <option value="wl">物流付款申请</option>
+                                <option value="pj">配件付款申请</option>
                             </select>
                         </div>
                     </div>
@@ -256,13 +257,13 @@
             $.ajax({
                 
                 type: 'POST',
-                url: "{:U('Light/Api/FpsmApi')}",
+                url: "{:U('Light/Api/CgFpsmApi')}",
                 dataType: 'json',
                 data: {
                     fylx:fylx,
                     money:money,
                     system: "{$system}",
-                    modname: 'Fpsm',
+                    modname: 'CgFpsm',
                     action: 'getDataOfFp',
                 },
                 dataType: 'json',
@@ -322,12 +323,12 @@
             if (!params) return tooltip('请重新选择费用');
             $.ajax({
                 type: 'POST',
-                url: "{:U('Light/Api/FpsmApi')}",
+                url: "{:U('Light/Api/CgFpsmApi')}",
                 dataType: 'json',
                 data: {
                     id: params,
                     system: "{$system}",
-                    modname: 'Fpsm',
+                    modname: 'CgFpsm',
                     action: 'getContent',
                 },
                 dataType: 'json',
@@ -383,7 +384,7 @@
             toastfadeIn(200, '数据提交中');
             $.ajax({
                 type: 'POST',
-                url: "{:U('Light/Api/FpsmApi')}", //&system=yxhb&modname=CgfkApply&action=getCustomerList
+                url: "{:U('Light/Api/CgFpsmApi')}", //&system=yxhb&modname=CgfkApply&action=getCustomerList
                 dataType: 'json',
                 data: {
                     id: feeid,
@@ -392,7 +393,7 @@
                     text: reason,
                     copyto_id: $("#copyto_id").val(),
                     system: "{$system}",
-                    modname: 'Fpsm',
+                    modname: 'CgFpsm',
                     action: 'submit',
                     __hash__: hash
                 },
@@ -784,8 +785,8 @@
                 // });
                 $li.find(".weui-uploader__file-content").html("");
                 $li.find(".weui-uploader__file-content").parent().removeClass("weui-uploader__file_status");
-                $li.find('img').attr('data-original','https://www.fjyuanxin.com/yxhb/upload/fy/'+imagepath);
-                $li.find('img').attr('src','https://www.fjyuanxin.com/yxhb/upload/fy/'+imagepath);
+                $li.find('img').attr('data-original','https://www.fjyuanxin.com/sngl/upload/fy/'+imagepath);
+                $li.find('img').attr('src','https://www.fjyuanxin.com/sngl/upload/fy/'+imagepath);
                 createViewr();
                 img_num++;
                 $("#upload_nums").text(img_num);

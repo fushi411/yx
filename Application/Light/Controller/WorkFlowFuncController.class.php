@@ -970,7 +970,7 @@ class WorkFlowFuncController extends Controller {
     {
         $res = M('kk_fpsm')->where(array('id'=>$aid))->setField('stat', 1);
         $id = M('kk_fpsm')->where(array('id'=>$aid))->find();
-        $res = M('kk_feefy')->where(array('id'=>$id['dh']))->setField('stat', 1);
+        $res = M('kk_feefy')->where(array('id'=>$id['dh']))->setField('fpsm', 1);
         $resArr = $res?array("status"=>"success"):array("status"=>"failure");
         return $resArr;
     }
@@ -983,9 +983,38 @@ class WorkFlowFuncController extends Controller {
     {
         $res = M('yxhb_fpsm')->where(array('id'=>$aid))->setField('stat', 1);
         $id = M('yxhb_fpsm')->where(array('id'=>$aid))->find();
-        $res = M('yxhb_feefy')->where(array('id'=>$id['dh']))->setField('stat', 1);
+        $res = M('yxhb_feefy')->where(array('id'=>$id['dh']))->setField('fpsm', 1);
         $resArr = $res?array("status"=>"success"):array("status"=>"failure");
         return $resArr;
     }
+     /**
+     * 新增对账单
+     * @param  [integre] $aid [记录ID]
+     * @return [array]      [状态]
+     */
+    public function KkCgFpsmEnd($aid)
+    {
+        $res = M('kk_fpsm')->where(array('id'=>$aid))->setField('stat', 1);
+        $id = M('kk_fpsm')->where(array('id'=>$aid))->find();
+        $res = M('kk_cgfksq')->where(array('id'=>$id['dh']))->setField('fpsm', 1);
+        M('kk_feecg')->where(array('sqdh',$id['dh']))->setField('fpsm',1);
+        $resArr = $res?array("status"=>"success"):array("status"=>"failure");
+        return $resArr;
+    }
+    /**
+     * 新增对账单
+     * @param  [integre] $aid [记录ID]
+     * @return [array]      [状态]
+     */
+    public function YxhbCgFpsmEnd($aid)
+    {
+        $res = M('yxhb_fpsm')->where(array('id'=>$aid))->setField('stat', 1);
+        $id = M('yxhb_fpsm')->where(array('id'=>$aid))->find();
+        $res = M('yxhb_cgfksq')->where(array('id'=>$id['dh']))->setField('fpsm', 1);
+        M('yxhb_feecg')->where(array('sqdh',$id['dh']))->setField('fpsm',1);
+        $resArr = $res?array("status"=>"success"):array("status"=>"failure");
+        return $resArr;
+    }
+    
 // -----END------
 }

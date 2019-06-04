@@ -235,14 +235,14 @@ class WorkFlowOpTvController extends BaseController {
 	public function sendMsg($system,$apply_id,$mod_name,$option){
         $logic = D(ucfirst($system).$mod_name, 'Logic');
         $res   = $logic->recordContent($apply_id);
-        $systemName = array('kk'=>'建材', 'yxhb'=>'环保');
+		$systemName = array('kk'=>'建材', 'yxhb'=>'环保');
+		$seek = D('Seek');
         // 微信发送
         $WeChat = new \Org\Util\WeChat;
-        
         $descriptionData = $logic->getDescription($apply_id);
 
 		$allArr = D($system.'Appflowtable')->getAllProc($mod_name);
-		$title  = $allArr['title'];
+		$title  = $seek->getTitle($mod_name,$system);
         $url    = "https://www.fjyuanxin.com/WE/index.php?m=Light&c=Apply&a=applyInfo&system=".$system."&aid=".$apply_id."&modname=".$mod_name;
 		
         if($option == 1 ){

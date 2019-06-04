@@ -287,8 +287,8 @@ class LoginController extends \Think\Controller {
         $systemName = array('kk'=>'建材', 'yxhb'=>'环保');
       // 微信发送
         $flowTable = M($system.'_appflowtable');
-        $mod_cname = $flowTable->getFieldByProMod($flowName, 'pro_name');
-        $mod_cname = str_replace('表','',$mod_cname);
+        $seek = D('Seek');
+        $mod_cname  = $seek->getTitle($flowName,$system);
         $title = $systemName[$system].$mod_cname.'(催收)';
         if($system == 'kk' && $flowName == 'AddMoneyQtTz') $title = '投资'.$mod_cname.'(催收)';
         $url = "https://www.fjyuanxin.com/WE/index.php?m=Light&c=Apply&a=applyInfo&system=".$system."&aid=".$id."&modname=".$flowName;

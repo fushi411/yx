@@ -3,9 +3,6 @@
 <!-- 去除不可选择日期 -->
 <block name="disable_date"></block>
 <block name="able_date"></block>
-<!-- 去除不可选择日期 end-->
-<block name="system"></block>
-
 <block name="content_body">
     <style>
         body .weui-form-preview__value {
@@ -45,7 +42,7 @@
             bottom: 10px;
             position: fixed;
             text-align: center;
-            z-index: 9;
+            z-index: 999;
         }
 
         label {
@@ -72,70 +69,108 @@
         }
     </style>
     <input type="hidden" id="ratio" value="ratio">
-    <div class="weui-tab" style="height:auto">
-        <div class="weui-tab__panel" style="height:auto;padding-bottom: 0">
-            <div class="weui-panel weui-panel_access">
-                <!-- <div class="weui-panel__hd">审批信息</div> -->
-                <div class="weui-panel__bd">
-                    <div class="weui-media-box weui-media-box_small-appmsg">
-                        <div class="weui-cells">
-                            <span class="weui-media-box weui-media-box_appmsg">
-                                <div class="weui-media-box__bd" id="apply_status">
-                                    <div
-                                        style="display: flex;flex-direction: row;align-items: center;margin-bottom: 1em;">
-                                        <img class="weui-media-box__thumb" src="" alt="" id='avatar'
-                                            style="border-radius: 5px;width: 2.5em;height: 2.5em;margin-right: 1em;">
-                                        <h4 class="weui-media-box__title" style="font-weight: 800;font-size:20px;"
-                                            id='title'>
-                                            测试测试的费用开支</h4>
-                                        <span class="label label-success"
-                                            style="margin-left: 1em;padding-top: 0.3em;padding-bottom: 0.2em">已通过</span>
-                                    </div>
-                                    <div id='content_costmoney'>
-
-                                    </div>
-                                </div>
-                            </span>
+    <div class="weui-cells" id="content1">
+        <div class="weui-cell weui-cell_select weui-cell_select-after">
+            <div class="weui-cell__hd">
+                <label class="weui-label">费用选择&nbsp;&nbsp;
+                    <span style="color:red;">*</span>
+                </label>
+            </div>
+            <div class="weui-cell__bd">
+                <input class="weui-select " type="text" readonly id="select_ycl" style="color: #337ab7;" value="点击选择费用" />
+            </div>
+        </div>
+        <div class="weui-panel__bd weui-cell" style="padding:0">
+            <div class="weui-media-box weui-media-box_small-appmsg">
+                <div class="weui-cells">
+                    <span class="weui-media-box weui-media-box_appmsg">
+                        <div class="weui-media-box__bd" id="apply_status">
+                            <div id='content_costmoney'>
+                                    <p class="weui-media-box__desc weui-flex"><span>自动填写</span></p>
+                            </div>
                         </div>
-                    </div>
-                </div>
-                <div id='fj'>
-                    <div class="weui-cell">
-                        <div class="weui-cell__hd">
-                            <label class="weui-label" style="width: 100%;">附件&nbsp;&nbsp;
-                            </label>
-                        </div>
-                    </div>
-                    <div class="weui-cell">
-                        <div class="weui-uploader__bd">
-                            <ul class="weui-uploader__files " id="viewer"  style="margin-bottom: 0px;float: left;">
-                            </ul>
-                        </div>
-                    </div>
+                    </span>
                 </div>
             </div>
-           
-            <div class="weui-cells weui-cells_form">
-                <div class="weui-cell">
-                    <div class="weui-cell__hd">
-                        <label class="weui-label" style="width: 100%;">附件上传&nbsp;&nbsp;
-                            <span style="color:red;">*</span>
-                            <span style="color: #f12e2e;font-size: 14px;">（点击+号，可查看或删除附件）</span>
-                        </label>
+        </div>
+        <div id='fj' style="display: none;">
+            <div class="weui-cell">
+                <div class="weui-cell__hd">
+                    <label class="weui-label" style="width: 100%;">附件&nbsp;&nbsp;
+                    </label>
+                </div>
+            </div>
+            <div class="weui-cell">
+                <div class="weui-uploader__bd">
+                    <ul class="weui-uploader__files " id="viewer"  style="margin-bottom: 0px;float: left;">
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="weui-cells weui-cells_form">
+        <div class="weui-cell">
+            <div class="weui-cell__hd">
+                <label class="weui-label" style="width: 100%;">附件上传&nbsp;&nbsp;
+                    <span style="color:red;">*</span>
+                    <span style="color: #f12e2e;font-size: 14px;">（点击+号，可查看或删除附件）</span>
+                </label>
+            </div>
+        </div>
+        <div class="weui-cell">
+            <div class="weui-uploader__bd">
+                <ul class="weui-uploader__files " id="uploaderFiles" style="margin-bottom: 0px;float: left;">
+                </ul>
+                <div class="weui-uploader__input-box" style="margin-top: 5px;">
+                    <input onclick="imgUpload()" class="weui-uploader__input" />
+                    <input id="uploaderInput" class="weui-uploader__input" type="file" accept="image/*" name="file_image[]" multiple style="display: none;"/>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="other_page" id="other_page" style='display: none;'>
+        <div class="container">
+            <div class="page js_show">
+                    <div class="weui-cells weui-cells_form">
+                    <div class="weui-cell weui-cell_select weui-cell_select-after">
+                        <div class="weui-cell__hd">
+                            <label class="weui-label">
+                                <span class="">费用类型</span>&nbsp;&nbsp;
+                            </label>
+                        </div>
+                        <div class="weui-cell__bd">
+                            <select class="weui-select greyColor" name="type" id='fylx'>
+                                <option value='-1' disabled selected style='display:none;'>请选择费用类型</option>
+                                <option value="bx">报销费用</option>
+                                <option value="yk">用款费用</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="weui-cell weui-cell_select weui-cell_select-after ">
+                        <div class="weui-cell__hd">
+                            <label class="weui-label" >用款金额&nbsp;&nbsp;
+                            </label>
+                        </div>
+                        <div class="weui-cell__bd">
+                            <input class="weui-select peibi scale" type="number" name="Num" id="number" placeholder="请输入费用金额">
+                        </div>
                     </div>
                 </div>
-                <div class="weui-cell">
-                    <div class="weui-uploader__bd">
-                        <ul class="weui-uploader__files " id="uploaderFiles" style="margin-bottom: 0px;float: left;">
-                        </ul>
-                        <div class="weui-uploader__input-box" style="margin-top: 5px;">
-                            <input onclick="imgUpload()" class="weui-uploader__input" />
-                            <input id="uploaderInput" class="weui-uploader__input" type="file" accept="image/*" name="file_image[]" multiple style="display: none;"/>
+                <div class="weui-cells weui-cells_form" id="order_select" style="margin-top: 0;min-height: 101%">    
+                    <div class="page__bd">
+                        <div class="weui-cells searchbar-result" id="order_searchResult" style="background-color:#f8f8f8;margin-top:0;">
+
                         </div>
+                        <div class="no-more">信息已经到底...</div>
+                        <div class="load-more">点我加载更多...</div>
                     </div>
                 </div>
             </div>
         </div>
+    </div>
+    <div id="btn-all">
+        <a href="javascript:;" class="weui-btn weui-btn_mini weui-btn_primary">返回</a>
+    </div>
 </block>
 <block name="Process">
     <div class="weui-cells__title">签收人员选择
@@ -170,7 +205,6 @@
 
 </block>
 
-
 <block name='js'>
     <div class="weui-gallery" id="gallery">
             <span class="weui-gallery__img" id="galleryImg"></span>
@@ -195,7 +229,95 @@
     <script src="__PUBLIC__/assets/js/base64_js.js"></script>
     <script>
         var params = getQueryString('id');
-        getContent(params);
+        var feeid = params;
+        // 页面的隐藏显示
+        $('#select_ycl').click(function(){
+            if(params) return;
+            $('#other_page').show();
+            $('#btn-all').show();
+        });
+        $('#btn-all').click(function(){
+            $('#other_page').hide();
+            $('#btn-all').hide();
+        });
+
+        if(!params){
+            getDataOfFp();
+        }
+        $('#fylx').change(function(){
+            getDataOfFp();
+        });
+        $('#number').change(function(){
+            getDataOfFp();
+        });
+        function getDataOfFp(){
+            var fylx = $('#fylx').val();
+            var money = $('#number').val();
+            $.ajax({
+                
+                type: 'POST',
+                url: "{:U('Light/Api/FpsmApi')}",
+                dataType: 'json',
+                data: {
+                    fylx:fylx,
+                    money:money,
+                    system: "{$system}",
+                    modname: 'Fpsm',
+                    action: 'getDataOfFp',
+                },
+                dataType: 'json',
+                success: function (res) {
+                    if(res.length == 0) {
+                        $('#order_searchResult').html('');
+                        $('.no-more').show();
+                        return tooltip('暂无未到发票记录');
+                    }else{
+                        $('.no-more').hide();
+                    }
+                    makeResHtml(res);
+                }
+            });
+        }
+    function makeResHtml(data) {
+            var html = '';
+            for (i = 0; i < data.length; i++) {
+                idx = data[i]['id'];
+                html += '<div class="weui-cell__bd weui-cell_primary fhindex"  index="' + idx + '">' +
+                    '<div class="weui-cells__title">' + data[i]['date'] + ' <span style="float: right;">' + data[i]['dh'] + '</span></div>' +
+                    '<div class="weui-form-preview">' +
+                    '<div class="weui-form-preview__bd">' +
+                    '<div class="weui-form-preview__item">' +
+                    '<label class="weui-form-preview__label">费用类型</label>' +
+                    '<span class="weui-form-preview__value" style="text-align:left;">' + data[i]['sqlx'] + '</span>' +
+                    '</div>' +
+                    '<div class="weui-flex">' +
+                    '<div class="weui-form-preview__item weui-flex__item">' +
+                    '<label class="weui-form-preview__label">用款金额</label>' +
+                    '<span class="weui-form-preview__value" style="text-align:left;">' + data[i]['money'] + '</span>' +
+                    '</div>' +
+                    '</div>' +
+                    '<div class="weui-flex">' +
+                    '<div class="weui-form-preview__item weui-flex__item">' +
+                    '<label class="weui-form-preview__label">相关说明</label>' +
+                    '<span class="weui-form-preview__value" style="text-align:left;">' + data[i]['text'] + '</span>' +
+                    '</div>' +
+                    '</div>' +
+                    '</div>' +
+                    '</div>' +
+                    '</div>';
+            }
+           
+            $('#order_searchResult').html(html);
+            $('.fhindex').click(function () {
+                feeid = $(this).attr('index');
+                getContent(feeid);
+                $('#other_page').hide();
+                $('#btn-all').hide();
+            });
+        }
+        if(params){
+            getContent(params);
+        }
         function getContent(params) {
             if (!params) return tooltip('请重新选择费用');
             $.ajax({
@@ -210,24 +332,31 @@
                 },
                 dataType: 'json',
                 success: function (res) {
-                    $('#avatar').attr('src', res['avatar']);
-                    $('#title').text(res['applyerName'] + '的费用开支');
                     makeHtml(res['content']);
                     makefjHtml(res['imgsrc']);
                 }
             });
         }
-
+        var viewer_conut = 0;
         function makefjHtml(data) {
-            if (data.length == 0) return $('#fj').remove();
+            if (data.length > 0){ 
+                 $('#fj').show();
+            }else{
+                return $('#fj').hide();
+            }
             $html = '';
             for (k in data) {
+               
                 $html += '<img src="' + data[k] + '" class="fjys" data-original="' + data[k] + '" >';
             }
             $('#viewer').html($html);
-            $('#viewer').viewer({
-                url: 'data-original',
-            });
+            if(viewer_conut == 0){
+                $('#viewer').viewer({
+                    url: 'data-original',
+                });
+                viewer_conut++;
+            }
+            $('#viewer').viewer('update');
         }
         function makeHtml(data) {
             $html = '';
@@ -240,7 +369,6 @@
             $('#content_costmoney').html($html);
         }
         $('#submit').click(function () {
-            if (!params) return tooltip('请联系管理员');
             var fylx = $('#sqlx').val(),
             file_names = $('#file_names').val();
             if (!file_names ) return tooltip('至少上传一张图片');
@@ -258,7 +386,7 @@
                 url: "{:U('Light/Api/FpsmApi')}", //&system=yxhb&modname=CgfkApply&action=getCustomerList
                 dataType: 'json',
                 data: {
-                    id: params,
+                    id: feeid,
                     sign: ids,
                     imagepath:file_names,
                     text: reason,

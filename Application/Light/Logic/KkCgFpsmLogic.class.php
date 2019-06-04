@@ -7,9 +7,9 @@ use Think\Model;
  * @author 
  */
 
-class YxhbFpsmLogic extends Model {
+class KkCgFpsmLogic extends Model {
     // 实际表名
-    protected $trueTableName = 'yxhb_fpsm';
+    protected $trueTableName = 'kk_fpsm';
 
     /**
      * 记录内容
@@ -31,116 +31,98 @@ class YxhbFpsmLogic extends Model {
     {
         $res = $this->record($id);
         $result['content'][] = array('name'=>'申请单位：',
-                                     'value'=>'环保发票上传',
+                                     'value'=>'建材采购发票上传',
                                      'type'=>'date',
                                      'color' => 'black'
                                     );
-        $logic  = D('YxhbCostMoney','Logic');
-        $data =  $logic->record($res['dh']);
+        $data    = M("kk_cgfksq")->where(array('id'=>$res['dh']))->find();
         $result['content'][] = array('name'=>'提交时间：',
-                                     'value'=> date('m-d H:i',strtotime($data['jl_date']))  ,
+                                     'value'=> date('m-d H:i',strtotime($data['date']))  ,
                                      'type'=>'string',
                                      'color' => 'black'
                                     );
-
-        $result['content'][] = array('name'=>'执行时间：',
-                                     'value'=>date('Y-m-d',strtotime($data['jl_date'])),
-                                     'type'=>'string',
-                                     'color' => 'black'
-                                    );
-        if( $data['nfylx'] == 1 ){
-            $fybx = M('yxhb_feefy3')->where("left(dh,13)='{$data['dh']}'" )->find();
-            $fylx = M('yxhb_fylx')->field('id as val,fy_name as name')->where(array('id' =>$fybx['nfylx']?$fybx['nfylx']:''))->order('id asc')->find(); 
+        if($data['fylx'] == 1){
+            $clientname = M('kk_gys')->field('g_name')->where(array('id' => $data['gys']))->find();
+            $suffix = "(汽运)";
+            if($data['htlx'] == '海运') $suffix = "(海运)";
+            $clientname['g_name'] .= $suffix;
+            $nfylx = '原材料采购付款';
+        }elseif($data['fylx'] == 2 || $data['fylx'] == 4|| $data['fylx'] == 7){
+            $clientname = M('kk_wl')->field('g_name')->where(array('id' => $data['gys']))->find();
+            $nfylx = '物流采购付款';
         }else{
-            $fylx = M('yxhb_fylx')->field('id as val,fy_name as name')->where(array('id' =>$data['nfylx']?$data['nfylx']:''))->order('id asc')->find(); 
+            $clientname = array( 'g_name' => $data['pjs']);
+            $nfylx = '配件采购付款';
         }
- 
+      
+        $result['content'][] = array('name'=>'执行时间：',
+                                     'value'=>date('Y-m-d',strtotime($data['date'])),
+                                     'type'=>'string',
+                                     'color' => 'black'
+                                    );
+                                    
         $result['content'][] = array('name'=>'申请类型：',
-                                     'value'=> $data['nfylx'] == 1?'报销费用':'用款费用',
+                                     'value'=> $nfylx,
                                      'type'=>'date',
                                      'color' => 'black'
                                     );
         $result['content'][] = array('name'=>'提交人员：',
-                                     'value'=> $data['njbr'],
+                                     'value'=> $data['rdy'],
                                      'type'=>'date',
                                      'color' => 'black'
                                     );
+        $result['content'][] = array('name'=>'客户名称：',
+                                     'value'=>$clientname['g_name'],
+                                     'type'=>'string',
+                                     'color' => 'black'
+                                    );
+        $result['content'][] = array('name'=>'付款金额：',
+                                    'value'=>"&yen;".number_format($data['fkje'],2,'.',',')."元",
+                                    'type'=>'number',
+                                    'color' => 'black;font-weight: 600;'
+                                   );
+       $result['content'][] = array('name'=>'大写金额：',
+                                    'value'=>cny($data['fkje']),
+                                    'type'=>'string',
+                                    'color' => 'black'
+                                   );
+       $fpsm = array('已到','未到','无票');
+       $color = $data['fpsm']-1==1?'#f12e2e':'black';
+       $showFpsm = $fpsm[$data['fpsm']-1];
+       if($res['stat'] == 1) $showFpsm = '补到';
+       $result['content'][] = array('name'=>'发票说明：',
+                                    'value'=> $showFpsm,
+                                    'type'=>'date',
+                                    'color' => $color
+                                   );
+       $fkfs = '暂无';
+       if($data['fkfs'] == 4 ){
+           $fkfs = '现金';
+       }elseif($data['fkfs'] == 2 ){
+           $fkfs = '公户';
+       }elseif ($data['fkfs'] == 3 ) {
+           $fkfs = '汇票';
+       }
+       $result['content'][] = array('name'=>'付款方式：',
+                                    'value'=>$fkfs,
+                                    'type'=>'string',
+                                    'color' => 'black'
+                                   );                                    
+        $xgsm = $data['zy']."<br/>".$res['text'];                 
+       $result['content'][] = array('name'=>'相关说明：',
+                                    'value'=>$xgsm?$xgsm :'无',
+                                    'type'=>'text',
+                                    'color' => 'black'
+                                   );
 
-        $fpsm = array('已到','未到','无票');
-        $color = $data['fpsm']-1==1?'#f12e2e':'black';
-        $showFpsm = $fpsm[$data['fpsm']-1];
-        if($res['stat'] == 1) $showFpsm = '补到';
-        $result['content'][] = array('name'=>'发票说明：',
-                                     'value'=> $showFpsm,
-                                     'type'=>'date',
-                                     'color' => $color
-                                    );
-        $result['content'][] = array('name'=>'费用类型：',
-                                     'value'=> $fylx['name']?$fylx['name']:'未提交',
-                                     'type'=>'date',
-                                     'color' => 'black'
-                                    );
-        
-        $fkfs = M('yxhb_fkfs')->field('id as val,fk_name as name')->where(array('id' =>$data['nfkfs']?$data['nfkfs']:''))->order('id asc')->find();
-        
-        $result['content'][] = array('name'=>'付款方式：',
-                                     'value'=>$fkfs['name']?$fkfs['name']:'未提交' ,
-                                     'type'=>'string',
-                                     'color' => 'black'
-                                    );
-        $result['content'][] = array('name'=>'用款金额：',
-                                     'value'=> "&yen;".number_format(-$data['nmoney'],2,'.',',')."元"  ,
-                                     'type'=>'string',
-                                     'color' => 'black;font-weight: 600;'
-                                    );
-        $result['content'][] = array('name'=>'大写金额：',
-                                     'value'=>cny( -$data['nmoney'] ),
-                                     'type'=>'number',
-                                     'color' => 'black; '
-                                    );
-        if( $data['nfylx'] == 0 ){
-            $textdata = M('yxhb_fybx')->field('nr as ntext')->where("left(dh,13)='{$data['dh']}'" )->find();
-        }else{
-            $textdata = M('yxhb_ykfy')->field('ykyt as ntext,skdw')->where("left(dh,13)='{$data['dh']}'" )->find();
-        }
-        if($res['nfylx'] != 0){
-            $skdw = $data['skdw']?$data['skdw']:'无';
-            $result['content'][] = array('name'=>'收款单位：',
-                                        'value'=>$textdata['skdw']?$textdata['skdw']:$skdw,
-                                        'type'=>'string',
-                                        'color' => 'black'
-                                        );
-
-            $result['content'][] = array('name'=>'收款账号：',
-                                        'value'=>$data['skzh']?$data['skzh']:'无',
-                                        'type'=>'string',
-                                        'color' => $data['skzh']?'black;font-weight:550;':'black',
-                                        );    
-            $result['content'][] = array('name'=>'开户银行：',
-                                        'value'=>$data['khyh']?$data['khyh']:'无',
-                                        'type'=>'string',
-                                        'color' => 'black'
-                                        );
-        }
-        $xgsm = $textdata['ntext']."<br/>".$res['text'];
-        $result['content'][] = array('name'=>'相关说明：',
-                                     'value'=>$xgsm?$xgsm:'无',
-                                     'type'=>'string',
-                                     'color' => 'black'
-                                    );   
-        $result['content'][] = array('name'=>'付款记录：',
-                                        'value'=>$logic->PayHmtl($res['dh']),
-                                        'type'=>'string',
-                                        'color' => 'black'
-                                        );   
         $imgsrc = explode('|', $res['file']) ;
         $image = array();
         $imgsrc = array_filter($imgsrc);
         foreach ($imgsrc as $key => $value) {
-            $image[] = 'http://www.fjyuanxin.com/yxhb/upload/fy/'.$value;
+            $image[] = 'http://www.fjyuanxin.com/sngl/upload/fy/'.$value;
         }
         $result['imgsrc'] = $image;
-        $result['applyerID'] = D('YxhbBoss')->getIDFromName($res['jbr']);
+        $result['applyerID'] = D('KkBoss')->getIDFromName($res['jbr']);
         $result['applyerName'] = $res['jbr'];
         $result['stat'] = $res['stat'];
         return $result;
@@ -153,6 +135,11 @@ class YxhbFpsmLogic extends Model {
      */
     public function delRecord($id)
     {
+        $res = $this->record($id);
+        // 已签收通过的 
+        if( $res['stat'] == 1){
+            M('kk_feecg')->where(array('sqdh',$res['dh']))->setField('fpsm',2);
+        }
         $map = array('id' => $id);
         return $this->field(true)->where($map)->setField('stat',0);
     }
@@ -174,13 +161,11 @@ class YxhbFpsmLogic extends Model {
     public function getDescription($id){
         $res = $this->record($id);
         $result = array();
+        $data    = M("kk_cgfksq")->where(array('id'=>$res['dh']))->find();
         $result[] = array('name'=>'提交时间：',
-                                     'value'=> date('m-d H:i',strtotime($res['date'])) ,
+                                     'value'=> date('m-d H:i',strtotime($date['date'])) ,
                                      'type'=>'date'
                                     );
-       
-        $logic  = D('YxhbCostMoney','Logic');
-        $data =  $logic->record($res['dh']);
         $fpsm = array('已到','未到','无票');
         $showFpsm = $fpsm[$data['fpsm']-1];
         if($res['stat'] == 1) $showFpsm = '补到';
@@ -188,14 +173,21 @@ class YxhbFpsmLogic extends Model {
                                         'value'=> $showFpsm,
                                         'type'=>'number'
                                     );
-        $fkfs = M('yxhb_fkfs')->field('id as val,fk_name as name')->where(array('id' =>$data['nfkfs']?$data['nfkfs']:''))->order('id asc')->find();
+        $fkfs = '暂无';
+        if($data['fkfs'] == 4 ){
+            $fkfs = '现金';
+        }elseif($data['fkfs'] == 2 ){
+            $fkfs = '公户';
+        }elseif ($data['fkfs'] == 3 ) {
+            $fkfs = '汇票';
+        }
         $result[] = array('name'=>'付款方式：',
-                                        'value'=>$fkfs['name']?$fkfs['name']:'未提交',
+                                        'value'=>$fkfs,
                                         'type'=>'number'
                                     );
-
+        
         $result[] = array('name'=>'用款金额：',
-                                        'value'=> number_format(-$data['nmoney'],2,'.',',')."元",
+                                        'value'=> number_format($data['fkje'],2,'.',',')."元",
                                         'type'=>'number'
                                     );
 
@@ -203,14 +195,9 @@ class YxhbFpsmLogic extends Model {
                                         'value'=>$res['jbr'],
                                         'type'=>'string'
                                     );
-        if( $data['nfylx'] == 0 ){
-            $textdata = M('yxhb_fybx')->field('nr as ntext')->where("left(dh,13)='{$data['dh']}'" )->find();
-        }else{
-            $textdata = M('yxhb_ykfy')->field('ykyt as ntext,skdw')->where("left(dh,13)='{$data['dh']}'" )->find();
-        }
-        $xgsm = $textdata['ntext']." ".$res['text'];
+        $xgsm = $data['zy']." ".$res['text'];  
         $result[] = array('name'=>'相关说明：',
-                                        'value'=>$xgsm?$xgsm:'无',
+                                        'value'=>$xgsm?$xgsm :'无',
                                         'type'=>'text'
                                     );
                                    
@@ -235,15 +222,15 @@ class YxhbFpsmLogic extends Model {
      */
     public function sealNeedContent($id){
         $res = $this->record($id);
-        $logic  = D('YxhbCostMoney','Logic');
-        $data =  $logic->record($res['dh']);
+        $data    = M("kk_cgfksq")->where(array('id'=>$res['dh']))->find();
         $fpsm = array('已到','未到','无票');
         $second_color = $data['fpsm']-1==1?"style='color:#f12e2e'":'';
         $second_content = $fpsm[$data['fpsm']-1];
         if($res['stat'] == 1) $second_content = '补到';
+
         $result = array(
             'first_title'    => '用款金额',
-            'first_content'  => "&yen;".number_format(-$data['nmoney'],2,'.',',')."元",
+            'first_content'  => "&yen;".number_format($data['fkje'],2,'.',',')."元",
             'second_title'   => '发票说明',
             'second_color'   => $second_color,
             'second_content' => $second_content,
@@ -278,21 +265,22 @@ class YxhbFpsmLogic extends Model {
             'file' => $imagepath,
             'jbr'  => session('name'),
             'date' => date('Y-m-d H:i:s'),
+            'type' => 2,
 		);
-        if(!M('yxhb_fpsm')->autoCheckToken($_POST)) return array('code' => 404,'msg' => '网络延迟，请勿点击提交按钮！');
+        if(!M('kk_fpsm')->autoCheckToken($_POST)) return array('code' => 404,'msg' => '网络延迟，请勿点击提交按钮！');
 
-        $result = M('yxhb_fpsm')->add($fpsm);
+        $result = M('kk_fpsm')->add($fpsm);
         if(!$result) return array('code' => 404,'msg' =>'提交失败，请刷新页面重新尝试！');
         // 抄送
         $copyto_id = trim($copyto_id,',');
         if (!empty($copyto_id)) {
             // 发送抄送消息
-            D('YxhbAppcopyto')->copyTo($copyto_id,'Fpsm', $result);
+            D('KkAppcopyto')->copyTo($copyto_id,'CgFpsm', $result);
         }
         // 签收通知
         $all_arr = array();
         foreach($sign_arr as $val){
-            $per_name = M('yxhb_boss')->where(array('wxid'=>$val))->Field('name,id')->find();
+            $per_name = M('kk_boss')->where(array('wxid'=>$val))->Field('name,id')->find();
             $data = array(
                 'pro_id'        => 31,
                 'aid'           => $result,
@@ -303,7 +291,7 @@ class YxhbFpsmLogic extends Model {
                 'app_word'      => '',
                 'time'          => date('Y-m-d H:i',time()),
                 'approve_time'  => '0000-00-00 00:00:00',
-                'mod_name'      => 'Fpsm',
+                'mod_name'      => 'CgFpsm',
                 'app_name'      => '签收',
                 'apply_user'    => '',
                 'apply_user_id' => 0, 
@@ -312,8 +300,8 @@ class YxhbFpsmLogic extends Model {
             $all_arr[]=$data;
         }
         $boss_id = implode('|',$sign_arr);
-        M('yxhb_appflowproc')->addAll($all_arr);
-        D('WxMessage')->ProSendCarMessage('yxhb','Fpsm',$result,$boss_id,session('yxhb_id'),'QS');
+        M('kk_appflowproc')->addAll($all_arr);
+        D('WxMessage')->ProSendCarMessage('kk','CgFpsm',$result,$boss_id,session('kk_id'),'QS');
         return array('code' => 200,'msg' => '提交成功' , 'aid' =>$result);
     }
      
@@ -324,16 +312,18 @@ class YxhbFpsmLogic extends Model {
     }
     // 费用开支内容
     public function FYrecordContent($id,$system){
-        $logic  = D(ucfirst($system).'CostMoney','Logic');
+        $res    = M("{$system}_cgfksq")->where(array('id'=>$id))->find();
+        if($res['fylx'] == 1){
+            $mod = 'CgfkApply';
+        }elseif($res['fylx'] == 2 || $res['fylx'] == 4|| $res['fylx'] == 7){
+            $mod = 'WlCgfkApply';
+        }else{
+            $mod = 'PjCgfkApply';
+        }    
+        $logic  = D(ucfirst($system).$mod,'Logic');
         $res    = $logic->recordContent($id);
-        $boss   = D($system.'Boss');
-        $avatar = $boss->getAvatar($res['applyerID']);
-        $res['avatar'] = $avatar;
-        $res['fylx'] = $logic->getFylx();
-        $res['fylxRecord'] = $logic->getFylxRecord();
         return $res;
     }
-
     /**
      * 获取未到发票数据
      */
@@ -344,7 +334,7 @@ class YxhbFpsmLogic extends Model {
         // 排除退审的费用开支
         $map = array(
             'app_stat' => 1,
-            'mod_name' => 'CostMoney',
+            'mod_name' => array(array('eq','CgfkApply'),array('eq','WlCgfkApply'),array('eq','PjCgfkApply'),'or'),
         );
         $feefy = M("{$system}_appflowproc")->field('aid')->where($map)->select();
         $feefy = array_unique($feefy);
@@ -356,30 +346,42 @@ class YxhbFpsmLogic extends Model {
         $map = array(
             'fpsm' => 2,
             'stat' => array('gt',0),
-            'njbr' => session('name'),
+            'rdy' => session('name'),
         );
         if($fylx){
-            $map['nfylx'] = $fylx =='bx'?0:array('gt',0);
+            if($fylx=='ycl'){
+                $map['fylx'] = '1';
+            }elseif($fylx=='wl'){
+                $map['fylx'] = array(array('eq',2),array('eq',7),array('eq',4),'or');
+            }else{
+                $map['fylx'] = 6;
+            }
         }
-        if($money) $map['nmoney'] = -$money;
-        $data = M("{$system}_feefy")->where($map)->order('jl_date desc')->select();
+        if($money){
+            $map['fkje'] = $money;
+        }
+
+        $data = M("{$system}_cgfksq")->where($map)->order('zd_date desc')->select();
         $res = array();
         foreach($data as $val){
             if( in_array($val['id'],$fee)) continue;
-            if( $val['nfylx'] == 0 ){
-                $textdata = M($system.'_fybx')->field('nr as ntext')->where("left(dh,13)='{$val['dh']}'" )->find();
+            if($val['fylx'] == 1){
+                $nfylx = '原材料采购付款';
+            }elseif($val['fylx'] == 2 || $val['fylx'] == 4|| $val['fylx'] == 7){
+                $nfylx = '物流采购付款';
             }else{
-                $textdata = M($system.'_ykfy')->field('ykyt as ntext,skdw')->where("left(dh,13)='{$val['dh']}'" )->find();
+                $nfylx = '配件采购付款';
             }
             $res[] = array(
                 'id'   => $val['id'],
-                'date' => date('Y-m-d H:i:s',strtotime($val['jl_date'])),
-                'sqlx' => $val['nfylx'] == 1?'报销费用':'用款费用',
-                'money'=> "&yen;".number_format(-$val['nmoney'],2,'.',',')."元",
+                'date' => date('Y-m-d H:i:s',strtotime($val['zd_date'])),
+                'sqlx' => $nfylx,
+                'money'=> "&yen;".number_format($val['fkje'],2,'.',',')."元",
                 'dh'   => $val['dh'],
-                'text' => $textdata['ntext']?$textdata['ntext']:'无',
+                'text' => $val['zy']?$val['zy']:'无',
             );
         }
         return $res;
     }
+
 }

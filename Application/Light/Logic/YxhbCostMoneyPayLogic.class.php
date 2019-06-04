@@ -174,7 +174,7 @@ class YxhbCostMoneyPayLogic extends Model {
             'nmoney'  => -$bcfk,
             'nbank'   => $bank,
             'sj_date' => $date,
-            'jl_date' => $date, 
+            'jl_date' => date('Y-m-d H:i:s'), 
             'npeople' => session('name'),
             'ntext'   => $bz,
             'nfkfs'   => $fkfs,

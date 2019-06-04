@@ -391,4 +391,13 @@ class ApiController extends BaseController {
         $res = $logic->$action();
         $this->ajaxReturn($res);
     }
+    public function CgFpsmApi(){
+        $system = I('system');
+        $mod    = I('modname');
+        $action = I('action');
+        $logic = D(ucfirst($system).$mod ,'Logic');
+        $res = $logic->$action();
+        $this->ajaxReturn($res);
+    }
+    
 }

@@ -107,8 +107,9 @@ class YxhbAppcopytoModel extends Model {
         $url_mod = $ture_mod == ''?$mod_name:$ture_mod;
         $recevier = str_replace(',', '|', $cpid);
         $flowTable = M('yxhb_appflowtable');
-        $mod_cname = $flowTable->getFieldByProMod($mod_name, 'pro_name');
-        $title = '环保'.str_replace('表','',$mod_cname);
+        $seek = D('Seek');
+        $mod_cname = $seek->getTitle($mod_name,'yxhb');
+        $title = '环保'.$mod_cname;
         $copy_man = session('name');
         $WeChat = new \Org\Util\WeChat;
         $url = "https://www.fjyuanxin.com/WE/index.php?m=Light&c=Apply&a=applyInfo&system=yxhb&aid=".$aid."&modname=".$url_mod;    
@@ -127,16 +128,13 @@ class YxhbAppcopytoModel extends Model {
             $recevierArr = array_merge(array_diff($recevierArr, array($applyerID)));
             $recevier     = implode('|',$recevierArr);
             $cpid = implode(',',$recevierArr);
-            $title = str_replace('表','',$mod_cname);
-            $title    = str_replace('申请','',$title);
-            $title    = str_replace('审批','',$title);
-            $title    = str_replace('环保','',$title);
-            $title    = str_replace('建材','',$title);
-            $qsRes =  M('yxhb_appflowtable')->field('pro_mod')->where(array('stage_name' => '签收'))->select();
+            $qsRes =  M('yx_config_title')->field('name')->where(array('stat' => '3'))->select();
             $qsArr = array();
             foreach($qsRes as $val){
-                $qsArr[] = $val['pro_mod'];
+                $qsArr[] = $val['name'];
             }
+            $title    = str_replace('环保','',$title);
+            $title    = str_replace('建材','',$title);
             $template =  in_array($mod_name,$qsArr)?"【{$title}】推送\n申请单位：环保":"【{$title}】推送\n申请单位：环保";
               
             $descriptionData = $logic->getDescription($aid);
