@@ -73,6 +73,18 @@
         <div class="weui-cell weui-cell_select weui-cell_select-after ">
             <div class="weui-cell__hd">
                 <label class="weui-label">
+                    <span class="font-width">LOSS</span>&nbsp;&nbsp;
+                    
+                </label>
+            </div>
+            <div class="weui-cell__bd">
+                <input class="weui-select peibi scale" id='loss' type="number" index="LOSS" maxlength="15" name="loss" 
+                    placeholder="F85:0-1.5;S95:0-1">
+            </div>
+        </div>
+        <div class="weui-cell weui-cell_select weui-cell_select-after ">
+            <div class="weui-cell__hd">
+                <label class="weui-label">
                     <span class="font-width">比表</span>&nbsp;&nbsp;
                     <span style='color:red;'>*</span>
                 </label>
@@ -340,6 +352,7 @@
             out_scale_array = [],
             xd     = $('#xd'),
             bb     = $('#bb'),
+            loss     = $('#loss'),
             H = H > 9 ? H : '0' + H;
         var arr_week = new Array("星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六");
         now = this_time.getFullYear() + '-' + ((this_time.getMonth() + 1) > 9 ? (this_time.getMonth() + 1) : '0' + (this_time.getMonth() + 1)) + '-' + (this_time.getDate() > 9 ? this_time.getDate() : '0' + this_time.getDate()) + ' ' + H + ':00';
@@ -581,6 +594,18 @@
                 return tooltip('细度范围为0-20');
             }
         });
+        // LOSS变化
+        loss.change(function(){
+            var value = $(this).val();
+            var cate = $('#type').val();
+            if(value > 1.5 && cate == 'F85'){
+                return tooltip('LOSS范围为0-1.5');
+            }
+            if(value > 1 && cate == 'S95'){
+                return tooltip('LOSS范围为0-1');
+            }
+        });
+
         // 比表变化
         bb.change(function(){
             var value = $(this).val();
@@ -594,10 +619,18 @@
             if(!datePicker.val()) return tooltip('请选择生产日期');
             // 细度检测
             var xdVal = xd.val(),
+                lossVal = loss.val(),
                 bbVal = bb.val();
+            var cate = $('#type').val();
             if(xdVal){
                 if(xdVal > 20 || xdVal < 0) return tooltip('细度范围为0-20');
-            } 
+            }
+            if(lossVal > 1.5 && cate == 'F85'){
+                return tooltip('LOSS范围为0-1.5');
+            }
+            if(lossVal > 1 && cate == 'S95'){
+                return tooltip('LOSS范围为0-1');
+            }
             if(bbVal > 600 || bbVal < 300)  return tooltip('比表范围为300-600');
             var reason = $('#reason').val();
             //     ids = $("#sign_id").val() + ",",
@@ -626,6 +659,7 @@
                     kh: $('#kh').val(),
                     out_scale:out_scale_array,
                     xd:xdVal,
+                    loss:lossVal,
                     bb:bbVal,
                     text: reason,
                     datetime: datePicker.val(),
@@ -648,9 +682,11 @@
         });
         function submit(){
             var xdVal = xd.val(),
+                lossVal = loss.val(),
                 bbVal = bb.val(),
                 reason = $('#reason').val(),
                 ids = $("#sign_id").val();
+            var cate = $('#type').val();
             $.ajax({
                 type: 'POST',
                 url: "{:U('Light/Api/kfScjlApi')}",
@@ -663,6 +699,7 @@
                     kh: $('#kh').val(),
                     out_scale:out_scale_array,
                     xd:xdVal,
+                    loss:lossVal,
                     bb:bbVal,
                     text: reason,
                     datetime: datePicker.val(),

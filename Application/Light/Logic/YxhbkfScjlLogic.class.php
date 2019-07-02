@@ -62,10 +62,15 @@ class YxhbkfScjlLogic extends Model {
                                      'color' => 'black'
                                     );
         $result['content'][] = array('name'=>'45μm：',
-                                     'value'=> $res['xd']?$res['xd']:'无',
-                                     'type'=>'number',
-                                     'color' => 'black'
-                                    );
+                                    'value'=> $res['xd']?$res['xd']:'无',
+                                    'type'=>'number',
+                                    'color' => 'black'
+                                   );
+        $result['content'][] = array('name'=>'LOSS：',
+                                   'value'=> $res['loss']?$res['loss']:'无',
+                                   'type'=>'number',
+                                   'color' => 'black'
+                                  );
         $result['content'][] = array('name'=>'比表：',
                                      'value'=>$res['bbmj'],
                                      'type'=>'number',
@@ -153,6 +158,10 @@ class YxhbkfScjlLogic extends Model {
                                      'value'=>$res['xd'],
                                      'type'=>'number'
                                     );
+        $result[] = array('name'=>'LOSS：',
+                                    'value'=>$res['loss'],
+                                    'type'=>'number'
+                                   );
         $result[] = array('name'=>'比表：',
                                      'value'=>$res['bbmj'],
                                      'type'=>'number'
@@ -250,6 +259,7 @@ class YxhbkfScjlLogic extends Model {
 
         $kh       = I('post.kh');
         $xd       = I('post.xd');
+        $loss       = I('post.loss');
         $bb       = I('post.bb');
         $text     = I('post.text');
         $datetime = I('post.datetime');
@@ -283,6 +293,7 @@ class YxhbkfScjlLogic extends Model {
         $kh       = I('post.kh');
         $xd       = I('post.xd');
         $bb       = I('post.bb');
+        $loss       = I('post.loss');
         $text     = I('post.text');
         $datetime = I('post.datetime');
         $copyto_id = I('post.copyto_id');
@@ -303,6 +314,11 @@ class YxhbkfScjlLogic extends Model {
         if($xd){
             if($xd > 20 || $xd <0) return array('code' => 404 , 'msg' => '细度范围为0-20');
         }
+        // Loss
+        if($loss){
+            if($loss > 1.5 && $type == 'F85') return array('code' => 404 , 'msg' => 'LOSS范围为0-1.5');
+            if($loss > 1 && $type == 'S95') return array('code' => 404 , 'msg' => 'LOSS范围为0-1');
+        }
         // 比表
         if( $bb > 600 || $bb < 300) return array('code' => 404 , 'msg' => '比表范围为300-600');
         // 防止重复提交
@@ -310,6 +326,7 @@ class YxhbkfScjlLogic extends Model {
         $add = $map;
         $add['STAT'] = 1;
         $add['xd']   = $xd;
+        $add['loss']   = $loss;
         $add['bbmj'] = $bb;
         $add['bz']   = $text;
         $add['jyry']   = session('name');
