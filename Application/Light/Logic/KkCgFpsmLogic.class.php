@@ -163,8 +163,19 @@ class KkCgFpsmLogic extends Model {
         $result = array();
         $data    = M("kk_cgfksq")->where(array('id'=>$res['dh']))->find();
         $result[] = array('name'=>'提交时间：',
-                                     'value'=> date('m-d H:i',strtotime($date['date'])) ,
+                                     'value'=> date('m-d H:i',strtotime($data['date'])) ,
                                      'type'=>'date'
+                                    );
+        if($data['fylx'] == 1){
+            $nfylx = '原材料采购付款';
+        }elseif($data['fylx'] == 2 || $data['fylx'] == 4|| $data['fylx'] == 7){
+            $nfylx = '物流采购付款';
+        }else{
+            $nfylx = '配件采购付款';
+        }    
+        $result[] = array('name'=>'费用类型：',
+                                        'value'=> $nfylx,
+                                        'type'=>'number'
                                     );
         $fpsm = array('已到','未到','无票');
         $showFpsm = $fpsm[$data['fpsm']-1];
@@ -268,7 +279,9 @@ class KkCgFpsmLogic extends Model {
             'type' => 2,
 		);
         if(!M('kk_fpsm')->autoCheckToken($_POST)) return array('code' => 404,'msg' => '网络延迟，请勿点击提交按钮！');
-
+        // 审批中 禁止提交
+        $pass = M('kk_fpsm')->where(array('dh' => $id,'type'=>2,'stat' => array(array('eq',1),array('eq',2),'or')))->find();
+        if(!empty($pass)) return array('code' => 404,'msg' =>'此记录已在签收中！');
         $result = M('kk_fpsm')->add($fpsm);
         if(!$result) return array('code' => 404,'msg' =>'提交失败，请刷新页面重新尝试！');
         // 抄送

@@ -35,7 +35,7 @@ class YxhbCreditLineApplyLogic extends Model {
             $date = date('Y-m-d',strtotime($res['date'].'-1 day'));
         }
         $info = $this->getInfo($res['clientid'],$date);
-        $clientname = M('yxhb_guest2')->field('g_khjc')->where(array('id' => $res['clientid']))->find();
+        $clientname = M('yxhb_guest2')->field('g_khjc,g_name')->where(array('id' => $res['clientid']))->find();
         $color = $info['flag']?'#f12e2e':'black';
         $result['content'][] = array('name'=>'申请单位：',
                                      'value'=>'环保信用额度申请',
@@ -48,7 +48,7 @@ class YxhbCreditLineApplyLogic extends Model {
                                      'color' => 'black'
                                     );
         $result['content'][] = array('name'=>'客户名称：',
-                                     'value'=>$clientname['g_khjc'],
+                                     'value'=>empty($clientname['g_khjc'])?$clientname['g_name']:$clientname['g_khjc'],
                                      'type'=>'string',
                                      'color' => 'black'
                                     );
@@ -97,7 +97,7 @@ class YxhbCreditLineApplyLogic extends Model {
             $date = date('Y-m-d',strtotime($res['date'].'-1 day'));
         }
         $info = $this->getInfo($res['clientid'],$date);
-        $clientname = M('yxhb_guest2')->field('g_khjc')->where(array('id' => $res['clientid']))->find();
+        $clientname = M('yxhb_guest2')->field('g_khjc,g_name')->where(array('id' => $res['clientid']))->find();
         $result[] = array('name'=>'提交时间：',
                                      'value'=> date('m-d H:i',strtotime($res['dtime'])),
                                      'type'=>'date'
@@ -107,7 +107,7 @@ class YxhbCreditLineApplyLogic extends Model {
                                      'type'=>'date'
                                     );
         $result[] = array('name'=>'客户名称：',
-                                     'value'=>$clientname['g_khjc'],
+                                     'value'=>empty($clientname['g_khjc'])?$clientname['g_name']:$clientname['g_khjc'],
                                      'type'=>'string'
                                     );
         $result[] = array('name'=>'应收额度：',
@@ -186,7 +186,7 @@ class YxhbCreditLineApplyLogic extends Model {
         $clientname = M('yxhb_guest2')->field('g_khjc')->where(array('id' => $res['clientid']))->find();
         $result = array(
             'first_title'    => '客户名称',
-            'first_content'  => $clientname['g_khjc']?$clientname['g_khjc']:'无',
+            'first_content'  => $clientname['g_khjc']?$clientname['g_khjc']:$clientname['g_name'],
             'second_title'   => '申请金额',
             'second_content' => number_format($res['line'],2,'.',',')."元",
             'third_title'    => '相关说明',

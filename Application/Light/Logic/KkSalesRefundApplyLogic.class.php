@@ -165,18 +165,23 @@ class KkSalesRefundApplyLogic extends Model {
     public function getYsye($res){
         $dtg  = M('kk_dtg')->where(array('dh' => $res['dh']))->find();
         $user = M('kk_guest2')->where(array('id' => $dtg['gid']))->find();
-        $name = $user['g_name'];
-        $info = $this->getInfo($dtg['gid'],$res['sj_date'],$name);
+        $clientid = $user['reid'] == 0? $dtg['gid']:$user['reid'];
+        $info = $this->getInfo($clientid,$res['sj_date']);
         $color = $info['flag']?'#f12e2e':'black';
         return array("&yen;".$info['ye'],$color);
     }
-    public function getInfo($clientid,$date,$name){
+    public function getInfo($clientid,$date){
         $result = array();
-        $ysye = D('Customer')->getUserYs($clientid);
-        $result['flag'] = $ysye<20000?true:false;
-        $result['ye'] =  number_format($ysye,2,'.',',')."元";  // 应收
+        $map = array(
+            'edate' => array('elt',$date),
+            'clientid' => $clientid,
+        );
+        $data = M('kk_guest_accounts_receivable')->where($map)->order('edate desc')->find();
+        $result['flag'] = $data['qmje']<20000?true:false;
+        $result['ye'] =  number_format($data['qmje'],2,'.',',')."元";  // 应收
         return $result;
     }
+
     /**
      * 记录内容
      * @param  integer $id 记录ID

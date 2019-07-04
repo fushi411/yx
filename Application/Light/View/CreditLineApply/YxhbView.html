@@ -135,7 +135,7 @@
         $("#user_name").on("select2:selecting", function (e) {
             $('.select2-selection__choice__remove').click();
             var selectArr = e.params.args.data;
-            selectArr.text = selectArr.jc;
+            if(selectArr.jc) selectArr.text = selectArr.jc;
                 
             $('.select2-selection__choice').text(selectArr.text);
             getTempInfo(selectArr.id);

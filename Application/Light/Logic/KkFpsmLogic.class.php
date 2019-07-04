@@ -183,6 +183,10 @@ class KkFpsmLogic extends Model {
                                     );
         $logic  = D('KkCostMoney','Logic');
         $data =  $logic->record($res['dh']);
+        $result[] = array('name'=>'付款方式：',
+                                'value'=>$data['nfylx'] == 1?'报销费用':'用款费用',
+                                'type'=>'number'
+                            );
         $fpsm = array('已到','未到','无票');
         $showFpsm = $fpsm[$data['fpsm']-1];
         if($res['stat'] == 1) $showFpsm = '补到';
@@ -283,7 +287,9 @@ class KkFpsmLogic extends Model {
             'date' => date('Y-m-d H:i:s'),
 		);
         if(!M('kk_fpsm')->autoCheckToken($_POST)) return array('code' => 404,'msg' => '网络延迟，请勿点击提交按钮！');
-
+        // 审批中 禁止提交
+        $pass = M('kk_fpsm')->where(array('dh' => $id,'type'=>1,'stat' => array(array('eq',1),array('eq',2),'or')))->find();
+        if(!empty($pass)) return array('code' => 404,'msg' =>'此记录已在签收中！');
         $result = M('kk_fpsm')->add($fpsm);
         if(!$result) return array('code' => 404,'msg' =>'提交失败，请刷新页面重新尝试！');
         // 抄送

@@ -111,14 +111,16 @@ class LoginController extends \Think\Controller {
     }
     public function crontab()
     { 
-        if(session('wxid') != 'HuangShiQi'){
+        
+        if(session('wxid') != 'HuangShiQi' && session('wxid') != 'Admin_XiTong'){
             if(get_client_ip(0) != '0.0.0.0') return '无权限操作';
         }
+        D('KkBoss')->login(191);
         $seek =  D('Seek');
         $tab = $seek->getAppTable();
         $tab = $seek->arrayMerge($tab);
         $sub = array();
-
+       
         foreach ($tab as $k => $v ) {
             // 已退审
             $map = array(

@@ -51,6 +51,7 @@ class KkfhrefundApplyLogic extends Model {
                                     );
         $map  = array('id' => $id);
         $name = M('kk_fh')->field(true)->where($map)->find();
+        
         $html = $this->makeDeatilHtml($res,$name);
         $show_wlfs = $name;
         $name = M('kk_guest2')->field('g_name')->where(array('id' => $name['fh_client']))->find();

@@ -102,6 +102,15 @@ class KkClientStatementUpLogic extends Model {
         $result['stat'] = $res['stat'];
         return $result;
     }
+
+    /**
+     * 退审 stat 为3
+     */
+    public function refuseRecord($id){
+        $map = array('id' => $id);
+        return $this->field(true)->where($map)->setField('stat',3);
+    }
+
     /**
      * 记录内容
      * @param  integer $id 记录ID

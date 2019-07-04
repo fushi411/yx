@@ -173,7 +173,7 @@ class KkCostMoneyPayLogic extends Model {
             'nmoney'  => -$bcfk,
             'nbank'   => $bank,
             'sj_date' => $date,
-            'jl_date' => date('Y-m-d H:i:s'), 
+            'jl_date' => $date, 
             'npeople' => session('name'),
             'ntext'   => $bz,
             'nfkfs'   => $fkfs,

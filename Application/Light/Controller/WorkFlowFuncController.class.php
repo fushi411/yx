@@ -995,9 +995,10 @@ class WorkFlowFuncController extends Controller {
     public function KkCgFpsmEnd($aid)
     {
         $res = M('kk_fpsm')->where(array('id'=>$aid))->setField('stat', 1);
-        $id = M('kk_fpsm')->where(array('id'=>$aid))->find();
+        $id  = M('kk_fpsm')->where(array('id'=>$aid))->find();
         $res = M('kk_cgfksq')->where(array('id'=>$id['dh']))->setField('fpsm', 1);
-        M('kk_feecg')->where(array('sqdh',$id['dh']))->setField('fpsm',1);
+        $res = M('kk_cgfksq')->where(array('id'=>$id['dh']))->find();
+        M('kk_feecg')->where(array('sqdh'=>$res['dh']))->setField('fpsm',1);
         $resArr = $res?array("status"=>"success"):array("status"=>"failure");
         return $resArr;
     }
@@ -1009,9 +1010,10 @@ class WorkFlowFuncController extends Controller {
     public function YxhbCgFpsmEnd($aid)
     {
         $res = M('yxhb_fpsm')->where(array('id'=>$aid))->setField('stat', 1);
-        $id = M('yxhb_fpsm')->where(array('id'=>$aid))->find();
+        $id  = M('yxhb_fpsm')->where(array('id'=>$aid))->find();
         $res = M('yxhb_cgfksq')->where(array('id'=>$id['dh']))->setField('fpsm', 1);
-        M('yxhb_feecg')->where(array('sqdh',$id['dh']))->setField('fpsm',1);
+        $id  = M('yxhb_cgfksq')->where(array('id'=>$id['dh']))->find();
+        M('yxhb_feecg')->where(array('sqdh'=>$id['dh']))->setField('fpsm',1);
         $resArr = $res?array("status"=>"success"):array("status"=>"failure");
         return $resArr;
     }

@@ -31,7 +31,7 @@ class YxhbCgFpsmLogic extends Model {
     {
         $res = $this->record($id);
         $result['content'][] = array('name'=>'申请单位：',
-                                     'value'=>'建材采购发票上传',
+                                     'value'=>'环保采购发票上传',
                                      'type'=>'date',
                                      'color' => 'black'
                                     );
@@ -168,6 +168,17 @@ class YxhbCgFpsmLogic extends Model {
                                      'value'=> date('m-d H:i',strtotime($data['date'])) ,
                                      'type'=>'date'
                                     );
+        if($data['fylx'] == 1){
+            $nfylx = '原材料采购付款';
+        }elseif($data['fylx'] == 2 || $data['fylx'] == 4|| $data['fylx'] == 7){
+            $nfylx = '物流采购付款';
+        }else{
+            $nfylx = '配件采购付款';
+        }    
+        $result[] = array('name'=>'费用类型：',
+                                        'value'=> $nfylx,
+                                        'type'=>'number'
+                                    );
         $fpsm = array('已到','未到','无票');
         $showFpsm = $fpsm[$data['fpsm']-1];
         if($res['stat'] == 1) $showFpsm = '补到';
@@ -269,7 +280,9 @@ class YxhbCgFpsmLogic extends Model {
             'type' => 2,
 		);
         if(!M('yxhb_fpsm')->autoCheckToken($_POST)) return array('code' => 404,'msg' => '网络延迟，请勿点击提交按钮！');
-
+        // 审批中 禁止提交
+        $pass = M('yxhb_fpsm')->where(array('dh' => $id,'type'=>2,'stat' => array(array('eq',1),array('eq',2),'or')))->find();
+        if(!empty($pass)) return array('code' => 404,'msg' =>'此记录已在签收中！');
         $result = M('yxhb_fpsm')->add($fpsm);
         if(!$result) return array('code' => 404,'msg' =>'提交失败，请刷新页面重新尝试！');
         // 抄送

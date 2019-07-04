@@ -204,7 +204,7 @@ class KkAppcopytoModel extends Model {
                     }
                 }
             }
-            $del_arr = M($system.'_appflowproc a')->join($system.'_boss b on b.id=a.per_id')->field('b.wxid')->where(array('a.aid' => $id,'a.mod_name' => $mod_name))->order('a.app_stage desc')->find();
+            $del_arr = M($system.'_appflowproc a')->join($system.'_boss b on b.id=a.per_id')->field('b.wxid')->where(array('a.aid' => $id,'a.mod_name' => $mod_name))->order('a.app_stage desc,approve_time DESC')->find();
             $del_id = $del_arr['wxid'];
             $res = array_search($del_id,$push_id);
             if($res !== false){

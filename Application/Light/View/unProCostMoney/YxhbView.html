@@ -683,7 +683,7 @@ var label = "所属月份&nbsp;&nbsp;<span style='color:red;'>*</span>",
                 if (!skzh ) return tooltip('请输入收款账号');
                 if (!khyh ) return tooltip('请输入开户银行');
             }
-            //if (!file_names ) return tooltip('至少上传一张图片');
+            if (!file_names ) return tooltip('至少上传一张图片');
             var reason = $('#reason').val();
             if(reason.length<5) return tooltip('用款用途不能少于5个字');
             toast.fadeIn(200);

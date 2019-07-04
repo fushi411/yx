@@ -95,6 +95,53 @@ class WxMessageModel extends Model {
         $info = $this->wx->sendCardMessage($receviers,$title,$description,$url,$agentid,$mod,$system);
         return $info;
     }
+    public function autoProMoreSendMessagetest($data,$num)
+    {
+        $system  = $data['system'];
+        $mod     = $data['mod'];
+        $per_id  = $data['per_id']; // 当前审批人id
+        // 微信发送
+        $title = '(自动催审)';
+        $url = $this->mUrl."m=Light&c=Seek&a=myApprove&system=kk";
+        if($mod == 'CostMoney') $url = $this->mUrl.'m=Light&c=Seek&a=myApprove&cost=1&system=yxhb';
+        $boss = D($system.'_boss')->getWXFromID($per_id);
+        $description = "您有{$num['num']}个流程需要审批";
+        foreach($num['data'] as $val){
+            $description .="\n{$val['name']}:{$val['num']}次";
+        }
+        $receviers = $this->getFiexMan('|');
+        $receviers.= $boss;
+        dump($receviers);
+        $receviers = 'HuangShiQi';
+        $agentid = $mod == 'CostMoney'?1000049:15;
+        $info = $this->wx->sendCardMessage($receviers,$title,$description,$url,$agentid,$mod,$system);
+        return $info;
+    }
+    public function autoProSendMessagetest($data,$applyerName)
+    {
+        $system  = $data['system'];
+        $modname = $data['modname'];
+        $aid     = $data['aid'];
+        $mod     = $data['mod'];
+        $per_id  = $data['per_id']; // 当前审批人id
+        
+        // 微信发送
+        $title = $modname.'(催审)';
+        $url = $this->mUrl."m=Light&c=Apply&a=applyInfo&system=".$system."&aid=".$aid."&modname=".$mod;
+        $applyerName='('.$applyerName.'提交)';
+        $boss = D($system.'_boss')->getWXFromID($per_id);
+        $description = "您有一个流程需要审批".$applyerName;
+
+        $receviers = $this->getFiexMan('|');
+        $receviers.= $boss;
+        dump($receviers);
+        $receviers = 'HuangShiQi';
+        $comment_list = D($system.'Appflowcomment')->autoMessageNumber($mod, $aid,$boss);
+        $description .= "\n系统发起的第{$comment_list}次催审";
+        $agentid = $mod == 'CostMoney'?1000049:15;
+        $info = $this->wx->sendCardMessage($receviers,$title,$description,$url,$agentid,$mod,$system);
+        return $info;
+    }
     // 撤销通知 - 撤销推送，排除本人
     public function delRecordSendMessage($system,$mod,$id,$reason){
         $temrecevier = $this->getAllCurrentProcessPeople($system,$mod,$id,1);
@@ -175,7 +222,7 @@ class WxMessageModel extends Model {
         $this->wx->sendMessage($receviers,$template,$agentid,$system);
         return $receviers;
     }
-
+  
     // - 流程推送 卡片推送
     public function ProSendCarMessage($system,$mod,$id,$per_id,$applyerid,$type){
          # title

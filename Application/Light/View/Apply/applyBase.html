@@ -283,7 +283,6 @@
                                         </ul>
                                         <div class="weui-uploader__input-box" style="width: 2.5em;height: 2.5em;margin-right: 0px;margin-bottom: 0px;margin-top:10px;">
                                             <input id="uploaderInput" class="weui-uploader__input open_model" type="button" name="copyto" readonly /> <!--data-toggle="modal" data-target="#myModal" -->
-                                            
                                             <input type="hidden" name="copyto_id" id="copyto_id" value="{$fixed['fiexd_copy_id']}">
                                         </div>
                                     </div>
@@ -304,6 +303,15 @@
                             <div class="weui-cell">
                                 <div class="weui-cell__bd">
                                     <div class="weui-uploader">
+                                        <if condition="empty($push)">
+                                                <div class="weui-uploader__bd" >
+                                                        <ul class="weui-uploader__files" id="app_pro" style="margin-bottom: 0px;">
+                                            <li>
+                                                <h4 class="weui-media-box__title" style="/*font-weight: 800;*/margin-top: 0px;margin-bottom: 5px;color:grey;">
+                                                无推送人
+                                                </h4>
+                                            </li>
+                                        <else/>
                                         <div class="weui-uploader__bd" style="min-height: 70px;">
                                             <ul class="weui-uploader__files" id="app_pro" style="margin-bottom: 0px;">
                                                 <volist name="push" id="vo">
@@ -316,9 +324,9 @@
                                                     <span style='margin-right: 6px;font-size: 12px;'> {$vo.name}</span>
                                                     </li>
                                                 </volist>
+                                        </if>
                                             </ul>
                                         </div>
-                                        
                                     </div>
                                 </div>
                             </div>
@@ -741,7 +749,7 @@
             if(!word.length) return modelIni();
             $('#searchResult').empty();
             $('#searchResult').append(loading);
-            $.post("{:U('Light/Apply/getDeptHtml')}",
+            $.post("{:U('WeChat/Meet/Api',array('func' => 'getDeptHtml'))}",
                 {
                     "type": 1,
                     'search':word
@@ -749,10 +757,8 @@
                     $('#searchResult').empty();
                     // console.log(data);
                     if(data == '') {
-                        console.log(1);
                         $('#searchResult').append(noresult);
                     } else {
-                        console.log(2);
                         $('#searchResult').append(data);
                         // console.log(data.pid);
                         $("#pre-level").attr("data-pid", 17);

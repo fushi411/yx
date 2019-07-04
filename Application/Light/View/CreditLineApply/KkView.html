@@ -138,7 +138,7 @@
                 var selectArr = e.params.args.data;
                 getTempInfo(selectArr.id,selectArr.text);
 
-                selectArr.text = selectArr.jc;
+                if(selectArr.jc) selectArr.text = selectArr.jc;
                 $('.select2-selection__choice').text(selectArr.text);
                 
                 user_id = selectArr.id;

@@ -363,34 +363,42 @@
                                                 <div class="weui-uploader">
                                                     <div class="weui-uploader__bd" >
                                                         <ul class="weui-uploader__files" style="margin-bottom: 0px;" >
-                                                            <if condition="empty($already_cpPush)">
-                                                                    <volist name="push" id="vo">
-                                                                        <li class='weui-uploader__file wk-select__user' style='min-height:70px;height:88px;width: 45px;margin-right: 0;margin-bottom: 0;'>
-                                                                        <if condition="$vo.avatar eq ''">
-                                                                            <img src="Public/assets/i/defaul.png" class='weui-selet__user' style='margin-right: 6px;margin-top:10px;width: 2em; height: 2em;'>
-                                                                            <else/>
-                                                                            <img src="{$vo.avatar}" class='weui-selet__user' style='margin-right: 6px;margin-top:10px;width: 2em; height: 2em;'>
-                                                                        </if>
-                                                                        <span style='margin-right: 6px;font-size: 12px;'> {$vo.name}</span>
-                                                                        </li>
-                                                                    </volist>
-                                                                    <else/>
-                                                                    <volist name="already_cpPush" id="acp">
-                                                                        <li class="weui-uploader__file wk-select__css" id="{$acp.id}" style='min-height:70px;height:88px;width: 45px;margin-right: 0;margin-bottom: 0;'>
-                                                                            <if condition="$acp.url eq ''">
-                                                                                <img src="__PUBLIC__/i/defaul.png" class="weui-selet__user" style="margin-right: 6px;margin-top:10px;width: 2em; height: 2em;" />
+                                                            <if condition="empty($push)">
+                                                                <li>
+                                                                        <h4 class="weui-media-box__title" style="/*font-weight: 800;*/margin-top: 0px;margin-bottom: 5px;color:grey;">
+                                                                        无推送人
+                                                                        </h4>
+                                                                </li>
+                                                                <else/>
+                                                                <if condition="empty($already_cpPush)">
+                                                                        <volist name="push" id="vo">
+                                                                            <li class='weui-uploader__file wk-select__user' style='min-height:70px;height:88px;width: 45px;margin-right: 0;margin-bottom: 0;'>
+                                                                            <if condition="$vo.avatar eq ''">
+                                                                                <img src="Public/assets/i/defaul.png" class='weui-selet__user' style='margin-right: 6px;margin-top:10px;width: 2em; height: 2em;'>
                                                                                 <else/>
-                                                                                <img src="{$acp.url}" class="weui-selet__user" style="margin-right: 6px;margin-top:10px;width: 2em; height: 2em;" />
+                                                                                <img src="{$vo.avatar}" class='weui-selet__user' style='margin-right: 6px;margin-top:10px;width: 2em; height: 2em;'>
                                                                             </if>
-                                                                            <span style="margin-right: 6px;font-size: 12px;">{$acp.name}</span>
-                                                                            
-                                                                            <if condition="in_array($acp['id'],$readedArrPush)">
-                                                                                <span style="margin-right: 6px;font-size: 12px;color: green;">[已读]</span>
-                                                                                <else/>
-                                                                                <span style="margin-right: 6px;font-size: 12px;color: red;">[未读]</span>
-                                                                            </if>  
-                                                                        </li>
-                                                                    </volist>
+                                                                            <span style='margin-right: 6px;font-size: 12px;'> {$vo.name}</span>
+                                                                            </li>
+                                                                        </volist>
+                                                                        <else/>
+                                                                        <volist name="already_cpPush" id="acp">
+                                                                            <li class="weui-uploader__file wk-select__css" id="{$acp.id}" style='min-height:70px;height:88px;width: 45px;margin-right: 0;margin-bottom: 0;'>
+                                                                                <if condition="$acp.url eq ''">
+                                                                                    <img src="__PUBLIC__/i/defaul.png" class="weui-selet__user" style="margin-right: 6px;margin-top:10px;width: 2em; height: 2em;" />
+                                                                                    <else/>
+                                                                                    <img src="{$acp.url}" class="weui-selet__user" style="margin-right: 6px;margin-top:10px;width: 2em; height: 2em;" />
+                                                                                </if>
+                                                                                <span style="margin-right: 6px;font-size: 12px;">{$acp.name}</span>
+                                                                                
+                                                                                <if condition="in_array($acp['id'],$readedArrPush)">
+                                                                                    <span style="margin-right: 6px;font-size: 12px;color: green;">[已读]</span>
+                                                                                    <else/>
+                                                                                    <span style="margin-right: 6px;font-size: 12px;color: red;">[未读]</span>
+                                                                                </if>  
+                                                                            </li>
+                                                                        </volist>
+                                                                </if>
                                                             </if>
                                                         </ul>
                                                         <eq name="isApplyer" value="1">
@@ -2380,8 +2388,9 @@ var filechooser = document.getElementById("uploaderInput");
             //$approveSearchInput = $('#approveSearchInput'),
            // $approveSearchClear = $('#approveSearchClear'),
             $approveSearchCancel = $('#approveSearchCancel');
-            
+        $('#apply_status .label').eq(0).css('font-weight',100);
         if($('#apply_status .label').eq(0).text() == '已撤销'){
+
             //$('#doing').text('该申请已撤销！');
             $("#alert_content").text('该申请已撤销');
             $("#iosDialog_alert").show();

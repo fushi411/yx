@@ -48,7 +48,7 @@ class YxhbFpsmLogic extends Model {
                                      'type'=>'string',
                                      'color' => 'black'
                                     );
-        if( $data['nfylx'] == 1 ){
+        if( $data['nfylx'] == 0 ){
             $fybx = M('yxhb_feefy3')->where("left(dh,13)='{$data['dh']}'" )->find();
             $fylx = M('yxhb_fylx')->field('id as val,fy_name as name')->where(array('id' =>$fybx['nfylx']?$fybx['nfylx']:''))->order('id asc')->find(); 
         }else{
@@ -56,7 +56,7 @@ class YxhbFpsmLogic extends Model {
         }
  
         $result['content'][] = array('name'=>'申请类型：',
-                                     'value'=> $data['nfylx'] == 1?'报销费用':'用款费用',
+                                     'value'=> $data['nfylx'] == 0?'报销费用':'用款费用',
                                      'type'=>'date',
                                      'color' => 'black'
                                     );
@@ -181,6 +181,10 @@ class YxhbFpsmLogic extends Model {
        
         $logic  = D('YxhbCostMoney','Logic');
         $data =  $logic->record($res['dh']);
+        $result[] = array('name'=>'付款方式：',
+                                'value'=>$data['nfylx'] == 0?'报销费用':'用款费用',
+                                'type'=>'number'
+                            );
         $fpsm = array('已到','未到','无票');
         $showFpsm = $fpsm[$data['fpsm']-1];
         if($res['stat'] == 1) $showFpsm = '补到';
@@ -280,7 +284,9 @@ class YxhbFpsmLogic extends Model {
             'date' => date('Y-m-d H:i:s'),
 		);
         if(!M('yxhb_fpsm')->autoCheckToken($_POST)) return array('code' => 404,'msg' => '网络延迟，请勿点击提交按钮！');
-
+        // 审批中 禁止提交
+        $pass = M('yxhb_fpsm')->where(array('dh' => $id,'type'=>1,'stat' => array(array('eq',1),array('eq',2),'or')))->find();
+        if(!empty($pass)) return array('code' => 404,'msg' =>'此记录已在签收中！');
         $result = M('yxhb_fpsm')->add($fpsm);
         if(!$result) return array('code' => 404,'msg' =>'提交失败，请刷新页面重新尝试！');
         // 抄送
@@ -374,7 +380,7 @@ class YxhbFpsmLogic extends Model {
             $res[] = array(
                 'id'   => $val['id'],
                 'date' => date('Y-m-d H:i:s',strtotime($val['jl_date'])),
-                'sqlx' => $val['nfylx'] == 1?'报销费用':'用款费用',
+                'sqlx' => $val['nfylx'] == 0?'报销费用':'用款费用',
                 'money'=> "&yen;".number_format(-$val['nmoney'],2,'.',',')."元",
                 'dh'   => $val['dh'],
                 'text' => $textdata['ntext']?$textdata['ntext']:'无',

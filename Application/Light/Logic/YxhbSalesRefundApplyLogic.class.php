@@ -137,18 +137,25 @@ class YxhbSalesRefundApplyLogic extends Model {
         $data['remaining'] = ceil((strtotime($data['dqda'])-time())/(3600*24)).'天';
         return $data;
     }
+
     public function getYsye($res){
-        $dtg   = M('yxhb_dtg')->where(array('dh' => $res['dh']))->find();
-        $client_id = $dtg['gid'];
-        $post_data = array(
-            'client' => $client_id,
-            'auth'   => data_auth_sign($client_id),
-            'type'   => 'add'
-        ); 
-        $res = send_post('http://www.fjyuanxin.com/sngl/client_ye_hb_api.php', $post_data);
-        $ysye = $res[1];
-        $flag = $ysye <20000?1:0;
-        return array($ysye,$flag);
+        $dtg  = M('yxhb_dtg')->where(array('dh' => $res['dh']))->find();
+        $user = M('yxhb_guest2')->where(array('id' => $dtg['gid']))->find();
+        $clientid = $user['reid'] == 0? $dtg['gid']:$user['reid'];
+        $info = $this->getInfo($clientid,$res['sj_date']);
+        $color = $info['flag']?'#f12e2e':'black';
+        return array("&yen;".$info['ye'],$color);
+    }
+    public function getInfo($clientid,$date){
+        $result = array();
+        $map = array(
+            'edate' => array('elt',$date),
+            'clientid' => $clientid,
+        );
+        $data = M('yxhb_guest_accounts_receivable')->where($map)->order('edate desc')->find();
+        $result['flag'] = $data['qmje']<20000?true:false;
+        $result['ye'] =  number_format($data['qmje'],2,'.',',')."元";  // 应收
+        return $result;
     }
     /**
      * 删除记录

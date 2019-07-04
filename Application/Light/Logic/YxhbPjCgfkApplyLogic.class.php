@@ -387,7 +387,7 @@ class YxhbPjCgfkApplyLogic extends Model {
         // 公司检测
         if($user_id == '' || str_replace(' ' ,'',$user_id) == '') return array('bool'=> false, 'msg' => '请认真输入配件公司');
         // 金额 
-        if($money == '' ||  $money <= 0 || $money > 1000000000000 ) return array('bool'=> false, 'msg' => '付款金额错误');
+        if($money == ''  || $money > 1000000000000 ) return array('bool'=> false, 'msg' => '付款金额错误');
         // 备注检测
         if(strlen($notice)<5) return array('bool'=> false, 'msg' => '备注不能少于5个字');
 
