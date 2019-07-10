@@ -93,10 +93,10 @@ class WorkFlowOpTvController extends BaseController {
 			D($system.'Appcopyto')->copyTo($copyto_id, $mod_name, $id);
 		}
 
-
+		$appStatus = $process->getWorkFlowStatus($mod_name, $id);
 		// 调用审批后处理方法
 		// 同理可处理开始审批、过程中、拒绝后调用方法
-	    if (!empty($wfStatus)&&$wfStatus['status']=='end'&&$wfStatus['option']==2) {
+	    if (!empty($wfStatus)&&$wfStatus['status']=='end'&&$wfStatus['option']==2&&$appStatus['stat']!=0) {
 	        $wfClass = new WorkFlowFuncController();
 	        $func = ucfirst($system).$mod_name.'End';
 			$funcRes = $wfClass->$func($id, $system);
