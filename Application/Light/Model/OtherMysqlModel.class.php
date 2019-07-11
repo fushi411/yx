@@ -12,9 +12,9 @@ class OtherMysqlModel extends Model {
     protected $autoCheckFields = false;
     protected $connection = array(
         'db_type'  => 'mysql',
-        'db_user'  => 'fjyuanxin',
-        'db_pwd'   => 'fjyuanxin',
-        'db_host'  => '220.160.55.177',
+        'db_user'  => 'root',
+        'db_pwd'   => 'Fjyuanxin%jt%',
+        'db_host'  => '120.78.223.165',
         'db_port'  => '3306',
         'db_name'  => 'sqlfjyuanxin',
         'db_charset' =>    'utf8',
