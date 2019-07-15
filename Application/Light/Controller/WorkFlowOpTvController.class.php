@@ -92,7 +92,7 @@ class WorkFlowOpTvController extends BaseController {
 			// 发送抄送消息
 			D($system.'Appcopyto')->copyTo($copyto_id, $mod_name, $id);
 		}
-
+		$process = D($system.'Appflowproc');
 		$appStatus = $process->getWorkFlowStatus($mod_name, $id);
 		// 调用审批后处理方法
 		// 同理可处理开始审批、过程中、拒绝后调用方法
