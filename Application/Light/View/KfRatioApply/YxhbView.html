@@ -209,11 +209,11 @@
                     <div class="weui-cell weui-cell_select weui-cell_select-after ">
                         <div class="weui-cell__hd">
                             <label class="weui-label">
-                                <span class="font-width">钢渣粉</span>&nbsp;&nbsp;
+                                <span class="font-width">复合掺合料</span>&nbsp;&nbsp;
                             </label>
                         </div>
                         <div class="weui-cell__bd">
-                            <input class="weui-select peibi out_scale" type="number" index="钢渣粉" maxlength="15" name="custodian" id="out_scale1" placeholder="0-20%">
+                            <input class="weui-select peibi out_scale" type="number" index="复合掺合料" maxlength="15" name="custodian" id="out_scale1" placeholder="0-20%">
                         </div>
                     </div>
                     <div class="weui-cell weui-cell_select weui-cell_select-after ">
@@ -652,7 +652,7 @@
             ['铜尾渣'  ,0,8,1],
             ['激发剂'  ,0,0.2,1],
             ['脱硫灰'  ,0,10,1],
-            ['钢渣粉'  ,0,20,1],
+            ['复合掺合料'  ,0,20,1],
             ['复合粉'  ,0,20,1],
             ['95矿粉'  ,0,20,1],
         ];
@@ -677,7 +677,7 @@
             
             var count = 0;
             for (var i = 0; i < F85.length; i++) {
-                if ($('.peibi').eq(i).attr('index') == '脱硫灰' || $('.peibi').eq(i).attr('index') == '激发剂' || $('.peibi').eq(i).attr('index') == '钢渣粉'|| $('.peibi').eq(i).attr('index') == '复合粉' || $('.peibi').eq(i).attr('index') == '95矿粉') continue;
+                if ($('.peibi').eq(i).attr('index') == '脱硫灰' || $('.peibi').eq(i).attr('index') == '激发剂' || $('.peibi').eq(i).attr('index') == '复合掺合料'|| $('.peibi').eq(i).attr('index') == '复合粉' || $('.peibi').eq(i).attr('index') == '95矿粉') continue;
                 num = $('.peibi').eq(i).val() ? $('.peibi').eq(i).val() : 0;
                 count += parseFloat(num);
             }
