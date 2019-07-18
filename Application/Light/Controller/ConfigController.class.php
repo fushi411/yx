@@ -403,9 +403,7 @@ class ConfigController extends BaseController {
         $pro_id   = $table->getProIdByViewid($id);
         //$this->ajaxReturn(array('code' => 404,'msg' => '请选择申请人员','data' => $pro_id,$id,2));
         $view = M('yx_config_viewpro')->where(array('id' => $id))->find();
-        if(!empty($copy_id)){
-            M('yx_config_viewpro')->where(array('id' => $id))->setField('fiexd_copy_id', $copy_id);
-        }
+        M('yx_config_viewpro')->where(array('id' => $id))->setField('fiexd_copy_id', $copy_id);
         M($system.'_appflowtable')->where(array('view_id' => $id))->setField('stat', 0);
         $flow  = array();
         $data  = M('yx_config_title')->where(array('mod_system' => $system,'name' =>$mod))->find();
