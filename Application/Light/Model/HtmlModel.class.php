@@ -53,6 +53,7 @@ class HtmlModel extends Model
             $date  = date('m/d',strtotime($v['date']));
             
             list($lable,$pro) = $type == 1 ? $this->pro_stat($v['stat'],$v['apply']) : $this->sign_stat($v['stat'],$v['apply']);
+            if($v['app_name'] == '转审') $pro = '转审';
             $fourth = empty($v['fourth_title'])?'':"<p class='weui-media-box__desc ' style='margin-bottom: 0px;'><span>{$v['fourth_title']}：</span><span>{$v['fourth_content']}</span></p>";
             
             $html .= "<a href='{$url}' target='_blank'

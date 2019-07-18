@@ -239,7 +239,7 @@ class SeekController  extends BaseController
 
             $res = M($v['system'].'_appflowproc a')
                     ->join("{$v['table_name']}  on a.aid={$v['table_name']}.{$v['id']} {$wh}")
-                    ->field($v['copy_field'])
+                    ->field($v['copy_field'].',a.app_name')
                     ->where($map)
                     ->select();    
             if(!empty($res)){
@@ -251,6 +251,13 @@ class SeekController  extends BaseController
             }
             $sub = array_merge($sub,$res);
         }
+        $temp = array();
+        foreach($sub as $val){
+            $k = $val['app_name'] == '转审'?0:1;
+            $temp[$k][] = $val; 
+        }  
+        if(empty($temp[0])) $sub = $temp[1];
+        else $sub = array_merge($temp[0],$temp[1]);
         return $sub;
     }
     public function noApprove(){
@@ -474,6 +481,7 @@ class SeekController  extends BaseController
                 'toptitle'       => $v['modname'],
                 'applyer'        => $res['applyerName'],
                 'apply'          => $appStatus,
+                'app_name'       => $v['app_name'],
             );
             if(!empty($res['fourth_title'])){
                 $arr['fourth_title'] = $res['fourth_title'];

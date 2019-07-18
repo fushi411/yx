@@ -6,11 +6,9 @@ class TestController extends BaseController {
     public function Sign()
     {   
         header('Content-Type: text/html; charset=utf-8');
-        
-        dump($res);
+  
     }
-
-
+   
     // 流程失效，重置
     public function flow(){
         $wf = A('WorkFlow');
