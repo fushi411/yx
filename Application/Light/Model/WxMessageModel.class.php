@@ -248,7 +248,31 @@ class WxMessageModel extends Model {
         $this->wx->sendCardMessage($receviers,$title,$description,$url,$agentid,$mod,$system);
         return $receviers;
     }
-
+    // 审批后推送
+    public function PushSendCarMessage($system,$mod,$id,$agentid,$receviers){
+         # title
+         $seek  = D('Seek');
+         $stat  = $seek->getConfig($mod,$system,'stat');
+         $title = '推送'; 
+         $top   = $seek->getModname($mod,$system);
+         $title = "{$top}({$title})";
+         # 推送人员
+         $receviers = $receviers;
+         // - 申请人员
+         $logic       = D(ucfirst($system).$mod, 'Logic');
+         $res         = $logic->recordContent($id);
+         $apply_user  = $res['applyerName'];
+         $description.= "提交人员：{$apply_user}\n";
+         $content     = $logic->sealNeedContent($id);
+         $template    = $this->CarReDescription($content);
+         $description.= $template;
+         # url 
+         $url     = $this->mUrl."m=Light&c=Apply&a=applyInfo&system=".$system."&aid=".$id."&modname=".$mod;
+        # 信息发送
+        $this->wx->sendCardMessage($receviers,$title,$description,$url,$agentid,$mod,$system);
+        return $receviers;
+    }
+    
     // 抄送推送
     public function copyTo($system,$mod,$id,$copyid){
         # 推送人员

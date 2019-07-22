@@ -93,6 +93,13 @@
         .ready-btn-on{
             font-weight: 600;
         }
+        #btn-all {
+            right: 10px;
+            bottom: 60px;
+            position: fixed;
+            text-align: center;
+            z-index: 999;
+        }
     </style>
 </head>
 
@@ -1030,6 +1037,11 @@
         
     </div>
     </div>
+    <if condition="$mod_name eq 'CostMoney'">
+        <div id="btn-all">
+            <a href="javascript:;" class="weui-btn weui-btn_mini weui-btn_primary">返回</a>
+        </div>
+    </if>
 </body>
 
 
@@ -1043,12 +1055,18 @@
 <!-- <script src="__PUBLIC__/assets/js/vconsole.min.js"></script> -->
 
 <script>
+   
     var ishttps = 'https:' == document.location.protocol ? true : false;
     if(ishttps == false){
         httpsUrl = document.location.href;
         httpsUrl = httpsUrl.replace('http:',"https:");
         window.location.href = httpsUrl;
     }
+
+    // 审批记录跳转
+    $('#btn-all').click(function(){
+        window.location.href = "{:U('Light/Seek/myApprove',array('cost' => 1))}";
+    });
     // 自动催审信息 收起
     $('#up').click(function(){
         var upflag = $(this).text();

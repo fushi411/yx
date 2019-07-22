@@ -369,6 +369,11 @@ class CustomerModel extends Model
         $line = M('kk_creditlineconfig')->where("stat='1' and lower<=1 and clientid='{$client}' and date<='{$date}'")->order('date desc,lower desc')->find();
         return $line['line']?$line['line']:'0';
     }
+    public  function  getkkFmhline($client,$date){
+        //select line from kk_creditlineconfig where stat='1' and lower<=1 and clientid='467' and date<='2018-05-04' order by date desc,lower desc
+        $line = M('kk_creditlineconfig_fmh')->where("stat='1' and lower<=1 and clientid='{$client}' and date<='{$date}'")->order('date desc,lower desc')->find();
+        return $line['line']?$line['line']:'0';
+    }
     /**
      * 获取应收额度 client_qc
      */
@@ -705,7 +710,31 @@ class CustomerModel extends Model
         }
         return $data;
     }
+    /**
+     * 合同用户 粉煤灰临时额度查询
+     * @param int $client_id 客户id
+     * @return arr   3种临时额度 申请情况
+     */
+    public function getFmhQuoteTimes($client_id,$system,$date = ''){
+        $this->today = date('Y-m-d H:i',time());
+        if(!empty($date)) $this->today=$date;
+        $tempClient = array('20000','50000','100000');
+        $data = array();
+        foreach($tempClient as $k=>$v){
+            $where = array(
+                "DATEDIFF('{$this->today}',date) <= SUBSTRING(yxq,1) and stat" => 1,
+                'line' => $v,
+                'clientid' => $client_id
+            );
+            $res = M($system.'_tempcreditlineconfig_fmh')
+                ->field('date,sales')
+                ->where($where)
+                ->select();
+            $data[] = $res;
 
+        }
+        return $data;
+    }
 
 
     /**
@@ -720,6 +749,11 @@ class CustomerModel extends Model
      */
     public function getClientname($clientid,$system){
         $clientName = M($system.'_guest2')->field('g_name')->where('id='.$clientid)->find();
+        return $clientName['g_name'];
+    }
+
+    public function getFmhClientname($clientid,$system){
+        $clientName = M($system.'_guest2_fmh')->field('g_name')->where('id='.$clientid)->find();
         return $clientName['g_name'];
     }
     /**
@@ -743,7 +777,27 @@ class CustomerModel extends Model
         }
         return $line;
     }
-
+    /**
+     * 获取临时额度
+     * @param string $clientid  客户id
+     * @param string $date  今天的日期
+     * @return integer 临时额度
+     */
+    public function getFmhTempCredit($clientid,$system,$date=''){
+        $this->today = date('Y-m-d H:i',time());
+        if(!empty($date)) $this->today=$date;
+        $sql = "SELECT * FROM `{$system}_tempcreditlineconfig_fmh` WHERE `clientid` = {$clientid} AND DATEDIFF('{$this->today}',date) <= SUBSTRING(yxq,1) AND `stat` = 1 ORDER BY date desc ";
+        $res = M()->query($sql);
+        $line = 0;
+        foreach($res as $val){
+            $yxq = substr($val['yxq'],0,1);
+            $yxq = strtotime($val['dtime']) + $yxq*24*3600;
+            if(strtotime($this->today) < $yxq){
+                $line += $val['line'];
+            }  
+        }
+        return $line;
+    }
     /**
      * 获取发货额度 ok
      * @param $client 用户id

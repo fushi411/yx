@@ -136,40 +136,62 @@ class MsgdataModel extends Model {
 
     // 信用额度
     public function CreditLineApply(){
+        return $this->CreditLineApplyData();
+    }
+    public function CreditLineApply_fmh(){
+        return $this->CreditLineApplyData();
+    }
+    // 信用额度
+    private function CreditLineApplyData(){
         $result = array();
         $result['url'] = array(
             array('name' => '环保信用额度','url' => U('Light/View/View',array('modname'=>'CreditLineApply','system' => 'yxhb')),'modname' => 'yxhbCreditLineApply'),
             array('name' => '建材信用额度','url' => U('Light/View/View',array('modname'=>'CreditLineApply','system' => 'kk')),'modname' => 'kkCreditLineApply'), 
+            array('name' => '粉煤灰信用额度','url' => U('Light/View/View',array('modname'=>'CreditLineApply_fmh','system' => 'kk')),'modname' => 'kkCreditLineApply_fmh'), 
         );
 
         $result['kkCreditLineApply']   =  array(
             'process' => U('Light/Process/ApplyProcess',array('modname'=>'CreditLineApply','system' => 'kk')),
             'info'    => U('Light/Apply/applyInfo',array('modname'=>'CreditLineApply','system'=>'kk'))
         );
+        $result['kkCreditLineApply_fmh']   =  array(
+            'process' => U('Light/Process/ApplyProcess',array('modname'=>'CreditLineApply_fmh','system' => 'kk')),
+            'info'    => U('Light/Apply/applyInfo',array('modname'=>'CreditLineApply_fmh','system'=>'kk'))
+        );
         $result['yxhbCreditLineApply'] = array(
             'process' => U('Light/Process/ApplyProcess',array('modname'=>'CreditLineApply','system' => 'yxhb')),
             'info'    => U('Light/Apply/applyInfo',array('modname'=>'CreditLineApply','system'=>'yxhb'))
         );   
-        return $result;      
+        return $result;  
     }
-
     // 临时额度
     public function TempCreditLineApply(){
+        return $this->TempCreditLineData();     
+    }
+    public function TempCreditLineApply_fmh(){
+        return $this->TempCreditLineData();
+    }
+    private  function TempCreditLineData(){
         $result = array();
         $result['url'] = array(
             array('name' => '环保临时额度','url' => U('Light/View/View',array('modname'=>'TempCreditLineApply','system' => 'yxhb')),'modname' => 'yxhbTempCreditLineApply'),
             array('name' => '建材临时额度','url' => U('Light/View/View',array('modname'=>'TempCreditLineApply','system' => 'kk')),'modname' => 'kkTempCreditLineApply'), 
+            array('name' => '粉煤灰临时额度','url' => U('Light/View/View',array('modname'=>'TempCreditLineApply_fmh','system' => 'kk')),'modname' => 'kkTempCreditLineApply_fmh'), 
         );
 
         $result['kkTempCreditLineApply']   =  array(
             'process' => U('Light/Process/ApplyProcess',array('modname'=>'TempCreditLineApply','system' => 'kk')),
             'info'    => U('Light/Apply/applyInfo',array('modname'=>'TempCreditLineApply','system'=>'kk'))
         );
+        $result['kkTempCreditLineApply_fmh']   =  array(
+            'process' => U('Light/Process/ApplyProcess',array('modname'=>'TempCreditLineApply_fmh','system' => 'kk')),
+            'info'    => U('Light/Apply/applyInfo',array('modname'=>'TempCreditLineApply_fmh','system'=>'kk'))
+        );
         $result['yxhbTempCreditLineApply'] = array(
             'process' => U('Light/Process/ApplyProcess',array('modname'=>'TempCreditLineApply','system' => 'yxhb')),
             'info'    => U('Light/Apply/applyInfo',array('modname'=>'TempCreditLineApply','system'=>'yxhb'))
         );   
-        return $result;      
+        return $result;   
     }
 
     // 配比通知
@@ -225,31 +247,34 @@ class MsgdataModel extends Model {
     
     // 销售收款
     public function SalesReceiptsApply(){
+        return $this->SalesReceiptsApplyData(); 
+    }
+    // 粉煤灰销售收款
+    public function SalesReceiptsApply_fmh(){
+        return $this->SalesReceiptsApplyData(); 
+    }
+    private function SalesReceiptsApplyData(){
         $result = array();
         $result['url'] = array(
             array('name' => '建材销售收款','url' => U('Light/View/View',array('modname'=>'SalesReceiptsApply','system' => 'kk')),'modname' => 'kkSalesReceiptsApply'),
             array('name' => '环保销售收款','url' => U('Light/View/View',array('modname'=>'SalesReceiptsApply','system' => 'yxhb')),'modname' => 'yxhbSalesReceiptsApply'),
+            array('name' => '粉煤灰销售收款','url' => U('Light/View/View',array('modname'=>'SalesReceiptsApply_fmh','system' => 'yxhb')),'modname' => 'kkSalesReceiptsApply_fmh'),
         );
     
         $result['kkSalesReceiptsApply'] = array(
             'process' => U('Light/Process/ApplyProcess',array('modname'=>'SalesReceiptsApply','system' => 'kk')),
             'info'    => U('Light/Apply/applyInfo',array('modname'=>'SalesReceiptsApply','system'=>'kk')),
-            // 'fiexd_copy_id' => 'xly',
-            // 'copydata' => array(
-            //     array('name' =>'许丽颖','url' => 'http://shp.qpic.cn/bizmp/nFsVdIIiaLZsmAv2LEDiaFwmzW1KMfkUIA3IW1c9PibAfaPCICgibpibQNA/'),
-            // )
         );  
+        $result['kkSalesReceiptsApply_fmh'] = array(
+            'process' => U('Light/Process/ApplyProcess',array('modname'=>'SalesReceiptsApply_fmh','system' => 'kk')),
+            'info'    => U('Light/Apply/applyInfo',array('modname'=>'SalesReceiptsApply_fmh','system'=>'kk')),
+        ); 
         $result['yxhbSalesReceiptsApply'] = array(
             'process' => U('Light/Process/ApplyProcess',array('modname'=>'SalesReceiptsApply','system' => 'yxhb')),
             'info'    => U('Light/Apply/applyInfo',array('modname'=>'SalesReceiptsApply','system'=>'yxhb')),
-            // 'fiexd_copy_id' => 'xly',
-            // 'copydata' => array(
-            //     array('name' =>'许丽颖','url' => 'http://shp.qpic.cn/bizmp/nFsVdIIiaLZsmAv2LEDiaFwmzW1KMfkUIA3IW1c9PibAfaPCICgibpibQNA/'),
-            // )
         );    
         return $result;   
     }
-
     // 销售退款
     public function SalesRefundApply(){
         $result = array();

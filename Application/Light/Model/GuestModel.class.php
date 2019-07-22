@@ -79,7 +79,15 @@ class GuestModel extends Model {
         $res = M()->query($sql);
         return $res;
     }
-
+    // 获取粉煤灰有效客户
+    public function getFmhHtUser(){
+        $today = date('Y-m-d',time());
+        $data = I('math');
+        $like = $data?"where g_helpword like '%{$data}%' or g_name like '%{$data}%'":'';
+        $sql = "select id,g_name as text,g_khjc as jc from (select a.id as id,g_name,g_helpword,g_khjc FROM kk_guest2_fmh as a,kk_ht_fmh as b where a.id=b.ht_khmc and ht_stday<='{$today}' and ht_enday>='{$today}' and ht_stat=2 and reid=0 group by ht_khmc UNION select id,g_name,g_helpword,g_khjc FROM kk_guest2_fmh where id=any(select a.reid as id FROM kk_guest2_fmh as a,kk_ht_fmh as b where a.id=b.ht_khmc and reid!= 0 and ht_stday<='{$today}' and ht_enday>='{$today}' and ht_stat=2  group by ht_khmc)) as t {$like} order by g_name ASC";
+        $res = M()->query($sql);
+        return $res;
+    }
     // 获取环保合同有效客户
     public function getYxhbHtUser(){
         $today = date('Y-m-d',time());
@@ -390,7 +398,7 @@ class GuestModel extends Model {
 					$info['contents'] = "";
 					$info['contract_eday'] = "";
 					// 一级客户余额计算
-                    $yeQuery = "SELECT qmje FROM yxhb_guest_accounts_receivable WHERE clientid='".$r['reid']."' ORDER BY id DESC";
+                    //$yeQuery = "SELECT qmje FROM ".$system."_guest_accounts_receivable WHERE clientid='".$r['reid']."' ORDER BY id DESC";
 					$yeRes=M($system.'_guest_accounts_receivable')->field('qmje')->where(array('clientid' => $r['reid']))->order('id desc')->find();
 					$info['ye'] = round($yeRes['qmje'], 2);
 					$father[$r['reid']] = $info;

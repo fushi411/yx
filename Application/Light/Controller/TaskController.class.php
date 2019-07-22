@@ -351,7 +351,7 @@ class TaskController extends \Think\Controller {
         $name = session('name');
         $wxid = session('wxid');
         $map = array(
-            'a.stat'   => 1 ,
+            'a.stat'   => 4 ,
             '_complex' => array(
                 '_logic' => 'or',
                 'a.tjr'  => $name,

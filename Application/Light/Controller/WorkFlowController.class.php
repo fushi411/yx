@@ -306,7 +306,7 @@ class WorkFlowController extends BaseController {
     public function sendApplyMsg($flowName, $id, $pid, $applyerid, $system, $type='')
     {
       $wx = D('WxMessage');
-      $arr = array('CostMoney','GuesttjApply');
+      $arr = array('CostMoney','GuesttjApply','CreditLineApply_fmh','TempCreditLineApply_fmh');
       if( in_array($flowName,$arr) ){
         $recevier = $wx->ProSendCarMessage($system,$flowName,$id,$pid,$applyerid,$type);
       }else{
@@ -354,7 +354,7 @@ class WorkFlowController extends BaseController {
       $sdata['app_word'] = $reason.'(转审->'.$per_name.')';
       $sdata['app_stat'] = 2;
       $sdata['app_name'] = '已转审';
-      $sdata['app_stage'] = $pre_stage; //将当前步骤退一个stage_id,为了排序 
+      $sdata['app_stage'] = $pre_stage; //将当前步骤退一个stage_id,为了排序
       $sdata['approve_time'] = date('Y-m-d H:i',time());
       $setProcQuery->where(array('aid'=>$aid, 'pro_id'=>$pro_id, 'app_stat'=>0,'per_id'=> $per_id))->save($sdata);
       // 5.设置转审流程

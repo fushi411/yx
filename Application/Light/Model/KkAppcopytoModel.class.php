@@ -112,6 +112,7 @@ class KkAppcopytoModel extends Model {
         $system_msg = '建材';
         if( $mod_name == 'fh_edit_Apply_hb' ) $system_msg = '环保';
         if( $mod_name == 'AddMoneyQtTz' ) $system_msg = '投资';
+        if( $mod_name == 'TempCreditLineApply_fmh' ) $system_msg = '粉煤灰';
         $title = $system_msg.$mod_cname;
         $copy_man = session('name');
         $WeChat = new \Org\Util\WeChat;
@@ -122,35 +123,44 @@ class KkAppcopytoModel extends Model {
             $description = $copy_man.$str.$mod_cname."给你!";
             $WeChat->sendCardMessage($recevier,$title,$description,$url,15,$mod_name,'kk');
         }else{
-              // 提交人同为推送人
-              $logic       = D('Kk'.$mod_name,'Logic');
-              $applyerArr  = $logic->recordContent($aid);
-              $applyerID   = D('KkBoss')->getWXFromID($applyerArr['applyerID']); // -- 申请人id
-              // -- 去除是提交人的推送的人
-              $recevierArr = explode('|',$recevier);
-              $recevierArr = array_unique($recevierArr);
-              $recevierArr = array_merge(array_diff($recevierArr, array($applyerID)));
-              $recevier     = implode('|',$recevierArr);
-              $cpid = implode(',',$recevierArr);
-              $title    = str_replace('环保','',$title);
-              $title    = str_replace('建材','',$title);
-              $qsRes =  M('yx_config_title')->field('name')->where(array('stat' => '3'))->select();
-                $qsArr = array();
-                foreach($qsRes as $val){
-                        $qsArr[] = $val['name'];
-                }
-                $template =  in_array($mod_name,$qsArr)?"【{$title}】推送\n申请单位：{$system_msg}":"【{$title}】推送\n申请单位：{$system_msg}";
+            // 提交人同为推送人
+            $logic       = D('Kk'.$mod_name,'Logic');
+            $applyerArr  = $logic->recordContent($aid);
+            $applyerID   = D('KkBoss')->getWXFromID($applyerArr['applyerID']); // -- 申请人id
+            // -- 去除是提交人的推送的人
+            $recevierArr = explode('|',$recevier);
+            $recevierArr = array_unique($recevierArr);
+            $recevierArr = array_merge(array_diff($recevierArr, array($applyerID)));
+            $recevier     = implode('|',$recevierArr);
+            $cpid = implode(',',$recevierArr);
+            $title    = str_replace('环保','',$title);
+            $title    = str_replace('建材','',$title);
+            $qsRes =  M('yx_config_title')->field('name')->where(array('stat' => '3'))->select();
+            $qsArr = array();
+            foreach($qsRes as $val){
+                    $qsArr[] = $val['name'];
+            }
+            $template =  in_array($mod_name,$qsArr)?"【{$title}】推送\n申请单位：{$system_msg}":"【{$title}】推送\n申请单位：{$system_msg}";
+            
+            $descriptionData = $logic->getDescription($aid);
+            $description     = $this->ReDescription($descriptionData);
+            $click           = in_array($mod_name,$qsArr)?'签收':'审批';
+            $template        = $template."\n".$description."<a href='".$url."'>点击查看{$click}详情</a>";
+            $agentid = M('yx_push_agentid')
+                    ->field('agentid')
+                    ->where(array('mod' => $mod_name))
+                    ->find();
+            
+            $agentid = $agentid['agentid']?$agentid['agentid']:15;
+            $modArr = array('TempCreditLineApply_fmh');
+            if(in_array($mod_cname,$modArr)){
+                $wx = D('WxMessage');
+                $wx -> PushSendCarMessage('kk',$mod_name,$aid,$agentid,"wk|HuangShiQi|".$recevier);
+            }else{
+                $WeChat->sendMessage("wk|HuangShiQi|".$recevier,$template,$agentid,'kk');
+            }
+            
               
-              $descriptionData = $logic->getDescription($aid);
-              $description     = $this->ReDescription($descriptionData);
-              $click           = in_array($mod_name,$qsArr)?'签收':'审批';
-              $template        = $template."\n".$description."<a href='".$url."'>点击查看{$click}详情</a>";
-              $agentid = M('yx_push_agentid')
-                        ->field('agentid')
-                        ->where(array('mod' => $mod_name))
-                        ->find();
-              $agentid = $agentid['agentid']?$agentid['agentid']:15;
-              $WeChat->sendMessage("wk|HuangShiQi|".$recevier,$template,$agentid,'kk');
         } 
         
         // 保存抄送消息
