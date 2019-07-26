@@ -152,8 +152,8 @@ class KkAppcopytoModel extends Model {
                     ->find();
             
             $agentid = $agentid['agentid']?$agentid['agentid']:15;
-            $modArr = array('TempCreditLineApply_fmh');
-            if(in_array($mod_cname,$modArr)){
+            $modArr = array('TempCreditLineApply_fmh','SalesReceiptsApply_fmh');
+            if(in_array($mod_name,$modArr)){
                 $wx = D('WxMessage');
                 $wx -> PushSendCarMessage('kk',$mod_name,$aid,$agentid,"wk|HuangShiQi|".$recevier);
             }else{

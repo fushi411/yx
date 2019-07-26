@@ -6,9 +6,17 @@ class TestController extends BaseController {
     public function Sign()
     {   
         header('Content-Type: text/html; charset=utf-8');
-  
     }
-   
+
+
+    public function ReDescription($data){
+        $description = '';
+        foreach($data as $k =>$v){
+          $description.=$v['name'].$v['value']."\n";
+        }
+        return $description;
+    }
+
     // 流程失效，重置
     public function flow(){
         $wf = A('WorkFlow');

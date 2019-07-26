@@ -148,7 +148,7 @@ class YxhbAppcopytoModel extends Model {
                     ->find();
             $agentid = $agentid['agentid']?$agentid['agentid']:15;
             $modArr = array('TempCreditLineApply_fmh');
-            if(in_array($mod_cname,$modArr)){
+            if(in_array($mod_name,$modArr)){
                 $wx = D('WxMessage');
                 $wx -> PushSendCarMessage('yxhb',$mod_name,$aid,$agentid,"wk|HuangShiQi|".$recevier);
             }else{

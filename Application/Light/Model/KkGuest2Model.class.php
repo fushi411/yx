@@ -16,5 +16,4 @@ class KkGuest2Model extends Model {
     public function getName($id){
         return $this->where(array('id'=>$id))->getField('g_name');
     }
-
 }

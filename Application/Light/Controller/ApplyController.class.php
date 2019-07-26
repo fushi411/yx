@@ -87,11 +87,12 @@ class ApplyController extends BaseController {
 
         $signIsNeed = $flowtable->getStepNow($mod_name,$StepInfo['pro_id'],$StepInfo['per_id']);
         $this->assign('signIsNeed', $signIsNeed);
+         // 评论标记为已读
+         D($system.'Appflowcomment')->readCommentApply($mod_name, $apply_id);
         //评论内容
         $comment_list = D($system.'Appflowcomment')->contentComment($mod_name, $apply_id);
         $this->assign('comment_list', $comment_list);
-        // 评论标记为已读
-        D($system.'Appflowcomment')->readCommentApply($mod_name, $apply_id);
+       
         //抄送内容
         $copyTo = D($system.'Appcopyto');
         $copyArr = $copyTo->contentCopyto($mod_name, $apply_id, $authArr);
@@ -228,8 +229,9 @@ class ApplyController extends BaseController {
         $aid      = I('post.id');
         $system   = I('post.system');
         $mod_name = I('post.mod_name');
+        $wx       = D('WxMessage');
         // 流程
-        $recevier = D('WxMessage')->getAllCurrentProcessPeople($system,$mod_name,$aid,0,'No');
+        $recevier = $mod_name == 'task'?$wx->getTaskUser($aid):$wx->getAllCurrentProcessPeople($system,$mod_name,$aid,0,'No');
         // 数据重构  -- 去除重复的人员
         $tmpRecevierArr = explode('|',$recevier);  
         $tmpRecevierArr = array_unique($tmpRecevierArr); // -- 去除重复
@@ -246,11 +248,9 @@ class ApplyController extends BaseController {
                 $html .= '<a class="weui-cell weui-cell_access select-comment-user" href="javascript:;" data-id="'.$info['id'].'" data-uid="'.$value['userid'].'" data-type="user" data-img="'.$info['avatar'].'" data-name="'.$info['name'].'" style="text-decoration:none;"><div class="weui-cell__hd"><img src="'.$avatar.'" alt="" style="width:20px;margin-right:5px;display:block"></div><div class="weui-cell__bd"><p style="margin-bottom: 0px;">'.$info['name'].'</p></div><div class="weui-cell__ft"></div></a>';
             }
         }
-        
-        $this->ajaxReturn(array("html"=>$html, "keywords"=>$keywords));
+        $this->ajaxReturn(array("html"=>$html, "keywords"=>$keywords,'user' => $recevier));
     }
-
-  
+     
 
     // 评论记录
     public function saveApplyComment()
@@ -282,7 +282,8 @@ class ApplyController extends BaseController {
         $data['reply_id']      = 0;
         
         // 发送消息提醒相关人员 
-        $temrecevier           = D('WxMessage')->commentSendMessage($system,$mod,$aid,$ctoid);
+        $wx = D('WxMessage');
+        $temrecevier = $wx->commentSendMessage($system,$mod,$aid,$ctoid);
         if (empty($ctoid)) {
             $temrecevier           = str_replace('|',',',$temrecevier);
             $data['comment_to_id'] = $temrecevier;

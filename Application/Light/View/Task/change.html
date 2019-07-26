@@ -351,7 +351,7 @@
     $(function () {
 
         if ("{$data.mod}") {
-            if ({$data.mod}) {
+            if ("{$data.mod}") {
                 mod.val("{$data.mod}");
             }
             $.post("{:U('Light/Task/getTwoData')}",
@@ -362,10 +362,10 @@
                     var html = "<option value='-1' disabled selected style='display:none;'>请选择三级类型</option>";
                     modThree.html(html);
                     dataMsg = data.data[1];
-                    if ({$data.modtwo}) {
+                    if ("{$data.modtwo}") {
                         modTwo.val("{$data.modtwo}");
                         makeModThree("{$data.modtwo}");
-                        if ({$data.modthree}) {
+                        if ("{$data.modthree}") {
                             modThree.val({$data.modthree});
                         }
                     }

@@ -118,146 +118,276 @@
         .font15 {
             font-size: 16px;
         }
+        .comment {
+            width: 100%;
+            overflow: auto;
+            word-break: break-all;
+            margin-top: 5px;
+        }
+        .fjys{
+            margin-right: 9px;
+            margin-bottom: 9px;
+            width: 79px;
+            height: 79px;
+            background: no-repeat 50%;
+            background-size: cover;
+        }
+        .ready-btn{
+            text-align: center;
+            padding: 10px;
+            font-size: 16px;
+            background: #fff;
+        }
+        .ready-btn-on{
+            font-weight: 600;
+        }
     </style>
 </head>
 
 <body>
     <div class="weui-toptips weui-toptips_warn js_tooltips" style="opacity: 1;">错误提示</div>
+
     <div class="container">
-        <div class="page js_show">
-            <div class="weui-cells weui-cells_form font15">
-                <div class="weui-cell weui-cell_select weui-cell_select-after">
-                    <div class="weui-cell__hd">
-                        <label class="weui-label">
-                            <span class="">模块类型</span>&nbsp;&nbsp;
-                            <span style="color:red;">*</span>
-                        </label>
-                    </div>
-                    <div class="weui-cell__bd">
-                        <select class="weui-select" name="type" disabled="disabled"  id='mod'>
-                            <option value='-1' disabled selected style='display:none;'>请选择模块类型</option>
+        <div class="page tabbar js_show">
+            <div class="page__bd" style="height: 100%;">
+                <div class="weui-tab">
+                    <div class="weui-tab__panel">
+                        <div class="weui-cells weui-cells_form font15">
+                            <div class="weui-cell weui-cell_select weui-cell_select-after">
+                                <div class="weui-cell__hd">
+                                    <label class="weui-label">
+                                        <span class="">模块类型</span>&nbsp;&nbsp;
+                                        <span style="color:red;">*</span>
+                                    </label>
+                                </div>
+                                <div class="weui-cell__bd">
+                                    <select class="weui-select" name="type" disabled="disabled" id='mod'>
+                                        <option value='-1' disabled selected style='display:none;'>请选择模块类型</option>
 
-                        </select>
-                    </div>
-                </div>
-            </div>
-            <div class="weui-cells weui-cells_form font15">
-                <div class="weui-cell weui-cell_select weui-cell_select-after">
-                    <div class="weui-cell__hd">
-                        <label class="weui-label">
-                            <span class="">二级类型</span>&nbsp;&nbsp;
-                            <span style="color:red;">*</span>
-                        </label>
-                    </div>
-                    <div class="weui-cell__bd">
-                        <select class="weui-select" name="type" disabled="disabled"  id='modTwo'>
-                            <option value='-1' disabled selected style='display:none;'>请选择二级类型</option>
-
-                        </select>
-                    </div>
-                </div>
-            </div>
-            <div class="weui-cells weui-cells_form font15">
-                <div class="weui-cell weui-cell_select weui-cell_select-after">
-                    <div class="weui-cell__hd">
-                        <label class="weui-label">
-                            <span class="">三级类型</span>&nbsp;&nbsp;
-                            <span style="color:red;">*</span>
-                        </label>
-                    </div>
-                    <div class="weui-cell__bd">
-                        <select class="weui-select" name="type" disabled="disabled"  id='modThree'>
-                            <option value='-1' disabled selected style='display:none;'>请选择模块类型</option>
-
-                        </select>
-                    </div>
-                </div>
-            </div>
-            <div class="weui-cells weui-cells_form font15">
-                <div class="weui-cell weui-cell_select weui-cell_select-after">
-                    <div class="weui-cell__hd">
-                        <label class="weui-label">
-                            <span class="">功能定位</span>&nbsp;&nbsp;
-                            <span style="color:red;">*</span>
-                        </label>
-                    </div>
-                    <div class="weui-cell__bd">
-                        <select class="weui-select" name="type" disabled="disabled"  id='func'>
-                            <option value='-1' disabled selected style='display:none;'>请选择功能定位</option>
-                            <option value="7">修改</option>
-                            <option value="8">优化</option>
-                            <option value="9">新增</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
-            <div class="weui-cells weui-cells_form font15">
-                <div class="weui-cell">
-                    <div class="weui-cell__hd">
-                        <label class="weui-label">需求标题&nbsp;&nbsp;
-                        </label>
-                    </div>
-                </div>
-                <div class="weui-cell">
-                    <div class="weui-cell__bd">
-                        <input class="weui-input" type="text" disabled="disabled"  id='title' value="{$data.title}" placeholder="请输入需求标题">
-                    </div>
-                </div>
-            </div>
-            <div class="weui-cells weui-cells_form font15">
-                <div class="weui-cell">
-                    <div class="weui-cell__hd">
-                        <label class="weui-label">需求描述&nbsp;&nbsp;
-                        </label>
-                    </div>
-                </div>
-                <div class="weui-cell">
-                    <div class="weui-cell__bd">
-                        <textarea class="weui-textarea" name="reason"   id="content" placeholder="请输入需求描述" rows="5">{$data.content}</textarea>
-                    </div>
-                </div>
-            </div>
-
-            <div class="weui-cells weui-cells_form ">
-                <div class="weui-cell font15">
-                    <div class="weui-cell__hd">
-                        <label class="weui-label" style="width: 100%;">参与人员&nbsp;&nbsp;<span style="color: #f12e2e">（点击+手动添加参与者）</span>
-                        </label>
-                    </div>
-                </div>
-                <div class="weui-cell" style="padding-top: 0px;padding-bottom: 5px;margin-bottom: 10px;">
-                    <div class="weui-cell__bd">
-                        <div class="weui-uploader">
-                            <div class="weui-uploader__bd">
-                                <ul class="weui-uploader__files" id="selectUser" style="margin-bottom: 0px;">
-                                    <volist name="fixed.copydata" id="vo">
-                                        <li class='weui-uploader__file no-select__user' style='min-height:80px;margin-bottom: 0;'>
-                                            <if condition="$vo.url eq ''">
-                                                <img src="Public/assets/i/defaul.png" class='weui-selet__user' style='margin-bottom: 0px;margin-right: 6px;margin-top:10px;'>
-                                                <else />
-                                                <img src="{$vo.url}" class='weui-selet__user' style='margin-bottom: 0px;margin-right: 6px;margin-top:10px;'>
-                                            </if>
-                                            <span style='margin-right: 6px;font-size: 14px;'> {$vo.name}</span>
-                                           
-                                        </li>
-                                    </volist>
-                                </ul>
-                                <div class="weui-uploader__input-box" style="display:none;width: 2.5em;height: 2.5em;margin-right: 0px;margin-bottom: 0px;margin-top:10px;">
-                                    <input id="uploaderInput" class="weui-uploader__input open_model" type="button"
-                                        name="copyto" readonly />
-                                    <!--data-toggle="modal" data-target="#myModal" -->
-                                    <input type="hidden" name="copyto_id" id="copyto_id" value="{$fixed['fiexd_copy_id']}">
+                                    </select>
                                 </div>
                             </div>
+                        </div>
+                        <div class="weui-cells weui-cells_form font15">
+                            <div class="weui-cell weui-cell_select weui-cell_select-after">
+                                <div class="weui-cell__hd">
+                                    <label class="weui-label">
+                                        <span class="">二级类型</span>&nbsp;&nbsp;
+                                        <span style="color:red;">*</span>
+                                    </label>
+                                </div>
+                                <div class="weui-cell__bd">
+                                    <select class="weui-select" name="type" disabled="disabled" id='modTwo'>
+                                        <option value='-1' disabled selected style='display:none;'>请选择二级类型</option>
+
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="weui-cells weui-cells_form font15">
+                            <div class="weui-cell weui-cell_select weui-cell_select-after">
+                                <div class="weui-cell__hd">
+                                    <label class="weui-label">
+                                        <span class="">三级类型</span>&nbsp;&nbsp;
+                                        <span style="color:red;">*</span>
+                                    </label>
+                                </div>
+                                <div class="weui-cell__bd">
+                                    <select class="weui-select" name="type" disabled="disabled" id='modThree'>
+                                        <option value='-1' disabled selected style='display:none;'>请选择模块类型</option>
+
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="weui-cells weui-cells_form font15">
+                            <div class="weui-cell weui-cell_select weui-cell_select-after">
+                                <div class="weui-cell__hd">
+                                    <label class="weui-label">
+                                        <span class="">功能定位</span>&nbsp;&nbsp;
+                                        <span style="color:red;">*</span>
+                                    </label>
+                                </div>
+                                <div class="weui-cell__bd">
+                                    <select class="weui-select" name="type" disabled="disabled" id='func'>
+                                        <option value='-1' disabled selected style='display:none;'>请选择功能定位</option>
+                                        <option value="7">修改</option>
+                                        <option value="8">优化</option>
+                                        <option value="9">新增</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="weui-cells weui-cells_form font15">
+                            <div class="weui-cell">
+                                <div class="weui-cell__hd">
+                                    <label class="weui-label">需求标题&nbsp;&nbsp;
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="weui-cell">
+                                <div class="weui-cell__bd">
+                                    <input class="weui-input" type="text" disabled="disabled" id='title'
+                                        value="{$data.title}" placeholder="请输入需求标题">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="weui-cells weui-cells_form font15">
+                            <div class="weui-cell">
+                                <div class="weui-cell__hd">
+                                    <label class="weui-label">需求描述&nbsp;&nbsp;
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="weui-cell">
+                                <div class="weui-cell__bd">
+                                    <textarea class="weui-textarea" name="reason" id="content" placeholder="请输入需求描述"
+                                        rows="5">{$data.content}</textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <block name="comment">
+                                <div class="weui-panel" style="margin-top: 0px;">
+                                    <div class="weui-panel__hd" style="font-size: 16px;background-color: #f8f8f8;color:black;padding-top: 10px;">评论<span style="color: #f12e2e">（流程及抄送人员均可评论或@指定人）</span></div>
+                                    <div class="weui-panel__bd">
+                                        <div class="weui-media-box weui-media-box_small-appmsg" style="padding-bottom: 10px;">
+                                            <div class="weui-cells">
+                                                <if condition="empty($comment_list)">
+                                                        <span class="weui-media-box weui-media-box_appmsg" style="    align-items: flex-start;padding-top: 10px;">
+                                                                    <h4 class="weui-media-box__title" style="/*font-weight: 800;*/margin-top: 0px;margin-bottom: 5px;color:grey;">
+                                                                    无评论
+                                                                    </h4>
+                                                                </span>
+                                                        <else/>
+                                                <volist name="comment_list" id="clist">
+                                                    <if condition="$clist.class eq 'dn'">
+                                                        <span class="weui-media-box weui-media-box_appmsg {$clist.class}"  style="align-items: flex-start;padding-top: 10px;display: none;">
+                                                    <else/>
+                                                        <span class="weui-media-box weui-media-box_appmsg {$clist.class}"  style="align-items: flex-start;padding-top: 10px;">
+                                                    </if>
+                                                        <div class="weui-media-box__hd" style="width: 2.5em;height: 2.5em;">
+                                                            <img class="weui-media-box__thumb" src="{$clist.avatar}" alt="" style="border-radius: 5px;">
+                                                        </div>
+                                                        <div class="weui-media-box__bd">
+                                                            <h4 class="weui-media-box__title" style="/*font-weight: 800;*/margin-top: 0px;margin-bottom: 5px;color:grey;">
+                                                                <span>{$clist.name}</span>
+                                                                <span style="float: right;font-size: 15px;line-height: 18px;">{$clist.time|substr=2,14}</span>
+                                                            </h4>
+                                                            <p class="weui-media-box__desc" style="display: block;overflow: visible; word-break:break-all; word-wrap:break-word;margin-bottom: 0px;color:black;">
+                                                                {$clist.word}
+                                                            </p>
+                                                           
+                                                            <if condition="$clist.is_img eq 1">
+                                                                <ul class="weui-uploader__files viewer"   style="margin-bottom: 0px;">
+                                                                    <volist name="clist.file" id="val">
+                                                                        <img  src="__PUBLIC__/upload/html5uploads/{$val}" class="fjys"  data-original="__PUBLIC__/upload/html5uploads/{$val}" alt="" style="max-width: 95%;">
+                                                                    </volist>
+                                                                </ul>    
+                                                            </if>
+                                                            <if condition="($clist.pid neq 9999) AND ($clist.pid neq 8888) ">
+                                                                <p class="weui-media-box__desc" style="display: flex;flex-direction:row;justify-content:space-between;align-items:center;font-size: 15px;margin-bottom: 0px;">
+                                                                    <switch name="clist.comment_ready">
+                                                                            <case value="no_this_param"><span>&nbsp;</span> </case>
+                                                                            <case value="readynone"><span>未读</span></case>
+                                                                            <case value="readyall"><span >全部已读</span></case>
+                                                                            <default /><span class="comment_id" style='color:#337ab7;' index="{$clist.id}" data-toggle="modal" data-target="#myModal3">{$clist.comment_ready}</span> 
+                                                                        </switch>
+                
+                                                                    <eq name="Think.session.wxid" value="$clist.wxid">
+                                                                        <eq name="clist.del_able" value="1">
+                                                                            <span style="color:red;" class="comment_del" data-id="{$clist.id}">
+                                                                                <span style="color:grey;">（2小时内）</span>删除</span>
+                                                                        </eq>
+                                                                    </eq>
+                                                                    <neq name="clist.pid" value="9999">
+                                                                        <neq name="clist.pid" value="8888">
+                                                                            <span style="color:red;" realname="{$clist.name}" wxid="{$clist.wxid}" avatar="{$clist.avatar}" data-toggle="modal" data-target="#myModal2" class="reply">回复</span>
+                                                                        </neq>
+                                                                    </neq> 
+                                                                </p>
+                                                            </if>
+                                                            <eq name="clist.class" value="up">
+                                                                <p style="font-size: 15px;margin-bottom: 0px;float: right;"><span style="color:#337ab7;"  id="{$clist.class}">展开</span></p>
+                                                            </eq>
+                                                        </div>
+                                                    </span>
+                                                </volist>
+                                                </if>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </block>
+                        <div class="weui-cells weui-cells_form ">
+                            <div class="weui-cell font15">
+                                <div class="weui-cell__hd">
+                                    <label class="weui-label" style="width: 100%;">参与人员&nbsp;&nbsp;<span
+                                            style="color: #f12e2e">（点击+手动添加参与者）</span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="weui-cell" style="padding-top: 0px;padding-bottom: 5px;margin-bottom: 10px;">
+                                <div class="weui-cell__bd">
+                                    <div class="weui-uploader">
+                                        <div class="weui-uploader__bd">
+                                            <ul class="weui-uploader__files" id="selectUser"
+                                                style="margin-bottom: 0px;">
+                                                <volist name="fixed.copydata" id="vo">
+                                                    <li class='weui-uploader__file no-select__user'
+                                                        style='min-height:80px;margin-bottom: 0;'>
+                                                        <if condition="$vo.url eq ''">
+                                                            <img src="Public/assets/i/defaul.png"
+                                                                class='weui-selet__user'
+                                                                style='margin-bottom: 0px;margin-right: 6px;margin-top:10px;'>
+                                                            <else />
+                                                            <img src="{$vo.url}" class='weui-selet__user'
+                                                                style='margin-bottom: 0px;margin-right: 6px;margin-top:10px;'>
+                                                        </if>
+                                                        <span style='margin-right: 6px;font-size: 14px;'>
+                                                            {$vo.name}</span>
+
+                                                    </li>
+                                                </volist>
+                                            </ul>
+                                            <div class="weui-uploader__input-box"
+                                                style="display:none;width: 2.5em;height: 2.5em;margin-right: 0px;margin-bottom: 0px;margin-top:10px;">
+                                                <input id="" class="weui-uploader__input open_model"
+                                                    type="button" name="copyto" readonly />
+                                                <!--data-toggle="modal" data-target="#myModal" -->
+                                                <input type="hidden" name="copyto_id" id="copyto_id"
+                                                    value="{$fixed['fiexd_copy_id']}">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="button-sp-area" id="apply-area"
+                            style="margin-bottom: 20px;display: flex;flex-direction: row;width: 100%;justify-content: space-around;align-items: baseline;">
+                            <input type="hidden" name="file_names" id="file_names">
+                            <a class="weui-btn weui-btn_primary" href="javascript:"
+                                style="width: 40%;background-color: #a5aba5;" id="submit">提交审核</a>
+                            <a href="javascript:;" id="apply-refuse" class="weui-btn weui-btn_warn"
+                                style="width: 40%;">取消</a>
                         </div>
                     </div>
                 </div>
             </div>
-            
-            <div class="button-sp-area" id="apply-area" style="margin-bottom: 20px;display: flex;flex-direction: row;width: 100%;justify-content: space-around;align-items: baseline;">
-                <input type="hidden" name="file_names" id="file_names">
-                <a class="weui-btn weui-btn_primary" href="javascript:" style="width: 40%;background-color: #a5aba5;" id="submit">提交审核</a>
-                <a href="javascript:;" id="apply-refuse" class="weui-btn weui-btn_warn" style="width: 40%;">取消</a>
+            <div class="weui-tabbar" style="padding-top: 8px;">
+                <a href="#" class="weui-tabbar__item" style="text-decoration: none;">
+                    <p class="weui-tabbar__label" style="font-size: 15px;color:black;" data-toggle="modal" data-target="#myModal2">
+                        <span class="glyphicon glyphicon-align-left" aria-hidden="true" style="margin-right: 5px;"></span>评论</p>
+                </a>
+                <a href="javascript:;" class="weui-tabbar__item" id="btn-delete">
+                
+                    <p class="weui-tabbar__label" style="font-size: 15px;color:black;"  id="show_iosDialog_delete">
+                        <span class="glyphicon glyphicon-share-alt" aria-hidden="true" style="margin-right: 5px;"></span>撤销</p>
+                </a>
+                <a href="javascript:;" class="weui-tabbar__item" id="btn-urge">
+                    <p class="weui-tabbar__label" style="font-size: 15px;color:black;">
+                        <span class="glyphicon glyphicon-hourglass" aria-hidden="true" style="margin-right: 5px;"></span>催审</p>
+                </a>
             </div>
         </div>
     </div>
@@ -268,8 +398,8 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span
-                            class="sr-only copy_to_close">Close</span></button>
+                    <button type="button" class="close" data-dismiss="modal"><span
+                            aria-hidden="true">&times;</span><span class="sr-only copy_to_close">Close</span></button>
                     <h4 class="modal-title" id="myModalLabel">选择人员</h4>
                 </div>
 
@@ -304,19 +434,175 @@
         </div>
     </div>
     <!-- Modal END-->
+    <div class="modal fade" id="myModal2" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" width="100%">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">
+                            <span aria-hidden="true">&times;</span>
+                            <span class="sr-only">Close</span>
+                        </button>
+                        <h4 class="modal-title" id="myModalLabel">评论内容：</h4>
+                    </div>
+                    <div class="modal-body" id="select_content" style="padding-top: 0px;padding-bottom: 0px;">
+                        <div class="page js_show" style="position: relative;">
+                            <div class="page__bd">
+                                <textarea name="comment_content" id="comment_content" class="comment" data-aid="{$data.id}" placeholder="请输入评论内容;
+评论内容可@指定人;
+@指定人未读每30分钟自动提醒;
+无指定默认@所有人（含抄送）;
+任意流程均可评论;" rows="6" cols="30"></textarea>
+                            </div>
+                        </div>
+                        <div class="weui-tabbar" style="padding-top: 8px;position: initial;">
+                            <a href="#" class="weui-tabbar__item" style="text-decoration: none;">
+                                <p class="weui-tabbar__label" style="font-size: 15px;color:black;" id="btn-at">
+                                    <span class="glyphicon" aria-hidden="true" style="margin-right: 5px;"></span>@ 指定人</p>
+                            </a>
+                            <a href="javascript:;" class="weui-tabbar__item" id="btn-face">
+                                <p class="weui-tabbar__label" style="font-size: 15px;color:black;">
+                                    <span class="glyphicon glyphicon-sunglasses" aria-hidden="true" style="margin-right: 5px;"></span>表情</p>
+                            </a>
+                            <a href="javascript:;" class="weui-tabbar__item" id="btn-img">
+                                <p class="weui-tabbar__label" style="font-size: 15px;color:black;">
+                                    <span class="glyphicon glyphicon-picture" aria-hidden="true" style="margin-right: 5px;"></span>图片</p>
+                            </a>
+                        </div>
+                        <div class="page js_show" id="comment_at" style="position: relative;display: none;">
+                            <div class="page__bd">
+                                <div class="weui-cells" id="" style="margin-top: 5px;margin-bottom: 5px;">
+                                    <div class="weui-uploader">
+                                        <div class="weui-uploader__bd" style="margin-right: 0px;margin-bottom: 0px;padding-top: 12px;">
+                                            <ul class="weui-uploader__files" id="selectCommentUser" style="margin-bottom: 0px;">
+                                            </ul>
+                                            <input type="hidden" name="comment_to_id" id="comment_to_id">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="weui-cells searchbar-result" id="commentSearchResult" style="margin-top: 0px;">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="page js_show" id="comment_img" style="position: relative;display: none;">
+                            <div class="page__bd">
+                                <div class="weui-cell">
+                                    <div class="weui-cell__bd">
+                                        <div class="weui-uploader">
+                                            <div class="weui-uploader__hd">
+                                                <p class="weui-uploader__title" style="margin-bottom: 0px;">图片上传</p>
+                                                <div class="weui-uploader__info">
+                                                    <span id="upload_nums">0</span>/9</div>
+                                            </div>
+                                            <div class="weui-uploader__bd">
+                                                <ul class="weui-uploader__files" id="uploaderFiles" style="margin-bottom: 0px;">
+                                                </ul>
+                                                <div class="weui-uploader__input-box">
+                                                    <input onclick="imgUpload()" class="weui-uploader__input"/>
+                                                    <input id="uploaderInput" class="weui-uploader__input" type="file" accept="image/*" name="file_image[]" multiple style="display: none;" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <input type="hidden" name="file_names" id="file_names">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                        <button type="button" class="btn btn-success" id="comment-send">发送</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Modal END-->
+         <!-- Modal -->
+         <div class="modal fade" id="myModal3" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"
+         width="100%">
+         <div class="modal-dialog">
+             <div class="modal-content">
+                 <div class="modal-header">
+                     <button type="button" class="close" data-dismiss="modal">
+                         <span aria-hidden="true">&times;</span>
+                         <span class="sr-only ">Close</span>
+                     </button>
+                     <h4 class="modal-title" id="myModalLabel">信息详情</h4>
+                 </div>
+                 <div class="modal-body" id="select_content" style="padding-top: 0px;padding-bottom: 0px;">
+                     <div class="page js_show" style="position: relative;">
+                         <div class="page__bd">
+                             <div class="weui-flex">
+                                 <div class="weui-flex__item"><div index='read' class="placeholder ready-btn ready-btn-on ready-btn-read">已读</div></div>
+                                 <div class="weui-flex__item"><div index='noread' class="placeholder ready-btn">未读</div></div>
+                             </div>
+                             <div class="weui-cells searchbar-result" id="readHtml" style="margin-top: 0px;">
+                                     
+                             </div>
+                         </div>
+                     </div>
+                 </div>
+                 <div class="modal-footer">
+                     <button type="button" class="btn btn-default " data-dismiss="modal">关闭</button>
+                 </div>
+             </div>
+         </div>
+     </div>
     <!--BEGIN dialog-->
+    <div class="js_dialog" id="knowDialog" style="display: none;">
+            <div class="weui-mask"></div>
+            <div class="weui-dialog">
+                <div class="weui-dialog__bd">图片布局方向须朝上！</div>
+                <div class="weui-dialog__ft">
+                    <a href="javascript:;" onclick="dialog_iknow()" class="weui-dialog__btn weui-dialog__btn_primary">知道了</a>
+                </div>
+            </div>
+        </div>
     <div id="dialogs">
         <div class="js_dialog" id="iosDialog" style="display: none;">
             <div class="weui-mask"></div>
             <div class="weui-dialog">
                 <div class="weui-dialog__hd"><strong class="weui-dialog__title">是否删除参与人</strong></div>
                 <div class="weui-dialog__ft">
-                    <a href="javascript:;" onclick="dialog_close()" class="weui-dialog__btn weui-dialog__btn_default">取消</a>
-                    <a href="javascript:;" onclick="dialog_confirm()" class="weui-dialog__btn weui-dialog__btn_primary">确认</a>
+                    <a href="javascript:;" onclick="dialog_close()"
+                        class="weui-dialog__btn weui-dialog__btn_default">取消</a>
+                    <a href="javascript:;" onclick="dialog_confirm()"
+                        class="weui-dialog__btn weui-dialog__btn_primary">确认</a>
                 </div>
             </div>
         </div>
     </div>
+    <div class="js_dialog" id="iosDialog_comment_record_del" style="display: none;">
+            <div class="weui-mask"></div>
+            <div class="weui-dialog">
+                <div class="weui-dialog__hd">
+                    <strong class="weui-dialog__title">是否删除评论</strong>
+                </div>
+                <div class="weui-dialog__ft">
+                    <a href="javascript:;" onclick="dialog_comment_record_del_close()" class="weui-dialog__btn weui-dialog__btn_default">取消</a>
+                    <a href="javascript:;" onclick="dialog_comment_record_del_confirm()" class="weui-dialog__btn weui-dialog__btn_primary">确认</a>
+                </div>
+            </div>
+        </div>
+    <div class="js_dialog" id="iosDialog_comment_del" style="display: none;">
+            <div class="weui-mask"></div>
+            <div class="weui-dialog">
+                <div class="weui-dialog__hd">
+                    <strong class="weui-dialog__title">是否删除评论人</strong>
+                </div>
+                <div class="weui-dialog__ft">
+                    <a href="javascript:;" onclick="dialog_comment_del_close()" class="weui-dialog__btn weui-dialog__btn_default">取消</a>
+                    <a href="javascript:;" onclick="dialog_comment_del_confirm()" class="weui-dialog__btn weui-dialog__btn_primary">确认</a>
+                </div>
+            </div>
+        </div>
+        <div id="doingToast" style="display:none;">
+                <div class="weui-mask_transparent"></div>
+                <div class="weui-toast">
+                    <i class="weui-loading weui-icon_toast"></i>
+                    <p class="weui-toast__content" id="doing">进行中...</p>
+                </div>
+            </div>
     <!-- END dialog -->
     <div id="toast" style="display: none;">
         <div class="weui-mask_transparent"></div>
@@ -349,7 +635,7 @@
     $(function () {
 
         if ("{$data.mod}") {
-            if ({$data.mod}) {
+            if ("{$data.mod}") {
                 mod.val("{$data.mod}");
             }
             $.post("{:U('Light/Task/getTwoData')}",
@@ -360,11 +646,11 @@
                     var html = "<option value='-1' disabled selected style='display:none;'>请选择三级类型</option>";
                     modThree.html(html);
                     dataMsg = data.data[1];
-                    if ({$data.modtwo}) {
+                    if ("{$data.modtwo}") {
                         modTwo.val("{$data.modtwo}");
                         makeModThree("{$data.modtwo}");
-                        if ({$data.modthree}) {
-                            modThree.val({$data.modthree});
+                        if ("{$data.modthree}") {
+                            modThree.val("{$data.modthree}");
                         }
                     }
                 }
@@ -378,83 +664,7 @@
     $('#apply-refuse').click(function () {
         window.location.href = "{:U('light/Task/commission')}";
     });
-    // 提交
-    $('#submit').click(function () {
-        return alert('暂未开发');
-        var $mod = mod.val(),
-            $modTwo = modTwo.val(),
-            $modThree = modThree.val(),
-            $func = func.val(),
-            $title = title.val(),
-            $content = content.val(),
-            $user = user.val();
-
-        if (!$mod) return tooltip('请选择模块类型');
-        if (!$modTwo) return tooltip('请选择二级类型');
-        if (!$modThree) return tooltip('请选择三级类型');
-        if (!$func) return tooltip('请选择需求功能');
-        if (!$title) return tooltip('请选择需求标题');
-        if (!$content) return tooltip('请选择需求描述');
-        if (!$user) return tooltip('请选择参与人员');
-
-        $.post("{:U('Light/Task/func_to_build_save')}",
-            {
-                'id':"{$data.id}",
-                'mod': mod.val(),
-                'modTwo': modTwo.val(),
-                'modThree': modThree.val(),
-                'func': func.val(),
-                'title': title.val(),
-                'content': content.val(),
-                'user': user.val(),
-                __hash__: hash
-            }, function (data) {
-                if (data.code != 200) {
-                    tooltip(data.msg);
-                } else {
-                    $toast.fadeIn(100);
-                    setTimeout(function () {
-                        window.location.href = "{:U('light/Task/commission')}";
-                    }, 2000);
-
-                }
-            }
-        );
-    });
-    // 草稿
-    $('#apply-agree').click(function () {
-        var $mod = mod.val(),
-            $modTwo = modTwo.val(),
-            $modThree = modThree.val(),
-            $func = func.val(),
-            $title = title.val(),
-            $content = content.val(),
-            $user = user.val();
-        if (!$title && !$content) return tooltip('标题和内容不能为空');
-        $.post("{:U('Light/Task/draftSave')}",
-            {
-                'id':"{$data.id}",
-                'mod': mod.val(),
-                'modTwo': modTwo.val(),
-                'modThree': modThree.val(),
-                'func': func.val(),
-                'title': title.val(),
-                'content': content.val(),
-                'user': user.val(),
-                __hash__: hash
-            }, function (data) {
-                if (data.code != 200) {
-                    tooltip(data.msg);
-                } else {
-                    $toast.fadeIn(100);
-                    setTimeout(function () {
-                        window.location.href = "{:U('light/Task/draftPage')}";
-                    }, 2000);
-
-                }
-            }
-        );
-    });
+  
 
     $('#mod').change(function () {
         $.post("{:U('Light/Task/getTwoData')}",
@@ -509,7 +719,7 @@
             html += '<option value="' + data[1][i].id + '">' + data[1][i].name + '</option>';
         }
         func.html(html);
-        if ({$data.function}) {
+        if ("{ $data.function }") {
             func.val("{$data.function}");
         }
 
@@ -528,201 +738,652 @@
             $tooltips.css('display', 'none');
         }, 2000);
     }
+    $('.reply').click(function(){
+        $("#comment_to_id").val('');
+        $("#selectCommentUser").empty();
+        $("#comment_at").fadeIn(200);
 
-
-
-    // 添加 参与人员 暂定信息中心
-    // 抄送
-    var loading = '<div class="weui-loadmore"><i class="weui-loading"></i><span class="weui-loadmore__tips">正在加载</span></div>';
-    var noresult = '<div class="weui-loadmore weui-loadmore_line"><span class="weui-loadmore__tips">暂无数据</span></div>';
-    var $selectUser = $("#selectUser");
-    // Modal
-    $('#myModal').on('show.bs.modal', function (e) {
-        var id = 1;
-        $("#pre-level").attr("data-pid", 0);
-        getDepartment(id);
-    });
-    $('.open_model').on('click', function () {
-        $('#myModal').modal('show');
-    });
-    function getDepartment(id) {
-        $('#searchResult').empty();
-        $('#searchResult').append(loading);
-        $.post("{:U('Light/Apply/getDeptHtml')}",
-            {
-                "id": id
-            }, function (data) {
-                $('#searchResult').empty();
-                // console.log(data);
-                if (data == '') {
-                    $('#searchResult').append(noresult);
-                } else {
-                    $('#searchResult').append(data);
-                }
-            }
-        );
-    }
-    // up pre-level
-    $("#pre-level").on("click", function () {
-        $('#searchResult').empty();
-        $('#searchResult').append(loading);
-        var pid = $(this).attr("data-pid");
-        // console.log(pid);
-        $.post("{:U('Light/Apply/getParentDeptHtml')}",
-            {
-                "id": pid
-            }, function (data) {
-                $('#searchResult').empty();
-                // console.log(data);
-                if (data == '') {
-                    $('#searchResult').append(noresult);
-                } else {
-                    $('#searchResult').append(data.html);
-                    // console.log(data.pid);
-                    $("#pre-level").attr("data-pid", data.pid);
-                }
-            }
-        );
-    });
-    // select department
-    $("#searchResult").on("click", ".select-department", function () {
-        var id = $(this).attr('data-id');
-        var type = $(this).attr('data-type');
-        // console.log(id);
-        getDepartment(id);
-        $("#pre-level").attr("data-pid", id);
-    });
-    // select department user
-    $("#searchResult").on("click", ".select-user", function () {
-        // var tmpl = '<li class="weui-uploader__file weui-selet__user" style="background-image:url(#url#)" id="#id#"></li>';
-        var tmpl = '<li class="weui-uploader__file wk-select__user" id="#id#" style="height:66px;"><img src="#url#" class="weui-selet__user" style="margin-bottom: 0px;margin-right: 6px;margin-top:10px;" /><span style="margin-right: 6px;font-size: 14px;">#name#</span><span class="weui-badge" style="position: relative;top: -5.8em;right: -1.4em;">X</span></li>';
-        var id = $(this).attr('data-id');
-        var type = $(this).attr('data-type');
-        var img = $(this).attr('data-img');
-        var name = $(this).attr('data-name');
-        var ids = $("#copyto_id").val() + "," + id;
+        var id = $(this).attr('wxid');
+        var name = $(this).attr('realname');
+        var img = $(this).attr('avatar');
+        // 重复点击
+        var ids = $("#comment_to_id").val() + ",";
+        var old_ids_arr = ids.split(",");
+        if($.inArray(id,old_ids_arr)!=-1){
+            return false;
+        }
+        var ids = $("#comment_to_id").val() + "," + id;
+        var comment_content = $("#comment_content").val();
+        var new_comment_content = "";
+        // new_comment_content = comment_content+'@'+name;
+        // $("#comment_content").val(new_comment_content);
+        var tmpl = '<li class="weui-uploader__file wk-comment__user" id="#id#" "><img src="#url#" class="weui-selet__user" style="margin-bottom: 0px;margin-right: 6px;" /><span style="margin-right: 6px;font-size: 14px;">#name#</span><span class="weui-badge" style="position: relative;top: -5.8em;right: -1.4em;">X</span></li>';
         // console.log(id);
         tmpl = tmpl.replace('#id#', id);
         tmpl = tmpl.replace('#name#', name);
-        $selectUser.append($(tmpl.replace('#url#', img)));
-        $("#copyto_id").val(ids);
-        $('#searchInput').val(null);
-        $('#myModal').modal('hide')
+        $("#selectCommentUser").append($(tmpl.replace('#url#', img)));
+        $("#comment_to_id").val(ids);
     });
-    // delete copyto user
-    $("#selectUser").on("click", ".wk-select__user", function () {
-        $li_dom = $(this);
-        $("#iosDialog").fadeIn(200);
+    // 已读未读 
+    $('.ready-btn').click(function(){
+        $('.ready-btn').removeClass('ready-btn-on');
+        $(this).addClass('ready-btn-on');
+        var param = $(this).attr('index');
+        getReadMan(param);
     });
 
-    // Close dialog
-    function dialog_close() {
-        $("#iosDialog").fadeOut(100);
-    }
-    // Confirm dialog
-    function dialog_confirm() {
-        var id = $li_dom.attr("id");
-        // console.log(id);
-        var ids = $("#copyto_id").val() + ",";
-        var old_ids_arr = ids.split(",");
-        var id_str = '';
-        var location = $.inArray(id, old_ids_arr);
-        // // console.log(old_name_arr);
-        if (location >= 0) {
-            var repl_id = ',' + id + ',';
-            id_str = ids.replace(repl_id, ',');
-        }
-        $("#copyto_id").val(id_str);
-        $li_dom.remove();
-        $("#iosDialog").fadeOut(100);
-    }
-    // 抄送搜索
-    $(function () {
-        $.each($("textarea"), function(i, n){
-            $(n).css("height", n.scrollHeight + "px");
-        })
-        var $searchBar = $('#searchBar'),
-            $searchResult = $('#searchResult'),
-            $searchText = $('#searchText'),
-            $searchInput = $('#searchInput'),
-            $searchClear = $('#searchClear'),
-            $searchCancel = $('#searchCancel');
-
-        function hideSearchResult() {
-            // $searchResult.hide();
-            $searchInput.val('');
-        }
-        function cancelSearch() {
-            hideSearchResult();
-            $searchBar.removeClass('weui-search-bar_focusing');
-            $searchText.show();
-        }
-
-        $searchText.on('click', function () {
-            $searchBar.addClass('weui-search-bar_focusing');
-            $searchInput.focus();
-        });
-        $searchInput
-            .on('blur', function () {
-                if (!this.value.length) cancelSearch();
-            })
-            .on('input', function () {
-                if (this.value.length) {
-                    $searchResult.show();
-                    searchCopyUser();
-                } else {
-                    modelIni()
-                }
-            })
-            ;
-        $searchClear.on('click', function () {
-            hideSearchResult();
-            $searchInput.focus();
-        });
-        $searchCancel.on('click', function () {
-            searchCopyUser();
-        });
-        $searchInput.on('keypress', function (e) {
-            var keycode = e.keyCode;
-            var searchName = $(this).val();
-            if (keycode == '13') {
-                e.preventDefault();
-
-                searchCopyUser();
+    var comment_id = '';
+    $('.comment_id').click(function(){
+        comment_id = $(this).attr('index');
+        $('.ready-btn').removeClass('ready-btn-on');
+        $('.ready-btn-read').addClass('ready-btn-on');
+        getReadMan('read');
+    });
+   
+    function getReadMan(param){
+        var $dtoast = $('#doingToast');
+        $('#doing').text('加载中...');
+        $('#readHtml').html('<div class="weui-loadmore"><i class="weui-loading"></i><span class="weui-loadmore__tips">正在加载</span></div>');
+        $.post("{:U('Light/Apply/getReadMan')}",
+            {
+                comment_id: comment_id,
+                param     : param,
+                mod_name  : "task",
+                system    : "kk",
+            }, function (data) {
+                 $('#readHtml').html(data);
             }
-        });
-        function searchCopyUser() {
-            word = $searchInput.val();
-            if (!word.length) return modelIni();
-            $('#searchResult').empty();
-            $('#searchResult').append(loading);
-            $.post("{:U('Light/Apply/getDeptHtml')}",
-                {
-                    "type": 1,
-                    'search': word
-                }, function (data) {
-                    $('#searchResult').empty();
+        );
+    }
+    $("#comment-send").on("click", function () {
+            $('#loadingToast').fadeIn(100);
+            $('#myModal2').modal('hide');
+            //评论值传入
+            var comment_content = $("#comment_content").val();
+            var aid             = $('#comment_content').attr('data-aid');
+            var ctoid           = $('#comment_to_id').val();
+            var file            = $('#file_names').val();
+            var hash            = $(":input[name='__hash__']").val();
+            // console.log(aid);
+            //保存数据
+            $.ajax({
+                type: "POST",
+                url: "{:U('Light/Apply/saveApplyComment')}",
+                dataType: "json",
+                data: {
+                    aid: "{$data.id}",
+                    ctoid: ctoid,
+                    file:file,
+                    mod_name: "task",
+                    system: "kk",
+                    word: comment_content,
+                    __hash__: hash
+                },
+                success: function (data) {
+                    //审批完成后操作
+                    // alert('审批通过');
                     // console.log(data);
-                    if (data == '') {
+                    $('#loadingToast').hide();
+                    var $toast = $('#toast');
+                    if ($toast.css('display') != 'none') return;
 
-                        $('#searchResult').append(noresult);
-                    } else {
-
-                        $('#searchResult').append(data);
-                        // console.log(data.pid);
-                        $("#pre-level").attr("data-pid", 17);
+                    $toast.fadeIn(100);
+                    // console.log(id);
+                    setTimeout(function () {
+                        $toast.fadeOut(100);
+                        window.location.reload();
+                    }, 500);
+                }
+            });
+        });
+    var $commentSearchResult = $('#commentSearchResult'),
+        $commentSearchCancel = $('#commentSearchCancel');
+       // @按钮
+       $("#btn-at").on("click", function () {
+            $("#comment_at").toggle(200);
+            getCommentResult($commentSearchResult);
+        });
+        
+        
+        function getCommentResult($dom){
+            $dom.show();
+            $.post("{:U('Light/Apply/getSearchUser')}",
+                {
+                    id: "{$data.id}",
+                    system:'kk',
+                    mod_name:"task"
+                }, function (data) {
+                    
+                    if (data == '') { 
+                        $dom.append(noresult);
+                    } else{
+                        $dom.empty();
+                        $('#loadingToast').fadeOut(100);
+                        $dom.append(data.html);
                     }
                 }
             );
         }
+        $("#commentSearchResult").on("click", ".select-comment-user", function () {
+            var id = $(this).attr('data-id');
+            var uid = $(this).attr('data-uid');
+            var name = $(this).attr('data-name');
+            var img = $(this).attr('data-img');
+            // 重复点击
+            var ids = $("#comment_to_id").val() + ",";
+            var old_ids_arr = ids.split(",");
+            if($.inArray(id,old_ids_arr)!=-1){
+                return false;
+            }
+            var ids = $("#comment_to_id").val() + "," + id;
+            var comment_content = $("#comment_content").val();
+            var new_comment_content = "";
+            // new_comment_content = comment_content+'@'+name;
+            // $("#comment_content").val(new_comment_content);
+            var tmpl = '<li class="weui-uploader__file wk-comment__user" id="#id#" style=""><img src="#url#" class="weui-selet__user" style="margin-bottom: 0px;margin-right: 6px;" /><span style="margin-right: 6px;font-size: 14px;">#name#</span><span class="weui-badge" style="position: relative;top: -5.8em;right: -1.4em;">X</span></li>';
+            // console.log(id);
+            tmpl = tmpl.replace('#id#', id);
+            tmpl = tmpl.replace('#name#', name);
+            $("#selectCommentUser").append($(tmpl.replace('#url#', img)));
+            $("#comment_to_id").val(ids);
+        });
 
-        function modelIni() {
-            var id = 1;
-            $searchInput.val(null);
-            $("#pre-level").attr("data-pid", 0);
-            getDepartment(id);
+        // delete comment user
+        $("#selectCommentUser").on("click", ".wk-comment__user", function () {
+            $li_dom_comment = $(this);
+            $("#iosDialog_comment_del").fadeIn(200);
+        });
+        $("#selectapprovetUser").on("click", ".wk-comment__user", function () {
+            $li_dom_comment = $(this);
+            $("#iosDialog_approve_del").fadeIn(200);
+        });
+        // delete comment record
+        $(".comment_del").on("click", function () {
+            $li_dom_comment_record = $(this);
+            $("#iosDialog_comment_record_del").fadeIn(200);
+            // $(this).parent().parent().parent().css('display', 'none');
+        });
+          // Close dialog
+        function dialog_comment_del_close() {
+            $("#iosDialog_comment_del").fadeOut(100);
         }
-    });
+        // Confirm dialog
+        function dialog_comment_del_confirm() {
+
+            var id = $li_dom_comment.attr("id");
+            // console.log(id);
+            var ids = $("#comment_to_id").val() + ",";
+            var old_ids_arr = ids.split(",");
+            var id_str = '';
+            var location = $.inArray(id, old_ids_arr);
+            // // console.log(old_name_arr);
+            if (location >= 0) {
+                var repl_id = ',' + id + ',';
+                id_str = ids.replace(repl_id, ',');
+            }
+            $("#comment_to_id").val(id_str);
+            $li_dom_comment.remove();
+            $("#iosDialog_comment_del").fadeOut(100);
+        }
+        // Close comment record del dialog
+        function dialog_comment_record_del_close() {
+            $("#iosDialog_comment_record_del").fadeOut(100);
+        }
+        // Confirm comment record del dialog
+        function dialog_comment_record_del_confirm() {
+            $("#iosDialog_comment_record_del").fadeOut(100);
+            var id = $li_dom_comment_record.attr('data-id');
+            var $dtoast = $('#doingToast');
+            if ($dtoast.css('display') != 'none') return;
+            $('#doing').text('删除中...');
+            $dtoast.fadeIn(100);
+            $.post("{:U('Light/Apply/delCommentRecord')}",
+                {
+                    "id": id,
+                    system: "kk"
+                }, function (data) {
+                    // console.log(data);
+                    if (data == 'success') {
+                        $('#doing').text('删除成功');
+                        $li_dom_comment_record.parent().parent().parent().css('display', 'none');
+                    } else {
+                        $('#doing').text('删除错误！');
+                    }
+                    $dtoast.fadeOut(1000);
+                }
+            );
+        }
+    var filechooser = document.getElementById("uploaderInput");
+    $("#comment_img").css({'display':'none'});
+    $("#btn-img").on('click',function(){
+        $("#comment_img").toggle(200);
+        if ($("#comment_img").css('display') != 'none') {
+
+        }
+    })
+    // 触发上传机制
+    function imgUpload(){
+        $("#knowDialog").fadeIn(100);
+    }
+
+    // 内容提示(知道了)
+    function dialog_iknow(){
+        $("#knowDialog").fadeOut(100);
+        
+        filechooser.click();
+    }
+
+    
+
+    // Close dialog
+  //    用于压缩图片的canvas
+  var canvas = document.createElement("canvas");
+    var ctx = canvas.getContext('2d');
+    //    瓦片canvas
+    var tCanvas = document.createElement("canvas");
+    var tctx = tCanvas.getContext("2d");
+    var maxsize = 100 * 1024;
+    var img_num = 0;
+    var imgIndex = "",
+        imgdom = "";
+    $("#upload").on("click", function () {
+        filechooser.click();
+    }).on("touchstart", function () {
+            $(this).addClass("touch")
+        })
+        .on("touchend", function () {
+            $(this).removeClass("touch")
+        });
+    filechooser.onchange = function () {
+        if (!this.files.length) return;
+        var files = Array.prototype.slice.call(this.files);
+        if (files.length > 9 || img_num > 8) {
+            alert("最多只可上传9张图片");
+            return;
+        }
+        files.forEach(function (file, i) {
+            if (!/\/(?:jpeg|png|gif)/i.test(file.type)) return;
+            // console.log(file);
+            // console.log(i);
+            // console.log(Orientation);
+            var reader = new FileReader();
+            var li = document.createElement("li");
+            //          获取图片大小
+            var size = file.size / 1024 > 1024 ? (~~(10 * file.size / 1024 / 1024)) / 10 + "MB" : ~~(file.size / 1024) + "KB";
+            // li.innerHTML = '<div class="progress"><span></span></div><div class="size">' + size + '</div>';
+            li.innerHTML = '<div class="weui-uploader__file-content"></div>';
+            $(li).addClass("weui-uploader__file weui-uploader__file_status");
+            $("#uploaderFiles").append($(li));
+            reader.onload = function () {
+                var result = this.result;
+                var img = new Image();
+                img.src = result;
+                $(li).css("background-image", "url(" + result + ")");
+
+                //如果图片大小小于100kb，则直接上传
+                if (result.length <= maxsize) {
+                    img = null;
+                    // TODO：这里没有做图片旋转，小于100K可能会有问题
+                    upload(result, file.type, $(li), i);
+                    return;
+                }
+                //      图片加载完毕之后进行压缩，然后上传
+                if (img.complete) {
+                    callback();
+                } else {
+                    img.onload = callback;
+                }
+
+                function callback() {
+                    //获取照片方向角属性，用户旋转控制  
+                    EXIF.getData(file, function () {
+                        Orientation = EXIF.getTag(this, 'Orientation');
+                        // alert(Orientation);
+                        var data = compress(img, Orientation);
+                        upload(data, file.type, $(li), i);
+                        img = null;
+                    });
+                }
+            };
+            reader.readAsDataURL(file);
+        })
+    };
+    //对图片旋转处理 added by lzk  
+    function rotateImg(img, direction, canvas) {
+        // alert(img);  
+        //最小与最大旋转方向，图片旋转4次后回到原方向    
+        var min_step = 0;
+        var max_step = 3;
+        //var img = document.getElementById(pid);    
+        if (img == null) return;
+        //img的高度和宽度不能在img元素隐藏后获取，否则会出错    
+        var height = img.height;
+        var width = img.width;
+        //var step = img.getAttribute('step');    
+        var step = 2;
+        if (step == null) {
+            step = min_step;
+        }
+        if (direction == 'right') {
+            step++;
+            //旋转到原位置，即超过最大值    
+            step > max_step && (step = min_step);
+        } else {
+            step--;
+            step < min_step && (step = max_step);
+        }
+        //img.setAttribute('step', step);    
+        /*var canvas = document.getElementById('pic_' + pid);   
+        if (canvas == null) {   
+            img.style.display = 'none';   
+            canvas = document.createElement('canvas');   
+            canvas.setAttribute('id', 'pic_' + pid);   
+            img.parentNode.appendChild(canvas);   
+        }  */
+        //旋转角度以弧度值为参数    
+        var degree = step * 90 * Math.PI / 180;
+        // var ctx = canvas.getContext('2d');
+        // console.log(step);
+        switch (step) {
+            case 0:
+                canvas.width = width;
+                canvas.height = height;
+                ctx.drawImage(img, 0, 0);
+                break;
+            case 1:
+                canvas.width = height;
+                canvas.height = width;
+                ctx.rotate(degree);
+                ctx.drawImage(img, 0, -height);
+                break;
+            case 2:
+                canvas.width = width;
+                canvas.height = height;
+                ctx.rotate(degree);
+                ctx.drawImage(img, -width, -height);
+                break;
+            case 3:
+                canvas.width = height;
+                canvas.height = width;
+                ctx.rotate(degree);
+                ctx.drawImage(img, -width, 0);
+                break;
+        }
+    }
+    //    使用canvas对大图片进行压缩
+    function compress(img, Orientation) {
+        var initSize = img.src.length;
+        var width = img.width;
+        var height = img.height;
+        //如果图片大于四百万像素，计算压缩比并将大小压至400万以下
+        var ratio;
+        if ((ratio = width * height / 4000000) > 1) {
+            ratio = Math.sqrt(ratio);
+            width /= ratio;
+            height /= ratio;
+        } else {
+            ratio = 1;
+        }
+        canvas.width = width;
+        canvas.height = height;
+        //        铺底色
+        ctx.fillStyle = "#fff";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        //如果图片像素大于100万则使用瓦片绘制
+        var count;
+        if ((count = width * height / 1000000) > 1) {
+            count = ~~(Math.sqrt(count) + 1); //计算要分成多少块瓦片
+            //            计算每块瓦片的宽和高
+            var nw = ~~(width / count);
+            var nh = ~~(height / count);
+            tCanvas.width = nw;
+            tCanvas.height = nh;
+            for (var i = 0; i < count; i++) {
+                for (var j = 0; j < count; j++) {
+                    tctx.drawImage(img, i * nw * ratio, j * nh * ratio, nw * ratio, nh * ratio, 0, 0, nw, nh);
+                    ctx.drawImage(tCanvas, i * nw, j * nh, nw, nh);
+                }
+            }
+        } else {
+            ctx.drawImage(img, 0, 0, width, height);
+        }
+
+        // console.log(Orientation);
+
+        if (navigator.userAgent.match(/iphone/i)) {
+            console.log('iphone');
+            //alert(expectWidth + ',' + expectHeight);  
+            //如果方向角不为1，都需要进行旋转 added by lzk  
+            if (Orientation != "" && Orientation != 1) {
+                console.log('旋转处理');
+                switch (Orientation) {
+                    case 6://需要顺时针（向左）90度旋转  
+                        console.log('需要顺时针（向左）90度旋转');
+                        rotateImg(img, 'left', canvas);
+                        break;
+                    case 8://需要逆时针（向右）90度旋转  
+                        console.log('需要顺时针（向右）90度旋转');
+                        rotateImg(img, 'right', canvas);
+                        break;
+                    case 3://需要180度旋转  
+                        console.log('需要180度旋转');
+                        rotateImg(img, 'right', canvas);//转两次  
+                        rotateImg(img, 'right', canvas);
+                        break;
+                }
+            }
+        } else {
+            //alert(Orientation);  
+            if (Orientation != "" && Orientation != 1) {
+                //alert('旋转处理');  
+                switch (Orientation) {
+                    case 6://需要顺时针（向左）90度旋转  
+                        console.log('需要顺时针（向左）90度旋转');
+                        rotateImg(img, 'left', canvas);
+                        break;
+                    case 8://需要逆时针（向右）90度旋转  
+                        console.log('需要顺时针（向右）90度旋转');
+                        rotateImg(img, 'right', canvas);
+                        break;
+                    case 3://需要180度旋转  
+                        console.log('需要180度旋转');
+                        rotateImg(img, 'right', canvas);//转两次  
+                        rotateImg(img, 'right', canvas);
+                        break;
+                }
+            }
+
+        }
+
+        var srcStr = img.src;
+        var img_header = srcStr.substring(0,23);
+        // console.log(img_header);
+        var indexSearch = img_header.indexOf('png');
+        console.log(indexSearch);
+        //进行最小压缩
+        if(indexSearch<=0){
+            var ndata = canvas.toDataURL('image/jpeg', 0.4);
+        }
+        else if (indexSearch>0){
+            var ndata = canvas.toDataURL('image/jpeg', 0.4);//'image/png'
+        }
+        // console.log('压缩前：' + initSize);
+        // console.log('压缩后：' + ndata.length);
+        // console.log('压缩率：' + ~~(100 * (initSize - ndata.length) / initSize) + "%");
+        tCanvas.width = tCanvas.height = canvas.width = canvas.height = 0;
+        return ndata;
+    }
+    //    图片上传，将base64的图片转成二进制对象，塞进formdata上传
+    function upload(basestr, file, $li, i) {
+        var text = window.atob(basestr.split(",")[1]);
+        // var buffer = new Uint8Array(text.length);
+        var pecent = 0,
+            loop = null;
+        // for (var i = 0; i < text.length; i++) {
+        //     buffer[i] = text.charCodeAt(i);
+        // }
+        // var blob = getBlob([buffer], type);
+        var xhr = new XMLHttpRequest();
+        var formdata = getFormData();
+        // console.log(blob);
+        // formdata.append('imagefile', blob);
+        formdata.append('imagefile', basestr);
+        formdata.append('order', i);
+        u = "{:U('Light/Apply/commentUploadBaseImg')}";
+        xhr.open('post', u);
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState == 4 && xhr.status == 200) {
+                var jsonData = JSON.parse(xhr.responseText);
+               
+                var imagedata = jsonData[0] || {};
+                var text = imagedata.path ? '上传成功' : '上传失败';
+                
+                console.log(text + '：' + imagedata.path);
+                clearInterval(loop);
+                //当收到该消息时上传完毕
+                // $li.find(".weui-uploader__file-content").animate({ 'width': "100%" }, pecent < 95 ? 200 : 0, function() {
+                //     $(this).html(text);
+                // });
+                $li.find(".weui-uploader__file-content").html("");
+                $li.find(".weui-uploader__file-content").parent().removeClass("weui-uploader__file_status");
+                img_num++;
+                $("#upload_nums").text(img_num);
+                var file_names = $("#file_names").val() + imagedata.output_file + "|";
+                $("#file_names").val(file_names);
+               
+                if (!imagedata.path) return;
+                // $(".pic-list").append('<a href="' + imagedata.path + '">' + imagedata.name + '（' + imagedata.size + '）<img src="' + imagedata.path + '" /></a>');
+            }
+        };
+        //数据发送进度，前50%展示该进度
+        xhr.upload.addEventListener('progress', function (e) {
+            if (loop) return;
+            pecent = ~~(100 * e.loaded / e.total) / 2;
+            // $li.find(".weui-uploader__file-content").css('width', pecent + "%");
+            $li.find(".weui-uploader__file-content").html(pecent + "%");
+            if (pecent == 50) {
+                mockProgress();
+            }
+        }, false);
+        //数据后50%用模拟进度
+        function mockProgress() {
+            if (loop) return;
+            loop = setInterval(function () {
+                pecent++;
+                // $li.find(".weui-uploader__file-content").css('width', pecent + "%");
+                $li.find(".weui-uploader__file-content").html(pecent + "%");
+                console.log(pecent);
+                if (pecent == 99) {
+                    clearInterval(loop);
+                }
+            }, 100)
+        }
+        xhr.send(formdata);
+
+        $(".weui-uploader__file").on('click',function(){
+            imgIndex = $(this).index();
+            imgdom = $(this);
+            // console.log(imgIndex);
+        })
+
+        $(".weui-gallery__del").on('click',function(){
+            // 是否删除该图
+            $("#iosDialog_imgDel").fadeIn(100);
+        })
+
+    }
+
+    // 取消图片删除
+    function dialog_close_imgdelete(){
+        $("#iosDialog_imgDel").fadeOut(100);
+    }
+    // 确认图片删除
+    function dialog_confirm_imgdelete(){
+        imgdom.remove();
+        var file_names_str = $("#file_names").val();
+        var file_names_arr = file_names_str.split("|");
+        file_names_arr.splice(imgIndex, 1);
+        var file_str_1 = file_names_arr.toString();
+        var file_str_2=file_str_1.replace(/,/g,"|");
+        // console.log(file_str_2);
+        $("#file_names").val(file_str_2);
+        $("#iosDialog_imgDel").fadeOut(100);
+    }
+
+    /**
+     * 获取blob对象的兼容性写法
+     * @param buffer
+     * @param format
+     * @returns {*}
+     */
+    function getBlob(buffer, format) {
+        try {
+            return new Blob(buffer, { type: format });
+        } catch (e) {
+            var bb = new (window.BlobBuilder || window.WebKitBlobBuilder || window.MSBlobBuilder);
+            buffer.forEach(function (buf) {
+                bb.append(buf);
+            });
+            return bb.getBlob(format);
+        }
+    }
+    /**
+     * 获取formdata
+     */
+    function getFormData() {
+        var isNeedShim = ~navigator.userAgent.indexOf('Android') &&
+            ~navigator.vendor.indexOf('Google') &&
+            !~navigator.userAgent.indexOf('Chrome') &&
+            navigator.userAgent.match(/AppleWebKit\/(\d+)/).pop() <= 534;
+        return isNeedShim ? new FormDataShim() : new FormData()
+    }
+    /**
+     * formdata 补丁, 给不支持formdata上传blob的android机打补丁
+     * @constructor
+     */
+    function FormDataShim() {
+        console.warn('using formdata shim');
+        var o = this,
+            parts = [],
+            boundary = Array(21).join('-') + (+new Date() * (1e16 * Math.random())).toString(36),
+            oldSend = XMLHttpRequest.prototype.send;
+        this.append = function (name, value, filename) {
+            parts.push('--' + boundary + '\r\nContent-Disposition: form-data; name="' + name + '"');
+            if (value instanceof Blob) {
+                parts.push('; filename="' + (filename || 'blob') + '"\r\nContent-Type: ' + value.type + '\r\n\r\n');
+                parts.push(value);
+            } else {
+                parts.push('\r\n\r\n' + value);
+            }
+            parts.push('\r\n');
+        };
+        // Override XHR send()
+        XMLHttpRequest.prototype.send = function (val) {
+            var fr,
+                data,
+                oXHR = this;
+            if (val === o) {
+                // Append the final boundary string
+                parts.push('--' + boundary + '--\r\n');
+                // Create the blob
+                data = getBlob(parts);
+                // Set up and read the blob into an array to be sent
+                fr = new FileReader();
+                fr.onload = function () {
+                    oldSend.call(oXHR, fr.result);
+                };
+                fr.onerror = function (err) {
+                    throw err;
+                };
+                fr.readAsArrayBuffer(data);
+                // Set the multipart content type and boudary
+                this.setRequestHeader('Content-Type', 'multipart/form-data; boundary=' + boundary);
+                XMLHttpRequest.prototype.send = oldSend;
+            } else {
+                oldSend.call(this, val);
+            }
+        };
+    }
 </script>
 
 </html>

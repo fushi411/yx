@@ -173,6 +173,24 @@
     <script>
         // params 
         var user_id = '', auth = '', user_name = '', data = '';
+        var user_id = '', auth = '', user_name = '',data = '';
+        var nowdays = new Date();
+        var year = nowdays.getFullYear();
+        var month = nowdays.getMonth();
+        if(month==0)
+        {
+            month=12;
+            year=year-1;
+        }
+        if (month < 10) {
+            month = "0" + month;
+        }
+        var firstDay = year + "-" + month + "-" + "01";               //上个月的第一天
+
+        var myDate = new Date(year, month, 0);
+        var lastDay = year + "-" + month + "-" + myDate.getDate();   //上个月的最后一天
+        $('#start_date').val(firstDay);
+        $('#end_date').val(lastDay);
         // 提交按钮
         $('#submit').click(function () {
             if (data == '') return tooltip('请选择对账单');

@@ -112,8 +112,15 @@ class TaskController extends \Think\Controller {
         $id = I('get.taskid');
         // 无任务ID 调整返回
         if(!$id) $this->redirect('Light/Task/commission');
+        $mod_name = 'task';
+        $system = 'kk';
         $data = M('yx_task')->where(array('id' => $id))->find();
         $fixed = $this->getPartInfo($data['part']);
+        // 评论标记为已读
+        D($system.'Appflowcomment')->readCommentApply($mod_name, $id);
+        $comment_list = D($system.'Appflowcomment')->contentComment($mod_name, $id);
+        $this->assign('comment_list', $comment_list);
+        
         $this->assign('data',$data);
         $this->assign('fixed',$fixed);
         $this->display("Task/taskLook");

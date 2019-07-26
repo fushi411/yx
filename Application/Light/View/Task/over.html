@@ -157,6 +157,10 @@
     $('#btn-all').click(function(){
         window.location.href = "{:U('Light/task/makeup')}";
     })
+    $('#show').on('click','.weui-panel',function(){
+        var idx = $(this).attr('index');
+        window.location.href = "{:U('Light/task/taskLook')}"+'&taskid='+idx;
+    });
     </script>
     
 </block>
