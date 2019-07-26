@@ -167,19 +167,40 @@ class WxMessageModel extends Model {
         $recevier.= str_replace(',', '|', $copyid);
         $plug = '@了你!';
         if(empty($copyid)) {
-            $recevier    = $this->getAllCurrentProcessPeople($system,$mod,$id,0);
+            $recevier    = $mod == 'task'?$this->getTaskUser($id):$this->getAllCurrentProcessPeople($system,$mod,$id,0);
             $plug = '@所有人!';
         }
         // - 模块名
         $title       = D('Seek')->getModname($mod,$system);
         $description = "您有新的评论：".$per_name.$plug;
-        $url         = $this->mUrl."m=Light&c=Apply&a=applyInfo&system=".$system."&aid=".$id."&modname=".$mod;
+
+        $url         = $mod == 'task'?$this->mUrl."m=Light&c=task&a=taskLook&taskid=".$id:$this->mUrl."m=Light&c=Apply&a=applyInfo&system=".$system."&aid=".$id."&modname=".$mod;
         # 信息发送
         $agentid = $mod == 'CostMoney'?1000049:15;
         $this->wx->sendCardMessage($recevier,$title,$description,$url,$agentid,$mod,$system);
         return $recevier;
     }
+    // - 评论通知 
+    public function tst($system,$mod,$id,$copyid){
+        $per_name    = session('name');
+        # 流程所有人员
+        $recevier = $this->getFiexMan('|');
+        $recevier.= str_replace(',', '|', $copyid);
+        $plug = '@了你!';
+        if(empty($copyid)) {
+            $recevier    = $mod == 'task'?$this->getTaskUser($id):$this->getAllCurrentProcessPeople($system,$mod,$id,0);
+            $plug = '@所有人!';
+        }
+        // - 模块名
+        $title       = D('Seek')->getModname($mod,$system);
+        $description = "您有新的评论：".$per_name.$plug;
 
+        $url         = $mod == 'task'?$this->mUrl."m=Light&c=task&a=taskLook&taskid=".$id:$this->mUrl."m=Light&c=Apply&a=applyInfo&system=".$system."&aid=".$id."&modname=".$mod;
+        # 信息发送
+        $agentid = $mod == 'CostMoney'?1000049:15;
+        $this->wx->sendCardMessage($recevier,$title,$description,$url,$agentid,$mod,$system);
+        return $recevier;
+    }
     // - 手动催审推送
     public function urgeSendMessage($system,$mod,$id,$per_id,$reason){
         # 推送人员
@@ -393,6 +414,28 @@ class WxMessageModel extends Model {
         return $temrecevier;
     }
 
+    /**
+     *  获取任务人员
+     * @param  int  $id 任务id
+     * @return string  $user
+     */
+    public function getTaskUser($id){
+        if(empty($id)) return '';
+        $data = M('yx_task')->where(array('id' => $id))->find();
+        if(empty($data)) return '';
+        $map = array('name' => $data['tjr']);
+        $tjr = M('wx_info')->where($map)->find();
+        $user = explode(',',$data['part']);
+        $user[] = $tjr['wxid'];
+        $wxid = session('wxid');
+        $temp = array();
+        foreach($user as $v){
+            if($wxid == $v) continue;
+            $temp[] = $v;            
+        }
+        $user = implode('|',$temp);
+        return $user;
+    } 
     /**
      *  根据返回值，重组字符串
      * @param  array $data 重组数组

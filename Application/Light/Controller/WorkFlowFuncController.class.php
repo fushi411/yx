@@ -484,7 +484,22 @@ class WorkFlowFuncController extends Controller {
         $resArr = $res?array("status"=>"success"):array("status"=>"failure");
         return $resArr;
 	}
-
+/**
+     * 建材销售收款审批通过后调用函数
+     * @param  [integre] $aid [记录ID]
+     * @return [array]      [状态]
+     */
+	public function KkSalesReceiptsApply_fmhEnd($aid)
+    {
+		$res = M('kk_feexs_fmh')->where(array('stat'=>2, 'id'=>$aid))->setField('stat', 1);
+		// ->承兑汇票
+		$data = D('KkSalesReceiptsApply_fmh','Logic')->record($aid);
+		if($data['nfkfs'] == 3){
+			M('kk_cdhp')->where(array('stat'=>3, 'odh'=>$data['dh']))->setField('stat', 1);
+		}
+        $resArr = $res?array("status"=>"success"):array("status"=>"failure");
+        return $resArr;
+	}
 	/**
      * 建材销售收款审批通过后调用函数
      * @param  [integre] $aid [记录ID]
@@ -943,7 +958,17 @@ class WorkFlowFuncController extends Controller {
         $resArr = $res?array("status"=>"success"):array("status"=>"failure");
         return $resArr;
     }
-
+    /**
+     * 粉煤灰新增对账单
+     * @param  [integre] $aid [记录ID]
+     * @return [array]      [状态]
+     */
+    public function KkClientStatementApply_fmhEnd($aid)
+    {
+        $res = M('kk_clientstatement_fmh')->where(array('id'=>$aid))->setField('stat', 1);
+        $resArr = $res?array("status"=>"success"):array("status"=>"failure");
+        return $resArr;
+    }
     /**
      * 上传对账回执
      * @param  [integre] $aid [记录ID]

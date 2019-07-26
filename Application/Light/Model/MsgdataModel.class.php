@@ -258,7 +258,7 @@ class MsgdataModel extends Model {
         $result['url'] = array(
             array('name' => '建材销售收款','url' => U('Light/View/View',array('modname'=>'SalesReceiptsApply','system' => 'kk')),'modname' => 'kkSalesReceiptsApply'),
             array('name' => '环保销售收款','url' => U('Light/View/View',array('modname'=>'SalesReceiptsApply','system' => 'yxhb')),'modname' => 'yxhbSalesReceiptsApply'),
-            array('name' => '粉煤灰销售收款','url' => U('Light/View/View',array('modname'=>'SalesReceiptsApply_fmh','system' => 'yxhb')),'modname' => 'kkSalesReceiptsApply_fmh'),
+            array('name' => '粉煤灰销售收款','url' => U('Light/View/View',array('modname'=>'SalesReceiptsApply_fmh','system' => 'kk')),'modname' => 'kkSalesReceiptsApply_fmh'),
         );
     
         $result['kkSalesReceiptsApply'] = array(
@@ -719,10 +719,17 @@ class MsgdataModel extends Model {
     }
     // 新增对账单
     public function  ClientStatementApply(){
+        return $this->ClientStatementData();
+    }
+    public function  ClientStatementApply_fmh(){
+        return $this->ClientStatementData();
+    }
+    private function ClientStatementData(){
         $result = array();
         $result['url'] = array(
             array('name' => '环保新增对账单','url' => U('Light/View/View',array('modname'=>'ClientStatementApply','system' => 'yxhb')),'modname' => 'yxhbClientStatementApply'),
             array('name' => '建材新增对账单','url' => U('Light/View/View',array('modname'=>'ClientStatementApply','system' => 'kk')),'modname' => 'kkClientStatementApply'),
+            array('name' => '粉煤灰新增对账单','url' => U('Light/View/View',array('modname'=>'ClientStatementApply_fmh','system' => 'kk')),'modname' => 'kkClientStatementApply_fmh'),
         );
 
         $result['yxhbClientStatementApply'] = array(
@@ -732,6 +739,10 @@ class MsgdataModel extends Model {
         $result['kkClientStatementApply'] = array(
             'process'       => U('Light/Process/ApplyProcess',array('modname'=>'ClientStatementApply','system' => 'kk')),
             'info'          => U('Light/Apply/applyInfo',array('modname'=>'ClientStatementApply','system'=>'kk')),
+        );
+        $result['kkClientStatementApply_fmh'] = array(
+            'process'       => U('Light/Process/ApplyProcess',array('modname'=>'ClientStatementApply_fmh','system' => 'kk')),
+            'info'          => U('Light/Apply/applyInfo',array('modname'=>'ClientStatementApply_fmh','system'=>'kk')),
         );
         return $result;
     }
