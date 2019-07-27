@@ -200,7 +200,7 @@ class KkCostMoneyPayLogic extends Model {
         $system = I('post.system');
         if(empty($id)) return array('code'=> 404 ,'msg' => '请刷新重试');
         $data = M($system.'_feefy2')->where(array('id' => $id))->find();
-        M($system.'_feefy')->where(array('dh' => $data['dh']))->save(array('nbank' => '','nfkfs' =>''));
+        M($system.'_feefy')->where(array('dh' => $data['dh']))->save(array('nbank' => '','nfkfs' =>'','stat' => 4));
         $res = M($system.'_feefy2')->where(array('id' => $id))->save(array('stat' => '0'));
         return array('code' => 200,'data' => $res);
     }
