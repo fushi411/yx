@@ -292,15 +292,14 @@ class YxhbSalesRefundApplyLogic extends Model {
         $dtg  = M('yxhb_dtg')->where(array('dh' => $res['dh']))->find();
         $user = M('yxhb_guest2')->where(array('id' => $dtg['gid']))->find();
         $user_name = $user['g_name'];
+        $temp = array(
+            array('title' => '客户名称' , 'content' => $user_name ),
+            array('title' => '退款金额' , 'content' => number_format(-$res['nmoney'],2,'.',',')."元" ),
+            array('title' => '本月累计' , 'content' => "&yen;".number_format($this->getTheMonthRec($dtg['gid'],$res['sj_date']),2,'.',',')."元" ),
+            array('title' => '本月累计' , 'content' => $res['ntext']?$res['ntext']:'无' ),
+        );
         $result = array(
-            'first_title'    => '客户名称',
-            'first_content'  => $user_name,
-            'second_title'   => '退款金额',
-            'second_content' => number_format(-$res['nmoney'],2,'.',',')."元",
-            'third_title'    => '本月累计',
-            'third_content'  => "&yen;".number_format($this->getTheMonthRec($dtg['gid'],$res['sj_date']),2,'.',',')."元",
-            'fourth_title'   => '相关说明',
-            'fourth_content' => $res['ntext']?$res['ntext']:'无',
+            'content'        => $temp,
             'stat'           => $this->transStat($res['stat']),
             'applyerName'    => $res['npeople'],
         );

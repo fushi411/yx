@@ -284,13 +284,13 @@ class KkfhrefundApplyLogic extends Model {
         $name = M('kk_fh')->field(true)->where($map)->find();
         $name = M('kk_guest2')->field('g_name')->where(array('id' => $name['fh_client']))->find();
         if($res['xg_person']) $res['fh_kpy'] = $res['xg_person'];
+        $temp = array(
+            array('title' => '客户名称' , 'content' => $clientname['g_name']?$clientname['g_name']:'无' ),
+            array('title' => '修改名称' , 'content' => $name['g_name']?$name['g_name']:'无' ),
+            array('title' => '相关说明' , 'content' => $res['tznr']?$res['tznr']:'无'  ),
+        );
         $result = array(
-            'first_title'    => '客户名称',
-            'first_content'  => $clientname['g_name']?$clientname['g_name']:'无',
-            'second_title'   => '修改名称',
-            'second_content' => $name['g_name']?$name['g_name']:'无',
-            'third_title'    => '相关说明',
-            'third_content'  => $res['tznr']?$res['tznr']:'无',
+            'content'        => $temp,
             'stat'           => $this->getStat($id),
             'applyerName'    => $res['fh_kpy'],
         );

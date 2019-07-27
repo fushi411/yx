@@ -284,15 +284,14 @@ class KkunProCostMoneyLogic extends Model {
         }else{
             $textdata = M('kk_ykfy')->field('ykyt as ntext')->where("left(dh,13)='{$res['dh']}'" )->find();
         }
+        $temp = array(
+            array('title' => $first_title , 'content' => $first_content ),
+            array('title' => $second_title , 'content' => $second_content ),
+            array('title' => '用款金额' , 'content' => "&yen;".number_format(-$res['nmoney'],2,'.',',')."元"  ),
+            array('title' => '相关说明' , 'content' => $textdata['ntext']?$textdata['ntext']:'无'  ),
+        );
         $result = array(
-            'first_title'    => $first_title,
-            'first_content'  => $first_content,
-            'second_title'   => $second_title,
-            'second_content' => $second_content,
-            'third_title'    => '用款金额',
-            'third_content'  => "&yen;".number_format(-$res['nmoney'],2,'.',',')."元",
-            'fourth_title'   => '相关说明',
-            'fourth_content' => $textdata['ntext']?$textdata['ntext']:'无',
+            'content'        => $temp,
             'stat'           => $this->transStat($res['stat']),
             'applyerName'    => $res['njbr'],
 

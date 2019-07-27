@@ -209,13 +209,13 @@ class YxhbKfMaterielApplyLogic extends Model {
      */
     public function sealNeedContent($id){
         $res    = $this->record($id);
+        $temp = array(
+            array('title' => '生产品种' , 'content' => $res['product'] ),
+            array('title' => '入库库号' , 'content' => $res['ku']  ),
+            array('title' => '相关说明' , 'content' => !empty($res['info'])?$res['info']:'无' ),
+        );
         $result = array(
-            'first_title'    => '生产品种',
-            'first_content'  => $res['product'],
-            'second_title'   => '入库库号',
-            'second_content' => $res['ku'],
-            'third_title'    => '相关说明',
-            'third_content'  => !empty($res['info'])?$res['info']:'无',
+            'content'        => $temp,
             'stat'           => $res['stat'],
             'applyerName'    => $res['tjr'],
         );

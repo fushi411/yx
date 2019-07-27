@@ -236,14 +236,13 @@ class YxhbKfRatioApplyLogic extends Model {
         $res = $this->record($id);
         $hour = $res['hour']>9?$res['hour']:'0'.$res['hour'];
         $scfz = $res['scfz']>9?$res['scfz']:'0'.$res['scfz'];
-
+        $temp = array(
+            array('title' => '生产时间' , 'content' => $res['date'].' '.$hour.':'.$scfz ),
+            array('title' => '生产品种' , 'content' => $res['variety'] ),
+            array('title' => '相关说明' , 'content' => $res['bz']?$res['bz']:'无' ),
+        );
         $result = array(
-            'first_title'    => '生产时间',
-            'first_content'  => $res['date'].' '.$hour.':'.$scfz,
-            'second_title'   => '生产品种',
-            'second_content' => $res['variety'],
-            'third_title'    => '相关说明',
-            'third_content'  => $res['bz']?$res['bz']:'无',
+            'content'        => $temp,
             'stat'           => $res['state'],
             'applyerName'    => $res['name'],
         );

@@ -199,15 +199,15 @@ class KkfhdelApplyLogic extends Model {
         );
         $res2 = M("kk_guest2")->where($map)->find();                          //客户表
         $res3 = M("kk_fhdel")->order('del_date DESC')->where(array('fh_id'=>$res['id']))->find();    //发货删除记录表
+        $temp = array(
+            array('title' => '提货单位' , 'content' => $res2['g_name']?$res2['g_name']:'无' ),
+            array('title' => '客户类型' , 'content' => $res['fh_wlname']?$res['fh_wlname']:'无' ),
+            array('title' => '相关说明' , 'content' => $res3['del_reason']?$res3['del_reason']:'无' ),
+        );
         $result = array(
-            'first_title'    => '提货单位',
-            'first_content'  => $res2['g_name']?$res2['g_name']:'无',
-            'second_title'   => '客户类型',
-            'second_content' => $res['fh_wlname']?$res['fh_wlname']:'无',
-            'third_title'    => '相关说明',
-            'third_content'  => $res3['del_reason']?$res3['del_reason']:'无',
+            'content'        => $temp,
             'stat'           => $this->transStat($res['id']),
-            'applyerName'    =>  $res3['del_person'],
+            'applyerName'    => $res3['del_person'],
         );
         return $result;
     }

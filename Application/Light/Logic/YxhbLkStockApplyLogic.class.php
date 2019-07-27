@@ -616,13 +616,13 @@ class YxhbLkStockApplyLogic extends Model {
      */
     public function sealNeedContent($id){
         $res = $this->record($id);
+        $temp = array(
+            array('title' => '提交时间' , 'content' => date('Y-m-d H:i',strtotime($res['cretime'])) ),
+            array('title' => '量库时间' , 'content' => date('Y-m-d H:i',strtotime($res['date'])+$res['time']*3600) ),
+            array('title' => '相关说明' , 'content' => $res['bz']?$res['bz']:'无' ),
+        );
         $result = array(
-            'first_title'    => '提交时间',
-            'first_content'  => date('Y-m-d H:i',strtotime($res['cretime'])),
-            'second_title'   => '量库时间',
-            'second_content' => date('Y-m-d H:i',strtotime($res['date'])+$res['time']*3600),
-            'third_title'    => '相关说明',
-            'third_content'  => $res['bz']?$res['bz']:'无',
+            'content'        => $temp,
             'stat'           => $res['stat'],
             'applyerName'    => $res['rdy'],
         );

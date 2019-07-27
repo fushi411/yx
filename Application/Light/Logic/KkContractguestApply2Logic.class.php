@@ -260,13 +260,13 @@ class KkContractguestApply2Logic extends Model {
      */
     public function sealNeedContent($id){
         $res = $this->record($id);
+        $temp = array(
+            array('title' => '客户名称','content' => $res['g_name']?$res['g_name']:'无' ),
+            array('title' => '客户类型','content' => $res['g_khlx']?$res['g_khlx']:'无' ),
+            array('title' => '相关说明','content' => $res['g_xmmc']?$res['g_xmmc']:'无' ),
+        );
         $result = array(
-            'first_title'    => '客户名称',
-            'first_content'  => $res['g_name']?$res['g_name']:'无',
-            'second_title'   => '客户类型',
-            'second_content' => $res['g_khlx']?$res['g_khlx']:'无',
-            'third_title'    => '相关说明',
-            'third_content'  => $res['g_xmmc']?$res['g_xmmc']:'无',
+            'content'        => $temp,
             'stat'           => $res['g_stat3'],
             'applyerName'    => $res['sales'],
         );

@@ -160,13 +160,13 @@ class KkGuesttjApplyLogic extends Model {
      */
     public function sealNeedContent($id){
         $res = $this->record($id);
+        $temp = array(
+            array('title' => '申请时间' , 'content' => date('Y-m-d',strtotime($res['date'])) ),
+            array('title' => '调价日期' , 'content' => date('Y-m-d',strtotime($res['date'])) ),
+            array('title' => '相关说明' , 'content' => '无'  ),
+        );
         $result = array(
-            'first_title'    => '申请时间',
-            'first_content'  => date('Y-m-d',strtotime($res['date'])),
-            'second_title'   => '调价日期',
-            'second_content' => date('Y-m-d',strtotime($res['date'])),
-            'third_title'    => '相关说明',
-            'third_content'  => '无',
+            'content'        => $temp,
             'stat'           => $this->transStat($res['id']),
             'applyerName'    => D('KkBoss')->getNameFromID($res['applyuser']),
         );

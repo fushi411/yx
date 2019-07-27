@@ -238,15 +238,13 @@ class KkCgFpsmLogic extends Model {
         $second_color = $data['fpsm']-1==1?"style='color:#f12e2e'":'';
         $second_content = $fpsm[$data['fpsm']-1];
         if($res['stat'] == 1) $second_content = '补到';
-
+        $temp = array(
+            array('title' => '用款金额','content' => "&yen;".number_format($data['fkje'],2,'.',',')."元" ),
+            array('title' => '发票说明','content' => $second_content , 'color' => $second_color ),
+            array('title' => '相关说明','content' => $res['text']?$res['text']:'无'),
+        );
         $result = array(
-            'first_title'    => '用款金额',
-            'first_content'  => "&yen;".number_format($data['fkje'],2,'.',',')."元",
-            'second_title'   => '发票说明',
-            'second_color'   => $second_color,
-            'second_content' => $second_content,
-            'third_title'    => '相关说明',
-            'third_content'  => $res['text']?$res['text']:'无',
+            'content'        => $temp,
             'stat'           => $res['stat'],
             'applyerName'    => $res['jbr'],
         );

@@ -54,8 +54,11 @@ class HtmlModel extends Model
             
             list($lable,$pro) = $type == 1 ? $this->pro_stat($v['stat'],$v['apply']) : $this->sign_stat($v['stat'],$v['apply']);
             if($v['app_name'] == '转审') $pro = '转审';
-            $fourth = empty($v['fourth_title'])?'':"<p class='weui-media-box__desc ' style='margin-bottom: 0px;'><span>{$v['fourth_title']}：</span><span>{$v['fourth_content']}</span></p>";
-            
+            $content = '';
+            foreach($v['content'] as $val){
+                $content .= empty($val)?'':"<p class='weui-media-box__desc ' style='margin-bottom: 0px;'><span>{$val['title']}：</span><span {$val['color']}>{$val['content']}</span></p>";
+            }
+
             $html .= "<a href='{$url}' target='_blank'
                 class='weui-cell weui-cell_access weui-cell_link' style='text-decoration: none;'>
                 <div class='weui-media-box weui-media-box_text' style='width: 100%;padding-left: 0px;padding-right: 0px;'>
@@ -69,10 +72,7 @@ class HtmlModel extends Model
                             <h5>{$date}</h5>
                         </div>
                     </div>
-                    <p class='weui-media-box__desc ' style='margin-bottom: 0px;'><span>{$v['first_title']}：</span><span>{$v['first_content']}</span></p>
-                    <p class='weui-media-box__desc ' style='margin-bottom: 0px;'><span>{$v['second_title']}：</span><span {$v['second_color']}>{$v['second_content']}</span></p>
-                    <p class='weui-media-box__desc ' style='margin-bottom: 0px;'><span>{$v['third_title']}：</span><span>{$v['third_content']}</span></p>
-                    {$fourth}
+                    {$content}
                 </div>
             </a>";
         }

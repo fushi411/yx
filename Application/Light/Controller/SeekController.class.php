@@ -466,27 +466,17 @@ class SeekController  extends BaseController
             $res       = D(ucfirst($v['system']).$v['mod'], 'Logic')->sealNeedContent($v['aid']);
             $appStatus = D($v['system'].'Appflowproc')->getWorkFlowStatus($v['mod'], $v['aid']);
             $arr = array(
-                'first_title'    => $res['first_title'],
-                'second_title'   => $res['second_title'],
-                'third_title'    => $res['third_title'],
-                'first_content'  => $res['first_content'],
-                'second_content' => $res['second_content'],
-                'second_color'   => $res['second_color'],
-                'third_content'  => $res['third_content'],
-                'date'           => $v['date'],
-                'system'         => $v['system'],
-                'mod'            => $v['mod'],
-                'aid'            => $v['aid'],
-                'stat'           => $res['stat'],
-                'toptitle'       => $v['modname'],
-                'applyer'        => $res['applyerName'],
-                'apply'          => $appStatus,
-                'app_name'       => $v['app_name'],
+                'content'    => $res['content'],
+                'date'       => $v['date'],
+                'system'     => $v['system'],
+                'mod'        => $v['mod'],
+                'aid'        => $v['aid'],
+                'stat'       => $res['stat'],
+                'toptitle'   => $v['modname'],
+                'applyer'    => $res['applyerName'],
+                'apply'      => $appStatus,
+                'app_name'   => $v['app_name'],
             );
-            if(!empty($res['fourth_title'])){
-                $arr['fourth_title'] = $res['fourth_title'];
-                $arr['fourth_content'] = $res['fourth_content'];
-            }
             $result[] = $arr;
         }
         return $result;

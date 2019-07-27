@@ -283,13 +283,13 @@ class YxhbfhrefundApplyLogic extends Model {
         $clientname = M('yxhb_guest2')->field('g_name')->where(array('id' => $res['fh_client']))->find();
       
         if($res['xg_person']) $res['fh_kpy'] = $res['xg_person'];
+        $temp = array(
+            array('title' => '客户名称' , 'content' => $clientname['g_name']?$clientname['g_name']:'无' ),
+            array('title' => '修改重量' , 'content' => $res['fh_zl']  ),
+            array('title' => '相关说明' , 'content' => $res['xg_reason']?$res['xg_reason']:'无'  ),
+        );
         $result = array(
-            'first_title'    => '客户名称',
-            'first_content'  => $clientname['g_name']?$clientname['g_name']:'无',
-            'second_title'   => '修改重量',
-            'second_content' => $res['fh_zl'],
-            'third_title'    => '相关说明',
-            'third_content'  => $res['xg_reason']?$res['xg_reason']:'无',
+            'content'        => $temp,
             'stat'           => $this->getStat($id),
             'applyerName'    => $res['fh_kpy'],
         );

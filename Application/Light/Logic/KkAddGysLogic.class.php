@@ -163,14 +163,13 @@ class KkAddGysLogic extends Model {
             $data = M('kk_boss')->where(array('boss' => $res['g_people']))->find();
             $applyerName = $data['name'];
         }
-        
+        $temp = array(
+            array('title' => '商户全称','content' => $res['g_name']?$res['g_name']:'无'),
+            array('title' => '商户类型','content' => $res['g_type']?$res['g_type']:'无'),
+            array('title' => '相关说明','content' => $res['gys_bz']?$res['gys_bz']:'无'),
+        );
         $result = array(
-            'first_title'    => '商户全称',
-            'first_content'  => $res['g_name']?$res['g_name']:'无',
-            'second_title'   => '商户类型',
-            'second_content' => $res['g_type']?$res['g_type']:'无',
-            'third_title'    => '相关说明',
-            'third_content'  => $res['gys_bz']?$res['gys_bz']:'无',
+            'content'        => $temp,
             'stat'           => $res['gys_stat'],
             'applyerName'    => $applyerName,
         );

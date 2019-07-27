@@ -221,13 +221,13 @@ class KkWlCgfkApplyLogic extends Model {
             $modname = 'PjCgfkApply';
             $title = '配件公司';
         }
+        $temp = array(
+            array('title' => $title , 'content' => $name['g_name']?$name['g_name']:'无' ),
+            array('title' => '申请金额' , 'content' => number_format($res['fkje'],2,'.',',')."元"  ),
+            array('title' => '相关说明' , 'content' => $res['zy']  ),
+        );
         $result = array(
-            'first_title'    => $title,
-            'first_content'  => $name['g_name']?$name['g_name']:'无',
-            'second_title'   => '申请金额',
-            'second_content' => number_format($res['fkje'],2,'.',',')."元",
-            'third_title'    => '相关说明',
-            'third_content'  => $res['zy'],
+            'content'        => $temp,
             'stat'           => $this->transStat($res['stat']),
             'applyerName'    => $res['rdy'],
         );

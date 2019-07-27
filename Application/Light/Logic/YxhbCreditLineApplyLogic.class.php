@@ -184,13 +184,13 @@ class YxhbCreditLineApplyLogic extends Model {
     public function sealNeedContent($id){
         $res = $this->record($id);
         $clientname = M('yxhb_guest2')->field('g_khjc')->where(array('id' => $res['clientid']))->find();
+        $temp = array(
+            array('title' => '客户名称' , 'content' => $clientname['g_khjc']?$clientname['g_khjc']:$clientname['g_name'] ),
+            array('title' => '申请金额' , 'content' => number_format($res['line'],2,'.',',')."元"  ),
+            array('title' => '相关说明' , 'content' => $res['notice']?$res['notice']:'无'  ),
+        );
         $result = array(
-            'first_title'    => '客户名称',
-            'first_content'  => $clientname['g_khjc']?$clientname['g_khjc']:$clientname['g_name'],
-            'second_title'   => '申请金额',
-            'second_content' => number_format($res['line'],2,'.',',')."元",
-            'third_title'    => '相关说明',
-            'third_content'  => $res['notice']?$res['notice']:'无',
+            'content'        => $temp,
             'stat'           => $res['stat'],
             'applyerName'    => $res['sales'],
         );

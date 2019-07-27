@@ -202,13 +202,13 @@ class YxhbContractApplyLogic extends Model {
         $res = $this->record($id);
         $clientname = M('yxhb_guest2')->field('g_name,reid')->where(array('id' => $res['ht_khmc']))->find();
         $topGys     = M('yxhb_guest2')->field('g_name')->where(array('id' => $clientname['reid']?$clientname['reid']:0))->find();
+        $temp = array(
+            array('title' => '上级客户' , 'content' => $topGys['g_name']?$topGys['g_name']:'无' ),
+            array('title' => '二级客户' , 'content' => $clientname['g_name']  ),
+            array('title' => '相关说明' , 'content' => $res['ht_bz']?$res['ht_bz']:'无'  ),
+        );
         $result = array(
-            'first_title'    => '上级客户',
-            'first_content'  => $topGys['g_name']?$topGys['g_name']:'无',
-            'second_title'   => '二级客户',
-            'second_content' => $clientname['g_name'],
-            'third_title'    => '相关说明',
-            'third_content'  => $res['ht_bz']?$res['ht_bz']:'无',
+            'content'        => $temp,
             'stat'           => $this->transStat($res['ht_stat']),
             'applyerName'    => $res['ht_rdy'],
         );

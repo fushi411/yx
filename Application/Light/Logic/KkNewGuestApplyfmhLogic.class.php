@@ -149,13 +149,13 @@ class KkNewGuestApplyfmhLogic extends Model {
      */
     public function sealNeedContent($id){
         $res = $this->record($id);
+        $temp = array(
+            array('title' => '备案名称' , 'content' => $res['name'] ),
+            array('title' => '备案产品' , 'content' => iconv('gbk','UTF-8',$res['product']) ),
+            array('title' => '相关说明' , 'content' => $res['info']?$res['info']:'无'  ),
+        );
         $result = array(
-            'first_title'    => '备案名称',
-            'first_content'  => $res['name'],
-            'second_title'   => '备案产品',
-            'second_content' => iconv('gbk','UTF-8',$res['product']),
-            'third_title'    => '相关说明',
-            'third_content'  => $res['info']?$res['info']:'无',
+            'content'        => $temp,
             'stat'           => $res['stat'],
         );
         return $result;

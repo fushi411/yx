@@ -123,15 +123,14 @@ class KkClientStatementApplyLogic extends Model {
     public function sealNeedContent($id){
         $res    = $this->record($id);
         $ntext = $res['qtbz']?$res['qtbz']:'无';
+        $temp = array(
+            array('title' => '客户名称','content' => D('kk_guest2')->getName($res['client']) ),
+            array('title' => '开始时间','content' => $res['stday'] ),
+            array('title' => '结束时间','content' => $res['enday']),
+            array('title' => '相关说明','content' => $ntext),
+        );
         $result = array(
-            'first_title'    => '客户名称',
-            'first_content'  => D('kk_guest2')->getName($res['client']),
-            'second_title'   => '开始时间',
-            'second_content' => $res['stday'],
-            'third_title'    => '结束时间',
-            'third_content'  => $res['enday'],
-            'fourth_title'   => '相关说明',
-            'fourth_content' => $ntext,
+            'content'        => $temp,
             'stat'           => $res['stat'],
             'applyerName'    => $res['rdy'],
         );

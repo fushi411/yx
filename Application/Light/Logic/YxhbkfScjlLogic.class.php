@@ -216,13 +216,13 @@ class YxhbkfScjlLogic extends Model {
      */
     public function sealNeedContent($id){
         $res = $this->record($id);
+        $temp = array(
+            array('title' => '生产品种' , 'content' => $res['scpz'] ),
+            array('title' => '比表面积' , 'content' => $res['bbmj'] ),
+            array('title' => '相关说明' , 'content' => $res['bz']?$res['bz']:'无' ),
+        );
         $result = array(
-            'first_title'    => '生产品种',
-            'first_content'  => $res['scpz'],
-            'second_title'   => '比表面积',
-            'second_content' => $res['bbmj'],
-            'third_title'    => '相关说明',
-            'third_content'  => $res['bz']?$res['bz']:'无',
+            'content'        => $temp,
             'stat'           => $res['STAT'],
             'applyerName'    => $res['jyry'],
         );

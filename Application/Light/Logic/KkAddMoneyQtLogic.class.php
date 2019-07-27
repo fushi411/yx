@@ -242,13 +242,13 @@ class KkAddMoneyQtLogic extends Model {
     public function sealNeedContent($id){
         $res = $this->record($id);
         $skfsArr = array(4 => '现金',2 => '公司账户', 3 => '承兑汇票');
+        $temp = array(
+            array('title' => '收款方式','content' => $skfsArr[$res['nfkfs']]?$skfsArr[$res['nfkfs']]:'无' ),
+            array('title' => '收款金额','content' => number_format($res['nmoney'],2,'.',',')."元" ),
+            array('title' => '相关说明','content' => $res['ntext']?$res['ntext']:'无' ),
+        );
         $result = array(
-            'first_title'    => '收款方式',
-            'first_content'  => $skfsArr[$res['nfkfs']]?$skfsArr[$res['nfkfs']]:'无',
-            'second_title'   => '收款金额',
-            'second_content' => number_format($res['nmoney'],2,'.',',')."元",
-            'third_title'    => '相关说明',
-            'third_content'  => $res['ntext']?$res['ntext']:'无',
+            'content'        => $temp,
             'stat'           => $res['stat'],
             'applyerName'    => $res['npeople'],
         );

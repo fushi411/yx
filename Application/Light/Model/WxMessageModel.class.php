@@ -283,7 +283,6 @@ class WxMessageModel extends Model {
          $logic       = D(ucfirst($system).$mod, 'Logic');
          $res         = $logic->recordContent($id);
          $apply_user  = $res['applyerName'];
-         $description.= "提交人员：{$apply_user}\n";
          $content     = $logic->sealNeedContent($id);
          $template    = $this->CarReDescription($content);
          $description.= $template;
@@ -455,17 +454,11 @@ class WxMessageModel extends Model {
      * @return string       description
      */
     public function CarReDescription($data){
-        $arr = array(
-            'first_title'  => 'first_content',
-            'second_title' => 'second_content',
-            'third_title'  => 'third_content',
-            'fourth_title' => 'fourth_content'
-        );
         $description = '';
-        foreach($arr as $k => $v){
-            if(empty($data[$k])) continue;
-            $val = str_replace('&yen;','',$data[$v]);
-            $description .= "{$data[$k]}：{$val}\n";
+        foreach($data as $k => $v){
+            if(empty($v)) continue;
+            $val = str_replace('&yen;','',$v['content']);
+            $description .= "{$v['title']}：{$val}\n";
         }
         return $description;
     }
