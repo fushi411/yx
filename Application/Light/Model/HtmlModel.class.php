@@ -146,4 +146,21 @@ class HtmlModel extends Model
     public function noAppProHtml(){
         return "<li style='font-size: 28px;line-height: 60px;color: #f12e2e;'>无审批流程</li>";
     }
+     // 推送显示
+     public function PushHtml($data){
+        $html = '';
+        if( empty($data) || !is_array($data)) return $html;
+        $arr      = array_slice($data,-1,1,true);
+        $last_key = key($arr);
+        foreach ($data as $k => $val) {
+            $left    = 'margin-right:8px';
+            $avatar  = empty($val['avatar']) ? $this->avatar:$val['avatar'];
+            if($k == $last_key) $parhtml = '';
+            $html .=  "<li class='weui-uploader__file wk-select__user' id='{$val['wxid']}' style='min-height:70px;width: 45px; margin-bottom: 0;{$left}'>
+                        <img src='{$avatar}' class='weui-selet__user' style='margin-right: 6px;margin-top:10px; width: 2em; height: 2em;'>
+                        <span style='margin-right: 6px;font-size: 12px;'> {$val['name']}</span>
+                       </li>";
+        }
+        return $html;
+    }
 }

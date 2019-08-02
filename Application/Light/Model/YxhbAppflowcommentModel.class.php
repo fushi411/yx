@@ -100,7 +100,7 @@ class YxhbAppflowcommentModel extends Model {
               if(strpos("烦躁".$v['app_word'],'@所有人') || $v['per_id'] == 9999 || $v['per_id'] == 8888){
                 $commentUser = " ";
               }
-              if(strpos($v['app_word'],'发起了催审! 催审理由')){
+              if(strpos($v['app_word'],'催审理由')){
                 $v['app_word'] = str_replace("催审理由","<br>催审理由",$v['app_word']);
               }
               # 已读人员检查

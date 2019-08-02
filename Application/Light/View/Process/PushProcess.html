@@ -1,241 +1,127 @@
-<!DOCTYPE html>
-<html lang="zh-cmn-Hans">
+<extend name="Process:pushBase" />
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0">
-    <title>推送名单</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet">
-    <!-- 引入 WeUI -->
-    <link rel="stylesheet" href="https://res.wx.qq.com/open/libs/weui/1.1.2/weui.min.css" />
-    <link rel="stylesheet" href="__PUBLIC__/assets/css/weMain.css?version=201708232" />
-    <link href="__PUBLIC__/assets/css/wc_select2.min.css?version=20170819" rel="stylesheet" />
-    <style type="text/css">
-        .weui-cells:after {
-            border-bottom: 0px solid #fff;
-        }
-
-        .weui-cell {
-            padding: 0px 15px;
-        }
-
-        .weui-selet__user {
-            width: 2.5em;
-            height: 2.5em;
-            margin-bottom: 5px;
-            margin-right: 16px;
-            border-radius: 5px;
-        }
-
-        .wk-select__user {
-            height: 60px;
-            width: 52px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin-right: 6px;
-        }
-
-        .wk-comment__user {
-            height: 60px;
-            width: 52px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin-right: 12px;
-        }
-
-        a:hover {
-            text-decoration: none;
-        }
-
-        label {
-            font-weight: 400;
-            margin-bottom: 0px;
-        }
-
-        .select2-results__option {
-            font-size: 16px;
-        }
-
-        .select2-search__field {
-            line-height: normal;
-        }
-
-        .titleTab {
-            text-align: center;
-        }
-    </style>
-</head>
-
-<body>
-    <div class="container" id="container">
-        <div class="page js_show">
-            <div class="page__bd">
-                <!-- 流程 -->
-                <volist name='yxhb' id='val'>
-                <h3 class="titleTab zhineng">环保{$val.pro_name}名单</h3>
-                <if condition="$val.display eq 'black'">
-                        <div class="zhi">
-                        <else/>
-                        <div class="zhi" style="display: none;">
-                </if>
-                    <volist name="val.condition" id="vo"> 
-                        <div class="weui-cells__title">{$vo.title}</div>
-                        <div class="weui-cells" style="margin-top:0px;">
-                            <div class="weui-cell">
-                                <div class="weui-cell__bd">
-                                    <div class="weui-uploader">
-                                        <div class="weui-uploader__bd" style="min-height: 85px;">
-                                            <ul class="weui-uploader__files" id="app_pro" style="margin-bottom: 0px;">
-                                                <!-- 为空的情况 -->
-                                                <if condition="$vo.count eq -1">
-                                                    <h1 class="page__title">{$vo.msg}</h1>
-                                                    <else/>
-                                                    <!-- 不为空的情况 -->
-                                                    
-                                                    <volist name="vo.pushMan" id="v">
-                                                                <li class='weui-uploader__file wk-select__user' style='min-height:80px;'>
-                                                                <if condition="$v.avatar eq ''">
-                                                                    <img src="Public/assets/i/defaul.png" class='weui-selet__user' style='margin-bottom: 0px;margin-right: 6px;margin-top:10px;'>
-                                                                    <else/>
-                                                                    <img src="{$v.avatar}" class='weui-selet__user' style='margin-bottom: 0px;margin-right: 6px;margin-top:10px;'>
-                                                                </if>
-                                                                <span style='margin-right: 6px;font-size: 14px;'> {$v.name}</span>
-                                                            </li>
-                                                    </volist>
-                                                    <!-- 不为空的情况 -->
-                                                </if>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+<block name='title'>{$pro_name}推送名单</block>
+<block name='content'>
+    <div class="weui-toptips weui-toptips_warn js_tooltips" style="opacity: 1;">错误提示</div>
+    <h3 class="titleTab">{$pro_name}推送名单</h3>
+    <if condition=" (empty($atten)) and (!$CueConfig)">
+        <div class="weui-cells__title" style="text-align:right;margin: 0;display:none;">
+            <else />
+        <div class="weui-cells__title" style="text-align:right;margin: 0;">
+    </if>
+    <a href="{:U('Light/View/View',array('system'=>$system,'modname'=>$modname))}" class="weui-btn weui-btn_mini weui-btn_default">关闭</a>
+    <a href="{:U('Light/Config/Dispenser',array('robot'=>'viewPushPage','system'=>$system,'mod'=>$modname))}" class="weui-btn weui-btn_mini weui-btn_primary">新增</a>
+    <volist name='condition' id='val'>
+        <div class="weui-cells__title" style="text-align: left;">{$val.pro_name}
+            <if condition=" (empty($atten)) and (!$CueConfig)">
+                <span style="float:right;display:none;">
+                <else/>
+                <span style="float:right">
+            </if>
+            <span style="float:right">
+                <i class="iconfont icon-xiugai" index="{:U('Light/Config/Dispenser',array('robot'=>'viewPushPage','system'=>$system,'mod'=>$modname,'id'=>$val['id']))}" style="vertical-align: middle;margin: 0 5px" ></i>  
+                <i class="iconfont icon-shanchu" index="{$val['id']}" style="vertical-align: middle;margin: 0 5px" ></i>
+            </span> 
+           
+        </div>
+        <div class="weui-cells" style="margin-top:0px;">
+            <div class="weui-cell">
+                <div class="weui-cell__bd">
+                    <div class="weui-uploader">
+                        <div class="weui-uploader__bd" style="min-height: 75px;">
+                            <ul class="weui-uploader__files" id="selectUser" style="margin-bottom: 0px;">
+                                {$val.html}
+                            </ul>
                         </div>
-                    </volist>
-                </div>
-                </volist>
-                <volist name='kk' id='val'>
-                    <h3 class="titleTab zhineng">建材{$val.pro_name}名单</h3>
-                    <if condition="$val.display eq 'black'">
-                            <div class="zhi">
-                        <else/>
-                            <div class="zhi" style="display: none;">
-                    </if>
-                        <volist name="val.condition" id="vo"> 
-                            <div class="weui-cells__title">{$vo.title}</div>
-                            <div class="weui-cells" style="margin-top:0px;">
-                                <div class="weui-cell">
-                                    <div class="weui-cell__bd">
-                                        <div class="weui-uploader">
-                                            <div class="weui-uploader__bd" style="min-height: 85px;">
-                                                <ul class="weui-uploader__files" id="app_pro" style="margin-bottom: 0px;">
-                                                    <!-- 为空的情况 -->
-                                                    <if condition="$vo.count eq -1">
-                                                        <h1 class="page__title">{$vo.msg}</h1>
-                                                        <else/>
-                                                        <!-- 不为空的情况 -->
-                                                        
-                                                        <volist name="vo.pushMan" id="v">
-                                                                    <li class='weui-uploader__file wk-select__user' style='min-height:80px;'>
-                                                                    <if condition="$v.avatar eq ''">
-                                                                        <img src="Public/assets/i/defaul.png" class='weui-selet__user' style='margin-bottom: 0px;margin-right: 6px;margin-top:10px;'>
-                                                                        <else/>
-                                                                        <img src="{$v.avatar}" class='weui-selet__user' style='margin-bottom: 0px;margin-right: 6px;margin-top:10px;'>
-                                                                    </if>
-                                                                    <span style='margin-right: 6px;font-size: 14px;'> {$v.name}</span>
-                                                                </li>
-                                                        </volist>
-                                                        <!-- 不为空的情况 -->
-                                                    </if>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </volist>
-                    </div>
-                    </volist>
-                <!-- 流程 END -->
-                <!-- 推送 -->
-                <h3 class="titleTab">推送规则</h3>
-                <!-- <div class="weui-cells__title">各个中心主管及以上职位的申请抄送</div> -->
-                <div class="weui-cells" style="margin-top:0px;">
-                    <div class="weui-cell">
-                        <div class="weui-cell__bd">
-                            <div class="weui-uploader">
-                                <div class="weui-uploader__bd" style="height: 85px;">
-                                     <div  style="color: #f12e2e;margin-top: 10px;">1.若申请人或推送人同属推送名单，将不进行推送.</div>
-                                </div>
-                            </div>
+                        <div class="weui-cells__title" style="padding:0;margin:0;">
+                            <if condition=" (empty($atten)) and (!$CueConfig)">
+                                <span style="float:right;display:none;">
+                                <else/>
+                                <span style="float:right">
+                            </if>
+                                <i class="iconfont icon-shezhi1" 
+                                index="{:U('Light/Config/Dispenser',array('robot'=>'pushConfig','system'=>$system,'mod'=>$modname,'id'=>$val['id']))}" 
+                                style="vertical-align: middle;margin: 0 5px;font-size: 20px;" ></i>  
+                            </span> 
                         </div>
                     </div>
                 </div>
-                <!-- 推送 END -->
-                <!-- 权限详情 -->
-                <!-- <h3 class="titleTab">权限详情</h3>
-                <div class="weui-media-box weui-media-box_small-appmsg" style="padding-bottom: 10px;">
+            </div>
+        </div>
 
-                        <div class="weui-cells" style="margin-top:0px;">
-                            <div class="weui-cell" style="padding-top: 5px;padding-bottom: 5px;border-bottom: 1px solid #f8f8f8;">
-                                <div class="weui-cell__bd">
-                                    <div class="weui-uploader">
-                                        <div class="weui-uploader__bd">
-                                            <div class="weui-cells weui-cells_form">
-                                                <div class="weui-cell weui-cell_select weui-cell_select-after" style="line-height: 40px">
-                                                    <div class="weui-cell__hd">
-                                                        <label class="weui-label">权限功能&nbsp;&nbsp;
-                                                        </label>
-                                                    </div>
-                                                    <div class="weui-cell__hd">
-                                                        查看{$show.proName}流程详情
-                                                    </div>
-                                                </div>
-                                                <div class="weui-cell weui-cell_select weui-cell_select-after" style="line-height: 40px">
-                                                    <div class="weui-cell__hd">
-                                                        <label class="weui-label">权限范围&nbsp;&nbsp;
-                                                        </label>
-                                                    </div>
-                                                    <div class="weui-cell__hd">
-                                                        {$group.group}
-                                                    </div>
-                                                </div>
-                                                <div class="weui-cell weui-cell_select weui-cell_select-after" style="line-height: 40px">
-                                                    <div class="weui-cell__hd">
-                                                        <label class="weui-label">权限人员&nbsp;&nbsp;
-                                                        </label>
-                                                    </div>
-                                                    <div class="weui-cell__hd">
-                                                        {$group.leaguer}
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div> -->
-                <!-- 权限详情 END -->
-
+    </volist>
+</block>
+<block name="model">
+    <div class="js_dialog" id="delDialog" style="display: none;">
+        <div class="weui-mask"></div>
+        <div class="weui-dialog">
+            <div class="weui-dialog__bd" style="padding:15px;color:#f12e2e;">删除确认</div>
+            <div class="weui-dialog__bd">确定要将此流程删除？</div>
+            <div class="weui-dialog__ft"> 
+                <a href="javascript:;" onclick="dialog_cal()" class="weui-dialog__btn weui-dialog__btn_primary">取消</a>
+                <a href="javascript:;"  style="color:#f12e2e;" onclick="dialog_sure()" class="weui-dialog__btn weui-dialog__btn_primary">确定</a>
             </div>
         </div>
     </div>
-</body>
-<!-- <script src="__PUBLIC__/assets/js/exif.js"></script> -->
-<script src="//cdn.bootcss.com/jquery/1.11.1/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.5/js/bootstrap.min.js"></script>
-<script src="https://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
-<script src="https://cdn.bootcss.com/select2/4.0.3/js/select2.min.js"></script>
-<script src="https://cdn.bootcss.com/select2/4.0.3/js/i18n/zh-CN.js"></script>
+</block>
+<block name="js">
 <script>
-
+ var del_id = '';
+    var $tooltips = $('.js_tooltips');
+       
+    
+    // 错误提示
+    function tooltip(text) {
+        if ($tooltips.css('display') != 'none') return;
+        $('.page.cell').removeClass('slideIn');
+        $tooltips.text(text);
+        $tooltips.css('display', 'block');
+        setTimeout(function () {
+            $tooltips.css('display', 'none');
+        }, 2000);
+    }
     $(".zhineng").click('on', function () {
-        var $id = $(".zhineng").index($(this));
-        $(".zhi").eq($id).toggle(500);
+        $(".zhi").toggle(500);
     });
+    $('.icon-xiugai').click(function(){
+        var url = $(this).attr('index');
+        window.location.href = url;
+    });
+    $('.icon-shezhi1').click(function(){
+        var url = $(this).attr('index');
+        window.location.href = url;
+    });
+    $('.icon-shanchu').click(function(){
+        del_id = $(this).attr('index');
+        $('#delDialog').show();
+    });
+    function dialog_cal(){
+        del_id = '';
+        $('#delDialog').hide();
+    }
+    $('#auth_detail').click(function(){
+        $('#auth_div').toggle();
+    });
+    function dialog_sure(){
+        $('#delDialog').hide();
+        $.ajax({
+                type:'POST',
+                url: "{:U('Light/Config/Dispenser',array('robot'=>'delPush'))}", //&system=yxhb&modname=CgfkApply&action=getCustomerList
+                dataType: 'json',
+                data: {
+                    system : "{$system}",
+                    id     : del_id,
+                },
+                dataType: 'json',
+                success: function (res) {
+                    if (res.code == 200) {
 
+                        window.location.reload();
+                    } else {
+                        tooltip(res.msg);
+                    }
+                }
+            });
+    }
 </script>
-
-</html>
+</block>

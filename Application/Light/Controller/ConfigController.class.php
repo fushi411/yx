@@ -48,6 +48,21 @@ class ConfigController extends BaseController {
             case 'ConfigSubmit': 
                     $this->ConfigSubmit(); 
             break;
+            case 'viewPushPage': 
+                    $this->viewPushPage(); 
+            break;
+            case 'changePushTitle': 
+                    $this->changePushTitle(); 
+            break;
+            case 'delPush': 
+                    $this->delPush(); 
+            break;
+            case 'pushConfig': 
+                    $this->pushConfigPage(); 
+            break;
+            case 'pushConfigSubmit': 
+                    $this->pushConfigSubmit(); 
+            break;
         }
     }
     
@@ -314,6 +329,8 @@ class ConfigController extends BaseController {
         $this->display('Config/viewProTitlePage');
     }
 
+   
+
     // 修改标题
     public function changeViewProTitle(){
         $system = I('post.system');
@@ -338,7 +355,6 @@ class ConfigController extends BaseController {
         $retuenData = $res !== false ?array('code' => 200):array('code' => 404 ,'msg' => '插入失败'); 
         $this->ajaxReturn($retuenData);
     }
-
     // 删除对应的id
     public function delViewPro(){
         $id     = I('post.id');
@@ -347,6 +363,115 @@ class ConfigController extends BaseController {
         $config = M('yx_config_viewpro')->where(array('id' => $id))->setField('stat', 0);
         $table  = M($system.'_appflowtable')->where(array('view_id' => $id))->setField('stat', 0);
         $this->ajaxReturn(array('code' => 200,'config' => $config,'table' => $table));
+    }
+
+    // 推送标题添加
+    protected function viewPushPage(){
+        $system = I('get.system');
+        $mod    = I('get.mod');
+        $id     = I('get.id');
+        $name   = array(
+            'title' => '',
+            'id'    => '',
+        );
+        $map  = array(
+            'pro_mod'   => $mod,
+            'id'        => $id,
+            'stat'      => 1,
+        );
+        if($id) $name = M($system.'_pushlist')->where($map)->find();
+        $this->assign('title',$name['pro_name']);
+        $this->assign('mod',$mod);
+        $this->assign('id',$name['id']);
+        $this->assign('system',$system);
+        $this->display('Config/pushTitle');
+    }
+
+     // 修改标题
+     public function changePushTitle(){
+        $system = I('post.system');
+        $mod    = I('post.mod');
+        $id     = I('post.id');
+        $title  = I('post.title');
+        if(empty($system)||empty($mod)||empty($title)) $this->ajaxReturn(array('code' => 404 ,'msg' => '修改失败','data' => '参数错误'));
+
+        $map  = array(
+            'pro_mod'   => $mod,
+            'id'        => $id,
+            'stat'      => 1,
+        );
+        $name = M($system.'_pushlist')->where($map)->find();
+        $data = array(
+            'pro_mod'       => $mod,                      //模块名
+            'pro_name'      => $title,           //相关说明
+            'stage_name'    => '推送',
+            'date'          => date('Y-m-d H:i:s'),
+            'condition'     => '',                        //条件
+            'ranges'        => '',
+            'type'          => 2,
+            'stat'          => 1,
+            'rule'          => '',
+        );
+        
+        if(empty($name)){
+            $res = M($system.'_pushlist')->add($data);
+        }else{
+            $res = M($system.'_pushlist')->where("`id`='$id'")->save($data);
+        }
+        $retuenData = $res !== false ?array('code' => 200):array('code' => 404 ,'msg' => '插入失败'); 
+        $this->ajaxReturn($retuenData);
+    }
+
+    // 删除对应的id
+    public function delPush(){
+        $id     = I('post.id');
+        $system = I('post.system');
+        if(empty($id)) $this->ajaxReturn(array('code' => 404 ,'msg' => '修改失败','data' => '参数错误'));
+        $config = M($system.'_pushlist')->where(array('id' => $id))->setField('stat', 0);
+        $this->ajaxReturn(array('code' => 200,'config' => $config));
+    }
+
+    // 推送设置
+    public function pushConfigPage(){
+        $system = I('get.system');
+        $mod    = I('get.mod');
+        $id     = I('get.id');
+        $aid     = I('get.aid');
+        // 获取推送人员
+        $arr = M($system.'_pushlist')->where(array('stat' => 1 , 'pro_mod' => $mod,'id' => $id))->field('id,pro_name,pro_mod,push_name')->select();
+        $temp = array();
+        $html = D('Html');
+        $boss = D(ucfirst($system).'Boss');
+        foreach($arr as $k => $v){
+            $user = trim($v['push_name'],'"');
+            $user = explode(',',$user);
+            $userArr = array();
+            foreach ($user as $val) {
+                 $userArr[] = array(
+                     'wxid'   => $val,
+                     'name'   => $boss->getNameFromWX($val),
+                     'avatar' => $boss->getAvatarFromWX($val),
+                 );
+            }
+            $v['push_name'] = trim($v['push_name'],'"');
+            $v['html'] = $html->fiexdCopyHtml($userArr);
+            $temp = $v;
+        }
+        // 注意事项
+        $detailModel = D('YxDetailAuth');
+        $atten       = $detailModel->ActiveAttention($system,'Push_config');
+        $this->assign('data',$temp);
+        $this->assign('atten',$atten);
+        $this->assign('id',$id);
+        $this->assign('aid',$aid);
+        $this->assign('modname',$mod);
+        $this->assign('system',$system);
+        $this->display('Config/PushConfig');
+    } 
+
+    // 推送设置接口
+    public function pushConfigSubmit(){
+
     }
 
     // 流程设置

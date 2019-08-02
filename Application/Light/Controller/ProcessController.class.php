@@ -253,19 +253,8 @@ class ProcessController extends Controller
 
     public function PushProcess(){
         // 进入指定的位置所需参数
-//        $system = I('system');
-//        $pro_mod = I('modname');
-//        $sy = array('kk' => '建材','yxhb' => '环保');
-//        $arr = M($system.'_appflowtable')->where(array('stat' => 1 , 'pro_mod' => $pro_mod.'_push'))->field('pro_name,pro_mod,condition')->select();
-//        $push = $this->recombinant($arr,$system);
-//        $this->assign('condition',$push);
-//        $this->assign('pro_name',$sy[$system].$push[0]['pro_name']);
-//        $this->display('Process/push');
-
-
         $system = I('get.system');
         $pro_mod = I('get.modname');
-
         //先判断_pushlist表中是否存在这个模块，没有的话先添加一条这个模块空的推送人员的数据
         $res = M($system.'_pushlist')->where(array('stat' => 1 , 'pro_mod' => $pro_mod))->find();
         if(empty($res)){
@@ -285,183 +274,37 @@ class ProcessController extends Controller
             M($system.'_pushlist')->add($res);
         }
 
-        $sy = array('kk' => '建材','yxhb' => '环保');
-        $arr = M($system.'_pushlist')->where(array('stat' => 1 , 'pro_mod' => $pro_mod))->field('id,pro_name,pro_mod,push_name')->select();
-        //不能重复添加相同的模块名
-        $arr = $this->a_array_unique($arr);
-        $push = $this->recombinant($arr,$system,$pro_mod,$sy);
-        $this->assign('condition',$push);
-        $this->assign('pro_name',$sy[$system].$push[0]['pro_name']);
-        $this->assign('pro_mod',$push[0]['pro_mod']);
-        $this->display('Process/push');
-    }
-
-    //去除重复模块名的方法
-    function a_array_unique($data)
-    {
-        $i = array();
-        foreach($data as $key => &$value){
-            if(in_array($value['pro_mod'],$i)){
-                unset($data[$key]);
-            }else{
-                $i = $value;
-            }
-        }
-        return $data;
-    }
-
-    /**
-     * 推送信息重构
-     * @param array $condition condition 数据
-     * @return array  $result 重构后的数组
-     */
-    private function recombinant($condition,$system,$mod,$sy){
-        // 数据检验
-//        if(!is_array($condition)) return false;
-//        foreach($condition as $k => $v){
-//            $v['condition'] = json_decode($v['condition'],true);
-//
-//            // 特殊页面显示 （临时额度） 目前只有临时页面特殊，后期可能修改
-//            switch($v['pro_mod']){
-//                case 'TempCreditLineApply_push':
-//                            $func = 'TempCreditLinePush';
-//                    break;
-//                default:
-//                            $func = 'getApplyPush';
-//            }
-//            if($sy == $system && $mod == $v['pro_mod']) $condition[$k]['display']   = 'black';
-//            $condition[$k]['condition'] = $this->$func($v,$system);
-//        }
-//        return $condition;
-
-        if(!is_array($condition)) return false;
-        foreach($condition as $k => $v){
-            $v['push_name'] = json_decode($v['push_name'],true);
-
-            // 特殊页面显示 （临时额度） 目前只有临时页面特殊，后期可能修改
-            switch($v['pro_mod']){
-                case 'TempCreditLineApply':
-                    $func = 'TempCreditLinePush';
-                    break;
-                default:
-                    $func = 'getApplyPush';
-            }
-            if($sy == $system && $mod == $v['pro_mod']) $condition[$k]['display']   = 'black';
-            $condition[$k]['push_name'] = $this->$func($v,$system);
-        }
-        return $condition;
-    }
-
-    private function TempCreditLinePush($data,$system){
-//        $result = array();
-//        $pushManStr = $data['condition']['two'];
-//        $pushManArr = explode(',',$pushManStr);
-//        $pushManArr = $this->getUserInfo($pushManArr,$system);
-//        $result[] = array(
-//            'title' => '二万临时额度',
-//            'pushMan' =>$pushManArr
-//        );
-//        $pushManStr = $data['condition']['push'];
-//        $pushManArr = explode(',',$pushManStr);
-//        $pushManArr = $this->getUserInfo($pushManArr,$system);
-//        $result[] = array(
-//            'title' => '五万,十万临时额度',
-//            'pushMan' =>$pushManArr
-//        );
-//        return $result;
-
-        $pro_mod = $data['pro_mod'];
-        $res = M($system.'_pushlist')->where(array('typs'=>2,'stat'=>1,'pro_mod'=>$pro_mod))->select();
-        $result = array();
-        foreach ($res as $key=>$val){
-            if($val['condition']=='line=20000'){
-                $pushManStr = $val['push_name'];
-                $pushManStr = trim($pushManStr,'"');
-                $pushManArr = explode(',',$pushManStr);
-                $pushManArr = $this->getUserInfo($pushManArr,$system);
-                $result[] = array(
-                    'title' => '二万临时额度',
-                    'tiaojian'=>$val['condition'],
-                    'id'=>$val['id'],
-                    'pushMan' =>$pushManArr
-                );
-            }else{
-                $pushManStr = $val['push_name'];
-                $pushManStr = trim($pushManStr,'"');
-                $pushManArr = explode(',',$pushManStr);
-                $pushManArr = $this->getUserInfo($pushManArr,$system);
-                $result[] = array(
-                    'title' => '五万,十万临时额度',
-                    'tiaojian'=>$val['condition'],
-                    'id'=>$val['id'],
-                    'pushMan' =>$pushManArr
-                );
-            }
-        }
-        return $result;
-    }
-
-    private function getApplyPush($data,$system){
-//        $result = array();
-//        $pushManStr = $data['condition']['push'];
-//        $pushManArr = explode(',',$pushManStr);
-//        $pushManArr = $this->getUserInfo($pushManArr,$system);
-//
-//        $result[] = array(
-//            'title' => $data['pro_name'],
-//            'pushMan' =>$pushManArr
-//        );
-//        return $result;
-
-        $result = array();
-        $pushManStr = $data['push_name'];
-        if($pushManStr=='""'||$pushManStr==""){
-            $result[] = array(
-                'title' => $data['pro_name'],
-                'id'=>$data['id'],
-                'pushMan' =>array(),
-            );
-            return $result;
-        }
-        $pushManStr = trim($pushManStr,'"');
-        $pushManArr = explode(',',$pushManStr);
-        $pushManArr = $this->getUserInfo($pushManArr,$system);
-
-        $result[] = array(
-            'title' => $data['pro_name'],
-            'id'=>$data['id'],
-            'pushMan' =>$pushManArr
+        $map = array(
+            'mod_system' => $system,
+            'name'       => $pro_mod,
         );
-        return $result;
-    }
-
-    // 用户名字头像获取
-    private function getUserInfo($data,$system){
-        // 条件语句拼接
-        $where = '(';
-        foreach($data as $k => $v){
-            if($k!=0) $where.=' or ';
-            $where .= "wxid='{$v}'";
+        $sy = M('yx_config_title')->field('mod_title,system')->where($map)->find();
+        $arr = M($system.'_pushlist')->where(array('stat' => 1 , 'pro_mod' => $pro_mod))->field('id,pro_name,pro_mod,push_name')->select();
+        $temp = array();
+        $html = D('Html');
+        $boss = D(ucfirst($system).'Boss');
+        foreach($arr as $k => $v){
+            $user = trim($v['push_name'],'"');
+            $user = explode(',',$user);
+            $userArr = array();
+            foreach ($user as $val) {
+                 $userArr[] = array(
+                     'wxid'   => $val,
+                     'name'   => $boss->getNameFromWX($val),
+                     'avatar' => $boss->getAvatarFromWX($val),
+                 );
+            }
+            $v['html'] = $html->PushHtml($userArr);
+            $temp[] = $v;
         }
-        $where .= ')';
-        $res =M($system.'_boss')->where($where)->field('name,wxid,avatar')->select();
-        $temp = $res;
-        foreach($temp as $k => $v){
-            $temp[$k]['sortwxid'] = strtolower($v['wxid']); 
-        }
-        $top  = array('ChenBiSong','csh','csl');
-        $array = array('','','');
-
-        $temp  = list_sort_by($temp,'sortwxid','asc');
-      
-        foreach($temp as $v){
-            if($v['wxid'] == $top[0]){ $array[0] = $v;continue;}
-            if($v['wxid'] == $top[1]){ $array[1] = $v;continue;}
-            if($v['wxid'] == $top[2]){ $array[2] = $v;continue;}
-            $array[] = $v;
-        }
-        $res = array_filter($array);
-        return $res;
+        $detailModel= D('YxDetailAuth');
+        $detailAuth = $detailModel->CueAuthCheck();
+        $this->assign('CueConfig',$detailAuth);
+        $this->assign('condition',$temp);
+        $this->assign('pro_name',$sy['mod_title']);
+        $this->assign('system',$system);
+        $this->assign('modname',$pro_mod);
+        $this->display('Process/PushProcess');
     }
 
     //查看新增的推送人员是否已存在
