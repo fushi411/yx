@@ -156,7 +156,7 @@ class KkClientStatementUpLogic extends Model {
         $ntext = $res['bz']?$res['bz']:'无';
         $data = M('kk_clientstatement')->where(array('id' => $res['aid']))->find();
         $temp = array(
-            array('title' => '客户名称' , 'content' => D('yxhb_guest2')->getName($data['client']) ),
+            array('title' => '客户名称' , 'content' => D('kk_guest2')->getName($data['client']) ),
             array('title' => '开始时间' , 'content' => $data['stday']  ),
             array('title' => '结束时间' , 'content' => $data['enday'] ),
             array('title' => '相关说明' , 'content' => $ntext  ),

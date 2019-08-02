@@ -748,10 +748,17 @@ class MsgdataModel extends Model {
     }
     // 上传对账回执
     public function ClientStatementUp(){
+        return $this->ClientStatementUpData();
+    }
+    public function ClientStatementUp_fmh(){
+        return $this->ClientStatementUpData();
+    }
+    public function ClientStatementUpData(){
         $result = array();
         $result['url'] = array(
             array('name' => '环保上传对账回执','url' => U('Light/View/View',array('modname'=>'ClientStatementUp','system' => 'yxhb')),'modname' => 'yxhbClientStatementUp'),
             array('name' => '建材上传对账回执','url' => U('Light/View/View',array('modname'=>'ClientStatementUp','system' => 'kk')),'modname' => 'kkClientStatementUp'),
+            array('name' => '粉煤灰上传对账回执','url' => U('Light/View/View',array('modname'=>'ClientStatementUp_fmh','system' => 'kk')),'modname' => 'kkClientStatementUp_fmh'),
         );
 
         $result['yxhbClientStatementUp'] = array(
@@ -762,8 +769,14 @@ class MsgdataModel extends Model {
             'process'       => U('Light/Process/ApplyProcess',array('modname'=>'ClientStatementUp','system' => 'kk')),
             'info'          => U('Light/Apply/applyInfo',array('modname'=>'ClientStatementUp','system'=>'kk')),
         );
+        $result['kkClientStatementUp_fmh'] = array(
+            'process'       => U('Light/Process/ApplyProcess',array('modname'=>'ClientStatementUp_fmh','system' => 'kk')),
+            'info'          => U('Light/Apply/applyInfo',array('modname'=>'ClientStatementUp_fmh','system'=>'kk')),
+        );
         return $result;
     }
+
+
     // 发票上传
     public function Fpsm(){
         $result = array();

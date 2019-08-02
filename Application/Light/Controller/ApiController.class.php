@@ -372,6 +372,15 @@ class ApiController extends BaseController {
         $res = $logic->$action();
         $this->ajaxReturn($res);
     }
+     // 粉煤灰上传对账回执
+     public function ClientStatementUp_fmhApi(){
+        $system = I('system');
+        $mod    = I('modname');
+        $action = I('action');
+        $logic = D(ucfirst($system).$mod ,'Logic');
+        $res = $logic->$action();
+        $this->ajaxReturn($res);
+    }
     //无需审批 费用申请
     public function unProCostMoneyApi(){
         $system = I('system');
