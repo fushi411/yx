@@ -143,7 +143,7 @@ class YxhbCostMoneyPayLogic extends Model {
         $cdhp   = I('post.cdhp');
         $sxfy   = I('post.sxfy');
         $bank   = I('post.bank');
-        $bz     = I('post.bz');
+        $bz     = I('post.text');
         $fkfs   = I('post.fkfs');
         $date   = I('post.date');
         if(empty($id)) return array('code' => 404 ,'msg' => '付款单号错误');

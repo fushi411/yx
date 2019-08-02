@@ -332,12 +332,7 @@
                     makeHtml(res['content']);
                     makefjHtml(res['imgsrc']);
                     makefkfsHtml(res['fkfs']);
-                    if (res['nfkfs'] == 3) {
-                        makeCdhpHtml();
-                        is_cdhp = 1;
-                    } else {
-                        $('#cdhpdiv').remove();
-                    }
+                    $('#cdhpdiv').hide();
                     isOver();
                     getPayed($id);
                 }
@@ -481,6 +476,14 @@
         }
 
         $('#fkfs').change(function(){
+            var theFkfs = $(this).val();
+            if(theFkfs == 3){
+                makeCdhpHtml();
+                is_cdhp = 1;
+                $('#cdhpdiv').show();
+            }else{
+                $('#cdhpdiv').hide();
+            }
             getBank();
         })
         
