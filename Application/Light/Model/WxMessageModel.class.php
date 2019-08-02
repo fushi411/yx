@@ -180,27 +180,7 @@ class WxMessageModel extends Model {
         $this->wx->sendCardMessage($recevier,$title,$description,$url,$agentid,$mod,$system);
         return $recevier;
     }
-    // - 评论通知 
-    public function tst($system,$mod,$id,$copyid){
-        $per_name    = session('name');
-        # 流程所有人员
-        $recevier = $this->getFiexMan('|');
-        $recevier.= str_replace(',', '|', $copyid);
-        $plug = '@了你!';
-        if(empty($copyid)) {
-            $recevier    = $mod == 'task'?$this->getTaskUser($id):$this->getAllCurrentProcessPeople($system,$mod,$id,0);
-            $plug = '@所有人!';
-        }
-        // - 模块名
-        $title       = D('Seek')->getModname($mod,$system);
-        $description = "您有新的评论：".$per_name.$plug;
-
-        $url         = $mod == 'task'?$this->mUrl."m=Light&c=task&a=taskLook&taskid=".$id:$this->mUrl."m=Light&c=Apply&a=applyInfo&system=".$system."&aid=".$id."&modname=".$mod;
-        # 信息发送
-        $agentid = $mod == 'CostMoney'?1000049:15;
-        $this->wx->sendCardMessage($recevier,$title,$description,$url,$agentid,$mod,$system);
-        return $recevier;
-    }
+    
     // - 手动催审推送
     public function urgeSendMessage($system,$mod,$id,$per_id,$reason){
         # 推送人员
@@ -288,6 +268,7 @@ class WxMessageModel extends Model {
          $description.= $template;
          # url 
          $url     = $this->mUrl."m=Light&c=Apply&a=applyInfo&system=".$system."&aid=".$id."&modname=".$mod;
+         $agentid = $agentid?$agentid:15;
         # 信息发送
         $this->wx->sendCardMessage($receviers,$title,$description,$url,$agentid,$mod,$system);
         return $receviers;
@@ -455,7 +436,7 @@ class WxMessageModel extends Model {
      */
     public function CarReDescription($data){
         $description = '';
-        foreach($data as $k => $v){
+        foreach($data['content'] as $k => $v){
             if(empty($v)) continue;
             $val = str_replace('&yen;','',$v['content']);
             $description .= "{$v['title']}：{$val}\n";
