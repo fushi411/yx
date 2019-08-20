@@ -230,6 +230,8 @@ class WorkFlowOpTvController extends BaseController {
      * 签收通知信息发送
      * @
      */
+   
+
 	public function sendMsg($system,$apply_id,$mod_name,$option){
         $logic = D(ucfirst($system).$mod_name, 'Logic');
         $res   = $logic->recordContent($apply_id);

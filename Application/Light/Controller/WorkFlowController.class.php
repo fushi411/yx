@@ -126,7 +126,9 @@ class WorkFlowController extends BaseController {
             if(in_array($wxid,$auth)){
                 $flow['auth'][] = $v;
                 $flag = 'auth';
-            }
+            }else{
+              $flow['defalt'][]=$v;
+          }
         }
         $getInit = $flow[$flag];
         //初始化审批流程
@@ -168,17 +170,6 @@ class WorkFlowController extends BaseController {
             //不满足条件结束本次循环
             if($con_flag==0) continue;
           }
-          // 自动审批 系统
-          if( $boss->getWXFromID($values['per_id']) == 'Admin_XiTong'){
-            // 直接调用-》结束方法
-            $wfClass = new WorkFlowFuncController();
-            $func = ucfirst($system).$flowName.'End';
-            $funcRes = $wfClass->$func($id, $system);
-            $push_id = D($system.'Appcopyto')->getPushId($system, $flowName, $id);
-            if(!empty($push_id)) D($system.'Appcopyto')->copyTo($push_id, $flowName, $id,2);
-            return true;
-          }
-
           if($values['per_id']==0){
              // 解决手动指定固定步骤的审批流程，增加$id获取记录--用章申请--15.12.10
              // $per_id=$this->$values['per_name']($pid,$db);
@@ -195,6 +186,17 @@ class WorkFlowController extends BaseController {
             $sameProcNum = $appflowproc->getPerSameProcNum($per_name,$per_id,$flowName, $id, $stageID);
              if($sameProcNum == 0){
               $is_done = $appflowproc->addProc($values, $id, $per_name, $per_id, $stageID);
+              // 自动审批 系统
+              if( $boss->getWXFromID($per_id) == 'Admin_XiTong'){
+                // 直接调用-》结束方法
+                $appflowproc ->proStat($flowName,$id,2);
+                $wfClass = new WorkFlowFuncController();
+                $func = ucfirst($system).$flowName.'End';
+                $funcRes = $wfClass->$func($id, $system);
+                $push_id = D($system.'Appcopyto')->getPushId($system, $flowName, $id);
+                if(!empty($push_id)) D($system.'Appcopyto')->copyTo($push_id, $flowName, $id,2);
+                return true;
+              }
               $done++;
               $msgInfo = $this->sendApplyMsg($flowName, $id, $per_id, $pid, $system);
              }            
