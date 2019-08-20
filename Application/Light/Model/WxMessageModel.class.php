@@ -144,10 +144,12 @@ class WxMessageModel extends Model {
     }
     // 撤销通知 - 撤销推送，排除本人
     public function delRecordSendMessage($system,$mod,$id,$reason){
-        $temrecevier = $this->getAllCurrentProcessPeople($system,$mod,$id,1);
         // - 申请人员
         $res = D(ucfirst($system).$mod, 'Logic')->recordContent($id);
         $apply_user = $res['applyerName'];
+        $need = $res['stat'] == 1?'push':'';
+        // 撤销推送人员
+        $temrecevier = $this->getAllCurrentProcessPeople($system,$mod,$id,1,$need);
         // - 模块名
         $modName     = D('Seek')->getModname($mod,$system);
         $title       = '【已撤销推送】';
@@ -350,12 +352,14 @@ class WxMessageModel extends Model {
         $receviers      = implode('|',$tmpRecevierArr);
         return array($receviers,$description);
     }
+
     /**
      * 人员获取 - 目前所有的流程人
      * @param string $system 系统
      * @param string $mod  模块名
      * @param string || int $id aid
      * @param string $isDel  是否撤销 1-是 0-否
+     * @param string $need  No 无需固定人员  push 添加推送人员
      */
     public function getAllCurrentProcessPeople($system,$mod,$id,$isDel,$need=''){
         $receviers   = $need=='No'?'': $this->getFiexMan(',');
@@ -373,8 +377,8 @@ class WxMessageModel extends Model {
         $copyTo  = D($system.'Appcopyto');
         $copyArr = $copyTo->contentCopyto($mod, $id, $authArr); 
         $authArr = $copyArr['authArr'];
-        // 推送人员 - 撤销不通知推送人员
-        if(!$isDel){
+        // 推送人员 - 撤销不通知推送人员 通过后推送
+        if(!$isDel || $need =='Push'){
             $copyArr = $copyTo->contentCopyto($mod_name, $apply_id, $authArr,2);
             $authArr = $copyArr['authArr'];
         }

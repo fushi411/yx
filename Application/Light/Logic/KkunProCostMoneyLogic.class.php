@@ -334,7 +334,7 @@ class KkunProCostMoneyLogic extends Model {
             'nfylx'   => $fyfy,
             'njbr'    => session('name'),
             'nbm'     => $bm,
-            'stat'    => 4,
+            'stat'    => 5,
             'att_name' => $imagepath,
             'att_name2'=> 'image',
             'skzh'     => $skzh,
@@ -384,7 +384,9 @@ class KkunProCostMoneyLogic extends Model {
             // 发送抄送消息
             D('KkAppcopyto')->copyTo($copyto_id,'unProCostMoney', $result);
         }
-     
+        $wf = A('WorkFlow');
+        $salesid = session('kk_id');
+        $res = $wf->setWorkFlowSV('unProCostMoney', $result, $salesid, 'kk');
         return array('code' => 200,'msg' => '提交成功' , 'aid' =>$result);
 
     }

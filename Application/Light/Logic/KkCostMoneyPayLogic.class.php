@@ -188,7 +188,7 @@ class KkCostMoneyPayLogic extends Model {
             $map['nmoney'] = -$sxfy;
             M("{$system}_feefy2")->add($map);
         }
-        if($res['nfkfs'] == 3){
+        if($fkfs == 3){
             M("{$system}_cdhp")->where(array('id' => $cdhp ,'stat' => 1))->save(array($stat => 2,'tdh' => $res['dh']));
         }
         return array('code' => 200,'msg' => '提交成功' , 'aid' =>$result);

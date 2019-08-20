@@ -54,6 +54,7 @@ class ProcessController extends Controller
         $this->assign('CueConfig',$detailAuth);
         $this->assign('show',$show);
         $this->assign('url',$url);
+        $this->assign('aid',$aid);
         $this->assign('modname',$pro_mod);
         $this->assign('system',$system);
         $this->display('Process/ApplyProcess');
@@ -253,8 +254,9 @@ class ProcessController extends Controller
 
     public function PushProcess(){
         // 进入指定的位置所需参数
-        $system = I('get.system');
+        $system  = I('get.system');
         $pro_mod = I('get.modname');
+        $aid     = I('get.aid');
         //先判断_pushlist表中是否存在这个模块，没有的话先添加一条这个模块空的推送人员的数据
         $res = M($system.'_pushlist')->where(array('stat' => 1 , 'pro_mod' => $pro_mod))->find();
         if(empty($res)){
@@ -297,12 +299,15 @@ class ProcessController extends Controller
             $v['html'] = $html->PushHtml($userArr);
             $temp[] = $v;
         }
+        $url = $aid?U('Light/Apply/applyInfo',array('modname'=>$pro_mod,'aid'=>$aid,'system'=>$system)):U('Light/View/View',array('modname'=>$pro_mod,'system' => $system));
         $detailModel= D('YxDetailAuth');
         $detailAuth = $detailModel->CueAuthCheck();
         $this->assign('CueConfig',$detailAuth);
         $this->assign('condition',$temp);
         $this->assign('pro_name',$sy['mod_title']);
         $this->assign('system',$system);
+        $this->assign('url',$url);
+        $this->assign('aid',$aid);
         $this->assign('modname',$pro_mod);
         $this->display('Process/PushProcess');
     }
@@ -338,11 +343,11 @@ class ProcessController extends Controller
         $data = I('post.data');             //推送人员名单
         $id = I('post.id');                 //数据id
         //$this->ajaxReturn($data);
-        $data = implode(',', $data);
+        $data = trim($data,',');
         $data = '"'.$data.'"';
         if(!M($system.'_pushlist')->autoCheckToken($_POST)) return array('code' => 404,'msg' => '网络延迟，请勿点击提交按钮！');    //在Model.class.php中，自动表单令牌验证
         $result = M($system.'_pushlist')->where(array('pro_mod'=>$pro_mod,'id'=>$id))->setField('push_name',$data);
-        if(!$result) $this->ajaxReturn(array('code' => 404,'msg' =>'提交失败，请重新尝试！'));
+        if(!$result) $this->ajaxReturn(array('code' => 403,'msg' =>'无改动，无需提交'));
         $this->ajaxReturn(array('code' => 200,'msg' => '提交成功' , 'aid' =>$result));
     }
 

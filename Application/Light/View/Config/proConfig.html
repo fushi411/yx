@@ -345,7 +345,7 @@
     }
     // 取消返回
     $('#ratio-refuse').click(function () {
-        window.location.href = document.referrer;
+        window.location.href = "{:U('Light/Process/ApplyProcess',array('modname'=>$modname,'system'=>$system,'aid' => $aid))}";
     })
     // 点击提交
     $('#ratio-agree').on('click', function () {
@@ -372,7 +372,7 @@
             success: function (res) {
                 toast.fadeOut(200);
                 if (res.code == 200) {
-                    window.location.href = document.referrer;
+                    window.location.href = "{:U('Light/Process/ApplyProcess',array('modname'=>$modname,'system'=>$system,'aid' => $aid))}";
                 } else {
                     tooltip(res.msg);
                 }

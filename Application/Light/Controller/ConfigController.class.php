@@ -370,6 +370,7 @@ class ConfigController extends BaseController {
         $system = I('get.system');
         $mod    = I('get.mod');
         $id     = I('get.id');
+        $aid     = I('get.aid');
         $name   = array(
             'title' => '',
             'id'    => '',
@@ -382,6 +383,7 @@ class ConfigController extends BaseController {
         if($id) $name = M($system.'_pushlist')->where($map)->find();
         $this->assign('title',$name['pro_name']);
         $this->assign('mod',$mod);
+        $this->assign('aid',$aid);
         $this->assign('id',$name['id']);
         $this->assign('system',$system);
         $this->display('Config/pushTitle');
@@ -445,12 +447,14 @@ class ConfigController extends BaseController {
         foreach($arr as $k => $v){
             $user = trim($v['push_name'],'"');
             $user = explode(',',$user);
+            $user = array_filter($user);
             $userArr = array();
             foreach ($user as $val) {
-                 $userArr[] = array(
+                $vavtar = $boss->getAvatarFromWX($val);
+                $userArr[] = array(
                      'wxid'   => $val,
                      'name'   => $boss->getNameFromWX($val),
-                     'avatar' => $boss->getAvatarFromWX($val),
+                     'avatar' => $vavtar?$vavtar:'Public/assets/i/defaul.png',
                  );
             }
             $v['push_name'] = trim($v['push_name'],'"');

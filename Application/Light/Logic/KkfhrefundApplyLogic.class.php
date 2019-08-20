@@ -281,13 +281,13 @@ class KkfhrefundApplyLogic extends Model {
         $res = $this->record($id);
         $clientname = M('kk_guest2')->field('g_name')->where(array('id' => $res['fh_client']))->find();
         $map  = array('id' => $id);
-        $name = M('kk_fh')->field(true)->where($map)->find();
-        $name = M('kk_guest2')->field('g_name')->where(array('id' => $name['fh_client']))->find();
-        if($res['xg_person']) $res['fh_kpy'] = $res['xg_person'];
+        // $name = M('kk_fh')->field(true)->where($map)->find();
+        // $name = M('kk_guest2')->field('g_name')->where(array('id' => $name['fh_client']))->find();
+        //if($res['xg_person']) $res['fh_kpy'] = $res['xg_person'];
         $temp = array(
             array('title' => '客户名称' , 'content' => $clientname['g_name']?$clientname['g_name']:'无' ),
-            array('title' => '修改名称' , 'content' => $name['g_name']?$name['g_name']:'无' ),
-            array('title' => '相关说明' , 'content' => $res['tznr']?$res['tznr']:'无'  ),
+            array('title' => '修改重量' , 'content' => $res['fh_zl']?$res['fh_zl']:'无' ),
+            array('title' => '相关说明' , 'content' => $res['xg_reason']?$res['xg_reason']:'无'  ),
         );
         $result = array(
             'content'        => $temp,

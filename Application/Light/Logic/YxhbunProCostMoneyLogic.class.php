@@ -330,7 +330,7 @@ class YxhbunProCostMoneyLogic extends Model {
             'nfylx'   => $fyfy,
             'njbr'    => session('name'),
             'nbm'     => $bm,
-            'stat'    => 4,
+            'stat'    => 5,
             'att_name' => $imagepath,
             'att_name2'=> 'image',
             'skzh'     => $skzh,
@@ -380,6 +380,9 @@ class YxhbunProCostMoneyLogic extends Model {
             // 发送抄送消息
             D('YxhbAppcopyto')->copyTo($copyto_id,'unProCostMoney', $result);
         }
+        $wf = A('WorkFlow');
+        $salesid = session('yxhb_id');
+        $res = $wf->setWorkFlowSV('unProCostMoney', $result, $salesid, 'yxhb');
         return array('code' => 200,'msg' => '提交成功' , 'aid' =>$result);
 
     }

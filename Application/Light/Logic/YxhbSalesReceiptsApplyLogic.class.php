@@ -87,6 +87,9 @@ class YxhbSalesReceiptsApplyLogic extends Model {
 
         list($ysye,$flag) = $this->getYsye($res);
         $ysye = $res['ysye']?$res['ysye']:$ysye;
+        if($res['ysye']){
+            $flag = (int) str_replace('元','',$ysye) < 20000?1:0;
+        }
         $color = 'black';
         if($flag) $color = '#f12e2e';
         $result['content'][] = array('name'=>'应收余额：',
@@ -291,10 +294,13 @@ class YxhbSalesReceiptsApplyLogic extends Model {
         $dtg  = M('yxhb_dtg')->where(array('dh' => $res['dh']))->find();
         $user = M('yxhb_guest2')->where(array('id' => $dtg['gid']))->find();
         $user_name = $user['g_name'];
+        list($ysye,$flag) = $this->getYsye($res);
+        $ysye = $res['ysye']?$res['ysye']:$ysye;
         $temp = array(
             array('title' => '客户名称' , 'content' => $user_name ),
             array('title' => '收款金额' , 'content' => number_format($res['nmoney'],2,'.',',')."元" ),
             array('title' => '本月累计' , 'content' => "&yen;".number_format($this->getTheMonthRec($dtg['gid'],$res['sj_date']),2,'.',',')."元" ),
+            array('title' => '应收余额' , 'content' => number_format($ysye,2,'.',',')   ),
             array('title' => '本月累计' , 'content' => $res['ntext']?$res['ntext']:'无' ),
         );
         $result = array(
@@ -500,7 +506,6 @@ class YxhbSalesReceiptsApplyLogic extends Model {
         if(!$fkfs)     return  array('code' => 404,'msg' => '请选择收款方式');
         if(!$user)  return  array('code' => 404,'msg' => '请选择收款单位');
         if(!$bank) return  array('code' => 404,'msg' => '请选择收款银行');
-        if(!$money ) return  array('code' => 404,'msg' => '收款金额不能为空');
         // 应收余额
         $ysye = I('post.ysye');
         $ysye = str_replace(',','',$ysye);

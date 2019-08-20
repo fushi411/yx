@@ -814,4 +814,34 @@ class MsgdataModel extends Model {
         );
         return $result;
     }
+    // 建材环保欠票通知
+    public function Arrears(){
+        return $this->ArrearsData();
+    }
+    public function Arrears_fmh(){
+        return $this->ArrearsData();
+    }
+    public function ArrearsData(){
+        $result = array();
+        $result['url'] = array(
+            array('name' => '环保欠票通知','url' => U('Light/View/View',array('modname'=>'Arrears','system' => 'yxhb')),'modname' => 'yxhbArrears'),
+            array('name' => '建材欠票通知','url' => U('Light/View/View',array('modname'=>'Arrears','system' => 'kk')),'modname' => 'kkArrears'),
+            //array('name' => '粉煤灰欠票通知','url' => U('Light/View/View',array('modname'=>'Arrears_fmh','system' => 'kk')),'modname' => 'kkArrears_fmh'),
+        );
+
+        $result['yxhbArrears'] = array(
+            'process'       => U('Light/Process/ApplyProcess',array('modname'=>'Arrears','system' => 'yxhb')),
+            'info'          => U('Light/Apply/applyInfo',array('modname'=>'Arrears','system'=>'yxhb')),
+        );
+        $result['kkArrears'] = array(
+            'process'       => U('Light/Process/ApplyProcess',array('modname'=>'Arrears','system' => 'kk')),
+            'info'          => U('Light/Apply/applyInfo',array('modname'=>'Arrears','system'=>'kk')),
+        );
+        $result['kkkkArrears_fmh'] = array(
+            'process'       => U('Light/Process/ApplyProcess',array('modname'=>'kkArrears_fmh','system' => 'kk')),
+            'info'          => U('Light/Apply/applyInfo',array('modname'=>'kkArrears_fmh','system'=>'kk')),
+        );
+        return $result;
+    }
+
 }

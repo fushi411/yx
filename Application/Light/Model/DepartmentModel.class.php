@@ -132,10 +132,50 @@ class DepartmentModel extends Model {
     {
         $html = '';
         foreach ($DeptUserArr as $key => $value) {
+            $wxid = $value['wxid']?$value['wxid']:$value['id'];
             $avatar =$value['avatar']?$value['avatar']:'Public/assets/i/defaul.png';
-            $html .= '<a class="weui-cell weui-cell_access select-user" href="javascript:;" data-id="'.$value['id'].'" data-type="user" data-img="'.$avatar.'" data-name="'.$value['name'].'" style="text-decoration:none;"><div class="weui-cell__hd"><img src="'.$avatar.'" alt="" style="width:20px;margin-right:5px;display:block"></div><div class="weui-cell__bd"><p style="margin-bottom: 0px;">'.$value['name'].'</p></div><div class="weui-cell__ft"></div></a>';
+            $html .= '<a class="weui-cell weui-cell_access select-user" href="javascript:;" data-id="'.$wxid.'" data-type="user" data-img="'.$avatar.'" data-name="'.$value['name'].'" style="text-decoration:none;"><div class="weui-cell__hd"><img src="'.$avatar.'" alt="" style="width:20px;margin-right:5px;display:block"></div><div class="weui-cell__bd"><p style="margin-bottom: 0px;">'.$value['name'].'</p></div><div class="weui-cell__ft"></div></a>';
         }
         return $html;
     }
-
+    /**
+     * 获取多选人员的信息
+     */
+    public function getWxInfo(){
+        $erp  = M('wx_info')->where(array('stat' => 1))->group('wxid')->select();
+        $dept = M('yx_wx_department')->where(array('state' => 1,'parentId' => array('gt',0)))->order('parentId asc')->select();
+        $temp = array();
+        foreach($dept as $v){
+            $temp[$v['parentId']][] = array(
+                'type'   => 'dept',
+                'id'     => $v['id'],
+                'name'   => $v['name'],
+                'avatar' => 'https://www.fjyuanxin.com/fjyxoaSV/Public/assets/i/weui/icon_nav_button.png',
+                'wx'     => $v['id']
+            );
+        }
+        $user = array();
+        foreach($erp as $v){
+            $user[$v['wxid']] = array(
+                'type'   => 'user',
+                'id'     => $v['wxid'],
+                'name'   => $v['name'],
+                'avatar' => $v['avatar']?$v['avatar']:'Public/assets/i/defaul.png',
+                'wx'     => $v['wxid']
+            );
+            if(empty($v['wx_dept'])) continue;
+            $dept = explode(',',$v['wx_dept']);
+            foreach($dept as $val){
+                $userTemp = array(
+                    'type'   => 'user',
+                    'id'     => $val,
+                    'name'   => $v['name'],
+                    'avatar' => $v['avatar']?$v['avatar']:'Public/assets/i/defaul.png',
+                    'wx'     => $v['wxid']
+                );
+                $temp[$val][] = $userTemp;
+            }
+        }
+        return array( 'dept' => $temp , 'user' => $user);
+    }
 }

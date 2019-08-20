@@ -330,8 +330,8 @@ class KkfheditApplyLogic extends Model {
         $name = M('kk_guest2')->field('g_name')->where(array('id' => $name['fh_client']))->find();
         if($res['xg_person']) $res['fh_kpy'] = $res['xg_person'];
         $temp = array(
-            array('title' => '客户名称' , 'content' => $clientname['g_name']?$clientname['g_name']:'无' ),
-            array('title' => '修改名称' , 'content' => $name['g_name']?$name['g_name']:'无' ),
+            array('title' => '客户名称' , 'content' => $name['g_name']?$name['g_name']:'无'  ),
+            array('title' => '修改名称' , 'content' => $clientname['g_name']?$clientname['g_name']:'无' ),
             array('title' => '相关说明' , 'content' => $res['xg_reason']?$res['xg_reason']:'无' ),
         );
         $result = array(

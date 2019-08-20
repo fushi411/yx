@@ -210,6 +210,7 @@ class KkAppflowprocModel extends Model {
         return $res;
     }
 
+
     /**
      * 审批撤回
      */
@@ -237,5 +238,12 @@ class KkAppflowprocModel extends Model {
     public function setApp_word($mod_name,$aid,$id,$word){
         $res = $this -> where(array('mod_name'=>$mod_name,'aid'=>$aid, 'per_id' => $id,'app_stat' => 0)) ->setField('app_word', $word);
         return $res;
+    }
+    /**
+     * 审批状态修改
+     */
+    public function proStat($mod_name,$aid,$stat){
+        if(empty($stat) && $stat !== 0 ) return false;
+        return $this -> where(array('mod_name'=>$mod_name,'aid'=>$aid)) ->setField('app_stat', $stat);
     }
 }

@@ -1,22 +1,5 @@
 <extend name="Apply:base" />
-<block name="show_title">
-    <div style="display: flex;flex-direction: row;align-items: center;margin-bottom: 1em;">
-        <img class="weui-media-box__thumb" src="{$avatar}" alt="" style="border-radius: 5px;width: 2.5em;height: 2.5em;margin-right: 1em;">
-        <h4 class="weui-media-box__title" style="font-weight: 800;font-size:20px;">{$applyer}的{$title|str_replace="表",'',###}</h4>
-        <eq name="stat" value="1">
-            <span class="label label-success" style="margin-left: 1em;padding-top: 0.3em;padding-bottom: 0.2em">已签收</span>
-        </eq>
-        <eq name="stat" value="2">
-            <span class="label label-primary" style="margin-left: 1em;padding-top: 0.3em;padding-bottom: 0.2em">签收中</span>
-        </eq>
-        <eq name="stat" value="0">
-            <span class="label label-default" style="margin-left: 1em;padding-top: 0.3em;padding-bottom: 0.2em">已撤销</span>
-        </eq>
-        <eq name="stat" value="3">
-            <span class="label label-danger" style="margin-left: 1em;padding-top: 0.3em;padding-bottom: 0.2em">已拒收</span>
-        </eq>
-    </div>
-</block>
+
 <block name="table">
     <style>
         #other_page_one .weui-form-preview__bd,
@@ -77,7 +60,7 @@
                     <div class="weui-cells__title">
                         <div style="display: inline-block;width: 40%;">对账详情</div>
                         <div style="display: inline-block;width: 50%;text-align: right;">
-                            <div id="btn-all" class="btn btn-default btn-sm">关闭</div>
+                            <div id="btn-all" class="btn btn-success btn-sm">返回</div>
                             <div id="overdue" class="btn btn-success btn-sm">确定</div>
                         </div>
                     </div>

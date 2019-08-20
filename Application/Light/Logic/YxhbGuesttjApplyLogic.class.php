@@ -122,7 +122,7 @@ class YxhbGuesttjApplyLogic extends Model {
     public function sealNeedContent($id){
         $res = $this->record($id);
         $temp = array(
-            array('title' => '申请时间' , 'content' => date('Y-m-d',strtotime($res['date']) ),
+            array('title' => '申请时间' , 'content' => date('Y-m-d',strtotime($res['date'])) ),
             array('title' => '调价日期' , 'content' => date('Y-m-d',strtotime($res['date']))  ),
             array('title' => '相关说明' , 'content' => '无' ),
         );

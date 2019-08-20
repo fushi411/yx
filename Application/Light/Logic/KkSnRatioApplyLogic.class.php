@@ -207,9 +207,10 @@ class KkSnRatioApplyLogic extends Model {
         $hour = $hour>9?$hour:'0'.$hour;
         $temp = array(
             array('title' => '生产时间' , 'content' => $res['scrq'].' '.$hour.':'.$fz ),
-            array('title' => '生产品种' , 'content' => $res['scpz'],
+            array('title' => '生产品种' , 'content' => $res['scpz']),
             array('title' => '相关说明' , 'content' => $res['tznr']?$res['tznr']:'无'  ),
         );
+
         $result = array(
             'content'        => $temp,
             'stat'           => $res['STAT'],

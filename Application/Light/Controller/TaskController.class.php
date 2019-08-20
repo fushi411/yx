@@ -36,7 +36,6 @@ class TaskController extends \Think\Controller {
     public function __construct(){
         parent::__construct();
         header("Content-type: text/html; charset=utf-8");
-
         $this->titleArr = array(
             array('title' => '我的代办','url' => U('Light/Task/commission'),'on' => '' , 'logo' => 'icon-biaoqian'),
             array('title' => '任务查看','url' => U('Light/Task/look'),      'on' => '' , 'logo' => 'icon-wendang'),
@@ -44,6 +43,11 @@ class TaskController extends \Think\Controller {
         );
 
     }
+    // 桌面式菜单
+    public function desktopMenu(){
+        $this->display("Task/desktopMenu");
+    }
+
     // 我的代办
    public function commission(){
        $this->titleArr[0]['on'] = 'weui-bar__item_on';
@@ -327,7 +331,7 @@ class TaskController extends \Think\Controller {
         $name = session('name');
         $wxid = session('wxid');
         $map = array(
-            'a.stat'   => 2 ,
+            'a.stat'   => array(array('eq',2),array('eq',3),'or') ,
             '_complex' => array(
                 '_logic' => 'or',
                 'a.tjr'  => $name,
@@ -335,7 +339,7 @@ class TaskController extends \Think\Controller {
             )
         );
         //b.`name` as func,c.`name` as modone,
-        $field = "a.id,a.part,a.createtime,a.submittime,a.tjr,a.content,a.title";
+        $field = "a.id,a.part,a.createtime,a.submittime,a.tjr,a.content,a.title,a.stat";
         $data = M('yx_task a')
                 // ->join("yx_task_fuc b on a.`function` = b.id")
                 // ->join("yx_task_mod c on a.`mod` = c.id")

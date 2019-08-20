@@ -6,16 +6,38 @@ class TestController extends BaseController {
     public function Sign()
     {   
         header('Content-Type: text/html; charset=utf-8');
-    }
-
-
-    public function ReDescription($data){
-        $description = '';
-        foreach($data as $k =>$v){
-          $description.=$v['name'].$v['value']."\n";
+        $field = 'b.*';
+        $map = array(
+            'a.id' => 101,
+        );
+        $data = M('kk_guest_tj a')
+                ->join('kk_tj b on a.relationid = b.relationid')
+                ->field($field)
+                ->where($map)
+                ->order('tj_client desc')
+                ->select();
+        $guest = $this->getAllGuestName();  
+        $temp = array();
+        foreach($data as $k => $vo){
+            $vo = $guest[$vo['tj_client']];
+            
         }
-        return $description;
+       
+        dump($data);
+        $this->assign('data',$data);
+        $this->display('YxhbforTest/applyInfo');
     }
+
+    public function getAllGuestName(){
+        $data = M('kk_guest2')->select();
+        $temp = array('无此客户');
+        foreach($data  as $val){
+            $temp[$val['id']] = $val['g_name'];
+        }
+        return $temp;
+    }
+
+
 
     // 流程失效，重置
     public function flow(){
@@ -24,7 +46,7 @@ class TestController extends BaseController {
         $salesid = 19;
         $res = $wf->setWorkFlowSV('fh_refund_Apply', $result, $salesid, 'kk');
     }
-    
+
     // 重置 发票上传未同步更新spsm字段
     public function updateFpsm(){
         // 发票上传

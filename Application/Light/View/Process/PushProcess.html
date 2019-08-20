@@ -9,8 +9,8 @@
             <else />
         <div class="weui-cells__title" style="text-align:right;margin: 0;">
     </if>
-    <a href="{:U('Light/View/View',array('system'=>$system,'modname'=>$modname))}" class="weui-btn weui-btn_mini weui-btn_default">关闭</a>
-    <a href="{:U('Light/Config/Dispenser',array('robot'=>'viewPushPage','system'=>$system,'mod'=>$modname))}" class="weui-btn weui-btn_mini weui-btn_primary">新增</a>
+    <a href="{$url}" class="weui-btn weui-btn_mini weui-btn_default">关闭</a>
+    <a href="{:U('Light/Config/Dispenser',array('robot'=>'viewPushPage','system'=>$system,'mod'=>$modname,'aid' => $aid))}" class="weui-btn weui-btn_mini weui-btn_primary">新增</a>
     <volist name='condition' id='val'>
         <div class="weui-cells__title" style="text-align: left;">{$val.pro_name}
             <if condition=" (empty($atten)) and (!$CueConfig)">
@@ -19,7 +19,7 @@
                 <span style="float:right">
             </if>
             <span style="float:right">
-                <i class="iconfont icon-xiugai" index="{:U('Light/Config/Dispenser',array('robot'=>'viewPushPage','system'=>$system,'mod'=>$modname,'id'=>$val['id']))}" style="vertical-align: middle;margin: 0 5px" ></i>  
+                <i class="iconfont icon-xiugai" index="{:U('Light/Config/Dispenser',array('robot'=>'viewPushPage','system'=>$system,'mod'=>$modname,'aid' => $aid,'id'=>$val['id']))}" style="vertical-align: middle;margin: 0 5px" ></i>  
                 <i class="iconfont icon-shanchu" index="{$val['id']}" style="vertical-align: middle;margin: 0 5px" ></i>
             </span> 
            
@@ -40,7 +40,7 @@
                                 <span style="float:right">
                             </if>
                                 <i class="iconfont icon-shezhi1" 
-                                index="{:U('Light/Config/Dispenser',array('robot'=>'pushConfig','system'=>$system,'mod'=>$modname,'id'=>$val['id']))}" 
+                                index="{:U('Light/Config/Dispenser',array('robot'=>'pushConfig','system'=>$system,'mod'=>$modname,'id'=>$val['id'] ,'aid' => $aid))}" 
                                 style="vertical-align: middle;margin: 0 5px;font-size: 20px;" ></i>  
                             </span> 
                         </div>
@@ -115,7 +115,6 @@
                 dataType: 'json',
                 success: function (res) {
                     if (res.code == 200) {
-
                         window.location.reload();
                     } else {
                         tooltip(res.msg);

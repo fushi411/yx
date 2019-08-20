@@ -191,6 +191,7 @@ class ApplyController extends BaseController {
     // 抄送搜索
     public function searchDeptHtml(){
         $word = I('post.search');
+        $type = I('post.type');
         $where = array(
             'stat'     => 1,
             '_complex' => array(
@@ -199,12 +200,27 @@ class ApplyController extends BaseController {
                 'name'   => array('like',"%{$word}%")
             )
         );
-
         $id = 1;
-        $userInfoList  = M('wx_info')->where($where)->field('wxid as id,name,avatar')->group('wxid')->select();
-        $Dept          = D('department');
-        $childDeptHtml = $Dept->genDeptUserHtml($userInfoList);
-        $this->ajaxReturn($childDeptHtml);
+        $userInfoList  = M('wx_info')->where($where)->field('id,name,avatar,wxid')->group('wxid')->select();
+
+        if($type == 'new'){
+            $temp = array();
+            foreach($userInfoList as $v){
+                $temp[] = array(
+                    'type'   => 'user',
+                    'id'     => $v['id'],
+                    'name'   => $v['name'],
+                    'avatar' => $v['avatar']?$v['avatar']:'Public/assets/i/defaul.png',
+                    'wx'     => $v['wxid']
+                );
+            }
+            $this->ajaxReturn($temp);
+        }else{
+            $Dept          = D('department');
+            $childDeptHtml = $Dept->genDeptUserHtml($userInfoList);
+            $this->ajaxReturn($childDeptHtml);
+        }
+        
     }
 
     // 查询所有的用户信息
@@ -489,6 +505,12 @@ class ApplyController extends BaseController {
         $val['path'] = $path;
         $val['output_file'] = $savePath.$output_file;
         $this->ajaxReturn( array('code' => 200,'data' => $val));
+    }
+    /**
+     * 获取多选微信信息
+     */
+    public function getWxInfo(){
+        $this->ajaxReturn( D('Department')->getWxInfo());
     }
 
 // ---END---

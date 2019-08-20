@@ -33,8 +33,10 @@ class KkFhfRatioApplyLogic extends Model {
         $result = array();
         $hour = str_replace('时','',$res['scxs']);
         $fz   = str_replace('分','',$res['scfz']);
+        $hour = (int) $hour;
         $hour = $hour>9?$hour:'0'.$hour;
-     $result['content'][] = array('name'=>'申请单位：',
+
+        $result['content'][] = array('name'=>'申请单位：',
                                      'value'=>'建材复合粉配比通知',
                                      'type'=>'date',
                                      'color' => 'black'
@@ -190,6 +192,7 @@ class KkFhfRatioApplyLogic extends Model {
         $res = $this->record($id);
         $hour = str_replace('时','',$res['scxs']);
         $fz   = str_replace('分','',$res['scfz']);
+        $hour = (int) $hour;
         $hour = $hour>9?$hour:'0'.$hour;
         $temp = array(
             array('title' => '生产时间' , 'content' => $res['scrq'].' '.$hour.':'.$fz ),

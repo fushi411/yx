@@ -143,10 +143,12 @@ class KkBossModel extends Model {
     }
 
     public function getIDFromName($name){
+        $name = $name == '机器人'?'系统':$name;
         return $this->where(array('name'=>$name))->getField('id');
     }
 
     public function getWxiDFromName($name){
+        $name = $name == '机器人'?'系统':$name;
         return $this->where(array('name'=>$name))->getField('wxid');
     }
     
