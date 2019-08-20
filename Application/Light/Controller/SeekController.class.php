@@ -398,8 +398,11 @@ class SeekController  extends BaseController
         $wx_id  = session('wxid');
         
         $eq     = empty($limit)?'':'!';
+        // 推送排除欠款
+        $arrears = array('Arrears','Arrears_fmh');
         // sql 重构
         foreach($arr as $k => $v){
+            if( in_array($v['mod_name'] ,$arrears)) continue;
             if($k != 0) $sql .= ' UNION all ';
             $userId =  $idArr[$v['system']];
             $sql .=  " select 
