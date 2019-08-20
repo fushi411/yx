@@ -141,6 +141,53 @@
         .ready-btn-on{
             font-weight: 600;
         }
+        .select2-container--default .select2-selection--multiple .select2-selection__rendered {
+            padding: 0;
+        }
+
+        .other_page {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #fff;
+            z-index: 999;
+        }
+
+        .searchCenter {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .select2-results__option {
+            font-size: 16px;
+        }
+
+        .select2-search__field {
+            line-height: normal;
+        }
+        #click_show .user{
+            color: black;
+            top: 9px;
+            padding: 0 2px;
+            font-size: 13px;
+            margin: 3px;
+            cursor: pointer;
+            margin-top: 0;
+        }
+        .myfoot{
+            flex-direction: row;
+            width: 100%;
+            justify-content: space-around;
+            position: fixed;
+            bottom: 0;
+            border-top: 1px solid #e0dfdf;
+            background-color: white;
+        }
+        .title_color{
+            color: #09bdc7
+        }
     </style>
 </head>
 
@@ -362,12 +409,42 @@
                                 </div>
                             </div>
                         </div>
-
+                        <!-- 签收人员 -->
+                        <div class="weui-cells__title">签收人员选择
+                            <span style="color: #f12e2e">（各部门须选择1人签收）</span>
+                    
+                        </div>
+                        <div class="weui-cells" style="margin-top:0px;">
+                            <div class="weui-cell" style="padding-top: 0px;padding-bottom: 5px;margin-bottom: 10px;">
+                                <div class="weui-cell__bd">
+                                    <div class="weui-uploader">
+                                        <div class="weui-uploader__bd">
+                                            <ul class="weui-uploader__files" id="selectSign" style="margin-bottom: 0px;">
+                                                <li class="weui-uploader__file" style="min-height:80px;">
+                                                    <div class="user_show">
+                    
+                                                    </div>
+                                                    <div class="box_div">
+                                                        <div class="weui-uploader__input-box" style="width: 2.5em;height: 2.5em;margin-right: 0px;margin-bottom: 0px;margin-top:10px;">
+                                                            <input id="signInput" class="weui-uploader__input open_sign_model" index="2" type="button" name="sign" readonly />
+                                                            <!--data-toggle="modal" data-target="#myModal" -->
+                                                        </div>
+                                                        <span style="font-size: 14px;display: inline-block;width: 57px;">信息中心</span>
+                                                    </div>
+                                                </li>
+                                            </ul>
+                                            <input type="hidden" name="sign_id" id="sign_id" value="">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- End 签收人员 -->
                         <div class="button-sp-area" id="apply-area"
                             style="margin-bottom: 20px;display: flex;flex-direction: row;width: 100%;justify-content: space-around;align-items: baseline;">
                             <input type="hidden" name="file_names" id="file_names">
                             <a class="weui-btn weui-btn_primary" href="javascript:"
-                                style="width: 40%;background-color: #a5aba5;" id="submit">提交审核</a>
+                                style="width: 40%;" id="submit">提交</a>
                             <a href="javascript:;" id="apply-refuse" class="weui-btn weui-btn_warn"
                                 style="width: 40%;">取消</a>
                         </div>
@@ -393,46 +470,7 @@
     </div>
     </div>
     <!-- Modal -->
-    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"
-        width="100%">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal"><span
-                            aria-hidden="true">&times;</span><span class="sr-only copy_to_close">Close</span></button>
-                    <h4 class="modal-title" id="myModalLabel">选择人员</h4>
-                </div>
 
-                <div class="modal-body" id="select_content" style="padding-top: 0px;padding-bottom: 0px;">
-                    <div class="page js_show" style="position: relative;">
-                        <div class="page__bd">
-                            <div class="weui-search-bar" id="searchBar">
-                                <form class="weui-search-bar__form">
-                                    <div class="weui-search-bar__box">
-                                        <i class="weui-icon-search"></i>
-                                        <input type="search" class="weui-search-bar__input " id="searchInput"
-                                            placeholder="请输入姓名或拼音缩写搜索" required="">
-                                        <a href="javascript:" class="weui-icon-clear" id="searchClear"></a>
-                                    </div>
-                                    <label class="weui-search-bar__label searchCenter" id="searchText">
-                                        <i class="weui-icon-search"></i>
-                                        <span>请输入姓名或拼音缩写搜索</span>
-                                    </label>
-                                </form>
-                                <a href="javascript:" class="weui-search-bar__cancel-btn" id="searchCancel">搜索</a>
-                            </div>
-                            <div class="weui-cells searchbar-result" id="searchResult" style="margin-top: 0px;">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default copy_to_close" data-dismiss="modal">关闭</button>
-                    <button type="button" class="btn btn-success" id="pre-level" data-pid="">上一级</button>
-                </div>
-            </div>
-        </div>
-    </div>
     <!-- Modal END-->
     <div class="modal fade" id="myModal2" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" width="100%">
             <div class="modal-dialog">
@@ -479,7 +517,6 @@
                                         </div>
                                     </div>
                                 </div>
-
                                 <div class="weui-cells searchbar-result" id="commentSearchResult" style="margin-top: 0px;">
                                 </div>
                             </div>
@@ -611,6 +648,57 @@
             <p class="weui-toast__content">已提交</p>
         </div>
     </div>
+    <!-- 新版签收人员选择 -->
+    <div class="other_page" id="other_page_two" style='display: none;'>
+        <div class="container">
+            <div class="page js_show" style="background-color: #fff;">
+                <div class="weui-search-bar" id="searchBar">
+                    <form class="weui-search-bar__form">
+                        <div class="weui-search-bar__box">
+                            <i class="weui-icon-search"></i>
+                            <input type="search" class="weui-search-bar__input " id="searchInput" placeholder="请输入姓名或拼音缩写搜索" required="">
+                            <a href="javascript:" class="weui-icon-clear" id="searchClear"></a>
+                        </div>
+                        <label class="weui-search-bar__label searchCenter" id="searchText">
+                            <i class="weui-icon-search"></i>
+                            <span>请输入姓名或拼音缩写搜索</span>
+                        </label>
+                    </form>
+                    <a href="javascript:" class="weui-search-bar__cancel-btn" id="searchCancel">搜索</a>
+                </div>
+                <div class="weui-cells__title" id="other_title"><span>首页</span></div>
+                <div class="weui-cells searchbar-result weui-cells_checkbox" id="searchResult" style="margin-top: 0px;">
+                </div>
+                <div class="myfoot">
+                    <div class="weui-cells__title" style='margin: 0;background-color: #f8f8f8;padding: 1px 15px;'>
+                        <span style="color: #f12e2e">点击部门或人员可删除</span>
+                    </div>
+                    <div class="button-sp-area weui-flex">
+                        <div class="weui-flex__item"  style="min-width: 0;">
+                            <div style="overflow-x: scroll;min-width: 0;" >
+                                <div id="click_show" style="white-space: nowrap;width: fit-content;height: 50px;">
+                                                                                        
+                                </div>
+                            </div>
+                        </div>
+                        <div style="padding: 0 8px;">
+                            <a href="javascript:;" style="background-color: #e64340;margin-top: 10px;" id='dept-cal' class="weui-btn weui-btn_mini">取消</a>
+                            <a href="javascript:;" style="background-color: #09bdc7;margin-top: 10px;" id='dept-btn' class="weui-btn weui-btn_mini">确定</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- changeable toast -->
+    <div id="toast" style="display:none;">
+        <div class="weui-mask_transparent"></div>
+        <div class="weui-toast">
+            <i class="weui-loading weui-icon_toast"></i>
+            <p class="weui-toast__content" id="doing">进行中...</p>
+        </div>
+    </div>
+    <!-- End 新版签收人员选择 -->
     <script src="__PUBLIC__/assets/js/jquery-1.11.1.min.js"></script>
     <script src="__PUBLIC__/assets/js/bootstrap.min.js"></script>
     <script src="__PUBLIC__/assets/js/select2.min.js"></script>
@@ -630,7 +718,7 @@
         $tooltips = $('.js_tooltips'),
         hash = $("meta[name='__hash__']").attr('content'),
         dataMsg = '';
-    var $toast = $('#toast');
+    var toast = $('#toast');
     // 多级联动初始化
     $(function () {
 
@@ -656,16 +744,39 @@
                 }
             );
         }
-
-
-
     });
     // 取消后 返回 我的需求
     $('#apply-refuse').click(function () {
         window.location.href = "{:U('light/Task/commission')}";
     });
-  
-
+    // 提交签收
+    $('#submit').click(function(){
+        var sign_id = $('#sign_id').val();
+        if(sign_id == undefined || sign_id == '' ) tooltip('请选择签收人员');
+        toast.fadeIn(200);
+            $.ajax({
+                type: 'POST',
+                url: "{:U('Light/Api/TaskApi')}",
+                dataType: 'json',
+                data: {
+                    task_id  : "{$data['id']}",
+                    sign     : sign_id,
+                    system   : "kk",
+                    modname  : 'Task',
+                    action   : 'submit',
+                    __hash__ : hash
+                },
+                dataType: 'json',
+                success: function (res) {
+                    toast.fadeOut(200);
+                    if (res.code == 200) {
+                        window.location.href = "{:U('Light/Apply/applyInfo',array('modname'=>'Task','system'=>'kk'))}" + "&aid=" + res.aid;
+                    } else {
+                        tooltip(res.msg);
+                    }
+                }
+            });
+    });
     $('#mod').change(function () {
         $.post("{:U('Light/Task/getTwoData')}",
             {
@@ -699,7 +810,6 @@
     }
 
 
-    // 正式提交
     $.post("{:U('Light/Task/getMod')}",
         {
             'type': 1,
@@ -1384,6 +1494,267 @@
             }
         };
     }
-</script>
+    // 选择签收人员
+    var loading = '<div class="weui-loadmore"><i class="weui-loading"></i><span class="weui-loadmore__tips">正在加载</span></div>',
+        noresult = '<div class="weui-loadmore weui-loadmore_line"><span class="weui-loadmore__tips">暂无数据</span></div>',
+        idx = 0,
+        deptData = '',
+        userInfo = '',
+        part = {
+            'dept':[],
+            'user':[],
+        },
+        dept_id = 2,
+        click_dept = [{'dept':2,'name':'信息中心'}];
+    $('#signInput').click(function(){
+        title_show();
+        $('#other_page_two').show();
+    });
+    // 取消按钮
+    $('#dept-cal').click(function(){
+        $('#other_page_two').hide();
+    });
+    // 确定按钮
+    $('#dept-btn').click(function(){
+        // 人员渲染
+        var user = part['user'][0];
+        var tmpl = '';
+        if(user!=undefined && user!= ''){
+             tmpl = "<li class='weui-uploader__file wk-select__user' id='#id#' style='min-height:70px;width: 45px; margin:0 8px 0 0 ;'>"+
+                        "<img src='#url#' class='weui-selet__user' style='margin-bottom: 0px;margin-right: 6px;margin-top:10px;'>"+
+                        "<span style='margin-right: 6px;font-size: 12px;'>#name#</span>"+
+                       "</li>";
+            tmpl = tmpl.replace('#id#', user);
+            tmpl = tmpl.replace('#name#', userInfo[user].name);
+            tmpl = tmpl.replace('#url#', userInfo[user].avatar);
+            $('.user_show').html(tmpl);
+            $('.box_div').hide();
+            $('#sign_id').val(user);
+        }
+       
+        $('#other_page_two').hide();
+    });
+    // 点击头像取消 人员名称
+    $('.user_show').on('click','.wk-select__user',function(){
+        $('#other_page_two').show();
+    });
+    // 人员数据获取
+    getWxInfo();
+    function getWxInfo(){
+        $.post("{:U('Light/Apply/getWxInfo')}",
+            {}, 
+            function (data) {
+                deptData = data['dept'];
+                userInfo = data['user'];
+                makeHtml(deptData[dept_id]); 
+            }
+        );
+    }
+    // html 添加
+    function makeHtml(data){
+        // 清空显示
+        html = '';
+        var deptChecked = getChecked(part['dept']);
+        for(k in data){
+            // 判断是部门有下级人员
+            $flag = true;
+            if(data[k].type == 'dept' && deptData[data[k].wx] == undefined ) $flag = false;
+            
+            // 查看是否已经选择
+            var $checked = part[data[k].type].includes(data[k].wx)?'checked="checked"':'';
+            html += '<a class="weui-cell weui-cell_access " href="javascript:;" data-id="'+data[k].wx+'" data-type="dept" style="text-decoration:none;">'+
+            '<label for="'+data[k].wx+'">'+
+            '<div class="weui-cell__hd" style="width: 32px;height: 25px;">';
+            if($flag){
+                if(!deptChecked.includes(data[k].wx)){
+                    html += '<input type="checkbox" name="checkbox1" class="weui-check" '+
+                        'data-type="'+data[k].type+'" data-img="'+data[k].avatar+'" data-name="'+data[k].name+'" '+$checked+' id="'+data[k].wx+'">'+
+                        '<i class="weui-icon-checked"></i>';
+                }
+            }
+            html += '</div>'+
+            '</label>'+
+            '<div class="weui-cell__hd select-dept">'+
+            '<img src="'+data[k].avatar+'" alt="'+data[k].name+'" style="width:20px;margin-right:5px;display:block">'+
+            '</div>'+
+            '<div class="weui-cell__bd select-'+data[k].type+'">'+
+            '<p style="margin-bottom: 0px;">'+data[k].name+'</p>'+
+            '</div>'+
+            '<div class="weui-cell__ft"></div>'+
+            '</a>';
+        }
+        $('#searchResult').html(html);
+   }
+   // 标题显示
+   function title_show(){
+        var length_title = click_dept.length;
+        var html = '';
+        for( i in click_dept){
+            if(i==length_title-1) html+= "<span>"+click_dept[i].name+'</span>';
+            else html += "<span class='title_color' dept-id='"+click_dept[i].dept+"'>"+click_dept[i].name+"</span> &gt;";
+        }
+        $('#other_title').html(html);
+    }
+    // 监控check按钮点击
+    $('#other_page_two').on('change','.weui-check',function(){
+        var data_type = $(this).attr('data-type');
+        var data_name = $(this).attr('data-name');
+        var data_id   = $(this).attr('id');
+        // 选中 单选
+        if($(this).is(':checked')){ 
+            var head_src  = data_type=='dept'?'/fjyxoaSV/Public/assets/i/weui/icon_nav_button.png':$(this).attr('data-img');
+            html = '<a href="javascript:;" class="weui-btn weui-btn_mini user '+data_type+data_id+'" data-type="'+data_type+'" data-id="'+data_id+'">'+
+                        '<img src="'+head_src+'" style="width: 20px;display: inline-block;vertical-align: middle;">'+
+                        '<span style="display: inline-block;vertical-align: middle;">'+data_name+'</span>'+
+                    '</a>';
+            $('#click_show').html(html);
+            // 添加数据 
+            part[data_type] = [data_id];
+            makeHtml(deptData[dept_id]);
+        }else{
+            // 删除dom
+            $('.'+data_type+data_id).remove();
+            //数据删除
+            for(k in part[data_type]){
+                if(part[data_type][k] == data_id) part[data_type].splice(k,1);
+            }
+        }
+    });
+    // 点击元素 
+    $('#click_show').on('click','.weui-btn_mini',function(){
+        var data_type = $(this).attr('data-type');
+        var data_id   = $(this).attr('data-id');
+        // 删除dom
+        $(this).remove();
+        //数据删除
+        for(k in part[data_type]){
+            if(part[data_type][k] == data_id) part[data_type].splice(k,1);
+        }
+        // 对应按钮变成原来的样子
+        makeHtml(deptData[dept_id]);
+    });
+    $('#searchResult').on('click','.select-dept',function(){
+        var index = $(this).parent().attr('data-id');
+        dept_id = index;
+        // 上标点击
+        var item = {'dept':index,'name':$(this).parent().text()};
+        click_dept.push(item);
+        title_show();
+        makeHtml(deptData[dept_id]);
+    });
+    // 获取已选人员的数据
+    function getChecked(data){
+       var res  = []; 
+       for(k in data){
+            deptKey = data[k];
+            if( deptData[deptKey] == undefined || deptData[deptKey].length == 0 ) continue;
+            var myData = deptData[deptKey];
+            for(key in myData){
+                res.push(myData[key].wx);
+                var myKey = myData[key].wx;
+                if(deptData[myKey] == undefined || deptData[myKey].length == 0 ) continue;
+                sonRes = getChecked([myKey]);
+                res.push.apply(res,sonRes);
+            }
+       }
+       return  res;
+   }
+   function getAllUser(data){
+       var res  = []; 
+       for(k in data){
+            deptKey = data[k];
+            if( deptData[deptKey] == undefined || deptData[deptKey].length == 0 ) continue;
+            var myData = deptData[deptKey];
+            for(key in myData){
+                if(myData[key].type == 'user') res.push(myData[key].wx);
+                var myKey = myData[key].wx;
+                if(deptData[myKey] == undefined || deptData[myKey].length == 0 ) continue;
+                sonRes = getChecked([myKey]);
+                res.push.apply(res,sonRes);
+            }
+       }
+       return  res;
+   }
 
+    // 搜索
+    var $searchBar = $('#searchBar'),
+            $searchResult = $('#searchResult'),
+            $searchText = $('#searchText'),
+            $searchInput = $('#searchInput'),
+            $searchClear = $('#searchClear'),
+            $searchCancel = $('#searchCancel');
+
+        function hideSearchResult(){
+            // $searchResult.hide();
+            $searchInput.val('');
+        }
+        function cancelSearch(){
+            hideSearchResult();
+            $searchBar.removeClass('weui-search-bar_focusing');
+            $searchText.show();
+        }
+
+        $searchText.on('click', function(){
+            $searchBar.addClass('weui-search-bar_focusing');
+            $searchInput.focus();
+        });
+        $searchInput
+            .on('blur', function () {
+                if(!this.value.length) cancelSearch();
+            })
+            .on('input', function(){
+                if(this.value.length) {
+                    $searchResult.show();
+                    searchCopyUser();
+                } else {
+                    modelIni()
+                }
+            })
+        ;
+        $searchClear.on('click', function(){
+            hideSearchResult();
+            $searchInput.focus();
+        });
+        $searchCancel.on('click', function(){
+            searchCopyUser();
+        });
+        $searchInput.on('keypress',function(e) {  
+            var keycode = e.keyCode;  
+            var searchName = $(this).val();
+            if(keycode=='13') {  
+            e.preventDefault();    
+            searchCopyUser();
+            }         
+        });
+        function searchCopyUser(){
+            word = $searchInput.val();
+            if(!word.length) return modelIni();
+            $('#title').html('<span>人员搜索</span>')
+            $('#searchResult').empty();
+            $('#searchResult').append(loading);
+            $.post("{:U('Light/Apply/searchDeptHtml')}",
+                {
+                    "type" : 'new',
+                    'key'  : word,
+                }, function (data) {
+                    api_for = 'user';
+                    $('#searchResult').empty();
+                    // console.log(data);
+                    if(data.length == 0) {
+                        $('#searchResult').append(noresult);
+                    } else {
+                        makeHtml(data);
+                    }
+                }
+            );
+        }
+
+        function modelIni(){
+            dept_id = 1;
+            $searchInput.val(null);
+            $("#pre-level").attr("data-pid", 0);
+            makeHtml(deptData[dept_id]);
+        }
+    
+</script>
 </html>

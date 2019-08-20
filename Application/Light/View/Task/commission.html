@@ -134,11 +134,11 @@
         function makehtml(data){
             var html = '';
             for(i=0;i<data.length;i++){
-                html += '<div class="weui-panel" index="'+data[i]['id']+'">'+
+                html += '<div class="weui-panel" data-stat="'+data[i]['stat']+'" index="'+data[i]['id']+'">'+
                             '<div class="weui-panel__bd">'+
                             '<div class="weui-media-box weui-media-box_text">'+
                                     '<h4 class="weui-media-box__title">'+data[i]['title']+'</h4>'+
-                                    '<p class="weui-media-box__desc">'+data[i]['content']+'</p>'+
+                                    '<div class="weui-media-box__desc" style="white-space: pre-wrap;">'+data[i]['content']+'</div>'+
                                     '<ul class="weui-media-box__info">'+
                                         //'<li class="weui-media-box__info__meta">'+data[i]['tjr']+'</li>'+
                                         '<li class="weui-media-box__info__meta">'+data[i]['submittime']+'</li>'+
@@ -152,17 +152,19 @@
         }
         $('#topDiv').on('click','li',function(){
            var url = $(this).attr('data-url');
-         
            if(url){
                window.location.href = url;
            }
         });
     $('#btn-all').click(function(){
         window.location.href = "{:U('Light/task/makeup')}";
+
     })
     $('#show').on('click','.weui-panel',function(){
         var idx = $(this).attr('index');
-        window.location.href = "{:U('Light/task/taskLook')}"+'&taskid='+idx;
+        var stat = $(this).attr('data-stat');
+        var url = stat == 3? "{:U('Light/Apply/applyInfo',array('modname'=>'Task','system'=>'kk'))}" + "&aid="+idx:"{:U('Light/task/taskLook')}"+'&taskid='+idx;
+        window.location.href = url;
     });
     </script>
     
