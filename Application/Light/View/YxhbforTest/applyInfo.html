@@ -1,49 +1,23 @@
 <extend name="Apply:base" />
 <block name='table'>
-    <style>
-        .tjcenter {
-            text-align: center;
-        }
-
-        .font13 {
-            font-size: 13px;
-        }
-    </style>
-    <div class="other_page" id="other_page" style="    
+    
+        <div class="other_page" id="other_page" style="    
         position: fixed;
         left: 0;
         top: 0;
         height: 100%;
         width: 100%;
         z-index: 999;">
-        <div class="container">
-            <div class="page js_show">
-                <h3 class="titleTab" style="text-align: center">调价详情</h3>
-                <volist name="data" id="vo">
-                    <div class="weui-cells__title" style="margin-top: 3px;">{$vo.date}</div>
-                    <div class="weui-cells weui-cells_form ">
-                        <div class="weui-cells__title" style="color: black;">{$vo.g_name}</div>
-                        <div class="weui-flex" style="padding: 2px 15px;">
-                            <div class="weui-form-preview__item weui-flex__item  font13">品种</div>
-                            <div class="weui-form-preview__item weui-flex__item  font13">当前</div>
-                            <div class="weui-form-preview__item weui-flex__item  font13">调整</div>
-                            <div class="weui-form-preview__item weui-flex__item  font13">运费</div>
+            <div class="container">
+                <div class="page js_show">
+                    <h3 class="titleTab" style="text-align: center">调价详情</h3>
+                    <volist name="data" id="vo">
+                        <div class="weui-cells weui-cells_form">
                         </div>
-                        <volist name="vo.child" id="val">
-                            <div class="weui-flex" style="padding: 2px 15px;">
-                                <div class="weui-form-preview__item weui-flex__item  font13">{$val.cate}</div>
-                                <div class="weui-form-preview__item weui-flex__item  font13">{$val.now}</div>
-                                <div class="weui-form-preview__item weui-flex__item  font13">{$val.dj}</div>
-                                <div class="weui-form-preview__item weui-flex__item  font13">{$val.tj_yf}</div>
-                            </div>
-                        </volist>
-                    </div>
-                </volist>
-                
-                <div class="weui-cells__title" style="height: 10px;"></div>
+                    </volist>
+                </div>
             </div>
         </div>
-    </div>
 
-
+    
 </block>
