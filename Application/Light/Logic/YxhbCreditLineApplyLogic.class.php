@@ -37,7 +37,7 @@ class YxhbCreditLineApplyLogic extends Model {
         $info = $this->getInfo($res['clientid'],$date);
         $clientname = M('yxhb_guest2')->field('g_khjc,g_name')->where(array('id' => $res['clientid']))->find();
         $color = $info['flag']?'#f12e2e':'black';
-        $result['content'][] = array('name'=>'申请单位：',
+        $result['content'][] = array('name'=>'系统类型：',
                                      'value'=>'环保信用额度申请',
                                      'type'=>'date',
                                      'color' => 'black'

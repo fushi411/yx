@@ -45,7 +45,7 @@ class WorkFlowFuncController extends Controller {
 		$fbsj=date('m月d日H点',strtotime($g['dtime']));
 		$title=$sj.' '."新销售日计划";
 		$description =  '环保'.$rq.'销售计划<br><div class=\"highlight\">发布时间：'.$fbsj.'</div>';
-		$url = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx133a00915c785dec&redirect_uri=http%3a%2f%2fwww.fjyuanxin.com%2fyxhb/add_sale_plan_wx.php?params='.$aid.'&response_type=code&scope=snsapi_base&state=STATE#wechat_redirect';
+		$url = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx133a00915c785dec&redirect_uri=http%3a%2f%2fwww.fjyuanxin.top%2fyxhb/add_sale_plan_wx.php?params='.$aid.'&response_type=code&scope=snsapi_base&state=STATE#wechat_redirect';
 		//新闻消息模式
 		$info=$jssdk->sendCardMessage($receiver,$title,$description,$url,16);
 		$sendStat=json_decode($info);
@@ -83,7 +83,7 @@ class WorkFlowFuncController extends Controller {
 		$fbsj=date('m月d日H点',strtotime($g['dtime']));
 		$title=$sj.' '."新销售月计划";
 		$description = '环保'.$month.'销售计划<br><div class=\"highlight\">发布时间：'.$fbsj.'</div>';
-		$url = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx133a00915c785dec&redirect_uri=http%3a%2f%2fwww.fjyuanxin.com%2fyxhb/add_sale_plan_month_wx.php?params='.$aid.'&response_type=code&scope=snsapi_base&state=STATE#wechat_redirect';
+		$url = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx133a00915c785dec&redirect_uri=http%3a%2f%2fwww.fjyuanxin.top%2fyxhb/add_sale_plan_month_wx.php?params='.$aid.'&response_type=code&scope=snsapi_base&state=STATE#wechat_redirect';
 		//新闻消息模式
 		$info=$jssdk->sendCardMessage($receiver,$title,$description,$url,16);
 		return $resArr;
@@ -690,12 +690,16 @@ class WorkFlowFuncController extends Controller {
      */
     public function KkContract_guest_ApplyEnd($aid)
     {
-        $id = M('kk_guest2')->field('g_beian')->where(array('id'=>$aid))->find();
+        $id = M('kk_guest2')->field('g_beian,g_name')->where(array('id'=>$aid))->find();
         $data['stat'] = 1;
         $data['stat2'] = 2;
         if(!empty($id))  $res = M('kk_newguest')->where(array('id'=>$id['g_beian']))->data($data)->save();
-        $res = M('kk_guest2')->where(array('id'=>$aid))->setField('g_stat3', 1);
-
+        $g_name = stripos($id['g_name'],'-总') === false?$id['g_name'].'-总':$id['g_name'];
+        $save = array(
+            'g_stat3' => 1,
+            'g_name'  => $g_name,
+        );
+        $res = M('kk_guest2')->where(array('id'=>$aid))->save($save);
         $newres = D('KkContract_guest_Apply2','Logic')->add2($aid);
         $resArr = $res?array("status"=>"success"):array("status"=>"failure");
         return $resArr;
@@ -707,12 +711,16 @@ class WorkFlowFuncController extends Controller {
      */
     public function YxhbContract_guest_ApplyEnd($aid)
     {
-        $id = M('yxhb_guest2')->field('g_beian')->where(array('id'=>$aid))->find();
+        $id = M('yxhb_guest2')->field('g_beian,g_name')->where(array('id'=>$aid))->find();
         $data['stat'] = 1;
         $data['stat2'] = 2;
         if(!empty($id))  $res = M('yxhb_newguest')->where(array('id'=>$id['g_beian']))->data($data)->save();
-        $res = M('yxhb_guest2')->where(array('id'=>$aid))->setField('g_stat3', 1);
-
+        $g_name = stripos($id['g_name'],'-总') === false?$id['g_name'].'-总':$id['g_name'];
+        $save = array(
+            'g_stat3' => 1,
+            'g_name'  => $g_name,
+        );
+        $res = M('yxhb_guest2')->where(array('id'=>$aid))->save($save);
         $newres = D('YxhbContract_guest_Apply2','Logic')->add2($aid);
 
         $resArr = $res?array("status"=>"success"):array("status"=>"failure");
@@ -845,7 +853,18 @@ class WorkFlowFuncController extends Controller {
         $resArr = $res?array("status"=>"success"):array("status"=>"failure");
         return $resArr;
 	}
-	
+    
+     /**
+     * 粉煤灰客户调价审批通过后调用函数
+     * @param  [integre] $aid [记录ID]
+     * @return [array]      [状态]
+     */
+    public function KkGuesttjApply_fmhEnd($aid)
+    {
+        $res = M('kk_tj_fmh')->where(array('id'=>$aid,))->setField('tj_stat', 2);
+        $resArr = $res?array("status"=>"success"):array("status"=>"failure");
+        return $resArr;
+	}
  	/**
      * 环保新增供应商审批通过后调用函数
      * @param  [integre] $aid [记录ID]
@@ -889,12 +908,16 @@ class WorkFlowFuncController extends Controller {
      */
     public function KkContract_guest_Apply_fmhEnd($aid)
     {
-        $id = M('kk_guest2_fmh')->field('g_beian')->where(array('id'=>$aid))->find();
+        $id = M('kk_guest2_fmh')->field('g_beian,g_name')->where(array('id'=>$aid))->find();
         $data['stat'] = 1;
         $data['stat2'] = 2;
         if(!empty($id))  $res = M('kk_newguest_fmh')->where(array('id'=>$id['g_beian']))->data($data)->save();
-        $res = M('kk_guest2_fmh')->where(array('id'=>$aid))->setField('g_stat3', 1);
-
+        $g_name = stripos($id['g_name'],'-总') === false?$id['g_name'].'-总':$id['g_name'];
+        $save = array(
+            'g_stat3' => 1,
+            'g_name'  => $g_name,
+        );
+        $res = M('kk_guest2_fmh')->where(array('id'=>$aid))->save($save);
         $newres = D('KkContract_guest_Apply_fmh2','Logic')->add2($aid);
         $resArr = $res?array("status"=>"success"):array("status"=>"failure");
         return $resArr;
@@ -1096,6 +1119,26 @@ class WorkFlowFuncController extends Controller {
     public function KkTaskEnd($aid)
     {
 		$res = M('yx_task')->where(array('id'=>$aid))->setField('stat', 4);
+        $resArr = $res?array("status"=>"success"):array("status"=>"failure");
+        return $resArr;
+    }
+    /**
+     * 建材客户结算
+     * @param  [integre] $aid [记录ID]
+     * @return [array]      [状态]
+     */
+    public function KkGuestJsApplyEnd($aid){
+        $res = M('kk_js')->where(array('pid'=>$aid))->setField('js_stat', 2);
+        $resArr = $res?array("status"=>"success"):array("status"=>"failure");
+        return $resArr;
+    }
+     /**
+     * 环保客户结算
+     * @param  [integre] $aid [记录ID]
+     * @return [array]      [状态]
+     */
+    public function YxhbGuestJsApplyEnd($aid){
+        $res = M('yxhb_js')->where(array('pid'=>$aid))->setField('js_stat', 2);
         $resArr = $res?array("status"=>"success"):array("status"=>"failure");
         return $resArr;
     }

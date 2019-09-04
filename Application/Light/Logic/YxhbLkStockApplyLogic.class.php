@@ -32,7 +32,7 @@ class YxhbLkStockApplyLogic extends Model {
         $res = $this->record($id);
         $result = array();
 
-        $result['content']['show'][] = array('name'=>'申请单位：',
+        $result['content']['show'][] = array('name'=>'系统类型：',
                                      'value'=> '环保量库库存',
                                      'type'=>'date',
                                      'color' => 'black'
@@ -67,7 +67,7 @@ class YxhbLkStockApplyLogic extends Model {
         if(!$res['zm']){
             $time = strtotime($res['date'])+$res['time']*3600;
             $auth = data_auth_sign($time);
-            $url  = "http://www.fjyuanxin.com/sngl/kf_stock_send_api.php?time={$time}&auth={$auth}";
+            $url  = "http://www.fjyuanxin.top/sngl/kf_stock_send_api.php?time={$time}&auth={$auth}";
             $post_data = array();
             $data = send_post($url,$post_data);
             $this->where(array('id'=> $id))->setField('zm',json_encode($data));
@@ -234,7 +234,7 @@ class YxhbLkStockApplyLogic extends Model {
         // if(date('H',time())< $res['time']) return array('code' => 404,'msg' => '不能提前提交' );
         $time = strtotime($res['date']);
         $auth = data_auth_sign($time);
-        $url  = "http://www.fjyuanxin.com/sngl/kf_stock_send_api.php?time={$time}&auth={$auth}";
+        $url  = "http://www.fjyuanxin.top/sngl/kf_stock_send_api.php?time={$time}&auth={$auth}";
         $post_data = array();
         $data = send_post($url,$post_data);
          

@@ -35,7 +35,7 @@ class YxhbKfMaterielApplyLogic extends Model {
         $res = $this->record($id);
         $result = array();
 
-        $result['content'][] = array('name'=>'申请单位：',
+        $result['content'][] = array('name'=>'系统类型：',
                                      'value'=>'环保矿粉物料配置',
                                      'type'=>'date',
                                      'color' => 'black'
@@ -102,7 +102,7 @@ class YxhbKfMaterielApplyLogic extends Model {
      * 获取开启双线html
      * @param  datetime $date
      * @return string   $res
-     * https://www.fjyuanxin.com/WE/index.php?m=&&m=Light&c=View&a=View&modname=KfMaterielApply&system=yxhb&systempath=sngl&datetime=1545768000
+     * https://www.fjyuanxin.top/WE/index.php?m=&&m=Light&c=View&a=View&modname=KfMaterielApply&system=yxhb&systempath=sngl&datetime=1545768000
      */
     public function makeDoubleScx($date){
         $date = strtotime($date)+8*3600;

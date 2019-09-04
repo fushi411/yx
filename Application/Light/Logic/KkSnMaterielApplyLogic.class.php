@@ -32,7 +32,7 @@ class KkSnMaterielApplyLogic extends Model {
         $res = $this->record($id);
         $result = array();
 
-        $result['content'][] = array('name'=>'申请单位：',
+        $result['content'][] = array('name'=>'系统类型：',
                                      'value'=>'环保矿粉物料配置',
                                      'type'=>'date',
                                      'color' => 'black'

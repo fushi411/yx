@@ -31,7 +31,7 @@ class YxhbClientStatementUpLogic extends Model {
     {
         $res = $this->record($id);
         $result = array();
-        $result['content'][] = array('name'=>'申请单位：',
+        $result['content'][] = array('name'=>'系统类型：',
                                      'value'=>'环保上传对账回执',
                                      'type'=>'date',
                                      'color' => 'black'
@@ -94,7 +94,7 @@ class YxhbClientStatementUpLogic extends Model {
         $image = array();
         $imgsrc = array_filter($imgsrc);
         foreach ($imgsrc as $key => $value) {
-            $image[] = 'http://www.fjyuanxin.com/WE/Public/upload/dzd/'.$value;
+            $image[] = 'http://www.fjyuanxin.top/WE/Public/upload/dzd/'.$value;
         }
         $result['imgsrc'] = $image;
         $result['applyerName'] = $res['rdy'];
@@ -124,7 +124,7 @@ class YxhbClientStatementUpLogic extends Model {
                                     );
          $res = $this->record($id);
         $result = array();
-        $result[] = array('name'=>'申请单位：',
+        $result[] = array('name'=>'系统类型：',
                                      'value'=>'环保',
                                      'type'=>'date',
                                      'color' => 'black'
@@ -322,7 +322,7 @@ class YxhbClientStatementUpLogic extends Model {
         }
 
         //  设置文件路径和文件前缀名称
-        $rootPath = "/www/web/default/WE/Public/upload/dzd/";
+        $rootPath = "/data/wwwroot/default/WE/Public/upload/dzd/";
         /* 检测上传根目录 */
         if(!$uploader->checkRootPath($rootPath)){
             $error = $uploader->getError();

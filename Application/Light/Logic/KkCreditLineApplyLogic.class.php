@@ -37,7 +37,7 @@ class KkCreditLineApplyLogic extends Model {
         $info = $this->getInfo($res['clientid'],$date,$res['clientname']);
         $clientname = M('kk_guest2')->field('g_khjc,g_name')->where(array('id' => $res['clientid']))->find();
         $color = $info['flag']?'#f12e2e':'black';
-        $result['content'][] = array('name'=>'申请单位：',
+        $result['content'][] = array('name'=>'系统类型：',
                                      'value'=>'建材信用额度申请',
                                      'type'=>'date',
                                      'color' => 'black'
@@ -166,7 +166,7 @@ class KkCreditLineApplyLogic extends Model {
             'auth' => data_auth_sign($name),
             'date' => $date
           );
-        $res = send_post('http://www.fjyuanxin.com/sngl/include/getClientCreditApi.php', $post_data);
+        $res = send_post('http://www.fjyuanxin.top/sngl/include/getClientCreditApi.php', $post_data);
         
         // $result['ye'] = number_format(-($ye-$res['ye']+$res['tmp']),2,'.',',')."元";
 

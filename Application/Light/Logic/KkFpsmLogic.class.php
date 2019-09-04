@@ -30,7 +30,7 @@ class KkFpsmLogic extends Model {
     public function recordContent($id)
     {
         $res = $this->record($id);
-        $result['content'][] = array('name'=>'申请单位：',
+        $result['content'][] = array('name'=>'系统类型：',
                                      'value'=>'建材发票上传',
                                      'type'=>'date',
                                      'color' => 'black'
@@ -139,7 +139,7 @@ class KkFpsmLogic extends Model {
         $image = array();
         $imgsrc = array_filter($imgsrc);
         foreach ($imgsrc as $key => $value) {
-            $image[] = 'http://www.fjyuanxin.com/sngl/upload/fy/'.$value;
+            $image[] = 'http://www.fjyuanxin.top/sngl/upload/fy/'.$value;
         }
         $result['imgsrc'] = $image;
         $result['applyerID'] = D('KkBoss')->getIDFromName($res['jbr']);

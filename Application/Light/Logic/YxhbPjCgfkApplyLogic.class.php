@@ -41,7 +41,7 @@ class YxhbPjCgfkApplyLogic extends Model {
             $clientname = array( 'g_name' => $res['pjs']);
         }
         $color = $res['yfye'] > 0? '#f12e2e':'black';
-        $result['content'][] = array('name'=>'申请单位：',
+        $result['content'][] = array('name'=>'系统类型：',
                                      'value'=>'环保配件采购付款',
                                      'type'=>'date',
                                      'color' => 'black'
@@ -115,7 +115,7 @@ class YxhbPjCgfkApplyLogic extends Model {
         $image = array();
         $imgsrc = array_filter($imgsrc);
         foreach ($imgsrc as $key => $value) {
-            $image[] = 'http://www.fjyuanxin.com/WE/Public/upload/cg/'.$value;
+            $image[] = 'http://www.fjyuanxin.top/WE/Public/upload/cg/'.$value;
         }
         $result['imgsrc'] = $image;
         $result['applyerID'] =  D('yxhbBoss')->getIDFromName($res['rdy']);
@@ -423,7 +423,7 @@ class YxhbPjCgfkApplyLogic extends Model {
         }
 
         //  设置文件路径和文件前缀名称
-        $rootPath = "/www/web/default/WE/Public/upload/cg/";
+        $rootPath = "/data/wwwroot/default/WE/Public/upload/cg/";
         /* 检测上传根目录 */
         if(!$uploader->checkRootPath($rootPath)){
             $error = $uploader->getError();

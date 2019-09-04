@@ -415,6 +415,7 @@ class KkContractguestApplyfmh2Logic extends Model {
         $data = M('kk_guest2_fmh')->where($map)->find();
         unset($data['id']);
         $data['reid'] = $aid;
+        $data['g_name'] = str_replace('-总','',$data['g_name']);
         $sub_time = date("Y-m-d H:i:s",time());
         $data['g_dtime'] = $sub_time;
 

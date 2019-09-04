@@ -33,7 +33,7 @@ class YxhbTempCreditLineApplyLogic extends Model {
         $info = $this->getInfo($res['clientid'],$res['date']);
         $result = array();
         $clientname = M('yxhb_guest2')->field('g_name,g_khjc')->where(array('id' => $res['clientid']))->find();
-        $result['content'][] = array('name'=>'申请单位：',
+        $result['content'][] = array('name'=>'系统类型：',
                                      'value'=>'环保临时额度申请',
                                      'type'=>'date',
                                      'color' => 'black'

@@ -34,7 +34,7 @@ class KkfhrefundApplyLogic extends Model {
         $res = $this->record($id);
         $result = array();
         $clientname = M('kk_guest2')->field('g_name')->where(array('id' => $res['fh_client']))->find();
-        $result['content'][] = array('name'=>'申请单位：',
+        $result['content'][] = array('name'=>'系统类型：',
                                      'value'=>'建材退货修改',
                                      'type'=>'date',
                                      'color' => 'black'
@@ -563,7 +563,7 @@ class KkfhrefundApplyLogic extends Model {
         }
 
         //  设置文件路径和文件前缀名称
-        $rootPath = "/www/web/default/WE/Public/upload/fh/";
+        $rootPath = "/data/wwwroot/default/WE/Public/upload/fh/";
         /* 检测上传根目录 */
         if(!$uploader->checkRootPath($rootPath)){
             $error = $uploader->getError();

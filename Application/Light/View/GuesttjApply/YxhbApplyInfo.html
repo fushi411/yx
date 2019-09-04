@@ -1,14 +1,71 @@
 <extend name="Apply:base" />
+<block name='table'>
+        <style>
+            .tjcenter {
+                text-align: center;
+            }
+    
+            .font13 {
+                font-size: 13px;
+            }
+        </style>
+        <div class="other_page" id="other_page_tj_detail" style="
+            display: none;    
+            position: fixed;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 100%;
+            z-index: 999;">
+            <div class="container">
+                <div class="page js_show">
+                    <h3 class="titleTab" style="text-align: center">调价详情</h3>
+                    <volist name="mydata" id="vo">
+                        <div class="weui-cells__title" style="margin-top: 3px;">{$vo.date}</div>
+                        <div class="weui-cells weui-cells_form " style="padding-bottom: 5px;">
+                            <div class="weui-cells__title" style="color: black;">{$vo.g_name}</div>
+                            <div class="weui-flex" style="padding: 2px 15px;">
+                                <div class="weui-form-preview__item weui-flex__item  font13">品种</div>
+                                <div class="weui-form-preview__item weui-flex__item  font13">当前</div>
+                                <div class="weui-form-preview__item weui-flex__item  font13">调整</div>
+                                <div class="weui-form-preview__item weui-flex__item  font13">运费</div>
+                            </div>
+                            <volist name="vo.child" id="val">
+                                <div class="weui-flex" style="padding: 3px 15px;">
+                                    <div class="weui-form-preview__item weui-flex__item  font13">{$val.cate}</div>
+                                    <div class="weui-form-preview__item weui-flex__item  font13">{$val.now}</div>
+                                    <div class="weui-form-preview__item weui-flex__item  font13">{$val.dj}</div>
+                                    <div class="weui-form-preview__item weui-flex__item  font13">{$val.tj_yf}</div>
+                                </div>
+                            </volist>
+                        </div>
+                    </volist>
+                    <div class="weui-cells__title" style="height: 10px;"></div>
+                </div>
+            </div>
+        </div>
+        <div id="btn-all">
+                <a href="javascript:;" class="weui-btn weui-btn_mini weui-btn_primary">返回</a>
+            </div>
+    </block>
 <block name="js">
     <script src="__PUBLIC__/assets/layer/layer.js"></script>
     <script type="text/javascript">
         $(function () {
+            $('#btn-all').hide();
             var id = getQueryString("aid");
+            var show = getQueryString("show");
+            if(show == 'Guesttj') $('#other_page_tj_detail').show();
             // 内容过滤选择器 选取含有文本内容text的元素
             $("p:contains('查看客户调价')").children('span :eq(1)').css('style','cursor: pointer');
             $("p:contains('查看客户调价')").children('span :eq(1)').click(function () {
-                viewSalesPlan(id);
-            })
+                $('#other_page_tj_detail').show();
+               $('#btn-all').show();
+           });
+           $('#btn-all').click(function(){
+                $('#other_page_tj_detail').hide();
+                $('#btn-all').hide();
+            });
         })
 
         // 获取URL参数
@@ -24,11 +81,11 @@
                 var title = '查看客户调价';
                 var censhu = id+'|'+'title='+title;
                 var url = "view_guest_tj_info.php?id="+censhu;
-                // "https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx133a00915c785dec&redirect_uri=http%3a%2f%2fwww.fjyuanxin.com%2fyxhb%2findex_index.php&response_type=code&scope=snsapi_base&state=STATE#wechat_redirect"
-                var url = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx133a00915c785dec&redirect_uri=http%3a%2f%2fwww.fjyuanxin.com%2fyxhb%2findex_redirect_parameter.php?url="+url+"&response_type=code&scope=snsapi_base&state=STATE#wechat_redirect";
+                // "https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx133a00915c785dec&redirect_uri=http%3a%2f%2fwww.fjyuanxin.top%2fyxhb%2findex_index.php&response_type=code&scope=snsapi_base&state=STATE#wechat_redirect"
+                var url = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx133a00915c785dec&redirect_uri=http%3a%2f%2fwww.fjyuanxin.top%2fyxhb%2findex_redirect_parameter.php?url="+url+"&response_type=code&scope=snsapi_base&state=STATE#wechat_redirect";
                 window.location.href = url;
             }else{
-                var url = 'https://www.fjyuanxin.com/yxhb/view_guest_tj_info.php?id='+id+"&type=view";
+                var url = 'https://www.fjyuanxin.top/yxhb/view_guest_tj_info.php?id='+id+"&type=view";
                 var areaArr =  ['750px', '450px'];
                 if( window.innerHeight > 600 ) areaArr =  ['550px', '650px'];
                 layer.open({

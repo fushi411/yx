@@ -30,7 +30,7 @@ class YxhbCgFpsmLogic extends Model {
     public function recordContent($id)
     {
         $res = $this->record($id);
-        $result['content'][] = array('name'=>'申请单位：',
+        $result['content'][] = array('name'=>'系统类型：',
                                      'value'=>'环保采购发票上传',
                                      'type'=>'date',
                                      'color' => 'black'
@@ -120,7 +120,7 @@ class YxhbCgFpsmLogic extends Model {
         $image = array();
         $imgsrc = array_filter($imgsrc);
         foreach ($imgsrc as $key => $value) {
-            $image[] = 'http://www.fjyuanxin.com/yxhb/upload/fy/'.$value;
+            $image[] = 'http://www.fjyuanxin.top/yxhb/upload/fy/'.$value;
         }
         $result['imgsrc'] = $image;
         $result['applyerID'] = D('YxhbBoss')->getIDFromName($res['jbr']);

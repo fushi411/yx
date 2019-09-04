@@ -33,7 +33,7 @@ class YxhbKfRatioApplyLogic extends Model {
         $result = array();
         $hour = $res['hour']>9?$res['hour']:'0'.$res['hour'];
         $scfz = $res['scfz']>9?$res['scfz']:'0'.$res['scfz'];
-        $result['content'][] = array('name'=>'申请单位：',
+        $result['content'][] = array('name'=>'系统类型：',
                                      'value'=>'环保矿粉配比通知',
                                      'type'=>'date',
                                      'color' => 'black'

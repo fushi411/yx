@@ -17,4 +17,14 @@ class KkGuest2Model extends Model {
         return $this->where(array('id'=>$id))->getField('g_name');
     }
 
+    /**
+     * 父级客户
+     * @param $id 客户ID
+     * @retrun string 客户名称
+     */
+    public function getParentName($id){
+        $data = $this->where(array('id'=>$id))->find();
+        if($data['reid'] == 0) return $data['g_name'];
+        return $this->where(array('id'=>$data['reid']))->getField('g_name');
+    }
 }

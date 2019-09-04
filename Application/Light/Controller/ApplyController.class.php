@@ -439,7 +439,7 @@ class ApplyController extends BaseController {
         }
 
         //  设置文件路径和文件前缀名称
-        $rootPath = "/www/web/default/WE/Public/upload/html5uploads/";
+        $rootPath = "/data/wwwroot/default/WE/Public/upload/html5uploads/";
         /* 检测上传根目录 */
         if(!$uploader->checkRootPath($rootPath)){
             $error = $uploader->getError();
@@ -488,7 +488,7 @@ class ApplyController extends BaseController {
         }
 
         //  设置文件路径和文件前缀名称
-        $rootPath = "/www/web/default/WE/Public/upload/sign/";
+        $rootPath = "/data/wwwroot/default/WE/Public/upload/sign/";
         /* 检测上传根目录 */
         if(!$uploader->checkRootPath($rootPath)){
             $error = $uploader->getError();

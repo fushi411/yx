@@ -31,7 +31,7 @@ class YxhbkfScjlLogic extends Model {
     {
         $res = $this->record($id);
         $result = array();
-        $result['content'][] = array('name'=>'申请单位：',
+        $result['content'][] = array('name'=>'系统类型：',
                                      'value'=>'环保生控记录(矿粉)',
                                      'type'=>'date',
                                      'color' => 'black'
@@ -359,7 +359,7 @@ class YxhbkfScjlLogic extends Model {
             'xd'        => $xd,
             'scx'       => $scx.'生产线',
           );
-        $res = send_post('http://www.fjyuanxin.com/sngl/AlarmInfoApi.php', $post_data);
+        $res = send_post('http://www.fjyuanxin.top/sngl/AlarmInfoApi.php', $post_data);
         return array('code' => 200,'msg' => '提交成功' , 'aid' =>$result);
         
     }

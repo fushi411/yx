@@ -25,7 +25,7 @@ class KkContractApplyfmhLogic extends Model {
         $clientname = M('kk_guest2_fmh')->field('g_name,reid')->where(array('id' => $res['ht_khmc']))->find();
         $topGys     = M('kk_guest2_fmh')->field('g_name')->where(array('id' => $clientname['reid']))->find();
         $kpjs       = $this->getModel($clientname['reid']);
-        $result['content'][] = array('name'=>'申请单位：',
+        $result['content'][] = array('name'=>'系统类型：',
                                      'value'=>'粉煤灰新增合同价格',
                                      'type'=>'date',
                                      'color' => 'black'

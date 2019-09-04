@@ -11,8 +11,8 @@ class WxMessageModel extends Model {
     // 虚拟模型
     protected $autoCheckFields = false;
     protected $wx = '';
-    protected $url = 'https://www.fjyuanxin.com';
-    protected $mUrl = 'https://www.fjyuanxin.com/WE/index.php?';
+    protected $url = 'https://www.fjyuanxin.top';
+    protected $mUrl = 'https://www.fjyuanxin.top/WE/index.php?';
     
     public function __construct(){
         parent::__construct();
@@ -231,7 +231,7 @@ class WxMessageModel extends Model {
          # title
         $seek  = D('Seek');
         $stat  = $seek->getConfig($mod,$system,'stat');
-        $title = $stat==3?'签收':'审批'; 
+        $title = $stat==3?'待签收':'待审批'; 
         $top   = $seek->getModname($mod,$system);
         $title = "{$top}({$title})";
         # 推送人员
@@ -309,7 +309,7 @@ class WxMessageModel extends Model {
         $title       = '【已退审推送】';
         $mod_cname   = D('Seek')->getModname($mod,$system);
 		$description = $mod_cname."( {$apply_user} 提交)\n<div class=\"highlight\">退审意见：".$word."</div>";
-        $url         = "https://www.fjyuanxin.com/WE/index.php?m=Light&c=Apply&a=applyInfo&system=".$system."&aid=".$id."&modname=".$mod;
+        $url         = "https://www.fjyuanxin.top/WE/index.php?m=Light&c=Apply&a=applyInfo&system=".$system."&aid=".$id."&modname=".$mod;
         $temrecevier = $this->getAllCurrentProcessPeople($system,$mod,$id,0);
         $this->wx->sendCardMessage($temrecevier,$title,$description,$url,15,$mod,$system);
     }

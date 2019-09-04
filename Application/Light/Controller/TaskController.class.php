@@ -4,7 +4,7 @@ namespace Light\Controller;
 class TaskController extends \Think\Controller {
    
     private $titleArr;
-    private $urlHead = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx133a00915c785dec&redirect_uri=http%3a%2f%2fwww.fjyuanxin.com';
+    private $urlHead = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx133a00915c785dec&redirect_uri=http%3a%2f%2fwww.fjyuanxin.top';
 
     private $urlEnd = '&response_type=code&scope=snsapi_base&state=YUANXIN#wechat_redirect';
     public function _initialize(){

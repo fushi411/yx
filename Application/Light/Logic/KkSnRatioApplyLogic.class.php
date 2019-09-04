@@ -35,7 +35,7 @@ class KkSnRatioApplyLogic extends Model {
         $fz   = str_replace('分','',$res['scfz']);
         $hour = (int)($hour);
         $hour = $hour>9?$hour:'0'.$hour;
-        $result['content'][] = array('name'=>'申请单位：',
+        $result['content'][] = array('name'=>'系统类型：',
                                      'value'=>'建材水泥配比通知',
                                      'type'=>'date',
                                      'color' => 'black'

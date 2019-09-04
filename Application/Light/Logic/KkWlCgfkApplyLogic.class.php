@@ -42,7 +42,7 @@ class KkWlCgfkApplyLogic extends Model {
             $clientname = array( 'g_name' => $res['pjs']);
         }
         $color = $res['yfye'] > 0? '#f12e2e':'black';
-        $result['content'][] = array('name'=>'申请单位：',
+        $result['content'][] = array('name'=>'系统类型：',
                                      'value'=>'建材物流采购付款',
                                      'type'=>'date',
                                      'color' => 'black'
@@ -103,7 +103,7 @@ class KkWlCgfkApplyLogic extends Model {
         $image = array();
         $imgsrc = array_filter($imgsrc);
         foreach ($imgsrc as $key => $value) {
-            $image[] = 'http://www.fjyuanxin.com/WE/Public/upload/cg/'.$value;
+            $image[] = 'http://www.fjyuanxin.top/WE/Public/upload/cg/'.$value;
         }
         $result['imgsrc'] = $image;
         $result['applyerID'] =  D('KkBoss')->getIDFromName($res['rdy']);
@@ -463,7 +463,7 @@ class KkWlCgfkApplyLogic extends Model {
             'auth' => $auth,
             'id'   => $id
         );
-        $res = send_post('http://www.fjyuanxin.com/sngl/include/getSupplyPaymentApi.php', $post_data);
+        $res = send_post('http://www.fjyuanxin.top/sngl/include/getSupplyPaymentApi.php', $post_data);
         return $res;
     }
 
@@ -551,7 +551,7 @@ class KkWlCgfkApplyLogic extends Model {
         }
 
         //  设置文件路径和文件前缀名称
-        $rootPath = "/www/web/default/WE/Public/upload/cg/";
+        $rootPath = "/data/wwwroot/default/WE/Public/upload/cg/";
         /* 检测上传根目录 */
         if(!$uploader->checkRootPath($rootPath)){
             $error = $uploader->getError();

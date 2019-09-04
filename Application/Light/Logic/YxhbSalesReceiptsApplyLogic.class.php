@@ -31,7 +31,7 @@ class YxhbSalesReceiptsApplyLogic extends Model {
     {
         $res = $this->record($id);
         $result = array();
-        $result['content'][] = array('name'=>'申请单位：',
+        $result['content'][] = array('name'=>'系统类型：',
                                      'value'=>'环保销售收款',
                                      'type'=>'date',
                                      'color' => 'black'
@@ -144,7 +144,7 @@ class YxhbSalesReceiptsApplyLogic extends Model {
             'auth'   => data_auth_sign($client_id),
             'type'   => 'add'
         ); 
-        $res = send_post('http://www.fjyuanxin.com/sngl/client_ye_hb_api.php', $post_data);
+        $res = send_post('http://www.fjyuanxin.top/sngl/client_ye_hb_api.php', $post_data);
         $ysye = $res[1];
         $flag = $ysye <20000?1:0;
         return array($ysye,$flag);
@@ -301,7 +301,7 @@ class YxhbSalesReceiptsApplyLogic extends Model {
             array('title' => '收款金额' , 'content' => number_format($res['nmoney'],2,'.',',')."元" ),
             array('title' => '本月累计' , 'content' => "&yen;".number_format($this->getTheMonthRec($dtg['gid'],$res['sj_date']),2,'.',',')."元" ),
             array('title' => '应收余额' , 'content' => number_format($ysye,2,'.',',')   ),
-            array('title' => '本月累计' , 'content' => $res['ntext']?$res['ntext']:'无' ),
+            array('title' => '相关说明' , 'content' => $res['ntext']?$res['ntext']:'无' ),
         );
         $result = array(
             'content'        => $temp,
@@ -340,7 +340,7 @@ class YxhbSalesReceiptsApplyLogic extends Model {
         }
 
         //  设置文件路径和文件前缀名称
-        $rootPath = "/www/web/default/yxhb/upload/hp/";
+        $rootPath = "/data/wwwroot/default/yxhb/upload/hp/";
         /* 检测上传根目录 */
         if(!$uploader->checkRootPath($rootPath)){
             $error = $uploader->getError();
@@ -389,7 +389,7 @@ class YxhbSalesReceiptsApplyLogic extends Model {
             'auth'   => data_auth_sign($client_id),
             'type'   => 'add'
         ); 
-        $res = send_post('http://www.fjyuanxin.com/sngl/include/yeinfo_hb_api.php', $post_data);
+        $res = send_post('http://www.fjyuanxin.top/sngl/include/yeinfo_hb_api.php', $post_data);
         $ysye = $res[0];
         $flag = $ysye <20000?1:0;
         $res = array(

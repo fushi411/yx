@@ -724,12 +724,18 @@ class MsgdataModel extends Model {
     public function  ClientStatementApply_fmh(){
         return $this->ClientStatementData();
     }
+    // 客户结算
+    public function GuestJsApply(){
+        return $this->ClientStatementData();
+    }
     private function ClientStatementData(){
         $result = array();
         $result['url'] = array(
             array('name' => '环保新增对账单','url' => U('Light/View/View',array('modname'=>'ClientStatementApply','system' => 'yxhb')),'modname' => 'yxhbClientStatementApply'),
             array('name' => '建材新增对账单','url' => U('Light/View/View',array('modname'=>'ClientStatementApply','system' => 'kk')),'modname' => 'kkClientStatementApply'),
             array('name' => '粉煤灰新增对账单','url' => U('Light/View/View',array('modname'=>'ClientStatementApply_fmh','system' => 'kk')),'modname' => 'kkClientStatementApply_fmh'),
+            array('name' => '环保客户结算','url' => U('Light/View/View',array('modname'=>'GuestJsApply','system' => 'yxhb')),'modname' => 'yxhbGuestJsApply'),
+            array('name' => '建材客户结算','url' => U('Light/View/View',array('modname'=>'GuestJsApply','system' => 'kk')),'modname' => 'kkGuestJsApply'),
         );
 
         $result['yxhbClientStatementApply'] = array(
@@ -743,6 +749,14 @@ class MsgdataModel extends Model {
         $result['kkClientStatementApply_fmh'] = array(
             'process'       => U('Light/Process/ApplyProcess',array('modname'=>'ClientStatementApply_fmh','system' => 'kk')),
             'info'          => U('Light/Apply/applyInfo',array('modname'=>'ClientStatementApply_fmh','system'=>'kk')),
+        );
+        $result['yxhbGuestJsApply'] = array(
+            'process'       => U('Light/Process/ApplyProcess',array('modname'=>'GuestJsApply','system' => 'yxhb')),
+            'info'          => U('Light/Apply/applyInfo',array('modname'=>'GuestJsApply','system'=>'yxhb')),
+        );
+        $result['kkGuestJsApply'] = array(
+            'process'       => U('Light/Process/ApplyProcess',array('modname'=>'GuestJsApply','system' => 'kk')),
+            'info'          => U('Light/Apply/applyInfo',array('modname'=>'GuestJsApply','system'=>'kk')),
         );
         return $result;
     }
@@ -844,4 +858,5 @@ class MsgdataModel extends Model {
         return $result;
     }
 
+    
 }

@@ -189,8 +189,8 @@
 
         var myDate = new Date(year, month, 0);
         var lastDay = year + "-" + month + "-" + myDate.getDate();   //上个月的最后一天
-        $('#start_date').val(firstDay);
-        $('#end_date').val(lastDay);
+        $('#start_date').val();
+        $('#end_date').val();
         // 提交按钮
         $('#submit').click(function () {
             if (data == '') return tooltip('请选择对账单');
@@ -267,7 +267,7 @@
             if (end_date == '') return tooltip('请选择结束时间');
             $.ajax({
                 type: 'POST',
-                url: "https://www.fjyuanxin.com/yxhb/getStatementApi.php",
+                url: "https://www.fjyuanxin.top/yxhb/getStatementApi.php",
                 dataType: 'json',
                 data: {
                     id: user_id,

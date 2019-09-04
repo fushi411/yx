@@ -30,7 +30,7 @@ class KkAddGysLogic extends Model {
     {
         $res = $this->record($id);
         $result = array();
-        $result['content'][] = array('name'=>'申请单位：',
+        $result['content'][] = array('name'=>'系统类型：',
                                      'value'=>'建材新增供应商',
                                      'type'=>'date',
                                      'color' => 'black'

@@ -66,12 +66,15 @@
                     <div class="weui-cells weui-cells_form"  style="margin-top: 0;min-height: 101%">
                         <div class="page__bd">
                             <div class="weui-cells searchbar-result" id="order_select" style="background-color:#f8f8f8;margin-top:0;">
+    
+    
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+        
 </block>  
 <block name="apply">
         <eq name="isApplyer" value="1">
@@ -160,7 +163,7 @@
          function getCustomerInfo() {
             $.ajax({
                 type: 'POST',
-                url: "https://www.fjyuanxin.com/sngl/getStatementApi.php",
+                url: "https://www.fjyuanxin.top/sngl/getStatementApi.php",
                 dataType: 'json',
                 data: {
                     id: user_id,

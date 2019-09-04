@@ -36,7 +36,7 @@ class KkFhfRatioApplyLogic extends Model {
         $hour = (int) $hour;
         $hour = $hour>9?$hour:'0'.$hour;
 
-        $result['content'][] = array('name'=>'申请单位：',
+        $result['content'][] = array('name'=>'系统类型：',
                                      'value'=>'建材复合粉配比通知',
                                      'type'=>'date',
                                      'color' => 'black'

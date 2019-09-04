@@ -32,7 +32,7 @@ class YxhbCostMoneyLogic extends Model {
         $res = $this->record($id);
         $result = array();
 
-        $result['content'][] = array('name'=>'申请单位：',
+        $result['content'][] = array('name'=>'系统类型：',
                                      'value'=>'环保费用开支',
                                      'type'=>'date',
                                      'color' => 'black'
@@ -134,7 +134,7 @@ class YxhbCostMoneyLogic extends Model {
         $image = array();
         $imgsrc = array_filter($imgsrc);
         foreach ($imgsrc as $key => $value) {
-            $image[] = 'http://www.fjyuanxin.com/yxhb/upload/fy/'.$value;
+            $image[] = 'http://www.fjyuanxin.top/yxhb/upload/fy/'.$value;
         }
         $result['imgsrc'] = $image;
         $result['applyerID'] = D('YxhbBoss')->getIDFromName($res['njbr']);
@@ -471,7 +471,7 @@ class YxhbCostMoneyLogic extends Model {
         }
 
         //  设置文件路径和文件前缀名称
-        $rootPath = "/www/web/default/yxhb/upload/fy/";
+        $rootPath = "/data/wwwroot/default/yxhb/upload/fy/";
         /* 检测上传根目录 */
         if(!$uploader->checkRootPath($rootPath)){
             $error = $uploader->getError();

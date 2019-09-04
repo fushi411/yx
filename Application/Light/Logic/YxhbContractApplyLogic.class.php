@@ -26,7 +26,7 @@ class YxhbContractApplyLogic extends Model {
         
         $topGys     = M('yxhb_guest2')->field('g_name')->where(array('id' => $clientname['reid']?$clientname['reid']:0))->find();
         $kpjs       = $this->getModel($clientname['reid']);
-        $result['content'][] = array('name'=>'申请单位：',
+        $result['content'][] = array('name'=>'系统类型：',
                                      'value'=>'环保新增合同价格',
                                      'type'=>'date',
                                      'color' => 'black'

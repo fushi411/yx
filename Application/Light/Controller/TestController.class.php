@@ -6,45 +6,18 @@ class TestController extends BaseController {
     public function Sign()
     {   
         header('Content-Type: text/html; charset=utf-8');
-        $field = 'b.*';
-        $map = array(
-            'a.id' => 101,
-        );
-        $data = M('kk_guest_tj a')
-                ->join('kk_tj b on a.relationid = b.relationid')
-                ->field($field)
-                ->where($map)
-                ->order('tj_client desc')
-                ->select();
-        $guest = $this->getAllGuestName();  
-        $temp = array();
-        foreach($data as $k => $vo){
-            $vo = $guest[$vo['tj_client']];
-            
-        }
        
-        dump($data);
-        $this->assign('data',$data);
-        $this->display('YxhbforTest/applyInfo');
+        $rootPath = "/data/wwwroot/default/sngl/upload/fy/";
+
+        echo "__FILE__:  ===>  ".__FILE__;
     }
-
-    public function getAllGuestName(){
-        $data = M('kk_guest2')->select();
-        $temp = array('无此客户');
-        foreach($data  as $val){
-            $temp[$val['id']] = $val['g_name'];
-        }
-        return $temp;
-    }
-
-
-
+        
     // 流程失效，重置
     public function flow(){
         $wf = A('WorkFlow');
         $result = 147991;
         $salesid = 19;
-        $res = $wf->setWorkFlowSV('fh_refund_Apply', $result, $salesid, 'kk');
+        $res = $wf->setWorkFlowSV('fh_refund_Apply', $result, $salesid, 'yxhb');
     }
 
     // 重置 发票上传未同步更新spsm字段
@@ -54,7 +27,7 @@ class TestController extends BaseController {
             'stat' => 1,
             'type' => 2,
         );
-        $data = M('kk_fpsm')->where($map)->select();
+        $data = M('yxhb_fpsm')->where($map)->select();
         // 采购申请单
         $idStr = '';
         foreach($data as $v){
@@ -63,18 +36,18 @@ class TestController extends BaseController {
         $map = array(
             'id' => array('in',trim($idStr,',') ),
         );
-        $data = M('kk_cgfksq')->where($map)->select();
+        $data = M('yxhb_cgfksq')->where($map)->select();
         // 采购费用
         foreach( $data as $v){
             $map = array(
                 'sqdh' => $v['dh'] ,
                 'fpsm' => 2,
             );
-            $res = M('kk_feecg')->where($map)->find();
+            $res = M('yxhb_feecg')->where($map)->find();
             if(empty($res)) continue;
             dump($res);
             // 发票状态重置
-            $res = M('kk_feecg')->where(array('id' => $res['id']))->setField('fpsm',1);
+            $res = M('yxhb_feecg')->where(array('id' => $res['id']))->setField('fpsm',1);
             dump(M()->_sql());
         }
     }

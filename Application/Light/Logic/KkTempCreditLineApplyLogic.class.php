@@ -35,7 +35,7 @@ class KkTempCreditLineApplyLogic extends Model {
         $result = array();
         $clientname = M('kk_guest2')->field('g_name,g_khjc')->where(array('id' => $res['clientid']))->find();
          //计算应收额度
-        $result['content'][] = array('name'=>'申请单位：',
+        $result['content'][] = array('name'=>'系统类型：',
                                      'value'=>'建材临时额度申请',
                                      'type'=>'date',
                                      'color' => 'black'
@@ -135,7 +135,7 @@ class KkTempCreditLineApplyLogic extends Model {
             'auth' => data_auth_sign($name),
             'date' => $date
           );
-        $res = send_post('http://www.fjyuanxin.com/sngl/include/getClientCreditApi.php', $post_data);
+        $res = send_post('http://www.fjyuanxin.top/sngl/include/getClientCreditApi.php', $post_data);
         
         // $result['ye'] = number_format(-($ye-$res['ye']+$res['tmp']),2,'.',',')."元";
         // $result['flag'] = -$res['ye']<20000?true:false;

@@ -31,7 +31,7 @@ class KkSalesRefundApplyLogic extends Model {
     {
         $res = $this->record($id);
         $result = array();
-        $result['content'][] = array('name'=>'申请单位：',
+        $result['content'][] = array('name'=>'系统类型：',
                                      'value'=>'建材销售退款',
                                      'type'=>'date',
                                      'color' => 'black'
@@ -340,7 +340,7 @@ class KkSalesRefundApplyLogic extends Model {
         }
 
         //  设置文件路径和文件前缀名称
-        $rootPath = "/www/web/default/sngl/upload/hp/";
+        $rootPath = "/data/wwwroot/default/sngl/upload/hp/";
         /* 检测上传根目录 */
         if(!$uploader->checkRootPath($rootPath)){
             $error = $uploader->getError();

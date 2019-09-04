@@ -31,7 +31,7 @@ class KkClientStatementApplyLogic extends Model {
     {
         $res = $this->record($id);
         $result = array();
-        $result['content'][] = array('name'=>'申请单位：',
+        $result['content'][] = array('name'=>'系统类型：',
                                      'value'=>'建材新增对账单',
                                      'type'=>'date',
                                      'color' => 'black'
@@ -95,7 +95,7 @@ class KkClientStatementApplyLogic extends Model {
                                     );
          $res = $this->record($id);
         $result = array();
-        $result[] = array('name'=>'申请单位：',
+        $result[] = array('name'=>'系统类型：',
                                      'value'=>'建材',
                                      'type'=>'date',
                                      'color' => 'black'
