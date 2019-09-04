@@ -49,9 +49,9 @@ class KkGuesttjApplyLogic extends Model {
         $result['content'][] = array('name'=>'客户调价：',
             'value'=>'查看客户调价',
             'type'=>'date',
-            'color' => 'black'
+            'color' => '#337ab7'
         );
-
+        $result['mydata'] = $this->getTjData($id);
 //        foreach ($html as $value){
 //            $result['content'][] = array('name'=>'审批信息：',
 //                'value'=>$value,
@@ -68,6 +68,45 @@ class KkGuesttjApplyLogic extends Model {
         return $result;
     }
 
+    public function getAllGuestName(){
+        $data = M('kk_guest2')->select();
+        $temp = array('无此客户');
+        foreach($data  as $val){
+            $temp[$val['id']] = $val['g_name'];
+        }
+        return $temp;
+    }
+    public function getTjData($aid){
+        $field = 'b.*';
+        $map = array(
+            'a.id' => $aid,
+        );
+        $data = M('kk_guest_tj a')
+                ->join('kk_tj b on a.relationid = b.relationid')
+                ->field($field)
+                ->where($map)
+                ->order('tj_client desc,tj_bzfs desc,tj_cate')
+                ->select();
+        $guest = $this->getAllGuestName();  
+        $temp = array();
+        foreach($data as $k => $vo){
+            $vo['g_name'] = $guest[$vo['tj_client']];
+            $bzfs         = $vo['tj_bzfs'] == '袋装'?'(袋)':'(散)';
+            $vo['cate']   = preg_replace('/[^\d]*/', '', $vo['tj_cate']).$bzfs;
+            // 当前价格
+            $vo['now'] = bcsub($vo['tj_dj'],$vo['delta_dj'],2);
+            // 调整后价格
+            $color = (int) $vo['delta_dj']>0? 'red':'green';
+            $arrow = (int) $vo['delta_dj']>0? '&uarr;':'&darr;';
+            $tmpl  = "<span style='color:".$color."'>(".$vo['delta_dj']."{$arrow})</span>";
+            $vo['dj'] = $vo['tj_dj'].$tmpl;
+            $temp[$vo['tj_client']]['g_name']  = $guest[$vo['tj_client']];  
+            $temp[$vo['tj_client']]['date']    = '调价日期：'.$vo['tj_stday'];  
+            $temp[$vo['tj_client']]['child'][] = $vo;    
+        }
+        return $temp;
+        
+    }
     // 状态值转换
     public function transStat($id){
         $map = array(
