@@ -315,10 +315,9 @@ class KkAppflowtableModel extends Model {
             $map = array(
                 'pro_id' => $pro_id,
                 'pro_mod' => $mod,
-                'stat' => 1,
                 'per_id' => $per_id,
             );
-            $res = $this->field('sign')->where($map)->find();
+            $res = $this->field('sign')->where($map)->order('date desc')->find();
             return empty($res)?0:$res['sign'];
         }
 }

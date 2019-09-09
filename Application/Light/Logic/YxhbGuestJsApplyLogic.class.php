@@ -76,13 +76,6 @@ class YxhbGuestJsApplyLogic extends Model {
                                     'type'=>'string',
                                     'color' => $color.';font-weight: 600;'
                                 );
-        $result['content'][] = array('name'=>'大写金额：',
-                                    'value'=> cny($res['js_je']),
-                                    'type'=>'string',
-                                    'color' => 'black'
-                                );
-       
-
         $result['content'][] = array('name'=>'相关说明：',
                                      'value'=>$res['js_bz']?$res['js_bz']:'无',
                                      'type'=>'text',
@@ -97,6 +90,7 @@ class YxhbGuestJsApplyLogic extends Model {
 
         if($res['jslx'] == 5 ){
             $result['mydata']['data'] = $this->getJcHtml($id);
+            $result['mydata']['tzje'] = "<span style='color:$color'>&yen;".number_format($data['js_je'],2,'.',',')."元</span>";
         }elseif($res['jslx'] == 4){
             $result['mydata']['je'] = $data['js_je'];
             $result['mydata']['jestr'] = cny($data['js_je']);
@@ -213,11 +207,12 @@ class YxhbGuestJsApplyLogic extends Model {
             foreach($res as $val){
                 if( $val['bzfs']== $vo['js_bzfs'] && $val['pp'] == $vo['js_cate'] ){
                     $xgdj = $vo['js_zl']>0?($val['dj']-$vo['js_dj']):($val['dj']+$vo['js_dj']);
+                    $xjColor = $vo['js_je']>0?'black':'#f12e2e';
                     $val['djformat'] = '&yen;'.preg_replace('/\.0+$/', '', number_format($val['dj'],2,'.',','));
                     $val['xgdj'] = '&yen;'.preg_replace('/\.0+$/', '', number_format( $xgdj,2,'.',',')).'<span style="color:#f12e2e">('.$vo['js_dj'].')</span>';
                     $val['xgyf'] = $vo['js_yf'];
                     $val['xgzl'] = number_format($vo['js_zl'],2,'.',',');
-                    $val['xgxj'] = number_format($vo['js_je'],2,'.',',');
+                    $val['xgxj'] = '<span style="color:'.$xjColor.'">'.number_format($vo['js_je'],2,'.',',').'</span>';
                     $temp[$client]['g_name'] = $g_name['g_name'];
                     $temp[$client]['data'][] = $val;
                 }
@@ -328,7 +323,7 @@ class YxhbGuestJsApplyLogic extends Model {
                 //有调价
                 $temp[$k][] = array(
                     'st' => $stday,
-                    'end' => $tj[0]['stday'],
+                    'end' => date('Y-m-d',strtotime($tj[0]['stday'].' -1 day')),
                     'pp' => $val['fh_cate'],
                     'bz' => $val['fh_bzfs'],
                     'bzfs' => $val['bzfs'],

@@ -196,6 +196,7 @@ class YxhbAppflowprocModel extends Model {
       $record['app_stat'] = 0;
       $record['app_stage'] = $stageID;
       $record['time'] = date('Y-m-d H:i:s');
+      $record['approve_time'] = date('Y-m-d H:i:s');
       $res = $this->add($record);
       return $res;
     }

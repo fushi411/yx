@@ -241,6 +241,7 @@ class SeekController  extends BaseController
                     ->join("{$v['table_name']}  on a.aid={$v['table_name']}.{$v['id']} {$wh}")
                     ->field($v['copy_field'].',a.app_name')
                     ->where($map)
+                    ->group('a.aid')
                     ->select();    
             if(!empty($res)){
                 foreach($res as $key => $val){

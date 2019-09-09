@@ -547,24 +547,29 @@ class ConfigController extends BaseController {
             $wx = array_filter($wx);
             $stage_name = count($wx)>1?'会审':($k == $last_key?'审批':'审核');
             $stage_next = $k == $last_key?0:$k+2;
+
             foreach($wx as $val){
+                // 0 签收 1 免签
+                $sign = 0;
+                if($mod == 'CostMoney' && $stage_next == 0) $sign = 1;
                 $flow[] = array(
-                    'pro_name' => $data['mod_show_name'],
-                    'pro_mod'  => $mod,
-                    'view_id'  => $id,
-                    'pro_id'   => $pro_id,
-                    'per_name' => $boss->getNameFromWX($val),
-                    'per_id'   => $boss->getIDFromWX($val),
-                    'role_id'  => $role_id,
-                    'stage_id' => $k+1,
+                    'pro_name'   => $data['mod_show_name'],
+                    'pro_mod'    => $mod,
+                    'view_id'    => $id,
+                    'pro_id'     => $pro_id,
+                    'per_name'   => $boss->getNameFromWX($val),
+                    'per_id'     => $boss->getIDFromWX($val),
+                    'role_id'    => $role_id,
+                    'stage_id'   => $k+1,
                     'stage_name' => $stage_name,
                     'stage_next' => $stage_next,
                     'date'       => date('Y-m-d H:i:s'),
                     'condition'  => $view['condition']?$view['condition']:'',
-                    'stat'  => 1,
-                    'type'  => 0,
-                    'rank'  => 0,
-                    'auth_id' => $auth,
+                    'stat'       => 1,
+                    'type'       => 0,
+                    'rank'       => 0,
+                    'auth_id'    => $auth,
+                    'sign'       => $sign,
                 );
                 $role_id++;
             } 

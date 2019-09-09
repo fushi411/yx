@@ -10,15 +10,15 @@ use Think\Model;
 class OtherMysqlModel extends Model {
     // 虚拟模型
     protected $autoCheckFields = false;
-    protected $connection = array(
-        'db_type'  => 'mysql',
-        'db_user'  => 'root',
-        'db_pwd'   => 'Fjyuanxin%jt%',
-        'db_host'  => '120.78.223.165',
-        'db_port'  => '3306',
-        'db_name'  => 'sqlfjyuanxin',
-        'db_charset' =>    'utf8',
-    );
+    // protected $connection = array(
+    //     'db_type'  => 'mysql',
+    //     'db_user'  => 'root',
+    //     'db_pwd'   => 'Fjyuanxin%jt%',
+    //     'db_host'  => '120.78.223.165',
+    //     'db_port'  => '3306',
+    //     'db_name'  => 'sqlfjyuanxin',
+    //     'db_charset' =>    'utf8',
+    // );
     /**
      * 量库库存
      */

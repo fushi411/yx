@@ -308,12 +308,7 @@ class WorkFlowController extends BaseController {
     public function sendApplyMsg($flowName, $id, $pid, $applyerid, $system, $type='')
     {
       $wx = D('WxMessage');
-      $arr = array('CostMoney','GuesttjApply','CreditLineApply_fmh','TempCreditLineApply_fmh');
-      if( in_array($flowName,$arr) ){
-        $recevier = $wx->ProSendCarMessage($system,$flowName,$id,$pid,$applyerid,$type);
-      }else{
-        $recevier = $wx->ProSendMessage($system,$flowName,$id,$pid,$applyerid,$type);
-      }
+      $recevier = $wx->ProSendCarMessage($system,$flowName,$id,$pid,$applyerid,$type);
       return $receiver;
     }
     

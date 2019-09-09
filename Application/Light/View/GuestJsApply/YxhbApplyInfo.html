@@ -101,7 +101,7 @@
                                     <div class="weui-cells__title" style="text-align:center;color:black;">{$val.g_name}
                                     </div>
                                     <volist name="val.data" id='vo'>
-                                        <div class="weui-cells__title" style="margin-top: 3px;">日期：{$vo.st} 至 {$vo.end}
+                                        <div class="weui-cells__title" style="color: black;">日期：{$vo.st} 至 {$vo.end}
                                         </div>
                                         <div class="weui-cells weui-cells_form " style="padding-bottom: 5px;">
                                             <div class="weui-cells__title" style="color: black;position: relative;"> <span>
@@ -134,6 +134,19 @@
                                         </div>
                                     </volist>
                                 </volist>
+                                <div class="weui-cell__bd weui-cell_primary fhindex" index="0">
+                                    <div class="weui-cells__title">结算汇总</div>
+                                    <div class="weui-form-preview">
+                                        <div class="weui-form-preview__bd">
+                                            <div class="weui-flex">
+                                                <div class="weui-form-preview__item weui-flex__item"><label
+                                                        class="weui-form-preview__label">结算金额</label><span
+                                                        class="weui-form-preview__value"
+                                                        style="text-align:left;">{$mydata.tzje}</span></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </eq>
                             <eq name="mydata.js_jslx" value="4">
                                 <div class="weui-cells weui-cells_form " style="margin-top: 0;">

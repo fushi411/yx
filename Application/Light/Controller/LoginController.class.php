@@ -146,6 +146,7 @@ class LoginController extends \Think\Controller {
                     ->join("{$v['table_name']}  on a.aid={$v['table_name']}.{$v['id']}")
                     ->field("a.aid,a.per_id,a.mod_name,a.per_name")
                     ->where($map)
+                    ->group('a.aid')
                     ->select();  
             
             if(!empty($res)){
