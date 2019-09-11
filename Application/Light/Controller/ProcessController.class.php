@@ -259,7 +259,8 @@ class ProcessController extends Controller
         $aid     = I('get.aid');
         //先判断_pushlist表中是否存在这个模块，没有的话先添加一条这个模块空的推送人员的数据
         $res = M($system.'_pushlist')->where(array('stat' => 1 , 'pro_mod' => $pro_mod))->find();
-        if(empty($res)){
+        $data = M('yx_config_title')->where(array('name' => $pro_mod))->find();
+        if(empty($res) && !empty($data)){
             $data = M($system.'_appflowtable')->where(array('stat' => 1 , 'pro_mod' => $pro_mod))->field('pro_name')->find();
             $res = array(
                 'pro_mod'=>$pro_mod,                      //模块名
