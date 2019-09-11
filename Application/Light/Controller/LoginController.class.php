@@ -15,7 +15,10 @@ class LoginController extends \Think\Controller {
             $username = I('post.username');
             $verify = I('post.verify');
             $password = md5(I('post.password'));
-            $user = M('yxhb_boss')->where("boss='".$username."'")->find();
+            $map = array(
+                'boss' => $username,
+            );
+            $user = M('yxhb_boss')->where($map)->find();
             if(!$this->check_verify($verify)){
                 $uid = -3; //验证码错误
             } elseif(is_array($user)){
