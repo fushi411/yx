@@ -42,20 +42,17 @@ class YxhbGuestJsApplyLogic extends Model {
                                      'type'=>'date',
                                      'color' => 'black'
                                     );
-        $result['content'][] = array('name'=>'申请日期：',
-                                     'value'=>$res['jl_date'],
-                                     'type'=>'date',
-                                     'color' => 'black'
-                                    );           
+         
         $result['content'][] = array('name' => '结算详情：',
                                     'value' => '查看结算详情',
                                     'type'  => 'date',
                                     'id'    => 'btnhp',
                                     'color' => '#337ab7'
                                     );              
-        $result['content'][] = array('name'=>'执行日期：',
-                                     'value'=>$res['js_date'],
-                                     'type'=>'date',
+
+        $result['content'][] = array('name'=>'客户名称：',
+                                     'value'=>D('yxhb_guest2')->getParentName($res['client']),
+                                     'type'=>'string',
                                      'color' => 'black'
                                     );
         $result['content'][] = array('name'=>'时间范围：',
@@ -63,9 +60,9 @@ class YxhbGuestJsApplyLogic extends Model {
                                      'type'=>'date',
                                      'color' => 'black'
                                     );
-        $result['content'][] = array('name'=>'客户名称：',
-                                     'value'=>D('yxhb_guest2')->getParentName($res['client']),
-                                     'type'=>'string',
+        $result['content'][] = array('name'=>'执行日期：',
+                                     'value'=>$res['js_date'],
+                                     'type'=>'date',
                                      'color' => 'black'
                                     );
         

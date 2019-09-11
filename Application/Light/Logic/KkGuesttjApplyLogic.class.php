@@ -81,34 +81,74 @@ class KkGuesttjApplyLogic extends Model {
         $map = array(
             'a.id' => $aid,
         );
+        $system = 'kk';
+        $model  = D(ucfirst($system).'Guest2');
         $data = M('kk_guest_tj a')
                 ->join('kk_tj b on a.relationid = b.relationid')
                 ->field($field)
                 ->where($map)
                 ->order('tj_client desc,tj_bzfs desc,tj_cate')
                 ->select();
+
+        $client = M('kk_guest_tj a')
+                ->join('kk_tj b on a.relationid = b.relationid')
+                ->field('tj_client')
+                ->where($map)
+                ->group('tj_client')
+                ->select();
         $guest = $this->getAllGuestName();  
+        $pp = array(
+            array('pp' => 'P.O42.5','bz' => '散装'),
+            array('pp' => 'P.S.A32.5','bz' => '散装'),
+            array('pp' => 'P.O42.5','bz' => '袋装'),
+            array('pp' => 'P.S.A32.5','bz' => '袋装'),
+        );
+        $tj_da = $data[0]['tj_da'];
         $temp = array();
-        foreach($data as $k => $vo){
-            $vo['g_name'] = $guest[$vo['tj_client']];
-            $bzfs         = $vo['tj_bzfs'] == '袋装'?'(袋)':'(散)';
-            $vo['cate']   = preg_replace('/[^\d]*/', '', $vo['tj_cate']).$bzfs;
-            // 当前价格
-            $vo['now'] = bcsub($vo['tj_dj'],$vo['delta_dj'],2);
-            // 调整后价格
-            $color = (int) $vo['delta_dj']>0? 'red':'green';
-            $arrow = (int) $vo['delta_dj']>0? '&uarr;':'&darr;';
-            $tmpl  = "<span style='color:".$color."'>(".$vo['delta_dj']."{$arrow})</span>";
-            $vo['dj'] = $vo['tj_dj'].$tmpl;
-            $temp[$vo['tj_client']]['g_name']  = $guest[$vo['tj_client']];  
-            $temp[$vo['tj_client']]['date']    = '调价日期：'.$vo['tj_stday'];  
-            $temp[$vo['tj_client']]['child'][] = $vo;    
+        foreach ($client as  $value) {
+            foreach ($pp as  $val) {
+                $flag = 0;
+                foreach ($data as $k=>$vo) {
+                    if($vo['tj_cate'] == $val['pp'] && $vo['tj_bzfs'] && $vo['tj_client'] == $value['tj_client']){
+                        $vo['g_name'] = $guest[$vo['tj_client']];
+                        $bzfs         = $vo['tj_bzfs'] == '袋装'?'(袋)':'(散)';
+                        $vo['cate']   = preg_replace('/[^\d]*/', '', $vo['tj_cate']).$bzfs;
+                        // 当前价格
+                        $vo['now'] = bcsub($vo['tj_dj'],$vo['delta_dj'],2);
+                        // 调整后价格
+                        $color = (int) $vo['delta_dj']>0? 'red':'green';
+                        $arrow = (int) $vo['delta_dj']>0? '&uarr;':'&darr;';
+                        $tmpl  = "<span style='color:".$color."'>(".$vo['delta_dj']."{$arrow})</span>";
+                        $vo['dj'] = $vo['tj_dj'].$tmpl;
+                        $temp[$vo['tj_client']]['g_name']  = $model->getParentName($vo['tj_client']);  
+                        $temp[$vo['tj_client']]['date']    = '调价日期：'.$vo['tj_stday'];  
+                        $temp[$vo['tj_client']]['child'][] = $vo;    
+                        $flag = 1;
+                        unset($data[$k]);
+                    }  
+                }
+                if($flag == 1) continue;
+                $bz   = $val['bz'] == '散装'?'(散)':'(袋)';
+                $show = preg_replace('/[^\d]*/', '', $val['pp']).$bz;
+                $wlfs = $this->getWlfs($value['tj_client'],$tj_da,$val['pp'],$val['bz'],$system);
+                $yf   = $this->getfhyf($value['tj_client'],$tj_da,'福源鑫',$val['pp'],$val['bz'],$system);
+                $item = array(
+                    'cate' => $show,
+                    'now'  => $this->getfhdj($value['tj_client'],$tj_da,'福源鑫',$val['pp'],$val['bz'],$system),
+                    'dj'   => '-',
+                    'tj_yf' => ($yf == '-'|| $wlfs == '自提')?$wlfs==null?$yf:$wlfs:$yf,
+                );
+                $temp[$value['tj_client']]['child'][] = $item; 
+            }
         }
         return $temp;
         
     }
     // 状态值转换
     public function transStat($id){
+        $res = $this->record($id);
+        if($res['stat'] == 0) return 0;
+        if($res['stat'] == 2) return 1;
         $map = array(
             'aid'=>$id,
             'mod_name'=>'GuesttjApply'
@@ -131,7 +171,9 @@ class KkGuesttjApplyLogic extends Model {
     public function delRecord($id)
     {
         $map = array('id' => $id);
-        return $this->field(true)->where($map)->setField('stat',0);
+        $this->field(true)->where($map)->setField('stat',0);
+        $data = $this->where($map)->find();
+        return M('kk_tj')->where(array('relationid' => $data['relationid']))->setField('tj_stat',0);
     }
 
     /**
@@ -211,6 +253,74 @@ class KkGuesttjApplyLogic extends Model {
         );
         return $result;
     }
+    /**
+     * 提交
+     */
+    public function submit(){
+        $data = I('post.data');
+        $date = I('post.date');
+        $copyto_id = I('post.copyto_id');
+        // 检查是否有修改
+        $save = array();
+        $relationid = $this->getRelationid();
+        foreach ($data as $value) {
+            foreach($value as $val){
+                foreach($val['data'] as $vo){
+                    if(!empty($vo['xgdj'])){
+                        $dh = 'TJ'.$relationid.count($insert);
+                        $insert[]= array(
+                            'tj_da'      => date('Y-m-d H:i:s'),
+                            'tj_stday'   => $date,
+                            'tj_dj'      => $vo['xgdj'],
+                            'tj_yf'      => $vo['xgyf']==''?0:$vo['xgyf'],
+                            'tj_cate'    => $vo['pp'],
+                            'tj_stat'    => 1,
+                            'tj_bzfs'    => $vo['bz'],
+                            'tj_pp'      => '福源鑫',
+                            'tj_enday'   => date('Y-m-d', strtotime(date('Y-m-01') . ' +2 month -1 day')),
+                            'tj_client'  => $val['client'],
+                            'delta_dj'   => $vo['xgdj']-$vo['dj'],
+                            'delta_yf'   => $vo['xgyf']-$vo['yf'],
+                            'rdy'        => session('name'),
+                            'relationid' => $relationid,
+                            'dh'         => $dh,
+                        );
+                    }
+                }
+            }
+        }
+        if(empty($insert)) return array('code' => 404,'msg' =>'无修改,无需提交');
+        if(!M('kk_guest_tj')->autoCheckToken($_POST)) return array('code' => 404,'msg' => '网络延迟，请勿点击提交按钮！');
+        M('kk_tj')->addAll($insert);
+        $tj = array(
+            'date'       => date('Y-m-d'),
+            'relationid' => $relationid,
+            'content'    => json_encode($insert),
+            'applyuser'  => session('kk_id'),
+            'jbr'        => session('name'),
+            'dtime'      => date('Y-m-d H:i:s'),
+            'stat'       => 1,
+        );
+        $result = M('kk_guest_tj')->add($tj);
+        if(!$result) return array('code' => 404,'msg' =>'提交失败，请刷新页面重新尝试！');
+        $copyto_id = trim($copyto_id,',');
+        if (!empty($copyto_id)) {
+            // 发送抄送消息
+            D('kkAppcopyto')->copyTo($copyto_id,'GuesttjApply', $result);
+        }
+        // 签收通知
+        $wf = A('WorkFlow');
+        $salesid = session('kk_id');
+        $res = $wf->setWorkFlowSV('GuesttjApply', $result, $salesid, 'kk');
+        return array('code' => 200,'msg' => '提交成功' , 'aid' =>$result);
+    }
+
+    public function getRelationid(){
+        $data = M('kk_guest_tj')->where(array( 'date' => date('Y-m-d') ))->count();
+        $lsdcount = $data + 1;
+        return date('Ymd').str_pad($lsdcount,3,'0',STR_PAD_LEFT);
+    }
+
     public function getTjInfo(){
         $date   = I('post.date');
         $system = I('post.system');
@@ -220,7 +330,7 @@ class KkGuesttjApplyLogic extends Model {
             array('pp' => 'P.O42.5','bz' => '散装'),
             array('pp' => 'P.S.A32.5','bz' => '散装'),
             array('pp' => 'P.O42.5','bz' => '袋装'),
-            array('pp' => 'P.S.A32.5','bz' => '散装'),
+            array('pp' => 'P.S.A32.5','bz' => '袋装'),
         );
         $kh = array(
             array('k' => 'jxs','name' => '经销商'),
@@ -248,6 +358,7 @@ class KkGuesttjApplyLogic extends Model {
                 $temp['fg_name'] = $model->getParentName($val['id']);
                 $temp['g_name']  = $val['g_name'];
                 $temp['tj_date'] = $this->getTjDate($val['id'],$date);
+                $temp['client']  = $val['id'];
                 foreach($pp as $vo){
                     $wlfs = $this->getWlfs($val['id'],$date,$vo['pp'],$vo['bz'],$system);
                     $dj   = $this->getfhdj($val['id'],$date,'福源鑫',$vo['pp'],$vo['bz'],$system);
@@ -260,9 +371,11 @@ class KkGuesttjApplyLogic extends Model {
                         'show'   => $show,
                         'dj'     => $dj,
                         'djflag' => $dj == '-'?0:1, 
-                        'yf'     => $yf,
+                        'yf'     => ($yf == '-'|| $wlfs == '自提')?$wlfs==null?$yf:$wlfs:$yf,
                         'yfflag' => ($yf == '-'|| $wlfs == '自提')?0:1, 
                         'wlfs'   => $wlfs,
+                        'xgyf'   => '',
+                        'xgdj'   => '',
                     );
                 }
                 $res[] = $temp;
@@ -271,12 +384,12 @@ class KkGuesttjApplyLogic extends Model {
         }
        return $result;
     }
-    public function getWlfs($client,$date,$cate,$bz,$system){
+    private function getWlfs($client,$date,$cate,$bz,$system){
         $query = "select ht_wlfs from {$system}_ht where ht_khmc='".$client."' and ht_stat='2' and ht_stday<='$date' and ht_enday>='$date' and ht_cate='$cate' and ht_bzfs='$bz' order by ht_stday desc";
         $res = M()->query($query);
         return $res[0]['ht_wlfs'];
     }
-    public function getfhdj($client,$day,$pp,$cate,$bzfs,$system){
+    private function getfhdj($client,$day,$pp,$cate,$bzfs,$system){
         if(($client==260||$client==261||$client==346||$client==339)&&$day>='2013-04-04'&&($cate=='S95'||$cate=='F95')){
             //所有调价和合同合并查询初始价格
             $query="select dj from (select ht_dj as dj,ht_yf as yf,ht_khmc as client,ht_stday as stday,ht_pp as pp,ht_cate as cate,ht_bzfs as bzfs,ht_stat as stat,ht_date as date from {$system}_ht union all select tj_dj as dj,tj_yf as yf,tj_client as client,tj_stday as stday,tj_pp as pp,tj_cate as cate,tj_bzfs as bzfs,tj_stat as stat,tj_da as date from {$system}_tj  ) as t where pp='$pp' and stday<='$day' and bzfs='$bzfs' and stat=2 and client='".$client."' and cate='外购矿粉' order by stday desc,date desc";
@@ -308,7 +421,7 @@ class KkGuesttjApplyLogic extends Model {
         }
     }
 
-    public function getfhyf($client,$day,$pp,$cate,$bzfs,$system){
+    private function getfhyf($client,$day,$pp,$cate,$bzfs,$system){
         if(($client==260||$client==261||$client==346||$client==339)&&$day>='2013-04-04'&&($cate=='S95'||$cate=='F95')){
             //所有调价和合同合并查询初始价格
             $query="select yf from (select ht_dj as dj,ht_yf as yf,ht_khmc as client,ht_stday as stday,ht_pp as pp,ht_cate as cate,ht_bzfs as bzfs,ht_stat as stat,ht_date as date from {$system}_ht union all select tj_dj as dj,tj_yf as yf,tj_client as client,tj_stday as stday,tj_pp as pp,tj_cate as cate,tj_bzfs as bzfs,tj_stat as stat,tj_da as date from {$system}_tj  ) as t where pp='$pp' and stday<='$day' and bzfs='$bzfs' and stat=2 and client='".$client."' and cate='外购矿粉' order by stday desc,date desc";
@@ -340,7 +453,7 @@ class KkGuesttjApplyLogic extends Model {
         }
     }
     
-    public function getTjDate($clientid,$day)
+    private function getTjDate($clientid,$day)
     {
       if (!empty($clientid)) {
         $res = M()->query("select tj_stday from kk_tj where tj_client='$clientid' and tj_stday<='$day' and  tj_stat='2' order by tj_stday desc");
@@ -354,4 +467,5 @@ class KkGuesttjApplyLogic extends Model {
       }
       return $result;
     }
+
 }

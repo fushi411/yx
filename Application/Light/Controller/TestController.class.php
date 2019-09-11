@@ -7,214 +7,97 @@ class TestController extends BaseController {
     {   
         header('Content-Type: text/html; charset=utf-8');
         // 经销商调价
-        $id = '20190905003';
-        $data   =  M('yxhb_js')->where(array('pid' => $id))->order('client')->select();
-        $temp = array();
-        foreach($data as $vo){
-            $stday  = $vo['js_stday'];
-            $enday  = $vo['js_enday'];
-            $client = $vo['client'];
-            $g_name = M('yxhb_guest2')->where(array('id' => $client))->find();
-            $res  = $this->getJc($stday,$enday,$client);
-            foreach($res as $val){
-                if( $val['bzfs']== $vo['js_bzfs'] && $val['pp'] == $vo['js_cate'] ){
-                    $xgdj = $vo['js_zl']>0?($val['dj']-$vo['js_dj']):($val['dj']+$vo['js_dj']);
-                    $val['djformat'] = '&yen;'.preg_replace('/\.0+$/', '', number_format($val['dj'],2,'.',','));
-                    $val['xgdj'] = '&yen;'.preg_replace('/\.0+$/', '', number_format( $xgdj,2,'.',',')).'<span style="color:#f12e2e">('.$vo['js_dj'].')</span>';
-                    $val['xgyf'] = $vo['js_yf'];
-                    $val['xgzl'] = number_format($vo['js_zl'],2,'.',',');
-                    $val['xgxj'] = number_format($vo['js_je'],2,'.',',');
-                    $temp[$client]['g_name'] = $g_name['g_name'];
-                    $temp[$client]['data'][] = $val;
-                }
-            }
-        }
-        dump($temp);
-    }
-
-    public function getJc($stday,$enday,$client){
-        $map = array(
-            'ht_khmc' => $client,
-            'fh_stat' => 1,
-            'fh_da'   => array('between',array($stday,$enday)),
-            'fh_bzfs' => array(array('eq','纸袋'),array('eq','编织袋'),array('eq','散装'),'or'),
+        $date   = '2019-09-10';
+        $system = 'yxhb';
+        $field  = 'a.id as id,g_name,g_khlx,reid';
+        $model  = D(ucfirst($system).'Guest2');
+        $pp = array(
+            array('pp' => 'S95','bz' => '散装'),
+            array('pp' => 'F85','bz' => '散装'),
         );
-        // 查询发货品种和包装
-        $data = M('yxhb_fh')->field("fh_cate,if(fh_bzfs='散装','散装','袋装') as fh_bzfs,fh_bzfs as bzfs")->where($map)->group('fh_cate,fh_bzfs')->select();
-        $temp = array();
-        // 调价查询
-        foreach( $data as $k => $val){
-            // 初始价格
-            list($csdj,$csyf,$csje) = $this->getFirstPrice($val['fh_cate'],$val['fh_bzfs'],$client,$stday);
-            $map = array(
-                'tj_pp'    => '福源鑫',
-                'tj_stday' => array('between',array($stday,$enday)),
-                'tj_stat'  => 2,
-                'tj_client'=> $client,
-                'tj_cate'  => $val['fh_cate'],
-                'tj_bzfs'  => $val['fh_bzfs'], 
-            );
-            $tj = M('yxhb_tj')
-                ->field('tj_dj as dj,tj_yf as yf,tj_stday as stday')
-                ->where($map)
-                ->select();
-            if(empty($tj)){ 
-                // 无调价
-                $temp[$k][] = array(
-                    'st' => $stday,
-                    'end' => $enday,
-                    'pp' => $val['fh_cate'],
-                    'bz' => $val['fh_bzfs'],
-                    'bzfs' => $val['bzfs'],
-                    'dj' => round(floatval($csdj),2),
-                    'yf' => round(floatval($csyf),2),
-                    'je' => round(floatval($csje),2),
-                    'zl' => $this->getTotalWeight($val['fh_cate'],$val['fh_bzfs'],$client,$stday,$enday),
-                );
-            }else{ 
-                //有调价
-                $temp[$k][] = array(
-                    'st' => $stday,
-                    'end' => date('Y-m-d',strtotime($tj[0]['stday'].' -1 day')),
-                    'pp' => $val['fh_cate'],
-                    'bz' => $val['fh_bzfs'],
-                    'bzfs' => $val['bzfs'],
-                    'dj' => round(floatval($csdj),2),
-                    'yf' => round(floatval($csyf),2),
-                    'je' => round(floatval($csje),2),
-                    'zl' => $this->getTotalWeight($val['fh_cate'],$val['fh_bzfs'],$client,$stday,date('Y-m-d',strtotime($tj[0]['stday'].' -1 day'))),
-                );
-                $tempStday = $tj[0]['stday'];
-                foreach($tj as $key => $vo){
-                    $tempEnday = empty($tj[$key+1])?$enday: date('Y-m-d',strtotime($tj[$key+1]['stday'].' -1 day'));
-                    if(strtotime($tempEnday) < strtotime($tempStday)) continue;
-                    $csdj=$vo['dj'];
-                    $csyf=$vo['yf'];
-                    $csje=$csdj+$csyf;
-                    $temp[$k][] = array(
-                        'st' => $tempStday,
-                        'end' => $tempEnday,
-                        'pp' => $val['fh_cate'],
-                        'bz' => $val['fh_bzfs'],
-                        'bzfs' => $val['bzfs'],
-                        'dj' => round(floatval($csdj),2),
-                        'yf' => round(floatval($csyf),2),
-                        'je' => round(floatval($csje),2),
-                        'zl' => $this->getTotalWeight($val['fh_cate'],$val['fh_bzfs'],$client,$tempStday,$tempEnday),
-                    );
-                    $tempStday = $tj[$key+1]['stday'];
-                }
-                dump($temp);
-            }
-        }
-        $res= array();
-        foreach($temp as $key => $val){
-            foreach($val as $vo){
-                if($vo['zl'] == 0) continue;
-                $bzfs     = $vo['bzfs'] == '散装'?'(散)':'(袋)';
-                $vo['xj'] = round(floatval(bcadd($vo['zl']*$vo['dj'],0,4)),2);
-                $vo['zl'] = round(floatval(bcadd($vo['zl'],0,4)),2);
-                $vo['ppformat'] = $vo['pp'].$bzfs;
-                $vo['djformat'] = '&yen;'.number_format($vo['dj'],2,'.',',');
-                $vo['yfformat'] = '&yen;'.number_format($vo['yf'],2,'.',',');
-                $vo['jeformat'] = '&yen;'.number_format($vo['je'],2,'.',',');
-                $vo['zlformat'] = number_format($vo['zl'],2,'.',',');
-                $vo['xjformat'] = number_format($vo['xj'],2,'.',',');
-                $vo['client']   = $client;
-                $res[] = $vo;
-            }
-        }
-        return $res;
-    }
-
-    // 获取区间内的发货数量
-    public function getTotalWeight($cate,$bzfs,$client,$stday,$enday){
-        $mapBzfs = $bzfs == '袋装'?array(array('eq','纸袋'),array('eq','编织袋'),'or'):'散装';
-        $map = array(
-            'fh_da'     => array(array('egt',$stday),array('elt',$enday),'and'),
-            'fh_stat'   => 1,
-            'fh_client' => $client,
-            'fh_cate'   => $cate,
-            'fh_bzfs'   => $mapBzfs,
+        $kh = array(
+            array('k' => 'jxs','name' => '经销商'),
+            array('k' => 'zgdw','name' => '直供单位'),
         );
-        $weight = M('yxhb_fh')
-                ->field('sum(fh_zl) as weight')
-                ->where($map)
-                ->select();
-        return empty($weight[0]['weight'])?0:$weight[0]['weight'];
-    } 
-  
-    // 获取所有的价格区间
-    public function getFirstPrice($cate,$bzfs,$client,$stday){
-        $map = array(
-            'tj_pp'    => '福源鑫',
-            'tj_stday' => array('elt',$stday),
-            'tj_stat'  => 2,
-            'tj_client'=> $client,
-            'tj_cate'  => $cate,
-            'tj_bzfs'  => $bzfs, 
-        );
-        $tj = M('yxhb_tj')
-            ->field('tj_dj as dj,tj_yf as yf,tj_stday as stday')
-            ->where($map)
-            ->order('tj_stday desc')
-            ->find();
-            // 无调价 查询合同
-        if(empty($tj)) {
-            $map = array(
-                'ht_pp'    => '福源鑫',
-                'ht_stday' => array('elt',$stday),
+        $guest = $this->getAllGuest();
+        $result = array();
+        foreach($kh as $value){
+            $map    = array(
                 'ht_stat'  => 2,
-                'ht_khmc'  => $client,
-                'ht_cate'  => $cate,
-                'ht_bzfs'  => $bzfs, 
-            );
-            $tj = M('yxhb_ht')
-                ->field('ht_dj as dj,ht_yf as yf,ht_stday as stday')
-                ->where($map)
-                ->order('ht_stday desc')
-                ->find();
-            // 无合同 初始时间后得
-            if(empty($tj)){
-                $map['ht_stday'] = array('gt',$stday);
-                $tj = M('yxhb_ht')
-                    ->field('ht_dj as dj,ht_yf as yf,ht_stday as stday')
+                'ht_stday' => array('elt',$date),
+                'ht_enday' => array('egt',$date),
+                'g_khlx'   => $value['name'],
+            ); 
+            $dealer = M($system.'_guest2 as a')
+                    ->join($system.'_ht as b on a.id = b.ht_khmc')
+                    ->field($field)
                     ->where($map)
-                    ->order('ht_stday')
-                    ->find();
+                    ->group('a.id')
+                    ->order('reid')
+                    ->select();
+            $res = array();
+            foreach($dealer as $val){
+                if(!empty($guest[$val['id']])) continue;
+                $temp = array();
+                $temp['fg_name'] = $model->getParentName($val['id']);
+                $temp['g_name']  = $val['g_name'];
+                $temp['tj_date'] = $this->getTjDate($val['id'],$date);
+                $temp['client']  = $val['id'];
+                foreach($pp as $vo){
+                    $wlfs = $this->getWlfs($val['id'],$date,$vo['pp'],$system);
+                    $dj   = $this->getfhdj($val['id'],$date,$vo['pp'],$vo['bz'],$wlfs);
+                    $yf   = $this->getfhyf($val['id'],$date,$vo['pp'],$vo['bz'],$wlfs);
+                    $show = $vo['pp'];
+                    $temp['data'][] = array(
+                        'pp'     => $vo['pp'],
+                        'bz'     => $vo['bz'],
+                        'show'   => $show,
+                        'dj'     => $dj,
+                        'djflag' => $dj == '-'?0:1, 
+                        'yf'     => ($yf == '-'|| $wlfs == '自提')?$wlfs==null?$yf:$wlfs:$yf,
+                        'yfflag' => ($yf == '-'|| $wlfs == '自提')?0:1, 
+                        'wlfs'   => $wlfs,
+                        'xgyf'   => '',
+                        'xgdj'   => '',
+                    );
+                }
+                $res[] = $temp;
             }
+            $result[$value['k']] = $res;
         }
-        $csdj=$tj['dj'];
-        $csyf=$tj['yf'];
-        $csje=$csdj+$csyf;
-        return array($csdj,$csyf,$csje);
-     }
-    public function getWlfs($client,$date,$cate,$bz,$system){
-        $query = "select ht_wlfs from {$system}_ht where ht_khmc='".$client."' and ht_stat='2' and ht_stday<='$date' and ht_enday>='$date' and ht_cate='$cate' and ht_bzfs='$bz' order by ht_stday desc";
+       return $result;
+    }
+    public function getAllGuestName(){
+        $data = M('yxhb_guest2')->select();
+        $temp = array('无此客户');
+        foreach($data  as $val){
+            $temp[$val['id']] = $val['g_name'];
+        }
+        return $temp;
+    }
+    public function getAllGuest(){
+        $data = M('yxhb_guest2')->select();
+        $temp = array('无此客户');
+        foreach($data  as $val){
+            if($val['reid'] == 0) continue;
+            $temp[$val['reid']][] = $val['id'];
+        }
+        return $temp;
+    }
+
+    public function getWlfs($client,$date,$cate,$system){
+        $query = "select ht_wlfs from {$system}_ht where ht_khmc='".$client."' and ht_stat='2' and ht_stday<='$date' and ht_enday>='$date' and ht_cate='{$cate}' order by ht_stday desc";
         $res = M()->query($query);
         return $res[0]['ht_wlfs'];
     }
-    public function getfhdj($client,$day,$pp,$cate,$bzfs,$system){
-        if(($client==260||$client==261||$client==346||$client==339)&&$day>='2013-04-04'&&($cate=='S95'||$cate=='F95')){
-            //所有调价和合同合并查询初始价格
-            $query="select dj from (select ht_dj as dj,ht_yf as yf,ht_khmc as client,ht_stday as stday,ht_pp as pp,ht_cate as cate,ht_bzfs as bzfs,ht_stat as stat,ht_date as date from {$system}_ht union all select tj_dj as dj,tj_yf as yf,tj_client as client,tj_stday as stday,tj_pp as pp,tj_cate as cate,tj_bzfs as bzfs,tj_stat as stat,tj_da as date from {$system}_tj  ) as t where pp='$pp' and stday<='$day' and bzfs='$bzfs' and stat=2 and client='".$client."' and cate='外购矿粉' order by stday desc,date desc";
-        
-            $data = M()->query($query);
-            $rowcount = count($data);
-            if($rowcount>0){
-                $row = $data[0];
-                return $row['dj'];
-            }
-            else{
-                return '无单价';
-            }
-        }
+
+    public function getfhdj($client,$day,$cate,$bzfs,$wlfs){
         if($bzfs=='散装'){
              //所有调价和合同合并查询初始价格
-            $query="select dj from (select ht_dj as dj,ht_yf as yf,ht_khmc as client,ht_stday as stday,ht_pp as pp,ht_cate as cate,ht_bzfs as bzfs,ht_stat as stat,ht_date as date from {$system}_ht union all select tj_dj as dj,tj_yf as yf,tj_client as client,tj_stday as stday,tj_pp as pp,tj_cate as cate,tj_bzfs as bzfs,tj_stat as stat,tj_da as date from {$system}_tj  ) as t where pp='$pp' and stday<='$day' and bzfs='$bzfs' and stat=2 and client='".$client."' and cate='".$cate."' order by stday desc,date desc";
+            $query="select dj from (select ht_dj as dj,ht_yf as yf,ht_khmc as client,ht_stday as stday,ht_pp as pp,ht_cate as cate,ht_bzfs as bzfs,ht_stat as stat,ht_wlfs as wlfs from yxhb_ht union all select tj_dj as dj,tj_yf as yf,tj_client as client,tj_stday as stday,tj_pp as pp,tj_cate as cate,tj_bzfs as bzfs,tj_stat as stat,tj_wlfs as wlfs from yxhb_tj  ) as t where stday<='$day' and bzfs='$bzfs' and stat=2 and client='".$client."' and cate='".$cate."' and wlfs='".$wlfs."' order by stday desc";
         }else{
-                //所有调价和合同合并查询初始价格
-            $query="select dj from (select ht_dj as dj,ht_yf as yf,ht_khmc as client,ht_stday as stday,ht_pp as pp,ht_cate as cate,ht_bzfs as bzfs,ht_stat as stat,ht_date as date from {$system}_ht union all select tj_dj as dj,tj_yf as yf,tj_client as client,tj_stday as stday,tj_pp as pp,tj_cate as cate,tj_bzfs as bzfs,tj_stat as stat,tj_da as date from {$system}_tj  ) as t where pp='$pp' and stday<='$day' and bzfs!='散装' and stat=2 and client='".$client."' and cate='".$cate."' order by stday desc,date desc";
+        //所有调价和合同合并查询初始价格
+            $query="select dj from (select ht_dj as dj,ht_yf as yf,ht_khmc as client,ht_stday as stday,ht_pp as pp,ht_cate as cate,ht_bzfs as bzfs,ht_stat as stat,ht_wlfs as wlfs from yxhb_ht union all select tj_dj as dj,tj_yf as yf,tj_client as client,tj_stday as stday,tj_pp as pp,tj_cate as cate,tj_bzfs as bzfs,tj_stat as stat,tj_wlfs as wlfs from yxhb_tj  ) as t where stday<='$day' and bzfs!='散装' and stat=2 and client='".$client."' and cate='".$cate."' and wlfs='".$wlfs."' order by stday desc";
         }
         $data = M()->query($query);
         $rowcount = count($data);
@@ -222,31 +105,17 @@ class TestController extends BaseController {
             $row = $data[0];
             return $row['dj'];
         }else{
-            return '无单价';
+            return '-';
         }
     }
 
-    public function getfhyf($client,$day,$pp,$cate,$bzfs,$system){
-        if(($client==260||$client==261||$client==346||$client==339)&&$day>='2013-04-04'&&($cate=='S95'||$cate=='F95')){
-            //所有调价和合同合并查询初始价格
-            $query="select yf from (select ht_dj as dj,ht_yf as yf,ht_khmc as client,ht_stday as stday,ht_pp as pp,ht_cate as cate,ht_bzfs as bzfs,ht_stat as stat,ht_date as date from {$system}_ht union all select tj_dj as dj,tj_yf as yf,tj_client as client,tj_stday as stday,tj_pp as pp,tj_cate as cate,tj_bzfs as bzfs,tj_stat as stat,tj_da as date from {$system}_tj  ) as t where pp='$pp' and stday<='$day' and bzfs='$bzfs' and stat=2 and client='".$client."' and cate='外购矿粉' order by stday desc,date desc";
-        
-            $data = M()->query($query);
-            $rowcount = count($data);
-            if($rowcount>0){
-                $row = $data[0];
-                return $row['yf'];
-            }
-            else{
-                return '无运费';
-            }
-        }
+    public function getfhyf($client,$day,$cate,$bzfs,$wlfs){
         if($bzfs=='散装'){
              //所有调价和合同合并查询初始价格
-            $query="select yf from (select ht_dj as dj,ht_yf as yf,ht_khmc as client,ht_stday as stday,ht_pp as pp,ht_cate as cate,ht_bzfs as bzfs,ht_stat as stat,ht_date as date from {$system}_ht union all select tj_dj as dj,tj_yf as yf,tj_client as client,tj_stday as stday,tj_pp as pp,tj_cate as cate,tj_bzfs as bzfs,tj_stat as stat,tj_da as date from {$system}_tj  ) as t where pp='$pp' and stday<='$day' and bzfs='$bzfs' and stat=2 and client='".$client."' and cate='".$cate."' order by stday desc,date desc";
+             $query="select yf from (select ht_dj as dj,ht_yf as yf,ht_khmc as client,ht_stday as stday,ht_pp as pp,ht_cate as cate,ht_bzfs as bzfs,ht_stat as stat,ht_wlfs as wlfs from yxhb_ht union all select tj_dj as dj,tj_yf as yf,tj_client as client,tj_stday as stday,tj_pp as pp,tj_cate as cate,tj_bzfs as bzfs,tj_stat as stat,tj_wlfs as wlfs from yxhb_tj  ) as t where stday<='$day' and bzfs='$bzfs' and stat=2 and client='".$client."' and cate='".$cate."' and wlfs='".$wlfs."' order by stday desc";
         }else{
-                //所有调价和合同合并查询初始价格
-            $query="select yf from (select ht_dj as dj,ht_yf as yf,ht_khmc as client,ht_stday as stday,ht_pp as pp,ht_cate as cate,ht_bzfs as bzfs,ht_stat as stat,ht_date as date from {$system}_ht union all select tj_dj as dj,tj_yf as yf,tj_client as client,tj_stday as stday,tj_pp as pp,tj_cate as cate,tj_bzfs as bzfs,tj_stat as stat,tj_da as date from {$system}_tj  ) as t where pp='$pp' and stday<='$day' and bzfs!='散装' and stat=2 and client='".$client."' and cate='".$cate."' order by stday desc,date desc";
+             //所有调价和合同合并查询初始价格
+             $query="select yf from (select ht_dj as dj,ht_yf as yf,ht_khmc as client,ht_stday as stday,ht_pp as pp,ht_cate as cate,ht_bzfs as bzfs,ht_stat as stat,ht_wlfs as wlfs from yxhb_ht union all select tj_dj as dj,tj_yf as yf,tj_client as client,tj_stday as stday,tj_pp as pp,tj_cate as cate,tj_bzfs as bzfs,tj_stat as stat,tj_wlfs as wlfs from yxhb_tj  ) as t where stday<='$day' and bzfs!='散装' and stat=2 and client='".$client."' and cate='".$cate."' and wlfs='".$wlfs."' order by stday desc";
         }
         $data = M()->query($query);
         $rowcount = count($data);
@@ -254,17 +123,17 @@ class TestController extends BaseController {
             $row = $data[0];
             return $row['yf'];
         }else{
-            return '无运费';
+            return '-';
         }
     }
     
     public function getTjDate($clientid,$day)
     {
       if (!empty($clientid)) {
-        $res = M()->query("select tj_stday from kk_tj where tj_client='$clientid' and tj_stday<='$day' and  tj_stat='2' order by tj_stday desc");
+        $res = M()->query("select tj_stday from yxhb_tj where tj_client='$clientid' and tj_stday<='$day' and  tj_stat='2' order by tj_stday desc");
         $result = $res[0]['tj_stday'];
         if (empty($result)) {
-          $res = M()->query("select ht_qday from kk_ht where ht_khmc='$clientid' and ht_qday<='$day' and  ht_stat='2' order by ht_qday desc");
+          $res = M()->query("select ht_qday from yxhb_ht where ht_khmc='$clientid' and ht_qday<='$day' and  ht_stat='2' order by ht_qday desc");
           $result = $res[0]['ht_qday'];
         }
       } else {
