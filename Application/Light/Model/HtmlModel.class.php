@@ -23,7 +23,7 @@ class HtmlModel extends Model
             $left    = '';
             $avatar  = empty($val['avatar']) ? $this->avatar:$val['avatar'];
             $ispar   = '<span style="border-radius: 3px;position: relative;top: -2.3em;right: -1.4em;width: 5px;height: 5px;background-color: #333333"></span>';
-            $nopar   = '<span class="glyphicon glyphicon-arrow-right" style="position: relative;top: -3.3em;right: -1.8em;font-size: 14px;"></span>';
+            $nopar   = '<span class="glyphicon glyphicon-arrow-right" style="position: relative;top: -3.3em;right: -1.8em;font-size: 14px;color:#f12e2e;"></span>';
             $parhtml = $val['parallel'] ? $ispar:$nopar;
             if($k == $last_key) $parhtml = '';
             $html .=  "<li class='weui-uploader__file wk-select__user' style='min-height:70px;width: 45px; margin-bottom: 0;margin-right: 8px;{$left}'>
@@ -130,7 +130,7 @@ class HtmlModel extends Model
             $left    = $k!=0?'margin-left:8px':'';
             $avatar  = empty($val['avatar']) ? $this->avatar:$val['avatar'];
             $ispar   = '<span style="border-radius: 3px;position: relative;top: -2.3em;right: 1.7em;width: 5px;height: 5px;background-color: #333333"></span>';
-            $nopar   = '<span class="glyphicon glyphicon-arrow-right" style="position: relative;top: -3.3em;right: -1.8em;font-size: 14px;"></span>';
+            $nopar   = '<span class="glyphicon glyphicon-arrow-right" style="position: relative;top: -3.3em;right: -1.8em;font-size: 14px;color:#f12e2e;"></span>';
             $parhtml = $val['parallel'] ? $ispar:$nopar;
             if($k == 0) $parhtml = '';
             $html .=  "<li class='weui-uploader__file wk-select__user' id='{$val['wxid']}' style='min-height:70px;width: 45px; margin-bottom: 0;margin-right: 0;{$left}'>
