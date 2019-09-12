@@ -76,6 +76,12 @@ class ConfigController extends BaseController
             case 'delUserDeploy':
                 $this->delUserDeploy();
                 break;
+            case 'upUserConfig':
+                $this->upUserConfig();
+                break;
+            case 'saveUserConfig':
+                $this->saveUserConfig();
+                break;
         }
     }
 
@@ -676,13 +682,79 @@ class ConfigController extends BaseController
     public function delUserDeploy()
     {
         $id = I('post.id');
-        if($id > 0){
+        if ($id > 0) {
             $info = M('yxhb_user_deploy')->where(array('id' => $id))->field('id')->find();
             if (!empty($info)) {
-                $config = M('yxhb_user_deploy')->where(array('id' => $id))->setField(array('status'=>1, 'last_at'=>date('Y-m-d H:i:s')));
+                $config = M('yxhb_user_deploy')->where(array('id' => $id))->setField(array('status' => 1, 'last_at' => date('Y-m-d H:i:s')));
                 $this->ajaxReturn(array('code' => 200, 'config' => $config));
             }
         }
         $this->ajaxReturn(array('code' => 404, 'msg' => '修改失败', 'data' => '参数错误'));
+    }
+
+    public function upUserConfig()
+    {
+        $id = I('get.id');
+        $temp = array();
+        $deployData = M('yxhb_user_deploy')->where(array('id' => $id))->select();
+        if (!empty($deployData)) {
+            $html = D('Html');
+            $boss = M('yxhb_boss');
+            foreach ($deployData as $k => $v) {
+                $bossIds = trim($v['boss_ids'], '"');
+                $bossArr = explode(',', $bossIds);
+                $userArr = array();
+                $wxIdArr = array();
+                foreach ($bossArr as $bossId) {
+                    //获取用户详细数据
+                    $bossInfo = $boss->where(array('id' => $bossId))->find();
+                    $userArr[] = array(
+                        'wxid' => $bossInfo['wxid'],
+                        'name' => $bossInfo['name'],
+                        'avatar' => $bossInfo['avatar'] ? $bossInfo['avatar'] : 'Public/assets/i/defaul.png',
+                    );
+
+                    $wxIdArr[] = $bossInfo['wxid'];
+                }
+
+                $v['push_name'] = implode(',', $wxIdArr);
+                $v['html'] = $html->fiexdCopyHtml($userArr);
+                $temp = $v;
+            }
+
+            // 注意事项
+            $detailModel = D('YxDetailAuth');
+            $atten = $detailModel->ActiveAttention('yxhb', 'Push_config');
+            $this->assign('data', $temp);
+            $this->assign('atten', $atten);
+            $this->assign('sourceType', $deployData[0]['source_type']);
+            $this->assign('id', $id);
+            $this->assign('aid', 0);
+            $this->assign('modname', 'KfRatioApply');
+            $this->assign('system', 'yxhb');
+            $this->display('Config/upUserConfig');
+        }
+    }
+
+    public function saveUserConfig(){
+        $data = explode(",", I('post.data'));             //推送人员名单
+        $id = I('post.id');                 //数据id
+        $list = M('yxhb_user_deploy')->where(array('id' => $id))->select();
+        if (empty($list) || empty($data)) {
+            $this->ajaxReturn(array('code' => 404, 'msg' => '修改失败', 'data' => '参数错误'));
+        }
+
+        $saveData = array();
+        $boss = M('yxhb_boss');
+        foreach ($data as $val) {
+            $bossInfo = $boss->where(array('wxid' => $val))->field('id')->find();
+            if (!empty($bossInfo)) {
+                $saveData[] = $bossInfo['id'];
+            }
+        }
+
+        $saveData = array_unique($saveData);//去重
+        $config = M('yxhb_user_deploy')->where(array('id' => $id))->setField(array('boss_ids' => implode(',', $saveData), 'last_at' => date('Y-m-d H:i:s')));
+        $this->ajaxReturn(array('code' => 200, 'config' => $config));
     }
 }

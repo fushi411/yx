@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>流程配置</title>
+    <link href="__PUBLIC__/assets/css/bootstrap.min.css" rel="stylesheet">
+    <!-- 引入 WeUI -->
+    <!-- <link rel="stylesheet" href="https://res.wx.qq.com/open/libs/weui/1.1.2/weui.min.css" /> -->
+    <link rel="stylesheet" href="__PUBLIC__/assets/css/weui.min.css" />
+    <link rel="stylesheet" href="__PUBLIC__/assets/css/weMain.css?version=201709012" />
+    <link rel="stylesheet" href="//at.alicdn.com/t/font_915899_55h0sykfz5i.css" />
+    <style type="text/css">
+        .weui-cells:after {
+            border-bottom: 0px solid #fff;
+        }
+
+        .weui-selet__user {
+            width: 2.5em;
+            height: 2.5em;
+            margin-bottom: 5px;
+            margin-right: 16px;
+            border-radius: 5px;
+        }
+
+        .wk-select__user {
+            height: 60px;
+            width: 52px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-right: 6px;
+        }
+
+        .no-select__user {
+            height: 60px;
+            width: 52px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-right: 6px;
+        }
+
+        .wk-comment__user {
+            height: 60px;
+            width: 52px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-right: 12px;
+        }
+
+        a:hover {
+            text-decoration: none;
+        }
+
+        label {
+            font-weight: 400;
+            margin-bottom: 0px;
+        }
+
+        .select2-results__option {
+            font-size: 16px;
+        }
+
+        .select2-search__field {
+            line-height: normal;
+        }
+
+        /* end */
+        .redColor {
+            color: #e64340;
+        }
+
+        .greenColor {
+            color: #16b517;
+        }
+
+        .weui-form-preview__value span {
+            display: inline-block;
+            width: 80px;
+            text-align: center;
+        }
+
+        .font-width {
+            display: inline-block;
+            width: 68px;
+            text-align: right;
+
+        }
+
+        .greyColor {
+            color: #757575;
+        }
+
+        .select2-container--default .select2-selection--multiple .select2-selection__rendered {
+            padding: 0;
+        }
+
+        .other_page {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #fff;
+            z-index: 999;
+        }
+
+        .searchCenter {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .select2-results__option {
+            font-size: 16px;
+        }
+
+        .select2-search__field {
+            line-height: normal;
+        }
+        #click_show .user{
+            color: black;
+            top: 9px;
+            padding: 0 2px;
+            font-size: 13px;
+            margin: 3px;
+            cursor: pointer;
+            margin-top: 0;
+        }
+        .myfoot{
+            flex-direction: row;
+            width: 100%;
+            justify-content: space-around;
+            position: fixed;
+            bottom: 0;
+            border-top: 1px solid #e0dfdf;
+            background-color: white;
+        }
+        .title_color{
+            color: #09bdc7
+        }
+    </style>
+</head>
+
+<body>
+    <div class="weui-toptips weui-toptips_warn js_tooltips" style="opacity: 1;">错误提示</div>
+  <!-- Modal -->
+  <div class="other_page" id="other_page" style='display: none;'>
+        <div class="container">
+            <div class="page js_show">
+                <div class="weui-cells weui-cells_radio" id='radio_div'>    
+                </div>
+                <div class="button-sp-area" style="margin-bottom: 20px;display: flex;flex-direction: row;width: 100%;justify-content: space-around;align-items: baseline;">
+                    <a href="javascript:;" id="ratio-refuse" class="weui-btn weui-btn_warn" style="width: 40%;">取消</a>
+                    <a href="javascript:;" id="ratio-agree" class="weui-btn weui-btn_primary" style="width: 40%">确定</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="other_page" id="other_page_two" style='display: none;'>
+        <div class="container">
+            <div class="page js_show" style="background-color: #fff;">
+                <div class="weui-search-bar" id="searchBar">
+                    <form class="weui-search-bar__form">
+                        <div class="weui-search-bar__box">
+                            <i class="weui-icon-search"></i>
+                            <input type="search" class="weui-search-bar__input " id="searchInput" placeholder="请输入姓名或拼音缩写搜索" required="">
+                            <a href="javascript:" class="weui-icon-clear" id="searchClear"></a>
+                        </div>
+                        <label class="weui-search-bar__label searchCenter" id="searchText">
+                            <i class="weui-icon-search"></i>
+                            <span>请输入姓名或拼音缩写搜索</span>
+                        </label>
+                    </form>
+                    <a href="javascript:" class="weui-search-bar__cancel-btn" id="searchCancel">搜索</a>
+                </div>
+                <div class="weui-cells__title" id="title"><span>首页</span></div>
+                <div class="weui-cells searchbar-result weui-cells_checkbox" id="searchResult" style="margin-top: 0px;">
+                </div>
+                <div class="myfoot">
+                    <div class="weui-cells__title" style='margin: 0;background-color: #f8f8f8;padding: 1px 15px;'>
+                        <span style="color: #f12e2e">点击部门或人员可删除</span>
+                    </div>
+                    <div class="button-sp-area weui-flex">
+                        <div class="weui-flex__item"  style="min-width: 0;">
+                            <div style="overflow-x: scroll;min-width: 0;" >
+                                <div id="click_show" style="white-space: nowrap;width: fit-content;height: 50px;">
+                                                                                        
+                                </div>
+                            </div>
+                        </div>
+                        <div style="padding: 0 8px;">
+                            <a href="javascript:;" style="background-color: #e64340;margin-top: 10px;" id='dept-cal' class="weui-btn weui-btn_mini">取消</a>
+                            <a href="javascript:;" style="background-color: #09bdc7;margin-top: 10px;" id='dept-btn' class="weui-btn weui-btn_mini">确定</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="sign_dialogs">
+        <div class="js_dialog" id="Dialog" style="display: none;">
+            <div class="weui-mask"></div>
+            <div class="weui-dialog">
+                <div class="weui-dialog__hd">
+                    <strong class="weui-dialog__title" id='dialog_text'>是否删除该人员</strong>
+                </div>
+                <div class="weui-dialog__ft">
+                    <a href="javascript:;" onclick="del_dialog_close()" class="weui-dialog__btn weui-dialog__btn_default">取消</a>
+                    <a href="javascript:;" onclick="del_dialog_confirm()" class="weui-dialog__btn weui-dialog__btn_primary">确认</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Modal END-->
+    <div class="container" id="container">
+        <div class="page js_show">
+            <h3 class="titleTab" style="text-align: center;">{$data.title}</h3>
+            <div class="weui-cells__title">签收人员</div>
+            <div class="weui-cells" style="margin-top:0px;">
+                <div class="weui-cell">
+                    <div class="weui-cell__bd">
+                        <div class="weui-uploader">
+                            <div class="weui-uploader__bd" >
+                                <ul class="weui-uploader__files app_auth" id="app_auth" style="margin-bottom: 0px;">
+                                        {$data.html}
+                                </ul>
+                                <div class="weui-uploader__input-box"
+                                    style="width: 35px;height: 35px;margin: 10px 0 0 8px;">
+                                    <input onclick="selAuthUser()" class="weui-uploader__input auth_model" type="button"
+                                        name="copyto" readonly="" autocomplete="off">
+                                    <input type="hidden" class="auth_id" value="{$data['push_name']}" autocomplete="off">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="button-sp-area"
+                style="margin-bottom: 20px;display: flex;flex-direction: row;width: 100%;justify-content: space-around;align-items: baseline;">
+                <a href="javascript:;" id="ratio-refuse_push" class="weui-btn weui-btn_warn" style="width: 40%;">取消</a>
+                <a href="javascript:;" id="ratio-agree_push" class="weui-btn weui-btn_primary" style="width: 40%">确定</a>
+            </div>
+            <div id="attention" >
+                <div class="weui-cells__title">操作说明 
+                    <a href="{:U('Light/Config/Dispenser',array('robot'=>'attention','system' => $system ,'modname' => 'Push_config','aid' => $aid))}">
+                        <i class="iconfont icon-xiugai" style="vertical-align: middle;" ></i>
+                    </a>
+                 </div>
+                <!-- <div class="weui-cells__title">各个中心主管及以上职位的申请抄送</div> -->
+                <div class="weui-cells" style="margin-top:0px;">
+                    <div class="weui-cell">
+                        <div class="weui-cell__bd">
+                            <div class="weui-uploader">
+                                <div class="weui-uploader__bd" >
+                                    <div id="attentionContent" style="font-size: 15px;color: #f12e2e;white-space: pre-wrap;">{$atten.content}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+   
+    <div id="loadingToast" style=" display: none;">
+        <div class="weui-mask_transparent"></div>
+        <div class="weui-toast">
+            <i class="weui-loading weui-icon_toast"></i>
+            <p class="weui-toast__content" id="toast__content">数据提交中</p>
+        </div>
+    </div>
+    <div id="toast" style="display: none;">
+        <div class="weui-mask_transparent"></div>
+        <div class="weui-toast">
+            <i class="weui-icon-success-no-circle weui-icon_toast"></i>
+            <p class="weui-toast__content">已完成</p>
+        </div>
+    </div>
+</body>
+<script src="__PUBLIC__/assets/js/jquery-1.11.1.min.js"></script>
+<script src="__PUBLIC__/assets/js/bootstrap.min.js"></script>
+<script src="__PUBLIC__/assets/js/select2.min.js"></script>
+<script src="__PUBLIC__/assets/js/zh-CN.js"></script>
+<script src="https://res.wx.qq.com/open/libs/weuijs/1.1.3/weui.min.js"></script>
+<script>
+    const contains = (() =>
+    Array.prototype.includes
+    ? (arr, value) => arr.includes(value)
+    : (arr, value) => arr.some(el => el === value)
+    )();
+    var $tooltips = $('.js_tooltips'),
+        reason = $('#reason'),
+        toast = $('#loadingToast'),
+        type = '',
+        loading = '<div class="weui-loadmore"><i class="weui-loading"></i><span class="weui-loadmore__tips">正在加载</span></div>',
+        noresult = '<div class="weui-loadmore weui-loadmore_line"><span class="weui-loadmore__tips">暂无数据</span></div>',
+        idx = 0,
+        deptData = '',
+        userInfo = '',
+        part = {
+            'dept':[],
+            'user':[],
+        },
+        click_dept = [{'dept':1,'name':'首页'}],
+        dept_id = 1;
+    // 数据提交与加载提示
+    function toastfadeIn(time, text) {
+        $('#toast__content').text(text);
+        toast.fadeIn(time);
+    }
+    // 错误提示
+    function tooltip(text) {
+        if ($tooltips.css('display') != 'none') return;
+        $('.page.cell').removeClass('slideIn');
+        $tooltips.text(text);
+        $tooltips.css('display', 'block');
+        setTimeout(function () {
+            $tooltips.css('display', 'none');
+        }, 2000);
+    }
+   
+    function selAuthUser(){
+        var auth_id = $('.auth_id').val();
+        auth_arr = (auth_id==undefined || auth_id=='')?[] :auth_id.split(',');
+        part = {
+            'dept':[],
+            'user':auth_arr,
+        }
+        html = '';
+        
+        for(k in auth_arr){
+            var wxid = auth_arr[k];
+            if(wxid == '' || wxid == undefined) continue;
+            html += '<a href="javascript:;" class="weui-btn weui-btn_mini user user'+wxid+'" data-type="user" data-id="'+wxid+'">'+
+                        '<img src="'+userInfo[wxid].avatar+'" style="width: 20px;display: inline-block;vertical-align: middle;">'+
+                        '<span style="display: inline-block;vertical-align: middle;">'+userInfo[wxid].name+'</span>'+
+                    '</a>';
+        }
+        $('#click_show').html(html);
+        $('#other_page_two').show();
+    }
+    getWxInfo();
+    function getWxInfo(){
+        $.post("{:U('Light/Apply/getWxInfo')}",
+            {}, 
+            function (data) {
+                deptData = data['dept'];
+                userInfo = data['user'];
+                makeHtml(deptData[dept_id]); 
+            }
+        );
+    }
+
+    function makeHtml(data){
+        // 清空显示
+        html = '';
+        var deptChecked = getChecked(part['dept']);
+        for(k in data){
+            // 判断是部门有下级人员
+            $flag = true;
+            if(data[k].type == 'dept' && deptData[data[k].wx] == undefined ) $flag = false;
+            
+            // 查看是否已经选择
+            var $checked = part[data[k].type].includes(data[k].wx)?'checked="checked"':'';
+            html += '<a class="weui-cell weui-cell_access " href="javascript:;" data-id="'+data[k].wx+'" data-type="dept" style="text-decoration:none;">'+
+            '<label for="'+data[k].wx+'">'+
+            '<div class="weui-cell__hd" style="width: 32px;height: 25px;">';
+            if($flag){
+                if(!deptChecked.includes(data[k].wx)){
+                    html += '<input type="checkbox" name="checkbox1" class="weui-check" '+
+                        'data-type="'+data[k].type+'" data-img="'+data[k].avatar+'" data-name="'+data[k].name+'" '+$checked+' id="'+data[k].wx+'">'+
+                        '<i class="weui-icon-checked"></i>';
+                }
+            }
+            html += '</div>'+
+            '</label>'+
+            '<div class="weui-cell__hd select-dept">'+
+            '<img src="'+data[k].avatar+'" alt="'+data[k].name+'" style="width:20px;margin-right:5px;display:block">'+
+            '</div>'+
+            '<div class="weui-cell__bd select-'+data[k].type+'">'+
+            '<p style="margin-bottom: 0px;">'+data[k].name+'</p>'+
+            '</div>'+
+            '<div class="weui-cell__ft"></div>'+
+            '</a>';
+        }
+        $('#searchResult').html(html);
+   }
+   // 获取已选人员的数据
+   function getChecked(data){
+       var res  = []; 
+       for(k in data){
+            deptKey = data[k];
+            if( deptData[deptKey] == undefined || deptData[deptKey].length == 0 ) continue;
+            var myData = deptData[deptKey];
+            for(key in myData){
+                res.push(myData[key].wx);
+                var myKey = myData[key].wx;
+                if(deptData[myKey] == undefined || deptData[myKey].length == 0 ) continue;
+                sonRes = getChecked([myKey]);
+                res.push.apply(res,sonRes);
+            }
+       }
+       return  res;
+   }
+   function getAllUser(data){
+       var res  = []; 
+       for(k in data){
+            deptKey = data[k];
+            if( deptData[deptKey] == undefined || deptData[deptKey].length == 0 ) continue;
+            var myData = deptData[deptKey];
+            for(key in myData){
+                if(myData[key].type == 'user') res.push(myData[key].wx);
+                var myKey = myData[key].wx;
+                if(deptData[myKey] == undefined || deptData[myKey].length == 0 ) continue;
+                sonRes = getChecked([myKey]);
+                res.push.apply(res,sonRes);
+            }
+       }
+       return  res;
+   }
+    // 监控check按钮点击
+    $('#other_page_two').on('change','.weui-check',function(){
+        var data_type = $(this).attr('data-type');
+        var data_name = $(this).attr('data-name');
+        var data_id   = $(this).attr('id');
+        if($(this).is(':checked')){ // 选中
+            var head_src  = data_type=='dept'?'/fjyxoaSV/Public/assets/i/weui/icon_nav_button.png':$(this).attr('data-img');
+            html = '<a href="javascript:;" class="weui-btn weui-btn_mini user '+data_type+data_id+'" data-type="'+data_type+'" data-id="'+data_id+'">'+
+                        '<img src="'+head_src+'" style="width: 20px;display: inline-block;vertical-align: middle;">'+
+                        '<span style="display: inline-block;vertical-align: middle;">'+data_name+'</span>'+
+                    '</a>';
+            $('#click_show').append(html);
+            // 添加数据
+            part[data_type].push(data_id);
+        }else{
+            // 删除dom
+            $('.'+data_type+data_id).remove();
+            //数据删除
+            for(k in part[data_type]){
+                if(part[data_type][k] == data_id) part[data_type].splice(k,1);
+            }
+        }
+    });
+    // 点击元素 
+    $('#click_show').on('click','.weui-btn_mini',function(){
+        var data_type = $(this).attr('data-type');
+        var data_id   = $(this).attr('data-id');
+        // 删除dom
+        $(this).remove();
+        //数据删除
+        for(k in part[data_type]){
+            if(part[data_type][k] == data_id) part[data_type].splice(k,1);
+        }
+        // 对应按钮变成原来的样子
+        makeHtml(deptData[dept_id]);
+    });
+    $('#searchResult').on('click','.select-dept',function(){
+        var index = $(this).parent().attr('data-id');
+        dept_id = index;
+        // 上标点击
+        var item = {'dept':index,'name':$(this).parent().text()};
+        click_dept.push(item);
+        title_show();
+        makeHtml(deptData[dept_id]);
+    });
+    function title_show(){
+        var length_title = click_dept.length;
+        var html = '';
+        if(length_title == 1) return $('#title').html('<span>首页</span>');
+        for( i in click_dept){
+            if(i==length_title-1) html+= "<span>"+click_dept[i].name+'</span>';
+            else html += "<span class='title_color' dept-id='"+click_dept[i].dept+"'>"+click_dept[i].name+"</span> &gt;";
+        }
+        $('#title').html(html);
+    }
+    $('#title').on('click','.title_color',function(){
+        var index = $(this).attr('dept-id');
+        var temp = [];
+        for(i in click_dept){
+            temp.push(click_dept[i]);
+            if(click_dept[i].dept == index) break;
+        }
+        click_dept=temp;
+        dept_id = index;
+        makeHtml(deptData[dept_id]);
+        title_show();
+    });
+    // 返回按钮 
+    $('#dept-cal').click(function(){
+        $('#other_page_two').hide();
+    });
+    // 确定 按钮
+    $('#dept-btn').click(function(){
+        // 先关闭
+        $('#other_page_two').hide();
+        // 获取人员
+        var user = getAllUser(part['dept']);
+        user.push.apply(user,part['user']);
+        var html = '';
+        var auth_id = '';
+        for(k in user){
+            if(user[k] == '') continue;
+            var tmpl = "<li class='weui-uploader__file wk-select__user' id='#id#' style='min-height:70px;width: 45px; margin:0 8px 0 0 ;'>"+
+                        "<img src='#url#' class='weui-selet__user' style='margin-right: 6px;margin-top:10px; width: 2em; height: 2em;'>"+
+                        "<span style='margin-right: 6px;font-size: 12px;'>#name#</span>"+
+                       "<span class='weui-badge' style='position: relative;top: -5.2em;right: -1.2em;padding: 1px 3px;line-height: 1;'>X</span>"+
+                       "</li>";
+            var id = $(this).attr('data-id');
+            var img = $(this).attr('data-img');
+            var name = $(this).attr('data-name');
+            tmpl = tmpl.replace('#id#', user[k]);
+            tmpl = tmpl.replace('#name#', userInfo[user[k]].name);
+            tmpl = tmpl.replace('#url#', userInfo[user[k]].avatar);
+            html += tmpl;
+            auth_id += user[k]+',';
+        }
+        $('#app_auth').html(html);
+        $('.auth_id').val(auth_id);
+    });
+    // 取消返回
+    $('#ratio-refuse_push').click(function () {
+        window.location.href = "{:U('Light/Process/userDeploy',array('source_type' => $sourceType))}";
+    })
+    // 点击提交
+    $('#ratio-agree_push').click(function () {
+        var abc = $('.auth_id').val(),
+        hash      = $("meta[name='__hash__']").attr('content')
+        $.ajax({
+            type:'post',
+            url: "{:U('Light/Config/Dispenser', array('robot'=>'saveUserConfig'))}",
+            data:{
+                'data'   : abc,
+                'id'     : "{$id}",
+                '__hash__': hash,
+                },
+            dataType: 'json',
+            success: function (res) {
+                if(res.code==200 || res.code == 403){
+                    window.location.href = "{:U('Light/Process/userDeploy',array('source_type' => $sourceType))}";
+                }else{
+                    tooltip(res.msg);
+                }
+            }
+        })
+    });
+    var del_inidex ='',del_id='',del_dom='';
+    $('.js_show').on('click','.weui-badge',function(){
+        up_dom = $(this).parent().parent();
+        id  = $(this).parent().attr('id');
+        dom = $('.auth_id');
+        ids = dom.val();
+        ids = ids.split(',');
+        var val = '';
+        for(i = 0;i<ids.length;i++){
+            if(id!=ids[i]){
+                val = val+','+ids[i];
+            }
+        }
+        del_type = 'user';
+        del_dom = $(this).parent();
+        del_id = val;
+        del_inidex = dom;
+        $('#Dialog').show();
+    })
+
+    function del_dialog_close(){
+        $('#Dialog').hide();
+    }
+    function del_dialog_confirm(){
+        del_dom.remove();
+        del_inidex.val(del_id);
+        $('#Dialog').hide();
+    }
+$(function(){
+    // 搜索
+    var $searchBar = $('#searchBar'),
+            $searchResult = $('#searchResult'),
+            $searchText = $('#searchText'),
+            $searchInput = $('#searchInput'),
+            $searchClear = $('#searchClear'),
+            $searchCancel = $('#searchCancel');
+
+        function hideSearchResult(){
+            // $searchResult.hide();
+            $searchInput.val('');
+        }
+        function cancelSearch(){
+            hideSearchResult();
+            $searchBar.removeClass('weui-search-bar_focusing');
+            $searchText.show();
+        }
+
+        $searchText.on('click', function(){
+            $searchBar.addClass('weui-search-bar_focusing');
+            $searchInput.focus();
+        });
+        $searchInput
+            .on('blur', function () {
+                if(!this.value.length) cancelSearch();
+            })
+            .on('input', function(){
+                if(this.value.length) {
+                    $searchResult.show();
+                    searchCopyUser();
+                } else {
+                    modelIni()
+                }
+            })
+        ;
+        $searchClear.on('click', function(){
+            hideSearchResult();
+            $searchInput.focus();
+        });
+        $searchCancel.on('click', function(){
+            searchCopyUser();
+        });
+        $searchInput.on('keypress',function(e) {  
+            var keycode = e.keyCode;  
+            var searchName = $(this).val();
+            if(keycode=='13') {  
+            e.preventDefault();    
+            searchCopyUser();
+            }         
+        });
+        function searchCopyUser(){
+            word = $searchInput.val();
+            if(!word.length) return modelIni();
+            $('#title').html('<span>人员搜索</span>')
+            $('#searchResult').empty();
+            $('#searchResult').append(loading);
+            $.post("{:U('Light/Apply/searchDeptHtml')}",
+                {
+                    "type" : 'new',
+                    'search'  : word,
+                }, function (data) {
+                    api_for = 'user';
+                    $('#searchResult').empty();
+                    // console.log(data);
+                    if(data.length == 0) {
+                        $('#searchResult').append(noresult);
+                    } else {
+                        makeHtml(data);
+                    }
+                }
+            );
+        }
+
+        function modelIni(){
+            dept_id = 1;
+            $searchInput.val(null);
+            $("#pre-level").attr("data-pid", 0);
+            makeHtml(deptData[dept_id]);
+        }
+    });
+</script>
+</html>
