@@ -390,5 +390,46 @@ class ProcessController extends Controller
     }
 
     //
+    public function userDeploy()
+    {
+        //权限判断
+        $detailModel= D('YxDetailAuth');
+        $detailAuth = $detailModel->CueAuthCheck();
+        if ($detailAuth === false) {
+            $this->error ('没有当前功能操作权限！');
+        }
 
+        $sourceType  = I('get.SourceType', 1, 'int');// 默认为1 签收人员配置
+        if (!in_array($sourceType, array(1))) {
+            $this->error ('不支持的操作！');
+        }
+
+        $temp = array();
+        $deployData = M('yxhb_user_deploy')->where(array('source_type' => $sourceType, 'status' => 0))->select();
+        if (!empty($deployData)) {
+            $html = D('Html');
+            $boss = M('yxhb_boss');
+            foreach ($deployData as $k => $v) {
+                $bossIds = trim($v['boss_ids'], '"');
+                $bossArr = explode(',', $bossIds);
+                $userArr = array();
+                foreach ($bossArr as $bossId) {
+                    //获取用户详细数据
+                    $bossInfo =  $boss->where(array('id'=>$bossId))->find();
+                    $userArr[] = array(
+                        'wxid' => $bossInfo['wxid'],
+                        'name' => $bossInfo['name'],
+                        'avatar' => $bossInfo['avatar']
+                    );
+                }
+                $v['html'] = $html->PushHtml($userArr);
+                $temp[] = $v;
+            }
+        }
+
+        $this->assign('titleName', '签收人员');
+        $this->assign('CueConfig',$detailAuth);
+        $this->assign('condition',$temp);
+        $this->display('Process/user_deploy');
+    }
 }
