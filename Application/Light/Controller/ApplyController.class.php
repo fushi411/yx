@@ -162,16 +162,40 @@ class ApplyController extends BaseController {
             $this->searchDeptHtml();
         }else{
             $id = I('post.id');
-            $Dept = D('department');
-            $DeptInfo = $Dept->getWXDeptInfo();
-            $childDeptInfo = $Dept->getChildDept($DeptInfo, $id);
-            // 无子部门返回成员信息
-            if (empty($childDeptInfo)) {
-                $userInfo = $Dept->getWXDeptUserInfo($id);
-                $childDeptHtml = $Dept->genDeptUserHtml($userInfo);
-            } else {
-                $childDeptHtml = $Dept->genDeptHtml($childDeptInfo);
+            $modeType = I('post.mode_type', '');
+            if($modeType == 'new'){//新模式
+                $wxInfoArr = array();
+                $dataInfo =  M('yxhb_user_deploy')->where(array('id'=>intval($id)))->field('boss_ids')->find();
+                $bossIdArr = explode(",", $dataInfo['boss_ids']);
+                if (!empty($bossIdArr)) {
+                    $boss = M('yxhb_boss');
+                    foreach ($bossIdArr as $bossId) {
+                        $bossInfo =  $boss->where(array('id'=>$bossId))->find();
+
+                        $wxInfoArr[] = array(
+                            'id'=> $bossInfo['wxid'],
+                            'name'=> $bossInfo['name'],
+                            'avatar'=> $bossInfo['avatar'],
+                            'order'=> $bossInfo,
+                        );
+                    }
+                }
+
+                $Dept = D('department');
+                $childDeptHtml = $Dept->genDeptUserHtml($wxInfoArr);
+            }else{
+                $Dept = D('department');
+                $DeptInfo = $Dept->getWXDeptInfo();
+                $childDeptInfo = $Dept->getChildDept($DeptInfo, $id);
+                // 无子部门返回成员信息
+                if (empty($childDeptInfo)) {
+                    $userInfo = $Dept->getWXDeptUserInfo($id);
+                    $childDeptHtml = $Dept->genDeptUserHtml($userInfo);
+                } else {
+                    $childDeptHtml = $Dept->genDeptHtml($childDeptInfo);
+                }
             }
+
             $this->ajaxReturn($childDeptHtml);
         }
     }

@@ -33,6 +33,13 @@ class ViewController  extends BaseController
         $detailAuth = $detailModel->CueAuthCheck();
         $atten      = $detailModel->ActiveAttention($system,$mod_name);
         $explain    = $detailModel->ActiveExplain($system,$mod_name);
+
+        //签收人员
+        $list =  M('yxhb_user_deploy')->where(array('source_type'=>1, 'status'=>0))->select();
+
+
+        $this->assign('list',$list);
+
         // 无审批流程 提示 签收模式排除
         $flag = empty($appflow)?'true':'false';
         $flag = $this->isSign($system,$mod_name)?$flag:'false';

@@ -249,8 +249,9 @@
     </div>
 </block>
 <block name="Process">
-    <div class="weui-cells__title">签收人员选择 <span style="color: #f12e2e">（各部门须选择1人签收）</span>
-        
+    <div class="weui-cells__title">签收人员选择
+        <a href="{:U('Light/Process/userDeploy', array('source_type'=>1))}"><i class="iconfont icon-chakan" style="vertical-align: middle;"></i></a>
+        <span style="color: #f12e2e">（各部门须选择1人签收）</span>
     </div>
     <div class="weui-cells" style="margin-top:0px;">
         <div class="weui-cell" style="padding-top: 0px;padding-bottom: 5px;margin-bottom: 10px;">
@@ -258,31 +259,46 @@
                 <div class="weui-uploader">
                     <div class="weui-uploader__bd">
                         <ul class="weui-uploader__files" id="selectSign" style="margin-bottom: 0px;">
-                            <li class="weui-uploader__file" style="min-height:80px;" >
-                                <div class="user_show">
+                            <volist name="list" id="vo" key="k">
+                                <li class="weui-uploader__file" style="min-height:80px;" >
+                                    <div class="user_show">
 
-                                </div>
-                                <div class="box_div">
-                                    <div class="weui-uploader__input-box" style="width: 2.5em;height: 2.5em;margin-right: 0px;margin-bottom: 0px;margin-top:10px;">
-                                            <input id="signInput" class="weui-uploader__input open_sign_model" index="9" type="button" name="sign" readonly />
-                                            <!--data-toggle="modal" data-target="#myModal" -->
-                                            
-                                        </div>
-                                    <span style="margin-right: 6px;font-size: 14px;">生产部</span>
-                                </div>
-                            </li>
-                            <li class="weui-uploader__file" style="min-height:80px;">
-                                <div class="user_show">
-
-                                </div>
-                                <div class="box_div">
+                                    </div>
+                                    <div class="box_div">
                                         <div class="weui-uploader__input-box" style="width: 2.5em;height: 2.5em;margin-right: 0px;margin-bottom: 0px;margin-top:10px;">
-                                                <input id="signInput" class="weui-uploader__input open_sign_model" index="10" type="button" name="sign" readonly />
-                                                <!--data-toggle="modal" data-target="#myModal" -->
-                                            </div>
-                                        <span style="margin-right: 6px;font-size: 14px;">品管部</span>
-                                </div>
-                            </li>
+                                            <input id="signInput" class="weui-uploader__input open_sign_model" index="{$vo.id}" sort="{$k}" mode="new" type="button" name="sign" readonly />
+                                            <!--data-toggle="modal" data-target="#myModal" -->
+
+                                        </div>
+                                        <span style="margin-right: 6px;font-size: 14px;">{$vo.title}</span>
+                                    </div>
+                                </li>
+                            </volist>
+<!--                            <li class="weui-uploader__file" style="min-height:80px;" >-->
+<!--                                <div class="user_show">-->
+
+<!--                                </div>-->
+<!--                                <div class="box_div">-->
+<!--                                    <div class="weui-uploader__input-box" style="width: 2.5em;height: 2.5em;margin-right: 0px;margin-bottom: 0px;margin-top:10px;">-->
+<!--                                            <input id="signInput" class="weui-uploader__input open_sign_model" index="9" type="button" name="sign" readonly />-->
+<!--                                            &lt;!&ndash;data-toggle="modal" data-target="#myModal" &ndash;&gt;-->
+
+<!--                                        </div>-->
+<!--                                    <span style="margin-right: 6px;font-size: 14px;">生产部</span>-->
+<!--                                </div>-->
+<!--                            </li>-->
+<!--                            <li class="weui-uploader__file" style="min-height:80px;">-->
+<!--                                <div class="user_show">-->
+
+<!--                                </div>-->
+<!--                                <div class="box_div">-->
+<!--                                        <div class="weui-uploader__input-box" style="width: 2.5em;height: 2.5em;margin-right: 0px;margin-bottom: 0px;margin-top:10px;">-->
+<!--                                                <input id="signInput" class="weui-uploader__input open_sign_model" index="10" type="button" name="sign" readonly />-->
+<!--                                                &lt;!&ndash;data-toggle="modal" data-target="#myModal" &ndash;&gt;-->
+<!--                                            </div>-->
+<!--                                        <span style="margin-right: 6px;font-size: 14px;">品管部</span>-->
+<!--                                </div>-->
+<!--                            </li>-->
                         </ul>
                         <input type="hidden" name="sign_id" id="sign_id" value="">
                     </div>
@@ -351,22 +367,27 @@
     <script>
         var sign_type = '',
             department_id = 0;
+            mode_type = '';
+            sort = '';
         $('#signModal').on('show.bs.modal', function (e) {
             var id = department_id;
             $("#sign_pre-level").attr("data-pid", department_id);
-            getSignDepartment(department_id);
+            getSignDepartment(department_id, mode_type);
         });
         $('.open_sign_model').on('click', function () {
             department_id = $(this).attr('index');
+            mode_type = $(this).attr('mode');
+            sort = $(this).attr('sort');
             $('#signModal').modal('show');
         });
 
-        function getSignDepartment(id) {
+        function getSignDepartment(id, modeType = '') {
             $('#sign_searchResult').empty();
             $('#sign_searchResult').append(loading);
             $.post("{:U('Light/Apply/getDeptHtml')}",
                 {
-                    "id": id
+                    "id": id,
+                    "mode_type" : mode_type,
                 }, function (data) {
                     $('#sign_searchResult').empty();
                     if (data == '') {
@@ -407,8 +428,8 @@
             // console.log(id);
             tmpl = tmpl.replace('#id#', id);
             tmpl = tmpl.replace('#name#', name);
-            var index = 0;
-            if(department_id == 10) index = 1;
+            var index = sort - 1;
+            // if(department_id == 10) index = 1;
             $selectSign.eq(index).html($(tmpl.replace('#url#', img)));
             $("#sign_id").val(ids);
             $('#signModal').modal('hide')
