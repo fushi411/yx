@@ -13,7 +13,7 @@
                         </label>
                     </div>
                     <div class="weui-cell__bd" id='alter_div'>
-                        <select class="weui-select" name="user_name[]" id="user_name" multiple="multiple" style="width: 95%;" data-placeholder="客户范围为账户有效客户">
+                        <select class="weui-select" name="user_name[]" id="user_name" multiple="multiple" style="width: 95%;" data-placeholder="客户范围为客户[有效]">
                         </select>
                     </div>
                 </div>
@@ -207,7 +207,7 @@
             templateSelection: formatRepoSelection
         });
         $('#alter_div').on('blur','input',function(){
-            if(!user_id) $('#alter_div input').eq(0).attr('placeholder', '客户范围为账户有效客户');
+            if(!user_id) $('#alter_div input').eq(0).attr('placeholder', '客户范围为客户[有效]');
         })
         // select2 点击触发
         $("#user_name").on("select2:selecting", function (e) {

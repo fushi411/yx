@@ -122,7 +122,7 @@
                 </label>
             </div>
             <div class="weui-cell__bd" id="mydiv">
-                <select class="weui-select" id="alter" multiple="multiple" style="width: 95%;" data-placeholder="客户范围为合同有效客户">
+                <select class="weui-select" id="alter" multiple="multiple" style="width: 95%;" data-placeholder="客户范围为客户[有效]">
                     <option selected value=""></option>
                 </select>
             </div>
@@ -178,7 +178,7 @@
                             </div>
                         <div class="weui-cell__bd">
                             <div class="weui-cell__bd"  id='alter_div'>
-                                <select class="weui-select" name="user_name[]" id="user_name" multiple="multiple" style="width: 95%;" data-placeholder="客户范围为合同有效客户">
+                                <select class="weui-select" name="user_name[]" id="user_name" multiple="multiple" style="width: 95%;" data-placeholder="客户范围为客户[有效]">
                                 </select>
                             </div>
                         </div>
@@ -507,7 +507,7 @@
         });
         
         $('#alter_div').on('blur','input',function(){
-            if(!user_id) $('#alter_div input').eq(0).attr('placeholder', '客户范围为合同有效客户');
+            if(!user_id) $('#alter_div input').eq(0).attr('placeholder', '客户范围为客户[有效]');
         })
         // select2 点击触发
         $("#user_name").on("select2:selecting", function (e) {
@@ -561,7 +561,7 @@
             templateSelection: formatRepoSelection
         });
         $('#mydiv').on('blur','input',function(){
-            if(!alter_user_id) $('#mydiv input').eq(0).attr('placeholder', '客户范围为合同有效客户');
+            if(!alter_user_id) $('#mydiv input').eq(0).attr('placeholder', '客户范围为客户[有效]');
         })
 
         var fh_cate = '',fh_wl='';

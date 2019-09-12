@@ -235,7 +235,7 @@
         });
         
         $('#alter_div').on('blur','input',function(){
-            if(!user_id) $('#alter_div input').eq(0).attr('placeholder', '客户范围为总客户-正常/冻结');
+            if(!user_id) $('#alter_div input').eq(0).attr('placeholder', '客户范围为总客户[有效+冻结]');
         })
         // select2 点击触发
         $("#user_name").on("select2:selecting", function (e) {
