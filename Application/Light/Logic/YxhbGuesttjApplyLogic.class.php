@@ -105,11 +105,11 @@ class YxhbGuesttjApplyLogic extends Model {
             foreach ($pp as  $val) {
                 $flag = 0;
                 foreach ($data as $k=>$vo) {
-                    if($vo['tj_cate'] == $val['pp'] && $vo['tj_bzfs'] && $vo['tj_client'] == $value['tj_client']){
+                    if($vo['tj_cate'] == $val['pp'] && $vo['tj_bzfs'] == $val['bz'] && $vo['tj_client'] == $value['tj_client']){
                         $vo['g_name'] = $guest[$vo['tj_client']];
                         $vo['cate']   = $vo['tj_cate'];
                         // 当前价格
-                        $vo['now'] = bcsub($vo['tj_dj'],$vo['delta_dj'],2);
+                        $vo['now'] = preg_replace('/\.0+$/', '',bcsub($vo['tj_dj'],$vo['delta_dj'],2));
                         // 调整后价格
                         $color = (int) $vo['delta_dj']>0? 'red':'green';
                         $arrow = (int) $vo['delta_dj']>0? '&uarr;':'&darr;';
@@ -133,6 +133,7 @@ class YxhbGuesttjApplyLogic extends Model {
                     'dj'   => '-',
                     'tj_yf' => ($yf == '-'|| $wlfs == '自提')?$wlfs==null?$yf:$wlfs:$yf,
                 );
+                if($item['now'] == '-') continue;
                 $temp[$value['tj_client']]['child'][] = $item; 
             }
         }
@@ -328,7 +329,7 @@ class YxhbGuesttjApplyLogic extends Model {
                         'pp'     => $vo['pp'],
                         'bz'     => $vo['bz'],
                         'show'   => $show,
-                        'dj'     => $dj,
+                        'dj'     => preg_replace('/\.0+$/', '',$dj),
                         'djflag' => $dj == '-'?0:1, 
                         'yf'     => ($yf == '-'|| $wlfs == '自提')?$wlfs==null?$yf:$wlfs:$yf,
                         'yfflag' => ($yf == '-'|| $wlfs == '自提')?0:1, 

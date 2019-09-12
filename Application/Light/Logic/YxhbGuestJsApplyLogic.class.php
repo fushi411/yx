@@ -49,7 +49,11 @@ class YxhbGuestJsApplyLogic extends Model {
                                     'id'    => 'btnhp',
                                     'color' => '#337ab7'
                                     );              
-
+        $result['content'][] = array('name'=>'结算类型：',
+                                     'value'=>$jslx[$res['jslx']],
+                                     'type'=>'date',
+                                     'color' => 'black'
+                                    );
         $result['content'][] = array('name'=>'客户名称：',
                                      'value'=>D('yxhb_guest2')->getParentName($res['client']),
                                      'type'=>'string',
@@ -207,9 +211,11 @@ class YxhbGuestJsApplyLogic extends Model {
                     $xjColor = $vo['js_je']>0?'black':'#f12e2e';
                     $val['djformat'] = '&yen;'.preg_replace('/\.0+$/', '', number_format($val['dj'],2,'.',','));
                     $val['xgdj'] = '&yen;'.preg_replace('/\.0+$/', '', number_format( $xgdj,2,'.',',')).'<span style="color:#f12e2e">('.$vo['js_dj'].')</span>';
-                    $val['xgyf'] = $vo['js_yf'];
-                    $val['xgzl'] = number_format($vo['js_zl'],2,'.',',');
-                    $val['xgxj'] = '<span style="color:'.$xjColor.'">'.number_format($vo['js_je'],2,'.',',').'</span>';
+                    $val['xgyf'] = $vo['js_yf']==0?$val['yf']:$vo['js_yf'];
+                    $val['xgzl'] = preg_replace('/\.0+$/', '',number_format($vo['js_zl'],2,'.',','));
+                    $val['xgxj'] = '<span style="color:'.$xjColor.'">&yen;'.preg_replace('/\.0+$/', '',number_format($vo['js_je'],2,'.',',')).'</span>';
+                    $val['zlformat'] = preg_replace('/\.0+$/', '',$val['zlformat']);
+                    $val['xjformat'] = '&yen;'.$val['xjformat'];
                     $temp[$client]['g_name'] = $g_name['g_name'];
                     $temp[$client]['data'][] = $val;
                 }

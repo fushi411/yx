@@ -201,12 +201,7 @@
             $tooltips.css('display', 'none');
         }, 2000);
     }
-    // 获取URL参数
-    function getQueryString(name) { 
-        var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i"); 
-        var r = window.location.search.substr(1).match(reg); 
-        if (r != null) return unescape(r[2]); return null; 
-    } 
+   
     // 启用配置
     $('#switchCP').on('click',function(){
         var switchVal=$(this).val();
