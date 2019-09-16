@@ -35,34 +35,10 @@ class ViewController  extends BaseController
         $explain    = $detailModel->ActiveExplain($system,$mod_name);
 
         //签收人员
-        switch ($mod_name) {
-            case 'KfRatioApply':
-                $sourceType = 1;
-            break;
-            case 'SnRatioApply':
-                $sourceType = 2;
-            break;
-            case 'FhfRatioApply':
-                $sourceType = 3;
-            break;
-            default:
-                $sourceType = 0;
-            break;
-        }
+        $list =  M('yxhb_user_deploy')->where(array('source_type'=>1, 'status'=>0))->select();
 
-        if ($sourceType > 0) {
-            $list =  M('yxhb_user_deploy')->where(array('source_type'=>$sourceType, 'status'=>0))->select();
-            $this->assign('list',$list);
-            $this->assign('source_type', $sourceType);
-        }
 
-        $qsRes =  M($system.'_appflowtable')->field('pro_mod')->where(array('stage_name' => '签收'))->select();
-        $qsArr = array();
-        foreach($qsRes as $val){
-            $qsArr[] = $val['pro_mod'];
-        }
-        $isQs = in_array($mod_name,$qsArr)?1:0;
-        $this -> assign('isQs',$isQs);
+        $this->assign('list',$list);
 
         // 无审批流程 提示 签收模式排除
         $flag = empty($appflow)?'true':'false';

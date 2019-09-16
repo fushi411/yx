@@ -226,9 +226,8 @@
             <!-- 相关说明 END-->
             <!-- 审批流程 -->
             <block name="Process">
-                <if condition="$isQs eq 0">
                     <div class="weui-cells__title">审批流程
-                        <a href="{$fixed['process']}"><i class="iconfont icon-chakan" style="vertical-align: middle;" ></i></a>
+                            <a href="{$fixed['process']}"><i class="iconfont icon-chakan" style="vertical-align: middle;" ></i></a>
                     </div>
                     <div id="allproc">
                         <div class="weui-cells" style="margin-top:0px;">
@@ -237,23 +236,23 @@
                                     <div class="weui-uploader">
                                         <div class="weui-uploader__bd" style="min-height: 70px;">
                                             <ul class="weui-uploader__files" id="app_pro" style="margin-bottom: 0px;">
-                                                <volist name="appflow" id="vo">
-                                                    <li class='weui-uploader__file wk-select__user' style='height:70px;'>
-                                                        <if condition="$vo.avatar eq ''">
-                                                            <img src="Public/assets/i/defaul.png" class='weui-selet__user' style='margin-bottom: 0px;margin-right: 6px;margin-top:10px;width: 2em;height: 2em;'>
-                                                            <else/>
-                                                            <img src="{$vo.avatar}" class='weui-selet__user' style='margin-bottom: 0px;margin-right: 6px;margin-top:10px;width: 2em;height: 2em;'>
-                                                        </if>
-                                                        <span style='margin-right: 6px;font-size: 12px;'> {$vo.name}</span>
-                                                        <if condition="count($appflow) gt $i">
-                                                            <if condition="$vo.sign eq 1">
-                                                                <span style="border-radius: 3px;position: relative;top: -2.5em;right: -1.8em;width: 6px;height: 6px;background-color: #333333;font-size: 14px;"></span>
+                                                    <volist name="appflow" id="vo">
+                                                            <li class='weui-uploader__file wk-select__user' style='height:70px;'>
+                                                            <if condition="$vo.avatar eq ''">    
+                                                                <img src="Public/assets/i/defaul.png" class='weui-selet__user' style='margin-bottom: 0px;margin-right: 6px;margin-top:10px;width: 2em;height: 2em;'>
                                                                 <else/>
-                                                                <span class="glyphicon glyphicon-arrow-right" style="position: relative;top: -2.8em;right: -1.8em;font-size: 14px;color:#f12e2e;"></span>
+                                                                <img src="{$vo.avatar}" class='weui-selet__user' style='margin-bottom: 0px;margin-right: 6px;margin-top:10px;width: 2em;height: 2em;'>
                                                             </if>
-                                                        </if>
-                                                    </li>
-                                                </volist>
+                                                            <span style='margin-right: 6px;font-size: 12px;'> {$vo.name}</span>
+                                                            <if condition="count($appflow) gt $i">
+                                                                    <if condition="$vo.sign eq 1">
+                                                                            <span style="border-radius: 3px;position: relative;top: -2.5em;right: -1.8em;width: 6px;height: 6px;background-color: #333333;font-size: 14px;"></span>
+                                                                        <else/>
+                                                                            <span class="glyphicon glyphicon-arrow-right" style="position: relative;top: -2.8em;right: -1.8em;font-size: 14px;color:#f12e2e;"></span>
+                                                                    </if>
+                                                            </if>
+                                                            </li>
+                                                        </volist>
                                             </ul>
                                         </div>
                                     </div>
@@ -261,39 +260,6 @@
                             </div>
                         </div>
                     </div>
-                    <else />
-                    <div class="weui-cells__title">签收人员选择
-                        <a href="{:U('Light/Process/userDeploy', array('source_type'=>1))}"><i class="iconfont icon-chakan" style="vertical-align: middle;"></i></a>
-                        <span style="color: #f12e2e">（各部门须选择1人签收）</span>
-                    </div>
-                    <div class="weui-cells" style="margin-top:0px;">
-                        <div class="weui-cell" style="padding-top: 0px;padding-bottom: 5px;margin-bottom: 10px;">
-                            <div class="weui-cell__bd">
-                                <div class="weui-uploader">
-                                    <div class="weui-uploader__bd">
-                                        <ul class="weui-uploader__files" id="selectSign" style="margin-bottom: 0px;">
-                                            <volist name="list" id="vo" key="k">
-                                                <li class="weui-uploader__file" style="min-height:80px;" >
-                                                    <div class="user_show">
-
-                                                    </div>
-                                                    <div class="box_div">
-                                                        <div class="weui-uploader__input-box" style="width: 2.5em;height: 2.5em;margin-right: 0px;margin-bottom: 0px;margin-top:10px;">
-                                                            <input id="signInput" class="weui-uploader__input open_sign_model" index="{$vo.id}" sort="{$k}" mode="new" type="button" name="sign" readonly />
-                                                        </div>
-                                                        <span style="margin-right: 6px;font-size: 14px;">{$vo.title}</span>
-                                                    </div>
-                                                </li>
-                                            </volist>
-                                        </ul>
-                                        <input type="hidden" name="sign_id" id="sign_id" value="">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </if>
-
             </block>
             <!-- 审批流程 END -->
             <block name="copyto">
