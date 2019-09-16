@@ -261,7 +261,7 @@
                             </div>
                         </div>
                     </div>
-                    <else />
+                <else />
                     <div class="weui-cells__title">签收人员选择
                         <a href="{:U('Light/Process/userDeploy', array('source_type'=>1))}"><i class="iconfont icon-chakan" style="vertical-align: middle;"></i></a>
                         <span style="color: #f12e2e">（各部门须选择1人签收）</span>
@@ -514,7 +514,7 @@
 </body>
 <script>
     var proFlag = "{$flag}";
-    
+
     if(proFlag == 'true'){
         $("#alert_content").text('无审批流程，请联系管理员');
         $("#iosDialog_alert").show();

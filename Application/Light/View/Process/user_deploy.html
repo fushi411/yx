@@ -9,8 +9,8 @@
             <else />
             <div class="weui-cells__title" style="text-align:right;margin: 0;">
     </if>
-    &nbsp;&nbsp;<a href="{:U('Light/View/View',array('modname'=>'KfRatioApply', 'system'=>'yxhb'))}" class="weui-btn weui-btn_mini weui-btn_default">关闭</a>
-    &nbsp;&nbsp;<a href="{:U('Light/Config/Dispenser',array('robot'=>'upUserDeploy'))}" class="weui-btn weui-btn_mini weui-btn_primary">新增配置</a>
+    &nbsp;&nbsp;<a href="{:$returnUrl}" class="weui-btn weui-btn_mini weui-btn_default">关闭</a>
+    &nbsp;&nbsp;<a href="{:U('Light/Config/Dispenser',array('robot'=>'upUserDeploy', 'source_type'=>$sourceType))}" class="weui-btn weui-btn_mini weui-btn_primary">新增配置</a>
     <volist name='condition' id='val'>
         <div class="weui-cells__title" style="text-align: left;">{$val.title}
             <if condition=" (empty($atten)) and (!$CueConfig)">
