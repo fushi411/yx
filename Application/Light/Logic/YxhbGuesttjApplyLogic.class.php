@@ -115,6 +115,7 @@ class YxhbGuesttjApplyLogic extends Model {
                         $arrow = (int) $vo['delta_dj']>0? '&uarr;':'&darr;';
                         $tmpl  = "<span style='color:".$color."'>(".$vo['delta_dj']."{$arrow})</span>";
                         $vo['dj'] = $vo['tj_dj'].$tmpl;
+                        $vo['tj_yf'] = $vo['tj_yf'] == 0?'自提':$vo['tj_yf'];
                         $temp[$vo['tj_client']]['g_name']  = $model->getName($vo['tj_client']);  
                         $temp[$vo['tj_client']]['date']    = '调价日期：'.$vo['tj_stday'];  
                         $temp[$vo['tj_client']]['child'][] = $vo;    
