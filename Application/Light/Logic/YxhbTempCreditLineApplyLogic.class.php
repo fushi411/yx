@@ -49,7 +49,7 @@ class YxhbTempCreditLineApplyLogic extends Model {
                                      'color' => 'black'
                                     );
         $result['content'][] = array('name'=>'客户名称：',
-                                     'value'=>$clientname['g_khjc']?$clientname['g_khjc']:$clientname['g_name'],
+                                     'value'=>$clientname['g_name'],
                                      'type'=>'string',
                                      'color' => 'black'
                                     ); 
@@ -150,7 +150,7 @@ class YxhbTempCreditLineApplyLogic extends Model {
                                      'type'=>'date'
                                     );
         $result[] = array('name'=>'客户名称：',
-                                     'value'=>$clientname['g_khjc']?$clientname['g_khjc']:$clientname['g_name'],
+                                     'value'=>$clientname['g_name'],
                                      'type'=>'string'
                                     );
         $result[] = array('name'=>'应收余额：',
@@ -198,7 +198,7 @@ class YxhbTempCreditLineApplyLogic extends Model {
         $clientname = M('yxhb_guest2')->field('g_khjc,g_name')->where(array('id' => $res['clientid']))->find();
         $info = $this->getInfo($res['clientid'],$res['date']);
         $temp = array(
-            array('title' => '客户名称' , 'content' => $clientname['g_khjc']?$clientname['g_khjc']:$clientname['g_name'] ),
+            array('title' => '客户名称' , 'content' => $clientname['g_name'] ),
             array('title' => '申请金额' , 'content' => number_format($res['line'],2,'.',',')."元" ),
             array('title' => '应收余额' , 'content' => $info['ye'] ),
             array('title' => '本月累计' , 'content' => $res['notice']?$res['notice']:'无' ),

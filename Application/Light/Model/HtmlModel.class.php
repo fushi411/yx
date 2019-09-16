@@ -47,7 +47,8 @@ class HtmlModel extends Model
                 <span class="weui-badge weui-badge_dot" style="margin-left: 5px;margin-right: 5px;margin-bottom: 8px;"></span>
             </div>';
         }
-                
+
+
         foreach( $data as $k=>$v ){
             $url   = U('Light/Apply/applyInfo',array('system' => $v['system'],'modname' => $v['mod'] ,'aid' => $v['aid']));
             $date  = date('m/d',strtotime($v['date']));
@@ -58,23 +59,31 @@ class HtmlModel extends Model
             foreach($v['content'] as $val){
                 $content .= empty($val)?'':"<p class='weui-media-box__desc ' style='margin-bottom: 0px;'><span>{$val['title']}：</span><span {$val['color']}>{$val['content']}</span></p>";
             }
-
-            $html .= "<a href='{$url}' target='_blank'
-                class='weui-cell weui-cell_access weui-cell_link' style='text-decoration: none;'>
-                <div class='weui-media-box weui-media-box_text' style='width: 100%;padding-left: 0px;padding-right: 0px;'>
-                    <div class='weui-flex' style='align-items: center;'>
-                        <div class='weui-flex__item'>
-                            <h4 class='weui-media-box__title'>{$v['applyer']}的{$v['toptitle']}</h4>
+            
+            $id    = $v['mod'].$v['aid']; 
+            $html .= "
+            <label for='$id' >
+                <a href='{$url}' target='_blank'
+                    class='weui-cell weui-cell_access weui-cell_link' style='text-decoration: none;'>
+                        <div class='weui-cell__hd' style='width: 32px;height: 25px;display:none;'>
+                            <input type='checkbox' name='checkbox1' id='$id'  class='weui-check'   >
+                            <i class='weui-icon-checked'></i>
                         </div>
-                        <div class='weui-flex__item'><span class='label {$lable}' style='margin-left: 1em;padding-top: 0.3em;padding-bottom: 0.2em;font-weight:300;'>{$pro}</span></div>
-                        {$dot}
-                        <div class='weui-flex__item' style='text-align: right;'>
-                            <h5>{$date}</h5>
-                        </div>
-                    </div>
-                    {$content}
-                </div>
-            </a>";
+                        <div class='weui-media-box_text' style='width: 100%;padding:5px 0px;position: relative;'>
+                            <div class='weui-flex' style='align-items: center;'>
+                                <div class='weui-flex__item'>
+                                    <h4 class='weui-media-box__title'>{$v['applyer']}的{$v['toptitle']}</h4>
+                                </div>
+                                <div class='weui-flex__item'><span class='label {$lable}' style='margin-left: 1em;padding-top: 0.3em;padding-bottom: 0.2em;font-weight:300;'>{$pro}</span></div>
+                                {$dot}
+                                <div class='weui-flex__item' style='text-align: right;'>
+                                    <h5>{$date}</h5>
+                                </div>
+                            </div>
+                            {$content}
+                        </div>   
+                </a>
+            </label>";
         }
         return $html;
     }

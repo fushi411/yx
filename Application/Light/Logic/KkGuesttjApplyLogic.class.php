@@ -120,7 +120,7 @@ class KkGuesttjApplyLogic extends Model {
                         $arrow = (int) $vo['delta_dj']>0? '&uarr;':'&darr;';
                         $tmpl  = "<span style='color:".$color."'>(".$vo['delta_dj']."{$arrow})</span>";
                         $vo['dj'] = $vo['tj_dj'].$tmpl;
-                        $temp[$vo['tj_client']]['g_name']  = $model->getParentName($vo['tj_client']);  
+                        $temp[$vo['tj_client']]['g_name']  = $model->getName($vo['tj_client']);  
                         $temp[$vo['tj_client']]['date']    = '调价日期：'.$vo['tj_stday'];  
                         $temp[$vo['tj_client']]['child'][] = $vo;    
                         $flag = 1;
@@ -132,11 +132,13 @@ class KkGuesttjApplyLogic extends Model {
                 $show = preg_replace('/[^\d]*/', '', $val['pp']).$bz;
                 $wlfs = $this->getWlfs($value['tj_client'],$tj_da,$val['pp'],$val['bz'],$system);
                 $yf   = $this->getfhyf($value['tj_client'],$tj_da,'福源鑫',$val['pp'],$val['bz'],$system);
+                $yf   = ($yf == '-'|| $wlfs == '自提')?$wlfs==null?$yf:$wlfs:$yf;
+                if($yf == 0) $yf = '自提';
                 $item = array(
                     'cate' => $show,
                     'now'  => $this->getfhdj($value['tj_client'],$tj_da,'福源鑫',$val['pp'],$val['bz'],$system),
                     'dj'   => '-',
-                    'tj_yf' => ($yf == '-'|| $wlfs == '自提')?$wlfs==null?$yf:$wlfs:$yf,
+                    'tj_yf' => $yf,
                 );
                 if($item['now'] == '-') continue;
                 $temp[$value['tj_client']]['child'][] = $item; 
@@ -365,6 +367,9 @@ class KkGuesttjApplyLogic extends Model {
                     $dj   = $this->getfhdj($val['id'],$date,'福源鑫',$vo['pp'],$vo['bz'],$system);
                     $yf   = $this->getfhyf($val['id'],$date,'福源鑫',$vo['pp'],$vo['bz'],$system);
                     $bz   = $vo['bz'] == '散装'?'(散)':'(袋)';
+                    if($dj == '-') continue;
+                    $yf     = ($yf == '-'|| $wlfs == '自提')?($wlfs==null?$yf:$wlfs):$yf;
+                    $yfflag = ($yf == '-'|| $wlfs == '自提')?0:1;
                     $show = preg_replace('/[^\d]*/', '', $vo['pp']).$bz;
                     $temp['data'][] = array(
                         'pp'     => $vo['pp'],
@@ -372,8 +377,8 @@ class KkGuesttjApplyLogic extends Model {
                         'show'   => $show,
                         'dj'     => $dj,
                         'djflag' => $dj == '-'?0:1, 
-                        'yf'     => ($yf == '-'|| $wlfs == '自提')?$wlfs==null?$yf:$wlfs:$yf,
-                        'yfflag' => ($yf == '-'|| $wlfs == '自提')?0:1, 
+                        'yf'     => $yf,
+                        'yfflag' => $yfflag, 
                         'wlfs'   => $wlfs,
                         'xgyf'   => '',
                         'xgdj'   => '',

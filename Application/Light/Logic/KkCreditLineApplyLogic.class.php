@@ -53,7 +53,7 @@ class KkCreditLineApplyLogic extends Model {
                                      'color' => 'black'
                                     );
         $result['content'][] = array('name'=>'客户名称：',
-                                     'value'=> empty($clientname['g_khjc'])?$clientname['g_name']:$clientname['g_khjc'],
+                                     'value'=> $clientname['g_name'],
                                      'type'=>'string',
                                      'color' => 'black'
                                     );
@@ -123,7 +123,7 @@ class KkCreditLineApplyLogic extends Model {
                                      'type'=>'date'
                                     );
         $result[] = array('name'=>'客户名称：',
-                                     'value'=>empty($clientname['g_khjc'])?$clientname['g_name']:$clientname['g_khjc'],
+                                     'value'=>$clientname['g_name'],
                                      'type'=>'string'
                                     );
         $result[] = array('name'=>'应收额度：',
@@ -198,7 +198,7 @@ class KkCreditLineApplyLogic extends Model {
         $res = $this->record($id);
         $clientname = M('kk_guest2')->field('g_khjc,g_name')->where(array('id' => $res['clientid']))->find();
         $temp = array(
-            array('title' => '客户名称' , 'content' => $clientname['g_khjc']?$clientname['g_khjc']:$clientname['g_name'] ),
+            array('title' => '客户名称' , 'content' => $clientname['g_name'] ),
             array('title' => '申请金额' , 'content' => "&yen;".number_format($res['line'],2,'.',',')."元" ),
             array('title' => '相关说明' , 'content' => $res['notice']?$res['notice']:'无' ),
         );
