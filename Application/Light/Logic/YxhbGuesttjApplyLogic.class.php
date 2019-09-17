@@ -218,6 +218,30 @@ class YxhbGuesttjApplyLogic extends Model {
         return $result;
     }
 
+    // 获取合同有效客户
+    public function getCustomerList(){
+        $key    = I('get.math');
+        $system = I('get.system');
+        $date   = I('get.date');
+
+        $field  = 'a.id as id,g_name as text,g_khjc as jc';
+        $map    = array(
+                'ht_stat'  => 2,
+                'ht_stday' => array('elt',$date),
+                'ht_enday' => array('egt',$date),
+                'g_khlx'   => array(array('eq','直供单位'),array('eq','经销商'),'or'),
+                'g_name'   => array('like',"%$key%"),
+                'g_helpword' => array('like',"%$key%"),
+            ); 
+        $dealer = M($system.'_guest2 as a')
+                ->join($system.'_ht as b on a.id = b.ht_khmc')
+                ->field($field)
+                ->where($map)
+                ->group('a.id')
+                ->order('reid')
+                ->select();
+        return $dealer;
+    }
  /**
      * 提交
      */
@@ -289,6 +313,8 @@ class YxhbGuesttjApplyLogic extends Model {
     public function getTjInfo(){
         $date   = I('post.date');
         $system = I('post.system');
+        $client = I('post.user_id');
+
         $field  = 'a.id as id,g_name,g_khlx,reid';
         $model  = D(ucfirst($system).'Guest2');
         $pp = array(
@@ -318,6 +344,7 @@ class YxhbGuesttjApplyLogic extends Model {
             $res = array();
             foreach($dealer as $val){
                 if(!empty($guest[$val['id']])) continue;
+                if(!empty($client) && $val['id'] != $client) continue;
                 $temp = array();
                 $temp['fg_name'] = $model->getParentName($val['id']);
                 $temp['g_name']  = $val['g_name'];

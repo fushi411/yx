@@ -207,11 +207,12 @@ class YxhbGuestJsApplyLogic extends Model {
             $res  = $this->getJc($stday,$enday,$client);
             foreach($res as $val){
                 if( $val['bzfs']== $vo['js_bzfs'] && $val['pp'] == $vo['js_cate'] ){
-                    $xgdj = $vo['js_zl']>0?($val['dj']-$vo['js_dj']):($val['dj']+$vo['js_dj']);
+                    $xgdj = $vo['js_zl']>0?bcsub($val['dj'],$vo['js_dj'],2):bcadd($val['dj'],$vo['js_dj'],2);
                     $xjColor = $vo['js_je']>0?'black':'#f12e2e';
                     $val['djformat'] = '&yen;'.preg_replace('/\.0+$/', '', number_format($val['dj'],2,'.',','));
                     $val['xgdj'] = '&yen;'.preg_replace('/\.0+$/', '', number_format( $xgdj,2,'.',',')).'<span style="color:#f12e2e">('.$vo['js_dj'].')</span>';
-                    $val['xgyf'] = $vo['js_yf']==0?$val['yf']:$vo['js_yf'];
+                    $val['xgyf'] = $vo['js_yf']==0?($val['yf'] == 0 ? '自提':$val['yf']):$vo['js_yf'];
+                    $val['yf']   = $val['yf'] == 0 ? '自提':$val['yf'];
                     $val['xgzl'] = preg_replace('/\.0+$/', '',number_format($vo['js_zl'],2,'.',','));
                     $val['xgxj'] = '<span style="color:'.$xjColor.'">&yen;'.preg_replace('/\.0+$/', '',number_format($vo['js_je'],2,'.',',')).'</span>';
                     $val['zlformat'] = preg_replace('/\.0+$/', '',$val['zlformat']);

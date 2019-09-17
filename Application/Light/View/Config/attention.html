@@ -220,7 +220,11 @@
         toastfadeIn(200,'数据提交中');
         var modname = getQueryString('modname'),
             system  = getQueryString('system');
-
+    function getQueryString(name) { 
+        var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i"); 
+        var r = window.location.search.substr(1).match(reg); 
+        if (r != null) return unescape(r[2]); return null; 
+    } 
         $.ajax({
                 type:'POST',
                 url: "{:U('Light/Config/Dispenser',array('robot'=>'attentionApi'))}", //&system=yxhb&modname=CgfkApply&action=getCustomerList

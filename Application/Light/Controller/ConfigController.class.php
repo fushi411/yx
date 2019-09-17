@@ -645,8 +645,9 @@ class ConfigController extends BaseController
         $id = I('get.id', 0, 'int');
         $title = '';
         if ($id > 0) {
-            $info = M('yxhb_user_deploy')->where(array('id' => $id))->field('title')->find();
+            $info = M('yxhb_user_deploy')->where(array('id' => $id))->field('source_type,title')->find();
             $title = $info['title'];
+            $sourceType = $info['source_type'];
         }
 
         $this->assign('sourceType', $sourceType);
@@ -671,6 +672,25 @@ class ConfigController extends BaseController
 
             $res = M('yxhb_user_deploy')->where("`id`='$id'")->save($saveData);
         } else {
+            $system = 'kk';
+            switch ($sourceType){
+                case 1:
+                    $modname = 'KfRatioApply';
+                    $system = 'yxhb';
+                    break;
+                case 2:
+                    $modname = 'SnRatioApply';
+                    break;
+                case 3:
+                    $modname = 'FhfRatioApply';
+                    break;
+                default:
+                    exit('需要先配置！');
+                    break;
+            }
+
+            $saveData['system'] = $system;
+            $saveData['modname'] = $modname;
             $saveData['source_type'] = $sourceType;
             $res = M('yxhb_user_deploy')->add($saveData);
         }

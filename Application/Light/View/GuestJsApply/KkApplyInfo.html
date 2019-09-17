@@ -213,8 +213,6 @@
 </block>
 <block name='js'>
     <script>
-        var show = getQueryString("show");
-        if(show == '') $('#other_page_one').show();
         div_show();
         function div_show(type) {
             return type == 1 ? $('#other_page_one').fadeIn() : $('#other_page_one').fadeOut();

@@ -257,6 +257,11 @@ class KkGuesttjApplyLogic extends Model {
         );
         return $result;
     }
+
+     // 获取合同有效客户
+     public function getCustomerList(){
+        return D('Guest')->getKkHtUser();
+    }
     /**
      * 提交
      */

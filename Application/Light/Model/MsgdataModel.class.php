@@ -105,6 +105,7 @@ class MsgdataModel extends Model {
         $result['kkWlCgfkApply'] = array(
             'process' => U('Light/Process/ApplyProcess',array('modname'=>'WlCgfkApply','system' => 'kk')),
             'info'    => U('Light/Apply/applyInfo',array('modname'=>'WlCgfkApply','system'=>'kk')),
+            
         );  
         $result['yxhbPjCgfkApply'] = array(
             'process' => U('Light/Process/ApplyProcess',array('modname'=>'PjCgfkApply','system' => 'yxhb')),
@@ -114,6 +115,7 @@ class MsgdataModel extends Model {
         $result['kkPjCgfkApply'] = array(
             'process' => U('Light/Process/ApplyProcess',array('modname'=>'PjCgfkApply','system' => 'kk')),
             'info'    => U('Light/Apply/applyInfo',array('modname'=>'PjCgfkApply','system'=>'kk')),
+            
         );  
         return $result;      
     }
