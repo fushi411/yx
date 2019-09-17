@@ -596,7 +596,7 @@
             function formatRepoSelection(repo) { return repo.text }
             $("#user_name").select2({
                 ajax: {
-                    url: "{:U('Light/Api/SalesReceiptsApplyApi')}" + "&system=kk&modname=SalesReceiptsApply&action=getCustomerList",
+                    url: "{:U('Light/Api/SalesReceiptsApply_fmhApi')}" + "&system=kk&modname=SalesReceiptsApply_fmh&action=getCustomerList",
                     dataType: 'json',
                     delay: 350,
                     data: function (params) {
@@ -652,7 +652,7 @@
         function getAuth(user_id,clientname){
             toastfadeIn(200,'数据加载中');
             $.ajax({
-                url: "{:U('Light/Api/SalesReceiptsApplyApi')}"+"&system=kk&modname=SalesReceiptsApply&action=getCustomerInfo",
+                url: "{:U('Light/Api/SalesReceiptsApply_fmhApi')}"+"&system=kk&modname=SalesReceiptsApply_fmh&action=getCustomerInfo",
                 dataType: 'json',
                 data: {
                     user_id: user_id
@@ -680,11 +680,11 @@
         function getBank() {
             $.ajax({
                 type: 'POST',
-                url: "{:U('Light/Api/SalesReceiptsApplyApi')}",
+                url: "{:U('Light/Api/SalesReceiptsApply_fmhApi')}",
                 dataType: 'json',
                 data: {
                     system: "{$system}",
-                    modname: 'SalesReceiptsApply',
+                    modname: 'SalesReceiptsApply_fmh',
                     action: 'getBankInfo',
                 },
                 success: function (res) {
@@ -986,9 +986,9 @@
         // formdata.append('imagefile', blob);
         formdata.append('imagefile', basestr);
         formdata.append('system', "{$system}");
-        formdata.append('modname', "SalesReceiptsApply");
+        formdata.append('modname', "SalesReceiptsApply_fmh");
         formdata.append('action', "hpsc");
-        u = "{:U('Light/Api/SalesReceiptsApplyApi')}";
+        u = "{:U('Light/Api/SalesReceiptsApply_fmhApi')}";
         xhr.open('post', u);
         xhr.onreadystatechange = function () {
             if (xhr.readyState == 4 && xhr.status == 200) {
@@ -1168,7 +1168,7 @@
             toast.fadeIn(200);
             $.ajax({
                 type: 'POST',
-                url: "{:U('Light/Api/SalesReceiptsApplyApi')}",
+                url: "{:U('Light/Api/SalesReceiptsApply_fmhApi')}",
                 dataType: 'json',
                 data: {
                     hphm: hphm,
@@ -1184,7 +1184,7 @@
                     reason: $('#hpsm').val(),
                     imagepath:imagepath,
                     system: "{$system}",
-                    modname: 'SalesReceiptsApply',
+                    modname: 'SalesReceiptsApply_fmh',
                     action: 'hptj',
                     __hash__: hash
                 },
@@ -1279,7 +1279,7 @@
             if (!user_id) return tooltip('请选择收款单位');
             if (fkfs == -1 || !fkfs) return tooltip('请选择收款方式');
             if (bank == -1 || !bank) return tooltip('请选择收款银行');
-            if (money < 0 || money == '' ) return tooltip('收款金额不能为空或小于零');
+            if (!money ) return tooltip('收款金额不能为空或小于零');
             // 留言判断
             var reason = $('#reason').val(),
                 ids = $("#sign_id").val() + ",",
@@ -1303,7 +1303,7 @@
             toast.fadeIn(200);
             $.ajax({
                 type: 'POST',
-                url: "{:U('Light/Api/SalesReceiptsApplyApi')}",
+                url: "{:U('Light/Api/SalesReceiptsApply_fmhApi')}",
                 dataType: 'json',
                 data: {
                     sign: ids,
@@ -1318,7 +1318,7 @@
                     datetime: datePicker.val(),
                     copyto_id: $("#copyto_id").val(),
                     system: "{$system}",
-                    modname: 'SalesReceiptsApply',
+                    modname: 'SalesReceiptsApply_fmh',
                     action: 'submit',
                     __hash__: hash
                 },

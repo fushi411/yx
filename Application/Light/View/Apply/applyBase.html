@@ -272,19 +272,24 @@
                                 <div class="weui-uploader">
                                     <div class="weui-uploader__bd">
                                         <ul class="weui-uploader__files" id="selectSign" style="margin-bottom: 0px;">
-                                            <volist name="list" id="vo" key="k">
-                                                <li class="weui-uploader__file" style="min-height:80px;" >
-                                                    <div class="user_show">
+                                            <if  condition="$list eq null">
+                                                <li class="weui-uploader__file" style="min-height:80px;" ></li>
+                                                <else />
+                                                <volist name="list" id="vo" key="k">
+                                                    <li class="weui-uploader__file" style="min-height:80px;" >
+                                                        <div class="user_show">
 
-                                                    </div>
-                                                    <div class="box_div">
-                                                        <div class="weui-uploader__input-box" style="width: 2.5em;height: 2.5em;margin-right: 0px;margin-bottom: 0px;margin-top:10px;">
-                                                            <input id="signInput" class="weui-uploader__input open_sign_model" index="{$vo.id}" sort="{$k}" mode="new" type="button" name="sign" readonly />
                                                         </div>
-                                                        <span style="margin-right: 6px;font-size: 14px;">{$vo.title}</span>
-                                                    </div>
-                                                </li>
-                                            </volist>
+                                                        <div class="box_div">
+                                                            <div class="weui-uploader__input-box" style="width: 2.5em;height: 2.5em;margin-right: 0px;margin-bottom: 0px;margin-top:10px;">
+                                                                <input id="signInput" class="weui-uploader__input open_sign_model" index="{$vo.id}" sort="{$k}" mode="new" type="button" name="sign" readonly />
+                                                            </div>
+                                                            <span style="margin-right: 6px;font-size: 14px;">{$vo.title}</span>
+                                                        </div>
+                                                    </li>
+                                                </volist>
+                                            </if>
+
                                         </ul>
                                         <input type="hidden" name="sign_id" id="sign_id" value="">
                                     </div>

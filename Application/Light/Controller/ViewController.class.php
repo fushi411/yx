@@ -39,12 +39,11 @@ class ViewController  extends BaseController
         $this->assign('list',$list);
 
         // 是否签收
-        $qsRes =  M($system.'_appflowtable')->field('pro_mod')->where(array('stage_name' => '签收'))->select();
-        $qsArr = array();
-        foreach($qsRes as $val){
-            $qsArr[] = $val['pro_mod'];
+        $qsInfo =  M('yx_config_title')->field('stat')->where(array('name' => $mod_name, 'mod_system'=>$system))->find();
+        $isQs = 0;
+        if (!empty($qsInfo) && $qsInfo['stat'] == 3) {
+            $isQs = 1;
         }
-        $isQs = in_array($mod_name,$qsArr)?1:0;
         $this -> assign('isQs', $isQs);
 
         // 无审批流程 提示 签收模式排除
