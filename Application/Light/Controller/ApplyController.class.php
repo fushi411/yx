@@ -39,6 +39,7 @@ class ApplyController extends BaseController {
             $isQs = 1;
         }
         $this->assign('isqs', $isQs);
+
         $boss = D($system.'Boss');
         $avatar = $boss->getAvatar($res['applyerID']);
         $this->assign('avatar', $avatar);
@@ -189,19 +190,12 @@ class ApplyController extends BaseController {
                 // 无子部门返回成员信息
                 if (empty($childDeptInfo)) {
                     $userInfo = $Dept->getWXDeptUserInfo($id);
-                    $userIdArr = array();
-                    foreach ($userInfo as $info) {
-                        $one = M('yxhb_boss')->where(array('wxid'=>$info['id']))->field('id')->find();
-                        $userIdArr[] = $one['id'];
-                    }
-
                     $childDeptHtml = $Dept->genDeptUserHtml($userInfo);
                 } else {
                     $childDeptHtml = $Dept->genDeptHtml($childDeptInfo);
                 }
             }
 
-//            $childDeptHtml = $childDeptHtml.implode(",", $userIdArr);
             $this->ajaxReturn($childDeptHtml);
         }
     }
