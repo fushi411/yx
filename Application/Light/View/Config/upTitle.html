@@ -203,7 +203,7 @@
     }
     // 取消返回
     $('#ratio-refuse').click(function(){
-        window.location.href = "{:U('Light/Process/userDeploy',array('source_type' => $sourceType))}";
+        window.location.href = "{:U('Light/Process/userDeploy', array('system' => $system, 'modname'=>$modname))}";
     })
     // 点击提交
     $('#ratio-agree').on('click',function(){
@@ -219,19 +219,19 @@
                 data: {
                     title  : title,
                     id     : "{$id}",
-                    source_type : "{$sourceType}"
+                    system : "{$system}",
+                    modname : "{$modname}"
                 },
                 dataType: 'json',
                 success: function (res) {
                     toast.fadeOut(200);
                     if (res.code == 200) {
-                        window.location.href = "{:U('Light/Process/userDeploy',array('source_type' => $sourceType))}";
+                        window.location.href = "{:U('Light/Process/userDeploy',array('system' => $system, 'modname'=>$modname))}";
                     } else {
                         tooltip(res.msg);
                     }
                 }
             });
-
     });
 </script>
 

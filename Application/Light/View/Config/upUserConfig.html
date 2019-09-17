@@ -523,7 +523,7 @@
     });
     // 取消返回
     $('#ratio-refuse_push').click(function () {
-        window.location.href = "{:U('Light/Process/userDeploy',array('source_type' => $sourceType))}";
+        window.location.href = "{:U('Light/Process/userDeploy', array('system' => $system, 'modname' => $modname))}";
     })
     // 点击提交
     $('#ratio-agree_push').click(function () {
@@ -540,7 +540,7 @@
             dataType: 'json',
             success: function (res) {
                 if(res.code==200 || res.code == 403){
-                    window.location.href = "{:U('Light/Process/userDeploy',array('source_type' => $sourceType))}";
+                    window.location.href = res.returnUrtl;
                 }else{
                     tooltip(res.msg);
                 }

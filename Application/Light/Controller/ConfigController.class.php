@@ -641,16 +641,20 @@ class ConfigController extends BaseController
 
     public function upUserDeploy()
     {
-        $sourceType = I('get.source_type', 1, 'int');
+        $system = I('get.system');
+        $modname = I('get.modname');
         $id = I('get.id', 0, 'int');
         $title = '';
         if ($id > 0) {
-            $info = M('yxhb_user_deploy')->where(array('id' => $id))->field('source_type,title')->find();
+            $info = M('yxhb_user_deploy')->where(array('id' => $id))->field('system,modname,title')->find();
             $title = $info['title'];
-            $sourceType = $info['source_type'];
+
+            $system = $info['system'];
+            $modname = $info['modname'];
         }
 
-        $this->assign('sourceType', $sourceType);
+        $this->assign('system', $system);
+        $this->assign('modname', $modname);
         $this->assign('title', $title);
         $this->assign('id', $id);
         $this->display('Config/upTitle');
@@ -658,7 +662,8 @@ class ConfigController extends BaseController
 
     public function saveUserDeploy()
     {
-        $sourceType = I('post.source_type');
+        $system = I('post.system');
+        $modname = I('post.modname');
         $id = I('post.id');
 
         $saveData = array();
@@ -672,26 +677,12 @@ class ConfigController extends BaseController
 
             $res = M('yxhb_user_deploy')->where("`id`='$id'")->save($saveData);
         } else {
-            $system = 'kk';
-            switch ($sourceType){
-                case 1:
-                    $modname = 'KfRatioApply';
-                    $system = 'yxhb';
-                    break;
-                case 2:
-                    $modname = 'SnRatioApply';
-                    break;
-                case 3:
-                    $modname = 'FhfRatioApply';
-                    break;
-                default:
-                    exit('需要先配置！');
-                    break;
+            if (empty($system) || empty($modname)) {
+                $this->ajaxReturn(array('code' => 404, 'msg' => '新增失败', 'data' => '参数错误'));
             }
 
             $saveData['system'] = $system;
             $saveData['modname'] = $modname;
-            $saveData['source_type'] = $sourceType;
             $res = M('yxhb_user_deploy')->add($saveData);
         }
 
@@ -747,12 +738,15 @@ class ConfigController extends BaseController
             $atten = $detailModel->ActiveAttention('yxhb', 'Push_config');
             $this->assign('data', $temp);
             $this->assign('atten', $atten);
-            $this->assign('sourceType', $deployData[0]['source_type']);
+            $this->assign('system', $deployData[0]['system']);
+            $this->assign('modname', $deployData[0]['modname']);
             $this->assign('id', $id);
             $this->assign('aid', 0);
             $this->assign('modname', 'KfRatioApply');
             $this->assign('system', 'yxhb');
             $this->display('Config/upUserConfig');
+        }else{
+            $this->error('参数异常!');
         }
     }
 
@@ -775,6 +769,7 @@ class ConfigController extends BaseController
 
         $saveData = array_unique($saveData);//去重
         $config = M('yxhb_user_deploy')->where(array('id' => $id))->setField(array('boss_ids' => implode(',', $saveData), 'last_at' => date('Y-m-d H:i:s')));
-        $this->ajaxReturn(array('code' => 200, 'config' => $config));
+        $returnUrtl = U('Light/Process/userDeploy', array('system' => $list[0]['system'], 'modname' => $list[0]['modname']));
+        $this->ajaxReturn(array('code' => 200, 'config' => $config, 'returnUrtl'=> $returnUrtl));
     }
 }

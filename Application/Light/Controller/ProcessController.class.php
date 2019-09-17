@@ -399,13 +399,14 @@ class ProcessController extends Controller
             $this->error ('没有当前功能操作权限！');
         }
 
-        $sourceType  = I('get.source_type', 1, 'int');// 默认为1 签收人员配置
-        if (!in_array($sourceType, array(1,2,3))) {
-            $this->error ('不支持的操作！');
+        $modname = I('get.modname');
+        $system = I('get.system');
+        if (empty($modname) || empty($system)) {
+            $this->error ('参数异常！ 请重新进入');
         }
 
         $temp = array();
-        $deployData = M('yxhb_user_deploy')->where(array('source_type' => $sourceType, 'status' => 0))->select();
+        $deployData = M('yxhb_user_deploy')->where(array('modname' => $modname, 'system'=>$system, 'status' => 0))->select();
         if (!empty($deployData)) {
             $html = D('Html');
             $boss = M('yxhb_boss');
@@ -427,26 +428,11 @@ class ProcessController extends Controller
             }
         }
 
-        $system = 'kk';
-        switch ($sourceType){
-            case 1:
-                $modname = 'KfRatioApply';
-                $system = 'yxhb';
-                break;
-            case 2:
-                $modname = 'SnRatioApply';
-                break;
-            case 3:
-                $modname = 'FhfRatioApply';
-                break;
-            default:
-                exit('需要先配置！');
-                break;
-        }
         $returnUrl = '/WE/index.php?m=Light&c=View&a=View&modname='.$modname.'&system='.$system;
-
         $this->assign('returnUrl', $returnUrl);
-        $this->assign('sourceType', $sourceType);
+
+        $this->assign('system', $system);
+        $this->assign('modname', $modname);
         $this->assign('titleName', '签收人员');
         $this->assign('CueConfig',$detailAuth);
         $this->assign('condition',$temp);
