@@ -1,0 +1,563 @@
+<extend name="Apply:applyBase" />
+
+<!-- 去除不可选择日期 -->
+<block name="disable_date"></block>
+<block name="able_date"></block>
+<block name="content_body">
+    <style>
+        #other_page .weui-form-preview__bd,
+        #other_page .fhindex .weui-cells__title {
+            color: black;
+        }
+        #other_page .fhindex .weui-cells__title{
+            font-weight: 550;
+        }
+        #other_page .weui-form-preview__label{
+            text-align-last:auto;
+            min-width:1em;
+        }
+    </style>
+    <div id='content'>
+        <div class="weui-cells">
+            <div class="weui-cell weui-cell_select weui-cell_select-after">
+                <div class="weui-cell__hd">
+                    <label class="weui-label">对账详情&nbsp;&nbsp;
+                        <span style="color:red;">*</span>
+                    </label>
+                </div>
+                <div class="weui-cell__bd">
+                    <input class="weui-select " type="text" readonly id="select_ycl" style="color: #337ab7;"
+                        value="提交对账信息" />
+                </div>
+            </div>
+            <div class="weui-cell ">
+                <div class="weui-cell__hd">
+                    <label class="weui-label">时间范围&nbsp;&nbsp;
+                    </label>
+                </div>
+                <div class="weui-cell__bd">
+                    <input class="weui-input sjfw" type="text" name="custodian" readonly placeholder="自动填写" />
+                    <span id="sjfw"></span>
+                </div>
+            </div>
+            <div class="weui-cell ">
+                <div class="weui-cell__hd">
+                    <label class="weui-label">客户名称&nbsp;&nbsp;
+                    </label>
+                </div>
+                <div class="weui-cell__bd">
+                    <input class="weui-input khmc" type="text" name="custodian" readonly placeholder="自动填写" />
+                    <span id="khmc"></span>
+                </div>
+            </div>
+            <div class="weui-cell ">
+                <div class="weui-cell__hd">
+                    <label class="weui-label">期初余额&nbsp;&nbsp;
+                    </label>
+                </div>
+                <div class="weui-cell__bd">
+                    <input class="weui-input qcye" type="text" name="custodian" readonly placeholder="自动填写" />
+                    <span id="qcye"></span>
+                </div>
+            </div>
+            <div class="weui-cell ">
+                <div class="weui-cell__hd">
+                    <label class="weui-label">本期合计&nbsp;&nbsp;
+                    </label>
+                </div>
+                <div class="weui-cell__bd">
+                    <input class="weui-input bqhj" type="text" name="custodian" readonly placeholder="自动填写" />
+                    <span id="bqhj"></span>
+                </div>
+            </div>
+            <div class="weui-cell ">
+                <div class="weui-cell__hd">
+                    <label class="weui-label">本期付款&nbsp;&nbsp;
+                    </label>
+                </div>
+                <div class="weui-cell__bd">
+                    <input class="weui-input bqyf" type="text" name="custodian" readonly placeholder="自动填写" />
+                    <span id="bqyf"></span>
+                </div>
+            </div>
+            <div class="weui-cell ">
+                <div class="weui-cell__hd">
+                    <label class="weui-label">
+                        <span class="font-width">其他调整</span>&nbsp;&nbsp;
+                    </label>
+                </div>
+                <div class="weui-cell__hd">
+                    <div id="qt_content">
+                    </div>
+                    <div id="qt_div">
+                        <span class=" greyColor">自动填写</span>
+                    </div>
+                </div>
+            </div>
+            <div class="weui-cell ">
+                <div class="weui-cell__hd">
+                    <label class="weui-label">期末余额&nbsp;&nbsp;
+                    </label>
+                </div>
+                <div class="weui-cell__bd">
+                    <input class="weui-input qmqk" type="text" name="custodian" readonly placeholder="自动填写" />
+                    <span id="qmqk"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="other_page" id="other_page">
+        <div class="container">
+            <div class="page js_show">
+                <div class="weui-cells weui-cells_form">
+                    <div class="weui-cell weui-cell_select weui-cell_select-after">
+                        <div class="weui-cell__hd">
+                            <label class="weui-label">客户选择&nbsp;&nbsp;
+                            </label>
+                        </div>
+                        <div class="weui-cell__bd">
+                            <div class="weui-cell__bd" id='alter_div'>
+                                <select class="weui-select" name="user_name[]" id="user_name" multiple="multiple"
+                                    style="width: 95%;" data-placeholder="客户范围为总客户[有效]">
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="weui-cell weui-cell_select weui-cell_select-after">
+                        <div class="weui-cell__hd">
+                            <label class="weui-label">开始日期&nbsp;&nbsp;
+                            </label>
+                        </div>
+                        <div class="weui-cell__bd">
+                            <input class="weui-select" type="text" name="custodian" id="start_date" readonly
+                                placeholder="请选择开始日期" value="" />
+                        </div>
+                    </div>
+                    <div class="weui-cell weui-cell_select weui-cell_select-after">
+                        <div class="weui-cell__hd">
+                            <label class="weui-label">结束日期&nbsp;&nbsp;
+                            </label>
+                        </div>
+                        <div class="weui-cell__bd">
+                            <input class="weui-select" type="text" name="custodian" id="end_date" readonly
+                                placeholder="请选择结束日期" value="" />
+                        </div>
+                    </div>
+                    
+                </div>
+                <div class="weui-cells__title">
+                    <div style="display: inline-block;width: 40%;">对账详情</div>
+                    <div style="display: inline-block;width: 50%;text-align: right;">
+                        <div id="btn-all" class="btn btn-default btn-sm">关闭</div>
+                        <div id="overdue" class="btn btn-success btn-sm">确定</div>
+                    </div>
+                </div>
+                <div class="weui-cells weui-cells_form"  style="margin-top: 0;min-height: 101%">
+                    <div class="page__bd">
+                        <div class="weui-cells searchbar-result" id="order_select" style="background-color:#f8f8f8;margin-top:0;">
+
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+   
+</block>
+<block name="js">
+<!-- <script src="__PUBLIC__/assets/js/vconsole.min.js"></script> -->
+    <script>
+        // params 
+
+        var user_id = '', auth = '', user_name = '',data = '';
+        var nowdays = new Date();
+        var year = nowdays.getFullYear();
+        var month = nowdays.getMonth();
+        if(month==0)
+        {
+            month=12;
+            year=year-1;
+        }
+        if (month < 10) {
+            month = "0" + month;
+        }
+        var firstDay = year + "-" + month + "-" + "01";               //上个月的第一天
+
+        var myDate = new Date(year, month, 0);
+        var lastDay = year + "-" + month + "-" + myDate.getDate();   //上个月的最后一天
+        $('#start_date').val();
+        $('#end_date').val();
+        // 提交按钮
+        $('#submit').click(function(){
+            if(data == '') return tooltip('请选择对账单');
+            var start_date = $('#start_date').val(),
+                end_date = $('#end_date').val();
+            if (user_id == '') return tooltip('请选择客户');
+            if (start_date == '') return tooltip('请选择开始时间');
+            if (end_date == '') return tooltip('请选择结束时间');
+            var reason = $('#reason').val();
+            toast.fadeIn(200);
+            $.ajax({
+                type: 'POST',
+                url: "{:U('Light/Api/ClientStatementApply_fmhApi')}",
+                dataType: 'json',
+                data: {
+                    data: data,
+                    start_date: start_date,
+                    end_date: end_date,
+                    user_id: user_id,
+                    text: reason,
+                    copyto_id: $("#copyto_id").val(),
+                    system: "{$system}",
+                    modname: 'ClientStatementApply_fmh',
+                    action: 'submit',
+                    __hash__: hash
+                },
+                dataType: 'json',
+                success: function (res) {
+                    toast.fadeOut(200);
+                    if (res.code == 200) {
+                        window.location.href = "{$fixed['info']}" + "&aid=" + res.aid;
+                    } else {
+                        tooltip(res.msg);
+                    }
+                }
+            });
+        });
+        // 确定按钮点击
+        $('#overdue').click(function () {
+            var start_date = $('#start_date').val(),
+                end_date = $('#end_date').val();
+            if (user_id == '') return tooltip('请选择客户');
+            if (start_date == '') return tooltip('请选择开始时间');
+            if (end_date == '') return tooltip('请选择结束时间');
+            toastfadeIn(200, '数据获取中');
+            $.ajax({
+                type: 'POST',
+                url: "{:U('Light/Api/ClientStatementApply_fmhApi')}",
+                dataType: 'json',
+                data: {
+                    user_id: user_id,
+                    start_date: start_date,
+                    end_date: end_date,
+                    system: "{$system}",
+                    modname: 'ClientStatementApply_fmh',
+                    action: 'getCustomerInfo',
+                    __hash__: hash
+                },
+                dataType: 'json',
+                success: function (res) {
+                    toast.fadeOut(200);
+                    auth = res;
+                    getCustomerInfo();
+                }
+            });
+        });
+        
+        // 远程接口获取
+        function getCustomerInfo() {
+            var start_date = $('#start_date').val(),
+                end_date = $('#end_date').val();
+            if (user_id == '') return tooltip('请选择客户');
+            if (start_date == '') return tooltip('请选择开始时间');
+            if (end_date == '') return tooltip('请选择结束时间');
+            $.ajax({
+                type: 'POST',
+                url: "https://www.fjyuanxin.top/sngl/getStatementFmhApi.php",
+                dataType: 'json',
+                data: {
+                    id: user_id,
+                    stday: start_date,
+                    enday: end_date,
+                    auth: auth,
+                },
+                dataType: 'json',
+                success: function (res) {
+                    data = res;
+                    makeHtml(res);
+                    showdata($('#sjfw'),$('.sjfw'),start_date+'至'+end_date,1); 
+                    showdata($('#khmc'),$('.khmc'),user_name,1); 
+                    if(res.qc_int<=0){
+                        showdata($('#qcye'),$('.qcye'),res.qc.substring(1),2);
+                    }else{
+                        $('#qcye').css('color','#f12e2e');
+                        showdata($('#qcye'),$('.qcye'),'-'+res.qc,2);
+                    }
+                    showdata($('#bqhj'),$('.bqhj'),res.totalje,2);
+                    showdata($('#bqyf'),$('.bqyf'),res.totalbqhr,2);
+                    showdata($('#qt_div'),$('#qt_content'),res.totalqtje,2);
+                    if(res.qmje_int<=0){
+                        showdata($('#qmqk'),$('.qmqk'),res.qmje.substring(1),2);
+                    }else{
+                        $('#qmqk').css('color','#f12e2e');
+                        showdata($('#qmqk'),$('.qmqk'),'-'+res.qmje,2);
+                    }
+                    $('#select_ycl').val('查看对账信息');
+                }
+            });
+        }
+        function showdata(show,hide,html,font){
+            show.show().html(html);
+            if(font == 2) {
+                show.show().html("&yen;"+html);
+                show.css('font-weight','600');
+            }
+            hide.hide();
+        }
+        function makeHtml(res) {
+            var color = res.qc_int<=0?'':'#f12e2e',
+            qmcolor = res.qmje_int<=0?'':'#f12e2e',
+            plug = res.qc_int<=0?res.qc.substring(1):'-'+res.qc,
+            qmplug = res.qmje_int<=0?res.qmje.substring(1):'-'+res.qmje;
+            
+            var html = '<div class="weui-cell__bd weui-cell_primary fhindex" index="0">'+
+                '<div class="weui-form-preview">'+
+                    '<div class="weui-form-preview__bd">'+
+                        '<div class="weui-form-preview__item"><label '+
+                            'class="weui-form-preview__label">客户名称:</label><span '+
+                                'class="weui-form-preview__value" style="text-align:left;">'+user_name+'</span>'+
+                        '</div>'+
+                        '<div class="weui-flex">'+
+                            '<div class="weui-form-preview__item weui-flex__item"><label '+
+                                'class="weui-form-preview__label">期初余额:</label><span '+
+                                    'class="weui-form-preview__value" style="text-align:left;color:'+color+';">'+"&yen;"+plug+'</span>'+
+                            '</div>'+
+                        '</div>'+
+                        '<div class="weui-flex">'+
+                            '<div class="weui-form-preview__item weui-flex__item"><label '+
+                                'class="weui-form-preview__label">本期合计:</label><span '+
+                                    'class="weui-form-preview__value" style="text-align:left;">'+"&yen;"+res.totalje+'</span>'+
+                            '</div>'+
+                        '</div>'+
+                        '<div class="weui-flex">'+
+                            '<div class="weui-form-preview__item weui-flex__item"><label '+
+                                'class="weui-form-preview__label">本期付款:</label><span '+
+                                    'class="weui-form-preview__value" style="text-align:left;">'+"&yen;"+res.totalbqhr+'</span>'+
+                            '</div>'+
+                        '</div>'+
+                        '<div class="weui-flex">'+
+                            '<div class="weui-form-preview__item weui-flex__item"><label '+
+                                'class="weui-form-preview__label">其他调整:</label><span '+
+                                    'class="weui-form-preview__value" style="text-align:left;">'+"&yen;"+res.totalqtje+'</span>'+
+                            '</div>'+
+                        '</div>'+
+                        '<div class="weui-flex">'+
+                            '<div class="weui-form-preview__item weui-flex__item"><label '+
+                                'class="weui-form-preview__label">期末余额:</label><span '+
+                                    'class="weui-form-preview__value" style="text-align:left;color:'+qmcolor+';">'+"&yen;"+qmplug+'</span>'+
+                            '</div>'+
+                        '</div>'+
+                    '</div>'+
+                '</div>'+
+            '</div>';
+            var user = '';
+            for(i in res.data){
+                if( user != res.data[i].client){
+                    html +='<div class="weui-cells__title" style="text-align:center;color:black;">'+res.data[i].client+'</div>';
+                    user = res.data[i].client;
+                }
+                html += '<div class="weui-cell__bd weui-cell_primary fhindex" index="0">'+
+                '<div class="weui-cells__title">'+res.data[i].date+'</div>'+
+                '<div class="weui-form-preview">'+
+                    '<div class="weui-form-preview__bd">'+
+                        '<div class="weui-flex">'+
+                            '<div class="weui-form-preview__item weui-flex__item"><label '+
+                                'class="weui-form-preview__label">品种</label><span '+
+                                    'class="weui-form-preview__value" style="text-align:left;">'+res.data[i].cate+'</span>'+
+                            '</div>'+
+                            '<div class="weui-form-preview__item weui-flex__item"><label '+
+                                'class="weui-form-preview__label">数量</label><span '+
+                                    'class="weui-form-preview__value" style="text-align:left;">'+res.data[i].weight+'吨</span>'+
+                            '</div>'+
+                        '</div>'+
+                        '<div class="weui-flex">'+
+                            '<div class="weui-form-preview__item weui-flex__item"> <label  '+
+                                'class="weui-form-preview__label">单价</label><span '+
+                                    'class="weui-form-preview__value" style="text-align:left;">'+"&yen;"+res.data[i].unitprice+'</span>'+
+                            '</div>'+
+                            '<div class="weui-form-preview__item weui-flex__item"><label '+
+                                'class="weui-form-preview__label">金额</label><span '+
+                                    'class="weui-form-preview__value" style="text-align:left;">'+"&yen;"+res.data[i].je+'</span>'+
+                            '</div>'+
+                        '</div>'+
+                    '</div>'+
+                '</div>'+
+            '</div>';
+            }
+            html += '<div class="weui-cell__bd weui-cell_primary fhindex" index="0">'+
+                '<div class="weui-cells__title">本期合计</div>'+
+                '<div class="weui-form-preview">'+
+                    '<div class="weui-form-preview__bd">'+
+                        '<div class="weui-flex">'+
+                            '<div class="weui-form-preview__item weui-flex__item"><label '+
+                                'class="weui-form-preview__label">数量</label><span '+
+                                    'class="weui-form-preview__value" style="text-align:left;">'+res.total_zl+'吨</span>'+
+                            '</div>'+
+                            '<div class="weui-form-preview__item weui-flex__item"><label '+
+                                'class="weui-form-preview__label">金额</label><span '+
+                                    'class="weui-form-preview__value" style="text-align:left;">'+"&yen;"+res.totalje+'</span>'+
+                            '</div>'+
+                        '</div>'+
+                    '</div>'+
+                '</div>'+
+            '</div>'+
+            '<div class="weui-cell__bd weui-cell_primary fhindex" index="0">'+
+                '<div class="weui-cells__title">付款明细</div>'+
+                '<div class="weui-form-preview">'+
+                    '<div class="weui-form-preview__bd">';
+                    for(k in res.bqhr_data){
+                        html+='<div class="weui-flex">'+
+                            '<div class="weui-form-preview__item weui-flex__item" style="color: black;"><label '+
+                                'class="weui-form-preview__label"></label><span '+
+                                    'class="weui-form-preview__value" style="text-align:left;">'+res.bqhr_data[k].date+'</span>'+
+                            '</div>'+
+                            '<div class="weui-form-preview__item weui-flex__item"><label '+
+                                'class="weui-form-preview__label"></label><span '+
+                                    'class="weui-form-preview__value" style="text-align:left;">'+"&yen;"+res.bqhr_data[k].money+'</span>'+
+                            '</div>'+
+                        '</div>';
+                    }
+            html+='<div class="weui-flex">'+
+                    '<div class="weui-form-preview__item weui-flex__item" ><label '+
+                        'class="weui-form-preview__label">合计</label><span '+
+                            'class="weui-form-preview__value" style="text-align:left;"></span>'+
+                    '</div>'+
+                    '<div class="weui-form-preview__item weui-flex__item" ><label '+
+                        'class="weui-form-preview__label"></label><span '+
+                            'class="weui-form-preview__value" style="text-align:left;">'+"&yen;"+res.totalbqhr+'</span>'+
+                    '</div>'+
+                '</div>'+
+                 '</div>'+
+                '</div>'+
+            '</div>'+
+            '<div class="weui-cell__bd weui-cell_primary fhindex" index="0">'+
+                '<div class="weui-cells__title">其他调整</div>'+
+                '<div class="weui-form-preview">'+
+                    '<div class="weui-form-preview__bd">'+
+                        '<div class="weui-flex">'+
+                            '<div class="weui-form-preview__item weui-flex__item"><label '+
+                                'class="weui-form-preview__label">结算</label><span '+
+                                    'class="weui-form-preview__value" style="text-align:left;">'+"&yen;"+res.jsje+'</span>'+
+                            '</div>'+
+                            '<div class="weui-form-preview__item weui-flex__item"><label '+
+                                'class="weui-form-preview__label">返利</label><span '+
+                                    'class="weui-form-preview__value" style="text-align:left;">'+"&yen;"+res.flje+'</span>'+
+                            '</div>'+
+                        '</div>'+
+                        '<div class="weui-flex">'+
+                            '<div class="weui-form-preview__item weui-flex__item">'+
+                            '</div>'+
+                            '<div class="weui-form-preview__item weui-flex__item"><label '+
+                                'class="weui-form-preview__label">金额</label><span '+
+                                    'class="weui-form-preview__value" style="text-align:left;">'+"&yen;"+res.totalqtje+'</span>'+
+                            '</div>'+
+                        '</div>'+
+                    '</div>'+
+                '</div>'+
+            '</div>';
+           $('#order_select').html(html);
+        }
+        // 
+        // 显示
+        div_show();
+        function div_show(type) {
+            if (type == 1) {
+                $('#content').fadeOut();
+                $('.weui-cells').eq(1).fadeOut();
+                $('#other_page').fadeIn();
+                $('#btn-all').fadeIn();
+            } else {
+                $('#content').fadeIn();
+                $('.weui-cells').eq(1).fadeIn();
+                $('#other_page').fadeOut();
+                $('#btn-all').fadeOut();
+            }
+        }
+        $('#btn-all').click(function () {
+            div_show();
+        });
+        $('#select_ycl').click(function () {
+            div_show(1);
+        })
+        // 开始时间
+        $('#start_date').on('click', function () {
+            weui.datePicker({
+                start: 2018,
+                end: new Date().getFullYear() + 10,
+                defaultValue: [new Date().getFullYear(), new Date().getMonth() + 1, new Date().getDate()],
+                onConfirm: function (result) {
+                    pickerValue(result, $('#start_date'));
+                },
+                id: 'start_date'
+            });
+        });
+        // 结束时间
+        $('#end_date').on('click', function () {
+            weui.datePicker({
+                start: 2018,
+                end: new Date().getFullYear() + 10,
+                defaultValue: [new Date().getFullYear(), new Date().getMonth() + 1, new Date().getDate()],
+                onConfirm: function (result) {
+                    pickerValue(result, $('#end_date'));
+                },
+                id: 'end_date'
+            });
+        });
+        // 日历填充
+        function pickerValue(dateArr, dom) {
+            var val = dateArr[0] + '-';
+            val += dateArr[1] > 9 ? dateArr[1] : '0' + dateArr[1];
+            val += '-';
+            val += dateArr[2] > 9 ? dateArr[2] : '0' + dateArr[2];
+            dom.val(val);
+        }
+        // 用户选择
+        function formatRepo(repo) { return repo.text; }
+        function formatRepoSelection(repo) { return repo.text }
+        $("#user_name").select2({
+            ajax: {
+                url: "{:U('Light/Api/ClientStatementApply_fmhApi')}" + "&system={$system}&modname=ClientStatementApply_fmh&action=getCustomerList",
+                dataType: 'json',
+                delay: 350,
+                data: function (params) {
+                    $('#alter_div input').eq(0).attr('placeholder', '请选择客户或拼音缩写');
+                    return {
+                        math: params.term,
+                    };
+                },
+                processResults: function (data) {
+                    return {
+                        results: data
+                    };
+                },
+                cache: true
+            },
+            escapeMarkup: function (markup) { return markup; },
+            minimumInputLength: 0,
+            minimumResultsForSearch: 9,
+            // allowClear: true,
+            language: "zh-CN",
+            templateResult: formatRepo,
+            templateSelection: formatRepoSelection
+        });
+
+        $('#alter_div').on('blur', 'input', function () {
+            if (!user_id) $('#alter_div input').eq(0).attr('placeholder', '客户范围为总客户[有效]');
+        })
+        // select2 点击触发
+        $("#user_name").on("select2:selecting", function (e) {
+            $('.select2-selection__choice__remove').click();
+            var selectArr = e.params.args.data;
+            user_name = selectArr.text;
+            if(selectArr.jc != '')selectArr.text = selectArr.jc;
+            $('.select2-selection__choice').text(selectArr.text);
+            user_id = selectArr.id;
+        });
+
+        $("#user_name").on("select2:unselecting", function (e) {
+            user_id = 0;
+            user_name = '';
+        });
+    </script>
+</block>

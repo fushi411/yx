@@ -1,0 +1,345 @@
+<extend name="Apply:base" />
+<block name="table">
+    <style>
+        #other_page_one .weui-form-preview__bd,
+        #other_page_one .fhindex .weui-cells__title {
+            color: black;
+        }
+        #other_page_one .fhindex .weui-cells__title{
+            font-weight: 550;
+        }
+        #other_page_one .weui-form-preview__label{
+            text-align-last:auto;
+            min-width:1em;
+        }
+    </style>
+    </style>
+        <div class="other_page_one" id="other_page_one" style="display: none;    
+        position: fixed;
+        left: 0;
+        top: 0;
+        height: 100%;
+        width: 100%;
+        z-index: 999;">
+            <div class="container">
+                <div class="page js_show">
+                    <div class="weui-cells weui-cells_form">
+                        <div class="weui-cell weui-cell_select weui-cell_select-after">
+                                <div class="weui-cell__hd">
+                                    <label class="weui-label">客户选择&nbsp;&nbsp;
+                                    </label>
+                                </div>
+                                <div class="weui-cell__bd">
+                                    <input class="weui-select" type="text" name="custodian" id="start_date" readonly
+                                        placeholder="请选择客户" value="{$mydata.user_name}" />
+                                </div>
+                            </div>
+                        <div class="weui-cell weui-cell_select weui-cell_select-after">
+                            <div class="weui-cell__hd">
+                                <label class="weui-label">开始日期&nbsp;&nbsp;
+                                </label>
+                            </div>
+                            <div class="weui-cell__bd">
+                                <input class="weui-select" type="text" name="custodian" id="start_date" readonly
+                                    placeholder="请选择开始日期" value="{$mydata.stday}" />
+                            </div>
+                        </div>
+                        <div class="weui-cell weui-cell_select weui-cell_select-after">
+                            <div class="weui-cell__hd">
+                                <label class="weui-label">结束日期&nbsp;&nbsp;
+                                </label>
+                            </div>
+                            <div class="weui-cell__bd">
+                                <input class="weui-select" type="text" name="custodian" id="end_date" readonly
+                                    placeholder="请选择结束日期" value="{$mydata.enday}" />
+                            </div>
+                        </div>
+    
+                    </div>
+                    <div class="weui-cells__title">
+                        <div style="display: inline-block;width: 40%;">对账详情</div>
+                        <div style="display: inline-block;width: 50%;text-align: right;">
+                            <div id="btn-all" class="btn btn-success btn-sm">返回</div>
+                            <div id="overdue" class="btn btn-success btn-sm">确定</div>
+                        </div>
+                    </div>
+                    <div class="weui-cells weui-cells_form"  style="margin-top: 0;min-height: 101%">
+                        <div class="page__bd">
+                            <div class="weui-cells searchbar-result" id="order_select" style="background-color:#f8f8f8;margin-top:0;">
+    
+    
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+</block>  
+<block name="apply">
+        <eq name="isApplyer" value="1">
+            <eq name="apply.stat" value="0">
+                <div class="weui-panel" style="margin-top: 0px;">
+                    <div class="weui-panel__hd" style="font-size: 16px;background-color: #f8f8f8;color:black;padding-top: 10px;">{$stepStatus}意见</div>
+                    <div class="weui-panel__bd">
+                        <div class="weui-cell">
+                            <div class="weui-cell__bd">
+                                <textarea class="weui-textarea" placeholder="请输入{$stepStatus}意见;
+{$stepStatus}意见可@指定人;
+无指定默认@所有人（含抄送）;" rows="3" id="comment" style="font-size: 1.2em">{$per_word}</textarea>
+                                <div class="weui-textarea-counter">
+                                    <!-- 指定@ -->
+                                    <div class="weui-tabbar" style="position: initial;">
+                                        <a href="#" class="weui-tabbar__item" style="text-decoration: none;">
+                                            <p class="weui-tabbar__label" style="font-size: 15px;color:black;" id="btn-sp">
+                                                <span class="glyphicon" aria-hidden="true" style="margin-right: 5px;"></span>
+                                                @ 指定人
+                                            </p>
+                                        </a>
+                                        <a href="#" class="weui-tabbar__item" id="btn-qz-div" style=" text-decoration: none;">
+                                            <p class="weui-tabbar__label" style="font-size: 15px;color:black;" id="btn-qz">
+                                                <span class="glyphicon glyphicon-pencil" aria-hidden="true" style="margin-right: 5px;"></span> 
+                                                签字
+                                            </p>  
+                                        </a>
+                                        <a href="#" class="weui-tabbar__item" id="btn-yl-div"  style="display: none;text-decoration: none;">
+                                            <p class="weui-tabbar__label" style="font-size: 15px;color:#1aad19;" id="btn-yl">
+                                                <span class="glyphicon glyphicon-paperclip" aria-hidden="true" style="margin-right: 5px;"></span> 
+                                                已签字（点击预览）
+                                            </p>  
+                                        </a>
+                                    </div>
+                                    <div class="page js_show" id="approve_at" style="position: relative;display: none;">
+                                        <div class="page__bd">
+                                            <div class="weui-cells" id="" style="margin-top: 5px;margin-bottom: 5px;">
+                                                <div class="weui-uploader">
+                                                    <div class="weui-uploader__bd" style="margin-right: 0px;margin-bottom: 0px;padding-top: 12px;">
+                                                        <ul class="weui-uploader__files" id="selectapprovetUser" style="margin-bottom: 0px;">
+                                                        </ul>
+                                                        <input type="hidden" name="approve_to_id" id="approve_to_id">
+                                                    </div>
+                                                </div>
+                                            </div>
+            
+                                            <div class="weui-cells searchbar-result" id="approveSearchResult" style="margin-top: 0px;">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- end   指定@ -->
+                                </div>
+                            </div>
+                            
+                        </div>
+                        <div class="button-sp-area" id="apply-area" style="margin-bottom: 20px;display: flex;flex-direction: row;width: 100%;justify-content: space-around;align-items: baseline;">
+                            <a href="javascript:;" id="apply-agree" class="weui-btn weui-btn_primary" style="width: 40%">同意</a>
+                            <a href="javascript:;" id="apply-refuse" class="weui-btn weui-btn_warn" style="width: 40%;">退审</a>
+                            <!-- <a href="javascript:;" class="weui-btn weui-btn_default">转审</a> -->
+                            
+                            <input type="hidden" name="apply_user" id="apply_user" value="{$applyerID}">
+                        </div>
+                        <div class="button-sp-area" style="margin-bottom: 20px;display: flex;flex-direction: row;width: 100%;justify-content: space-around;align-items: baseline;">
+                            <button id="apply-change" class="weui-btn weui-btn_primary" style="width: 90%">转审</button>
+                        </div>
+                        
+                        <!-- <div class="weui-cells__title">各个中心主管及以上职位的申请抄送</div> -->
+                        
+                    </div>
+                </div>
+            </eq>
+        </eq>
+      
+    </block>
+<block name='js'>
+  
+    <script>
+        var user_id = "{$mydata.id}",
+            start_date = "{$mydata.stday}",
+            end_date = "{$mydata.enday}",
+            auth = "{$mydata.auth}",
+            user_name = "{$mydata.user_name}";
+            // 显示
+         // 远程接口获取
+         getCustomerInfo();
+         function getCustomerInfo() {
+            $.ajax({
+                type: 'POST',
+                url: "https://www.fjyuanxin.top/sngl/getStatementFmhApi.php",
+                dataType: 'json',
+                data: {
+                    id: user_id,
+                    stday: start_date,
+                    enday: end_date,
+                    auth: auth,
+                },
+                dataType: 'json',
+                success: function (res) {
+                    makeHtml(res);
+                }
+            });
+        }
+        div_show();
+        function div_show(type) {
+           return type == 1? $('#other_page_one').fadeIn(): $('#other_page_one').fadeOut();
+        }
+
+        $('#btn-all').click(function () {
+            div_show();
+        });
+        $('#look').click(function () {
+            div_show(1);
+        })
+
+        function makeHtml(res) {
+            var color = res.qc_int<0?'':'#f12e2e',
+            qmcolor = res.qmje_int<0?'':'#f12e2e',
+            plug = res.qc_int<0?res.qc.substring(1):'-'+res.qc,
+            qmplug = res.qmje_int<0?res.qmje.substring(1):'-'+res.qmje;
+            
+            var html = '<div class="weui-cell__bd weui-cell_primary fhindex" index="0">'+
+                '<div class="weui-form-preview">'+
+                    '<div class="weui-form-preview__bd">'+
+                        '<div class="weui-form-preview__item"><label '+
+                            'class="weui-form-preview__label">客户名称:</label><span '+
+                                'class="weui-form-preview__value" style="text-align:left;">'+user_name+'</span>'+
+                        '</div>'+
+                        '<div class="weui-flex">'+
+                            '<div class="weui-form-preview__item weui-flex__item"><label '+
+                                'class="weui-form-preview__label">期初余额:</label><span '+
+                                    'class="weui-form-preview__value" style="text-align:left;color:'+color+';">'+"&yen;"+plug+'</span>'+
+                            '</div>'+
+                        '</div>'+
+                        '<div class="weui-flex">'+
+                            '<div class="weui-form-preview__item weui-flex__item"><label '+
+                                'class="weui-form-preview__label">本期合计:</label><span '+
+                                    'class="weui-form-preview__value" style="text-align:left;">'+"&yen;"+res.totalje+'</span>'+
+                            '</div>'+
+                        '</div>'+
+                        '<div class="weui-flex">'+
+                            '<div class="weui-form-preview__item weui-flex__item"><label '+
+                                'class="weui-form-preview__label">本期付款:</label><span '+
+                                    'class="weui-form-preview__value" style="text-align:left;">'+"&yen;"+res.totalbqhr+'</span>'+
+                            '</div>'+
+                        '</div>'+
+                        '<div class="weui-flex">'+
+                            '<div class="weui-form-preview__item weui-flex__item"><label '+
+                                'class="weui-form-preview__label">其他调整:</label><span '+
+                                    'class="weui-form-preview__value" style="text-align:left;">'+"&yen;"+res.totalqtje+'</span>'+
+                            '</div>'+
+                        '</div>'+
+                        '<div class="weui-flex">'+
+                            '<div class="weui-form-preview__item weui-flex__item"><label '+
+                                'class="weui-form-preview__label">期末余额:</label><span '+
+                                    'class="weui-form-preview__value" style="text-align:left;color:'+qmcolor+';">'+"&yen;"+qmplug+'</span>'+
+                            '</div>'+
+                        '</div>'+
+                    '</div>'+
+                '</div>'+
+            '</div>';
+            var user = '';
+            for(i in res.data){
+                if( user != res.data[i].client){
+                    html +='<div class="weui-cells__title" style="text-align:center;color:black;">'+res.data[i].client+'</div>';
+                    user = res.data[i].client;
+                }
+                html += '<div class="weui-cell__bd weui-cell_primary fhindex" index="0">'+
+                '<div class="weui-cells__title">'+res.data[i].date+'</div>'+
+                '<div class="weui-form-preview">'+
+                    '<div class="weui-form-preview__bd">'+
+                        '<div class="weui-flex">'+
+                            '<div class="weui-form-preview__item weui-flex__item"><label '+
+                                'class="weui-form-preview__label">品种</label><span '+
+                                    'class="weui-form-preview__value" style="text-align:left;">'+res.data[i].cate+'</span>'+
+                            '</div>'+
+                            '<div class="weui-form-preview__item weui-flex__item"><label '+
+                                'class="weui-form-preview__label">数量</label><span '+
+                                    'class="weui-form-preview__value" style="text-align:left;">'+res.data[i].weight+'吨</span>'+
+                            '</div>'+
+                        '</div>'+
+                        '<div class="weui-flex">'+
+                            '<div class="weui-form-preview__item weui-flex__item"> <label  '+
+                                'class="weui-form-preview__label">单价</label><span '+
+                                    'class="weui-form-preview__value" style="text-align:left;">'+"&yen;"+res.data[i].unitprice+'</span>'+
+                            '</div>'+
+                            '<div class="weui-form-preview__item weui-flex__item"><label '+
+                                'class="weui-form-preview__label">金额</label><span '+
+                                    'class="weui-form-preview__value" style="text-align:left;">'+"&yen;"+res.data[i].je+'</span>'+
+                            '</div>'+
+                        '</div>'+
+                    '</div>'+
+                '</div>'+
+            '</div>';
+            }
+            html += '<div class="weui-cell__bd weui-cell_primary fhindex" index="0">'+
+                '<div class="weui-cells__title">本期合计</div>'+
+                '<div class="weui-form-preview">'+
+                    '<div class="weui-form-preview__bd">'+
+                        '<div class="weui-flex">'+
+                            '<div class="weui-form-preview__item weui-flex__item"><label '+
+                                'class="weui-form-preview__label">数量</label><span '+
+                                    'class="weui-form-preview__value" style="text-align:left;">'+res.total_zl+'吨</span>'+
+                            '</div>'+
+                            '<div class="weui-form-preview__item weui-flex__item"><label '+
+                                'class="weui-form-preview__label">金额</label><span '+
+                                    'class="weui-form-preview__value" style="text-align:left;">'+"&yen;"+res.totalje+'</span>'+
+                            '</div>'+
+                        '</div>'+
+                    '</div>'+
+                '</div>'+
+            '</div>'+
+            '<div class="weui-cell__bd weui-cell_primary fhindex" index="0">'+
+                '<div class="weui-cells__title">付款明细</div>'+
+                '<div class="weui-form-preview">'+
+                    '<div class="weui-form-preview__bd">';
+                    for(k in res.bqhr_data){
+                        html+='<div class="weui-flex">'+
+                            '<div class="weui-form-preview__item weui-flex__item" style="color: black;"><label '+
+                                'class="weui-form-preview__label"></label><span '+
+                                    'class="weui-form-preview__value" style="text-align:left;">'+res.bqhr_data[k].date+'</span>'+
+                            '</div>'+
+                            '<div class="weui-form-preview__item weui-flex__item"><label '+
+                                'class="weui-form-preview__label"></label><span '+
+                                    'class="weui-form-preview__value" style="text-align:left;">'+"&yen;"+res.bqhr_data[k].money+'</span>'+
+                            '</div>'+
+                        '</div>';
+                    }
+            html+='<div class="weui-flex">'+
+                    '<div class="weui-form-preview__item weui-flex__item" ><label '+
+                        'class="weui-form-preview__label">合计</label><span '+
+                            'class="weui-form-preview__value" style="text-align:left;"></span>'+
+                    '</div>'+
+                    '<div class="weui-form-preview__item weui-flex__item" ><label '+
+                        'class="weui-form-preview__label"></label><span '+
+                            'class="weui-form-preview__value" style="text-align:left;">'+"&yen;"+res.totalbqhr+'</span>'+
+                    '</div>'+
+                '</div>'+
+                 '</div>'+
+                '</div>'+
+            '</div>'+
+            '<div class="weui-cell__bd weui-cell_primary fhindex" index="0">'+
+                '<div class="weui-cells__title">其他调整</div>'+
+                '<div class="weui-form-preview">'+
+                    '<div class="weui-form-preview__bd">'+
+                        '<div class="weui-flex">'+
+                            '<div class="weui-form-preview__item weui-flex__item"><label '+
+                                'class="weui-form-preview__label">结算</label><span '+
+                                    'class="weui-form-preview__value" style="text-align:left;">'+"&yen;"+res.jsje+'</span>'+
+                            '</div>'+
+                            '<div class="weui-form-preview__item weui-flex__item"><label '+
+                                'class="weui-form-preview__label">返利</label><span '+
+                                    'class="weui-form-preview__value" style="text-align:left;">'+"&yen;"+res.flje+'</span>'+
+                            '</div>'+
+                        '</div>'+
+                        '<div class="weui-flex">'+
+                            '<div class="weui-form-preview__item weui-flex__item">'+
+                            '</div>'+
+                            '<div class="weui-form-preview__item weui-flex__item"><label '+
+                                'class="weui-form-preview__label">金额</label><span '+
+                                    'class="weui-form-preview__value" style="text-align:left;">'+"&yen;"+res.totalqtje+'</span>'+
+                            '</div>'+
+                        '</div>'+
+                    '</div>'+
+                '</div>'+
+            '</div>';
+           $('#order_select').html(html);
+        }
+    </script>
+</block>
