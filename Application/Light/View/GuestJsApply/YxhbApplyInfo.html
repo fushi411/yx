@@ -203,7 +203,15 @@
 </block>
 <block name='js'>
     <script>
-        div_show();
+        var modelFlag = getQueryString('modelflag');
+        if(modelFlag == 'show'){
+            $('#other_page_one').show();
+            $('#btn-all').remove();
+            $('#overdue').remove();
+        }else{
+            div_show();
+        }
+
         function div_show(type) {
             return type == 1 ? $('#other_page_one').fadeIn() : $('#other_page_one').fadeOut();
         }
