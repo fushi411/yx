@@ -664,7 +664,7 @@ class ConfigController extends BaseController
     {
         $system = I('post.system');
         $modname = I('post.modname');
-        $id = I('post.id');
+        $id = I('post.id', 0, 'int');
 
         $saveData = array();
         $saveData['title'] = I('post.title');
@@ -678,7 +678,12 @@ class ConfigController extends BaseController
             $res = M('yxhb_user_deploy')->where("`id`='$id'")->save($saveData);
         } else {
             if (empty($system) || empty($modname)) {
-                $this->ajaxReturn(array('code' => 404, 'msg' => '新增失败', 'data' => '参数错误'));
+                $this->ajaxReturn(array('code' => 404, 'msg' => '新增失败，您的参数不符合要求！', 'data' => '参数错误'));
+            }
+
+            $info = M('yx_config_title')->where(array('name'=>$modname, 'mod_systen'=>$system))->field('id')->find();
+            if (empty($info)) {
+                $this->ajaxReturn(array('code' => 404, 'msg' => '新增失败，您的参数不符合要求！', 'data' => '您的参数不符合要求！'));
             }
 
             $saveData['system'] = $system;

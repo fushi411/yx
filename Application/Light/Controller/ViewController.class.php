@@ -38,6 +38,15 @@ class ViewController  extends BaseController
         $list =  M('yxhb_user_deploy')->where(array('modname'=>$mod_name, 'system'=>$system, 'status'=>0))->select();
         $this->assign('list',$list);
 
+        // 是否签收
+        $qsRes =  M($system.'_appflowtable')->field('pro_mod')->where(array('stage_name' => '签收'))->select();
+        $qsArr = array();
+        foreach($qsRes as $val){
+            $qsArr[] = $val['pro_mod'];
+        }
+        $isQs = in_array($mod_name,$qsArr)?1:0;
+        $this -> assign('isQs', $isQs);
+
         // 无审批流程 提示 签收模式排除
         $flag = empty($appflow)?'true':'false';
         $flag = $this->isSign($system,$mod_name)?$flag:'false';
