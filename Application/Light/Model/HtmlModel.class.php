@@ -66,7 +66,7 @@ class HtmlModel extends Model
                 <a href='{$url}' target='_blank'
                     class='weui-cell weui-cell_access weui-cell_link' style='text-decoration: none;'>
                         <div class='weui-cell__hd' style='width: 32px;height: 25px;display:none;'>
-                            <input type='checkbox' name='checkbox1' id='$id'  class='weui-check'  data-aid='{$v['aid']}' data-mod='{$v['mod']}'>
+                            <input type='checkbox' name='checkbox1' id='$id'  class='weui-check' data-system='{$v['system']}' data-aid='{$v['aid']}' data-mod='{$v['mod']}'>
                             <i class='weui-icon-checked'></i>
                         </div>
                         <div class='weui-media-box_text' style='width: 100%;padding:5px 0px;position: relative;'>
