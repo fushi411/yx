@@ -331,7 +331,6 @@
             'user':auth_arr,
         }
         html = '';
-        
         for(k in auth_arr){
             var wxid = auth_arr[k];
             if(wxid == '' || wxid == undefined) continue;
@@ -397,7 +396,7 @@
             if( deptData[deptKey] == undefined || deptData[deptKey].length == 0 ) continue;
             var myData = deptData[deptKey];
             for(key in myData){
-                res.push(myData[key].wx);
+                if(myData[key].type == 'user') res.push(myData[key].wx);
                 var myKey = myData[key].wx;
                 if(deptData[myKey] == undefined || deptData[myKey].length == 0 ) continue;
                 sonRes = getChecked([myKey]);
@@ -406,6 +405,7 @@
        }
        return  res;
    }
+
    function getAllUser(data){
        var res  = []; 
        for(k in data){
@@ -641,7 +641,6 @@ $(function(){
                 }, function (data) {
                     api_for = 'user';
                     $('#searchResult').empty();
-                    // console.log(data);
                     if(data.length == 0) {
                         $('#searchResult').append(noresult);
                     } else {
