@@ -743,8 +743,8 @@ class ConfigController extends BaseController
             $atten = $detailModel->ActiveAttention('yxhb', 'Push_config');
             $this->assign('data', $temp);
             $this->assign('atten', $atten);
-            $this->assign('system', $deployData[0]['system']);
-            $this->assign('modname', $deployData[0]['modname']);
+            $this->assign('systems', $deployData[0]['system']);
+            $this->assign('modnames', $deployData[0]['modname']);
             $this->assign('id', $id);
             $this->assign('aid', 0);
             $this->assign('modname', 'KfRatioApply');
