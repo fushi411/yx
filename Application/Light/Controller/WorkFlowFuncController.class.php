@@ -861,7 +861,7 @@ class WorkFlowFuncController extends Controller {
      */
     public function KkGuesttjApply_fmhEnd($aid)
     {
-        $res = M('kk_tj_fmh')->where(array('id'=>$aid,))->setField('tj_stat', 2);
+        $res = M('kk_tj_fmh')->where(array('pid'=>$aid,))->setField('tj_stat', 2);
         $resArr = $res?array("status"=>"success"):array("status"=>"failure");
         return $resArr;
 	}
