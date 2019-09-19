@@ -59,8 +59,14 @@ class KkGuestJsApplyLogic extends Model {
                                      'type'=>'string',
                                      'color' => 'black'
                                     );
+        if( $res['jslx'] == 5 ){
+            $timeArr = $this->field('min(js_stday) as js_stday,MAX(js_enday) as js_enday')->where(array('pid' => $id))->find();
+            $timeFrame = $timeArr['js_stday'].' 至 '.$timeArr['js_enday'];
+        }else{
+            $timeFrame = $res['js_stday'].' 至 '.$res['js_enday'];
+        }
         $result['content'][] = array('name'=>'时间范围：',
-                                     'value'=>$res['js_stday'].' 至 '.$res['js_enday'],
+                                     'value'=>$timeFrame,
                                      'type'=>'date',
                                      'color' => 'black'
                                     );
