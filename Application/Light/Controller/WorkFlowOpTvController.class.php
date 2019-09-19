@@ -3,22 +3,66 @@ namespace Light\Controller;
 
 class WorkFlowOpTvController extends BaseController {
 
-    public function WorkFlowSubmit(){
+	// 批量审批入口
+	public function batchWorkFlow(){
+        $data = I('post.data');
+        $map = array(
+            'mod_name' =>'CostMoney' ,
+            'per_name' => session('name'),
+            'sign'     => array('neq',''), 
+
+        );
+        $union = array(
+            'field' => 'approve_time,sign',
+            'table' => 'yxhb_appflowproc' ,
+            'where' => $map 
+        );
+        $query = M('kk_appflowproc')
+                ->field('approve_time,sign')
+                ->union($union)
+                ->where($map)
+                ->select(false);
+        $signArr = M()->query("SELECT sign from ($query)as t ORDER BY approve_time desc limit 1");
+        $sign    = $signArr[0]['sign'];
+
+        // 校验
+        $size = count($data);
+        if($size == 0) $this->ajaxReturn(array('code' => 404 , 'msg' => '无审批记录'));
+        // 令牌验证
+        if (!M()->autoCheckToken($_POST)){
+			$arr[] = array("optiontype"=>'令牌验证失败！');
+			$this -> ajaxReturn($arr);
+        }
+        // 审批
+        foreach ($data as $k => $v) {
+            $system = $v['system'];
+            $mod    = $v['mod'];
+            $id     = $v['aid'];
+            $option = 2;
+            $img    = $sign;
+            $user   = M($system.'_boss')->field('id')->where(array('name' => $v['apply_user']))->find();
+            $user_id= $user['id'];
+            $this->WorkFlowSubmit($system,$mod,$id,$option,$img,$user_id);
+        }
+        $this->ajaxReturn(array('code' => 200 , 'msg' => 'success'));
+	}
+    public function WorkFlowSubmit($system,$mod,$id,$option,$img,$user_id){
     	$wf         = new WorkFlowController();
-    	$mod_name   = I('post.mod_name');
-    	$system     = I('post.system');
-    	$DB_name    = D(ucfirst($system).$mod_name, 'Logic')->getTableName();			
-	    $id         = I('post.id');
-		$pid        = session($system.'_id');
-		$copyto_id  = I('post.copyto_id');
-		$option     = I('post.option');
+    	$mod_name   = empty($mod)    ? I('post.mod_name') : $mod;
+    	$system     = empty($system) ? I('post.system')   : $system;
+	    $id         = empty($id)     ? I('post.id')       : $id;
+		$option     = empty($option) ? I('post.option')   : $option;
+		$img        = empty($img)    ? I('post.signoutput_file') : $img;
+		$apply_user = empty($user_id)? I('post.apply_user')      : $user_id;
+
 		$word       = I('post.word');
-		$img       = I('post.signoutput_file');
+		$copyto_id  = I('post.copyto_id');
 		$approve_id = I('post.approve_id');
-		$apply_user = I('post.apply_user');
+		$pid        = session($system.'_id');
 		$time       = date("Y-m-d H:i:s",time());
+		$DB_name    = D(ucfirst($system).$mod_name, 'Logic')->getTableName();	
 		// dump($mod_name);exit();
-		if (!M()->autoCheckToken($_POST)){
+		if (!M()->autoCheckToken($_POST) && empty($mod)){
 			$arr[] = array("optiontype"=>'令牌验证失败！');
 			$this -> ajaxReturn($arr);
 		}
@@ -107,7 +151,7 @@ class WorkFlowOpTvController extends BaseController {
 	    }
 		$arr[] = array("optiontype"=>$optionType, "wfStatus"=>$wfStatus);
 		//echo $optionType;
-		$this -> ajaxReturn($arr);
+		if(empty($mod)) $this -> ajaxReturn($arr);
 	}
 
 	/*审批请求是否唯一

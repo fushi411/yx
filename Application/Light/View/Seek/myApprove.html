@@ -26,13 +26,15 @@
     </div>
     <div class="weui-panel__hd"
         style="color: red;font-size: 18px;font-weight: 800;background-color: #f8f8f8;padding-top: 8px;padding-bottom: 4px;">
-        <span>待审批</span> </div>
-    <div class="weui-panel__bd weui-cells_checkbox">
+        <span>待审批</span> 
+        <i class="iconfont icon-shouhuodizhiyebianji" id='iconfont' style="font-size: 18px;margin-right: 10px;float: right;color: #337ab7;display: none;"></i>
+    </div>
+    <div class="weui-panel__bd weui-cells_checkbox" id='noProc'>
         {$noApprove}
     </div>
     </div>
 
-    <div class="weui-panel weui-panel_access" style="margin-top:0px;">
+    <div class="weui-panel weui-panel_access" style="margin-top:0px;" id='Proc'>
         <div class="weui-panel__hd"
             style="color: green;font-size: 18px;font-weight: 800;background-color: #f8f8f8;padding-top: 8px;padding-bottom: 4px;">
             已审批</div>
@@ -40,20 +42,115 @@
 
         </div>
     </div>
+     <!-- 审批按钮 -->
+     <div id="btn-all">
+        <a href="javascript:;" class="weui-btn weui-btn_mini weui-btn_primary">批量审批</a>
+    </div>
+    <!-- 审批按钮 end -->   
 </block>
 
 <block name="js">
     <script>
-        var page = 1;
-        var toast = $('#loadingToast'),
-            no_more = $('.no-more'),
-            load_more = $('.load-more');
+        var page      = 1;
+            toast     = $('#loadingToast'),
+            no_more   = $('.no-more'),
+            load_more = $('.load-more'),
+            hash      = $(":input[name='__hash__']").val(),
+            proc_btn  = 0;
+        // 显示批量审批按钮
+        var length = $('#noProc input').size();
+        if(length == 0){
+            $('#iconfont').hide();
+        }else{
+            $('#iconfont').show();
+        }
         load_more.click(function () {
             getData();
         })
+        // 批量审批确定
+        function dialog_confirm(){
+            var data = [];
+            for(var i=0;i<length;i++){
+                var isChecked = $('#noProc input').eq(i).is(':checked');
+                if(!isChecked) continue;
+                var item = { 
+                        system     : $('#noProc input').eq(i).attr('data-system'),
+                        mod        : $('#noProc input').eq(i).attr('data-mod'),
+                        aid        : $('#noProc input').eq(i).attr('data-aid'),
+                        apply_user : $('#noProc input').eq(i).attr('data-applyUser'),
+                    }; 
+                data.push(item);
+            }
+            // 无选择
+            if(data.length == 0){
+                $('#iosDialog').fadeOut();
+                return  tooltip('请选择需要审批的记录');   
+            }    
+            $('#iosDialog').hide();
+            toast.fadeIn(200);
+            $.ajax({
+                type: 'POST',
+                url: "{:U('Light/WorkFlowOpTv/batchWorkFlow')}",
+                data: {
+                    data     : data,
+                    __hash__ : hash,
+                },
+                dataType: 'json',
+                success: function (res) {
+                    toast.fadeOut(200);
+                    if (res.code == 200) {
+
+                        window.location.reload();
+                    }else{
+                        return tooltip(res.msg);
+                    }
+                   
+                }
+            });
+
+        }
+
         $(function () {
+            iosDialogText('确认审批通过？');
+            loadingToastText('数据上传中');
             // 请求数据
             getData();
+            // 点击批量审批按钮
+            $('.icon-shouhuodizhiyebianji').click(function(){
+                if(proc_btn == 0){
+                    $('#noProc .weui-cell__hd').show();
+                    // 隐藏已审批
+                    $('#Proc').hide();
+                    $('#foot').hide();
+                    $('#btn-all').show();
+                    $("#noProc").find("a").click(function(e){
+                        if ( e && e.preventDefault ) {
+                            //阻止默认浏览器动作(W3C) 
+                            e.preventDefault(); 
+                        }else{
+                            //IE中阻止函数器默认动作的方式 
+                            window.event.returnValue = false; 
+                            return false;
+                        }    
+                    });
+                    proc_btn = 1;
+                }else{
+                    $('#noProc .weui-cell__hd').hide();
+                    // 显示已审批
+                    $('#Proc').show();
+                    $('#foot').show();
+                    $('#btn-all').hide();
+                    $("#noProc").find("a").unbind('click');
+                    proc_btn = 0;
+                }
+            });
+            // 未审批记录多选
+            $('#noProc label').click(function(){
+                var idName = $(this).attr('for');
+                var dom    =  $('#'+idName);
+                var isChecked = dom.is(':checked');
+                dom.prop('checked',!isChecked);
+            });
 
         })
         function searchGetDate() {
@@ -83,9 +180,7 @@
                             page++;
                             load_more.show();
                             no_more.hide();
-
                         }
-
                         makeHtml(data, $('#approve'));
                     }
                     toast.fadeOut(200);

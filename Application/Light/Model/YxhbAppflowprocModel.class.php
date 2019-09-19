@@ -220,7 +220,8 @@ class YxhbAppflowprocModel extends Model {
                     SELECT  app_stage  FROM yxhb_appflowproc WHERE  mod_name = '{$mod_name}' AND aid = {$aid}   
                     AND per_name = '{$name}'  ) + 1 ORDER BY app_stat desc";
         $res = M()->query($sql);
-        if($res[0]['app_stat'] != 0)  return array('code' => 404, 'msg' => '下一流程人已批复,无法撤回');   
+        // 1/2 批复状态
+        if(in_array($res[0]['app_stat'],array(1,2))) return array('code' => 404, 'msg' => '下一流程人已批复,无法撤回');   
         // 撤销-> 会审阶段  下一阶段 置 3
         if(!empty($res) ) $this->where(array('app_stage' => $res[0]['app_stage'],'aid'=>$aid,'mod_name' => $mod_name))->setInc('app_stat', 3);
         // 撤销-> 自身置0
