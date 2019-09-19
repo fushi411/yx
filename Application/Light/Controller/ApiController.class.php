@@ -500,5 +500,7 @@ class ApiController extends BaseController {
         $res = $logic->$action();
         $this->ajaxReturn($res);
     }
+
+    
     
 }

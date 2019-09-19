@@ -80,6 +80,7 @@ class SeekController  extends BaseController
     public function myApprove(){
         $this->titleArr[0]['on'] = 'weui-bar__item_on';
         $this->assign('titleArr',$this->titleArr);  
+        
         $data = $this->noApprove();
         $this->assign('title',$this->titlename);
         $this->assign('cost',$this->flag);

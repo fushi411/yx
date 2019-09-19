@@ -27,7 +27,22 @@
     <div class="weui-panel__hd"
         style="color: red;font-size: 18px;font-weight: 800;background-color: #f8f8f8;padding-top: 8px;padding-bottom: 4px;">
         <span>待审批</span> 
-        <i class="iconfont icon-shouhuodizhiyebianji" id='iconfont' style="font-size: 18px;margin-right: 10px;float: right;color: #337ab7;display: none;"></i>
+        <eq name="cost" value='1'>
+            <span id="iconfont" style="font-size: 18px;margin-right: 10px;float: right;color: rgb(167, 167, 167);font-weight: 100;">
+                批量
+                <i class="iconfont icon-shouhuodizhiyebianji"  style="font-size: 18px;margin-right: 10px;float: right;"></i>
+            </span>
+        </eq>
+    </div>
+    <div class="weui-panel__hd weui-cells_checkbox" id='label-all' style="font-size: 18px;background-color: #ffffff;padding-top: 4px;padding-bottom: 4px;display: none;">
+        <label for="choseAll"  style="width: 100%;">
+            <div class="weui-cell__hd" style="width: 32px; height: 25px;float:left;">
+                <input type="checkbox" name="checkbox1" id='choseAll' class="weui-check" >
+                <i class="weui-icon-checked"></i>
+            </div>
+            <span>全选</span> 
+        </label>
+       
     </div>
     <div class="weui-panel__bd weui-cells_checkbox" id='noProc'>
         {$noApprove}
@@ -43,9 +58,11 @@
         </div>
     </div>
      <!-- 审批按钮 -->
-     <div id="btn-all">
-        <a href="javascript:;" class="weui-btn weui-btn_mini weui-btn_primary">批量审批</a>
-    </div>
+     <eq name="cost" value='1'>
+        <div id="btn-all">
+            <a href="javascript:;" class="weui-btn weui-btn_mini weui-btn_primary">批量审批</a>
+        </div>
+     </eq>
     <!-- 审批按钮 end -->   
 </block>
 
@@ -67,6 +84,10 @@
         load_more.click(function () {
             getData();
         })
+        $('#choseAll').change(function(){
+            var isChecked = $(this).is(':checked');
+            $('#noProc input').prop('checked',isChecked);
+        });
         // 批量审批确定
         function dialog_confirm(){
             var data = [];
@@ -116,13 +137,14 @@
             // 请求数据
             getData();
             // 点击批量审批按钮
-            $('.icon-shouhuodizhiyebianji').click(function(){
+            $('#iconfont').click(function(){
                 if(proc_btn == 0){
                     $('#noProc .weui-cell__hd').show();
                     // 隐藏已审批
                     $('#Proc').hide();
                     $('#foot').hide();
                     $('#btn-all').show();
+                    $('#label-all').show();
                     $("#noProc").find("a").click(function(e){
                         if ( e && e.preventDefault ) {
                             //阻止默认浏览器动作(W3C) 
@@ -140,6 +162,7 @@
                     $('#Proc').show();
                     $('#foot').show();
                     $('#btn-all').hide();
+                    $('#label-all').hide();
                     $("#noProc").find("a").unbind('click');
                     proc_btn = 0;
                 }
