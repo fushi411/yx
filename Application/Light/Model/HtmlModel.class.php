@@ -128,6 +128,30 @@ class HtmlModel extends Model
         return $html;
     }
 
+    // 固定抄送
+    public function fiexdCopyHtmls($data, $class, $width = 45, $height = 70){
+        $html = '';
+        if( empty($data) || !is_array($data)) return $html;
+        $arr      = array_slice($data,-1,1,true);
+        $last_key = key($arr);
+        foreach ($data as $k => $val) {
+            $size = '5.2';
+            if (strlen($val['name']) > 15) {
+                $size = '6.2';
+            }
+
+            $left    = 'margin-right:8px';
+            $avatar  = empty($val['avatar']) ? $this->avatar:$val['avatar'];
+            if($k == $last_key) $parhtml = '';
+            $html .=  "<li class='weui-uploader__file wk-select__user' id='{$val['wxid']}' style='min-height:{$height}px;width: {$width}px; margin-bottom: 0;{$left}'>
+                        <img src='{$avatar}' class='weui-selet__user' style='margin-right: 6px;margin-top:10px; width: 2em; height: 2em;'>
+                        <span style='margin-right: 6px;font-size: 12px;'> {$val['name']}</span>
+                        <span class='{$class}' style=' vertical-align: middle;font-size: 12px;text-align: center;color: #fff;background-color: #f43530;border-radius: 18px;min-width: 8px;display: inline-block;position: relative;top: -{$size}em;right: -1.2em;padding: 1px 3px;line-height: 1;'>X</span> 
+                       </li>";
+        }
+        return $html;
+    }
+
     // 审批流程配置
     public function getProConfigHtml($data){
         $html = '';

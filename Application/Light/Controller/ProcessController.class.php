@@ -14,6 +14,20 @@ class ProcessController extends Controller
      * 推送可视化页面
      */
     public function ApplyProcess(){
+        $qxc = I('get.qxc', '');
+        $this->assign('qxc',$qxc);
+        $qxcArr = array();
+        $qxcArr[] = array(
+            'list'=>array(
+            array('avatar'=>'http://p.qlogo.cn/bizmail/lYlgHcsdNXFnC1hdemGUtyJIyvezibUiaSbmheTUVXiaYhkTIxEOCFw1Q/100', 'name'=>'张三'),
+            array('avatar'=>'http://p.qlogo.cn/bizmail/lYlgHcsdNXFnC1hdemGUtyJIyvezibUiaSbmheTUVXiaYhkTIxEOCFw1Q/100', 'name'=>'张三')
+            ),
+            'title'=>'查询权限'
+        );
+        $qxcArr[] = array('list'=>array(array('avatar'=>'http://p.qlogo.cn/bizmail/lYlgHcsdNXFnC1hdemGUtyJIyvezibUiaSbmheTUVXiaYhkTIxEOCFw1Q/100', 'name'=>'张三')), 'title'=>'删除权限');
+//        var_dump($qxcArr);exit();
+        $this->assign('purviewList', $qxcArr);
+
         $pro_mod = I('get.modname');
         // $pro_mod 为空的情况
         $system  = I('get.system');
@@ -428,12 +442,14 @@ class ProcessController extends Controller
             }
         }
 
+        $modInfo = M('yx_config_title')->where(array('name'=>$modname, 'mod_system'=>$system))->field('mod_title')->find();
+        $this->assign('titleName', $modInfo['mod_title'].'签收人员');
+
         $returnUrl = '/WE/index.php?m=Light&c=View&a=View&modname='.$modname.'&system='.$system;
         $this->assign('returnUrl', $returnUrl);
 
         $this->assign('system', $system);
         $this->assign('modname', $modname);
-        $this->assign('titleName', '签收人员');
         $this->assign('CueConfig',$detailAuth);
         $this->assign('condition',$temp);
         $this->display('Process/user_deploy');

@@ -161,11 +161,13 @@ class ApplyController extends BaseController {
         if(!empty($type)){
             $this->searchDeptHtml();
         }else{
-            $id = I('post.id');
+            $id = I('post.id', 0, 'int');
             $modeType = I('post.mode_type', '');
             if($modeType == 'new'){//新模式
+                D('YxhbUserDeploy')->upUserConfig($id);//更新人员名单
+
                 $wxInfoArr = array();
-                $dataInfo =  M('yxhb_user_deploy')->where(array('id'=>intval($id)))->field('boss_ids')->find();
+                $dataInfo =  M('yxhb_user_deploy')->where(array('id'=>$id))->field('boss_ids')->find();
                 $bossIdArr = explode(",", $dataInfo['boss_ids']);
                 if (!empty($bossIdArr)) {
                     $boss = M('yxhb_boss');

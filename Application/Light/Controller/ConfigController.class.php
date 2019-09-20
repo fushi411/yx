@@ -712,6 +712,8 @@ class ConfigController extends BaseController
     {
         $id = I('get.id');
         $temp = array();
+        D('YxhbUserDeploy')->upUserConfig($id);//更新人员名单
+
         $deployData = M('yxhb_user_deploy')->where(array('id' => $id))->select();
         if (!empty($deployData)) {
             $html = D('Html');
@@ -732,9 +734,52 @@ class ConfigController extends BaseController
 
                     $wxIdArr[] = $bossInfo['wxid'];
                 }
-
                 $v['push_name'] = implode(',', $wxIdArr);
                 $v['html'] = $html->fiexdCopyHtml($userArr);
+
+                $exclUserArr = array();
+                $exclWxidArr = array();
+                if (!empty($v['exclude_ids'])) {
+                    $excludeId = trim($v['exclude_ids'], '"');
+                    $excludeArr = explode(',', $excludeId);
+                    foreach ($excludeArr as $excludeId) {
+                        //获取用户详细数据
+                        $bossInfo = $boss->where(array('id' => $excludeId))->find();
+                        $exclUserArr[] = array(
+                            'wxid' => $bossInfo['wxid'],
+                            'name' => $bossInfo['name'],
+                            'avatar' => $bossInfo['avatar'] ? $bossInfo['avatar'] : 'Public/assets/i/defaul.png',
+                        );
+
+                        $exclWxidArr[] = $bossInfo['wxid'];
+                    }
+                }
+
+                $v['exclude_push_name'] = implode(',', $exclWxidArr);
+                $v['exclude_html'] = $html->fiexdCopyHtmls($exclUserArr, 'weui-badge-exclude');
+
+                $columnArr = array();
+                $columnNmaeArr = array();
+                if (!empty($v['column_ids'])) {
+                    $boss = M('yx_wx_department');
+                    $columnId = trim($v['column_ids'], '"');
+                    $columnArrs = explode(',', $columnId);
+                    foreach ($columnArrs as $columnId) {
+                        //获取用户详细数据
+                        $bossInfo = $boss->where(array('id' => $columnId))->find();
+                        $columnArr[] = array(
+                            'wxid' => $columnId,
+                            'name' => $bossInfo['name'],
+                            'avatar' => 'https://www.fjyuanxin.top/fjyxoaSV/Public/assets/i/weui/icon_nav_button.png',
+                        );
+
+                        $columnNmaeArr[] = $columnId;
+                    }
+                }
+
+                $v['column_push_name'] = implode(',', $columnNmaeArr);
+                $v['column_html'] = $html->fiexdCopyHtmls($columnArr, 'weui-badge-column', 75, 80);
+
                 $temp = $v;
             }
 
@@ -757,6 +802,9 @@ class ConfigController extends BaseController
 
     public function saveUserConfig(){
         $data = explode(",", I('post.data'));             //推送人员名单
+        $columnData = explode(",", I('post.column')); //部门合计
+        $excludeData = explode(",", I('post.exclude'));//黑名单
+
         $id = I('post.id');                 //数据id
         $list = M('yxhb_user_deploy')->where(array('id' => $id))->select();
         if (empty($list) || empty($data)) {
@@ -765,15 +813,46 @@ class ConfigController extends BaseController
 
         $saveData = array();
         $boss = M('yxhb_boss');
-        foreach ($data as $val) {
-            $bossInfo = $boss->where(array('wxid' => $val))->field('id')->find();
-            if (!empty($bossInfo)) {
-                $saveData[] = $bossInfo['id'];
+        if (!empty($data) && is_array($data)) {
+            foreach ($data as $val) {
+                $bossInfo = $boss->where(array('wxid' => $val))->field('id')->find();
+                if (!empty($bossInfo)) {
+                    $saveData[] = $bossInfo['id'];
+                }
             }
+            $saveData = array_unique($saveData);//去重
         }
 
-        $saveData = array_unique($saveData);//去重
-        $config = M('yxhb_user_deploy')->where(array('id' => $id))->setField(array('boss_ids' => implode(',', $saveData), 'last_at' => date('Y-m-d H:i:s')));
+        $columnDataSave = array();
+        if (!empty($columnData) && is_array($columnData)) {
+            $column = M('yx_wx_department');
+            foreach ($columnData as $val) {
+                $bossInfo = $column->where(array('id' => $val))->field('id')->find();
+                if (!empty($bossInfo)) {
+                    $columnDataSave[] = $bossInfo['id'];
+                }
+            }
+            $columnDataSave = array_unique($columnDataSave);
+        }
+
+        $excludeDataSvae = array();
+        if (!empty($excludeData) && is_array($excludeData)) {
+            foreach ($excludeData as $val) {
+                $bossInfo = $boss->where(array('wxid' => $val))->field('id')->find();
+                if (!empty($bossInfo)) {
+                    $excludeDataSvae[] = $bossInfo['id'];
+                }
+            }
+            $excludeDataSvae = array_unique($excludeDataSvae);//去重
+        }
+
+        $config = M('yxhb_user_deploy')->where(array('id' => $id))->setField(
+            array('boss_ids' => implode(',', $saveData),
+                'column_ids' => implode(',', $columnDataSave),
+                'exclude_ids' => implode(',', $excludeDataSvae),
+                'last_at' => date('Y-m-d H:i:s')
+            ));
+
         $returnUrtl = U('Light/Process/userDeploy', array('system' => $list[0]['system'], 'modname' => $list[0]['modname']));
         $this->ajaxReturn(array('code' => 200, 'config' => $config, 'returnUrtl'=> $returnUrtl));
     }

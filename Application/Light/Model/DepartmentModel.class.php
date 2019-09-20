@@ -145,7 +145,12 @@ class DepartmentModel extends Model {
         $erp  = M('wx_info')->where(array('stat' => 1))->group('wxid')->select();
         $dept = M('yx_wx_department')->where(array('state' => 1,'parentId' => array('gt',0)))->order('parentId asc')->select();
         $temp = array();
+        $column = array();
         foreach($dept as $v){
+
+            $arr = $this->getdetailedColumnId($v['id'], $v['parentId'], $dept, $erp);
+            $column[$v['id']] = array('id'=>$v['id'], 'name'=>$v['name'], 'detailed_id'=>$arr['one'], 'detailed_name'=>$arr['two']);
+
             $temp[$v['parentId']][] = array(
                 'type'   => 'dept',
                 'id'     => $v['id'],
@@ -176,6 +181,64 @@ class DepartmentModel extends Model {
                 $temp[$val][] = $userTemp;
             }
         }
-        return array( 'dept' => $temp , 'user' => $user);
+        return array( 'dept' => $temp , 'user' => $user, 'column'=>$column);
+    }
+
+    /**
+     * 获取目录名的详细
+     * @param $data
+     * @param $name
+     * @param $parentId
+     * @return string
+     */
+    public function getdetailedColumnId($id, $parentId, $dept, $erp)
+    {
+        $returnArrId = array();
+        $saveData = array_column($dept, null, 'id');
+        $returnArrName[] = $saveData[$id]['name'];
+
+        while ($parentId > 1) {//向上获取出类目名称 单线
+            $returnArrName[] = $saveData[$parentId]['name'];
+            $parentId = $saveData[$parentId]['parentId'];
+        }
+
+        $idArr[] = $id;
+        $idSaveArr = array($id);
+        while (!empty($idArr)) {//向下获取出所有类目 多线
+            $idsArr = array();
+            foreach ($idArr as $id) {
+                foreach ($saveData as $kev=>$val) {
+                    if ($val['parentId'] == $id) {
+                        $idsArr[] = $val['id'];
+                        $idSaveArr[] = $val['id'];
+                    }
+                }
+            }
+
+            $idArr = $idsArr;
+        }
+
+        foreach ($idSaveArr as $id) {//获取当前栏目下的所有成员
+            $returnArrId =  array_merge($this->extractData($id, $erp), $returnArrId);
+        }
+
+        $returnArrName = array_reverse($returnArrName);
+//        $returnArrId = implode(',', array_unique($returnArrId));
+        return  array('one'=>$returnArrId, 'two'=>$returnArrName);
+    }
+
+    public function extractData($id, $data){
+        $arrays = array();
+        if (!empty($data)) {
+            foreach ($data as $info) {
+                if (!empty($info['wx_dept'])) {
+                    $array = explode(",", $info['wx_dept']);
+                    if (in_array($id, $array)) {
+                        $arrays[] = $info['wxid'];
+                    }
+                }
+            }
+        }
+        return $arrays;
     }
 }

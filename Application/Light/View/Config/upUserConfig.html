@@ -219,7 +219,37 @@
     <div class="container" id="container">
         <div class="page js_show">
             <h3 class="titleTab" style="text-align: center;">{$data.title}</h3>
-            <div class="weui-cells__title">签收人员</div>
+            <div class="weui-cells__title">签收部门（实时自动获取最新人员信息）</div>
+            <div class="weui-cells" style="margin-top:0px;">
+                <div class="weui-cell">
+                    <div class="weui-cell__bd">
+                        <div class="weui-uploader">
+                            <div class="weui-uploader__bd" >
+                                <ul class="weui-uploader__files app_auth" id="column_app_auth" style="margin-bottom: 0px;">
+                                    {$data.column_html}
+                                </ul>
+                                <input type="hidden" class="column_auth_id" value="{$data.column_push_name}" autocomplete="off">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="weui-cells__title">剔除人员名单</div>
+            <div class="weui-cells" style="margin-top:0px;">
+                <div class="weui-cell">
+                    <div class="weui-cell__bd">
+                        <div class="weui-uploader">
+                            <div class="weui-uploader__bd" >
+                                <ul class="weui-uploader__files app_auth" id="exclude_app_auth" style="margin-bottom: 0px;">
+                                    {$data.exclude_html}
+                                </ul>
+                                <input type="hidden" class="exclude_auth_id" value="{$data['exclude_push_name']}" autocomplete="off">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="weui-cells__title">具体签收人员</div>
             <div class="weui-cells" style="margin-top:0px;">
                 <div class="weui-cell">
                     <div class="weui-cell__bd">
@@ -301,6 +331,7 @@
         idx = 0,
         deptData = '',
         userInfo = '',
+        column = '',
         part = {
             'dept':[],
             'user':[],
@@ -325,9 +356,11 @@
    
     function selAuthUser(){
         var auth_id = $('.auth_id').val();
+        var column_auth_id = $('.column_auth_id').val();
         auth_arr = (auth_id==undefined || auth_id=='')?[] :auth_id.split(',');
+        dept_arr = (column_auth_id==undefined || column_auth_id=='')?[] :column_auth_id.split(',');
         part = {
-            'dept':[],
+            'dept':dept_arr,
             'user':auth_arr,
         }
         html = '';
@@ -340,6 +373,17 @@
                         '<span style="display: inline-block;vertical-align: middle;">'+userInfo[wxid].name+'</span>'+
                     '</a>';
         }
+
+        for(k in dept_arr){
+            var column_id = dept_arr[k];
+            if(column_id == '' || column_id == undefined) continue;
+
+            html +=  '<a href="javascript:;" class="weui-btn weui-btn_mini user dept'+column_id+'" data-type="dept" data-id="'+column_id+'">'+
+                '<img src="/fjyxoaSV/Public/assets/i/weui/icon_nav_button.png" style="width: 20px;display: inline-block;vertical-align: middle;">'+
+                '<span style="display: inline-block;vertical-align: middle;">'+column[column_id].name+'</span>'+
+                '</a>';
+        }
+
         $('#click_show').html(html);
         $('#other_page_two').show();
     }
@@ -350,6 +394,7 @@
             function (data) {
                 deptData = data['dept'];
                 userInfo = data['user'];
+                column = data['column'];
                 makeHtml(deptData[dept_id]); 
             }
         );
@@ -397,7 +442,7 @@
             if( deptData[deptKey] == undefined || deptData[deptKey].length == 0 ) continue;
             var myData = deptData[deptKey];
             for(key in myData){
-                res.push(myData[key].wx);
+                if(myData[key].type == 'user') res.push(myData[key].wx);
                 var myKey = myData[key].wx;
                 if(deptData[myKey] == undefined || deptData[myKey].length == 0 ) continue;
                 sonRes = getChecked([myKey]);
@@ -407,7 +452,7 @@
        return  res;
    }
    function getAllUser(data){
-       var res  = []; 
+       var res  = [];
        for(k in data){
             deptKey = data[k];
             if( deptData[deptKey] == undefined || deptData[deptKey].length == 0 ) continue;
@@ -422,6 +467,16 @@
        }
        return  res;
    }
+   function getColumn(data) {
+       var res  = {};
+       for(k in data){
+           deptKey = data[k];
+           if( column[deptKey] == undefined || column[deptKey].length == 0 ) continue;
+           res[deptKey] = column[deptKey];
+       }
+       return  res;
+   }
+
     // 监控check按钮点击
     $('#other_page_two').on('change','.weui-check',function(){
         var data_type = $(this).attr('data-type');
@@ -499,16 +554,26 @@
         $('#other_page_two').hide();
         // 获取人员
         var user = getAllUser(part['dept']);
-        user.push.apply(user,part['user']);
+        user =  Array.from(new Set([...user, ...part['user']]));//合并,去重
+        // user.push.apply(user,part['user']);
+
         var html = '';
         var auth_id = '';
         for(k in user){
-            if(user[k] == '') continue;
+            //在剔除人员名单中的不显示
+            excl_idarr = excl_id.split(',');
+            var a = excl_idarr.indexOf(user[k]);
+            if (a >= 0) {
+                continue;
+            }
+
             var tmpl = "<li class='weui-uploader__file wk-select__user' id='#id#' style='min-height:70px;width: 45px; margin:0 8px 0 0 ;'>"+
-                        "<img src='#url#' class='weui-selet__user' style='margin-right: 6px;margin-top:10px; width: 2em; height: 2em;'>"+
-                        "<span style='margin-right: 6px;font-size: 12px;'>#name#</span>"+
-                       "<span class='weui-badge' style='position: relative;top: -5.2em;right: -1.2em;padding: 1px 3px;line-height: 1;'>X</span>"+
-                       "</li>";
+                "<img src='#url#' class='weui-selet__user' style='margin-right: 6px;margin-top:10px; width: 2em; height: 2em;'>"+
+                "<span style='margin-right: 6px;font-size: 12px;'>#name#</span>"+
+                "<span class='weui-badge' style='position: relative;top: -5.2em;right: -1.2em;padding: 1px 3px;line-height: 1;'>X</span>"+
+                "</li>";
+
+            if(user[k] == '') continue;
             var id = $(this).attr('data-id');
             var img = $(this).attr('data-img');
             var name = $(this).attr('data-name');
@@ -520,6 +585,38 @@
         }
         $('#app_auth').html(html);
         $('.auth_id').val(auth_id);
+
+        //获取选中的栏目
+        var column_data = getColumn(part['dept']);
+        var column_html = '';
+        var column_auth_id = '';
+        for(d in column_data) {
+            var tmpl = "<li class='weui-uploader__file wk-select__user' id='#id#' style='min-height:80px;width: 75px; margin:0 8px 0 0 ;'>"+
+                "<img src='#url#' class='weui-selet__user' style='margin-right: 6px;margin-top:10px; width: 2em; height: 2em;'>"+
+                "<span style='margin-right: 6px;font-size: 12px;'>#name#</span>"+
+                "<span class='weui-badge-column' style='display: inline-block;padding: .15em .4em;min-width: 8px; border-radius: 18px;background-color: #f43530;color: #fff;line-height: 1.2;text-align: center;" +
+                "font-size: 12px;" +
+                "vertical-align: middle;position: relative;top: -#style#em;right: -1.2em;padding: 1px 3px;line-height: 1;'>X</span>"+
+                "</li>";
+            if(column_data[d] == '') continue;
+            var id = $(this).attr('data-id');
+            var img = $(this).attr('data-img');
+            var name = $(this).attr('data-name');
+
+            if ((column_data[d].name).length > 5) {
+                tmpl = tmpl.replace('#style#', 6.5);
+            }else{
+                tmpl = tmpl.replace('#style#', 5.2);
+            }
+
+            tmpl = tmpl.replace('#id#', d);
+            tmpl = tmpl.replace('#name#', column_data[d].name);
+            tmpl = tmpl.replace('#url#', 'https://www.fjyuanxin.top/fjyxoaSV/Public/assets/i/weui/icon_nav_button.png');
+            column_html += tmpl;
+            column_auth_id += column_data[d].id+',';
+        }
+        $('#column_app_auth').html(column_html);
+        $('.column_auth_id').val(column_auth_id);
     });
     // 取消返回
     $('#ratio-refuse_push').click(function () {
@@ -527,13 +624,15 @@
     })
     // 点击提交
     $('#ratio-agree_push').click(function () {
-        var abc = $('.auth_id').val(),
+        var abc = $('.auth_id').val(), column = $('.column_auth_id').val(), exclude = $('.exclude_auth_id').val(),
         hash      = $("meta[name='__hash__']").attr('content')
         $.ajax({
             type:'post',
             url: "{:U('Light/Config/Dispenser', array('robot'=>'saveUserConfig'))}",
             data:{
                 'data'   : abc,
+                'column' : column,
+                'exclude': exclude,
                 'id'     : "{$id}",
                 '__hash__': hash,
                 },
@@ -547,7 +646,52 @@
             }
         })
     });
+
+    //部门删除部分
+    $('.js_show').on('click','.weui-badge-column',function(){
+        up_dom = $(this).parent().parent();
+        id  = $(this).parent().attr('id');
+        dom = $('.column_auth_id');
+        ids = dom.val();
+        ids = ids.split(',');
+        var val = '';
+        for(i = 0;i<ids.length;i++){
+            if(id!=ids[i]){
+                val = val+','+ids[i];
+            }
+        }
+
+        del_dom = $(this).parent();
+        del_id = val;
+        del_inidex = dom;
+        $('#Dialog').show();
+    })
+
+    //剔除人员删除部分
+    var restore_id = '';
+    $('.js_show').on('click','.weui-badge-exclude',function(){
+        up_dom = $(this).parent().parent();
+        id  = $(this).parent().attr('id');
+        dom = $('.exclude_auth_id');
+        ids = dom.val();
+        ids = ids.split(',');
+        var val = '';
+        for(i = 0;i<ids.length;i++){
+            if(id!=ids[i]){
+                val = val+','+ids[i];
+            }
+        }
+
+        del_dom = $(this).parent();
+        del_id = val;
+        del_inidex = dom;
+        restore_id = id;
+
+        $('#Dialog').show();
+    })
+
     var del_inidex ='',del_id='',del_dom='';
+    var del_doms = [], del_ids='';
     $('.js_show').on('click','.weui-badge',function(){
         up_dom = $(this).parent().parent();
         id  = $(this).parent().attr('id');
@@ -564,15 +708,89 @@
         del_dom = $(this).parent();
         del_id = val;
         del_inidex = dom;
+
+        doms = $('.column_auth_id');
+        idss = doms.val();
+        idss = idss.split(',');
+        var vals = '';
+        var valss = [];
+        for(i = 0;i<idss.length;i++){
+            var switchs = true;
+            for(k in column){
+                if (column[k]['id'] == idss[i]) {
+                    var a = column[k]['detailed_id'].indexOf(id);
+                    if (a >= 0) {
+                        //是部门里面的人员 则去剔除名单
+                        valss.push(id);
+                    }
+                }
+            }
+        }
+
+        del_doms = valss;
         $('#Dialog').show();
     })
 
     function del_dialog_close(){
         $('#Dialog').hide();
     }
+
+    var excl_id = '';
     function del_dialog_confirm(){
         del_dom.remove();
         del_inidex.val(del_id);
+
+        var html = $('#exclude_app_auth').html();
+        excl_id = $('.exclude_auth_id').val();
+        for(k in del_doms) {
+            var tmpl = "<li class='weui-uploader__file wk-select__user' id='#id#' style='min-height:70px;width: 45px; margin:0 8px 0 0 ;'>"+
+                "<img src='#url#' class='weui-selet__user' style='margin-right: 6px;margin-top:10px; width: 2em; height: 2em;'>"+
+                "<span style='margin-right: 6px;font-size: 12px;'>#name#</span>"+
+                "<span class='weui-badge-exclude' style='display: inline-block;padding: .15em .4em;min-width: 8px; border-radius: 18px;background-color: #f43530;color: #fff;line-height: 1.2;text-align: center;" +
+                "font-size: 12px;" +
+                "vertical-align: middle;position: relative;top: -5.2em;right: -1.2em;padding: 1px 3px;line-height: 1;'>X</span>"+
+                "</li>";
+
+            if(del_doms[k] == '') continue;
+            var id = $(this).attr('data-id');
+            var img = $(this).attr('data-img');
+            var name = $(this).attr('data-name');
+            tmpl = tmpl.replace('#id#', del_doms[k]);
+            tmpl = tmpl.replace('#name#', userInfo[del_doms[k]].name);
+            tmpl = tmpl.replace('#url#', userInfo[del_doms[k]].avatar);
+            html += tmpl;
+            excl_id += ','+del_doms[k];
+        }
+
+        $('.exclude_auth_id').val(excl_id);
+        $('#exclude_app_auth').html(html);
+        del_doms = [];
+
+        //剔除名单恢复到正常名单
+        if (restore_id != '') {
+            var html = $('#app_auth').html();
+            auth_id = $('.auth_id').val();
+
+            var tmpl = "<li class='weui-uploader__file wk-select__user' id='#id#' style='min-height:70px;width: 45px; margin:0 8px 0 0 ;'>"+
+                "<img src='#url#' class='app_auth' style='margin-right: 6px;margin-top:10px; width: 2em; height: 2em;'>"+
+                "<span style='margin-right: 6px;font-size: 12px;'>#name#</span>"+
+                "<span class='weui-badge' style='position: relative;top: -5.2em;right: -1.2em;padding: 1px 3px;line-height: 1;'>X</span>"+
+                "</li>";
+
+            var id = $(this).attr('data-id');
+            var img = $(this).attr('data-img');
+            var name = $(this).attr('data-name');
+            tmpl = tmpl.replace('#id#', restore_id);
+            tmpl = tmpl.replace('#name#', userInfo[restore_id].name);
+            tmpl = tmpl.replace('#url#', userInfo[restore_id].avatar);
+            html += tmpl;
+            auth_id += ','+restore_id;
+
+            $('.auth_id').val(auth_id);
+            $('#app_auth').html(html);
+            restore_id = '';
+        }
+
         $('#Dialog').hide();
     }
 $(function(){

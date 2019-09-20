@@ -158,12 +158,38 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </div>auth_div
                 </div> -->
                 <!-- 推送 END -->
                 <!-- 权限详情 -->
                 <h3 class="titleTab" id='auth_detail'>权限详情</h3>
-                <div class="weui-media-box weui-media-box_small-appmsg" id='auth_div' style="display:none;padding-bottom: 10px;">
+                <if condition="$qxc eq 'qxc'">
+                    <div class="weui-cells" style="display:none;margin-top:0px;" id="auth_div">
+                        <div class="weui-cell">
+                            <div class="weui-cell__bd">
+                                <volist name="purviewList" id="v1">
+                                <div class="weui-uploader">
+                                    <div class="weui-cells__title" style="padding:0;margin:0;">
+                                        <span style="color:black;">  {$v1.title}</span>
+                                    </div>
+                                    <div class="weui-uploader__bd" style="height: 85px;">
+                                        <if condition="$v1['list'] neq ''">
+                                        <volist name="v1.list" id="v2">
+
+                                        <li class="weui-uploader__file wk-select__user" id="csl" style="min-height:70px;width: 45px; margin-bottom: 0;margin-right:8px">
+                                            <img src={$v2.avatar} class="weui-selet__user" style="margin-right: 6px;margin-top:10px; width: 2em; height: 2em;">
+                                            <span style="margin-right: 6px;font-size: 12px;"> {$v2.name}</span>
+                                        </li>
+                                        </volist>
+                                        </if>
+                                    </div>
+                                </div>
+                                </volist>
+                            </div>
+                        </div>
+                    </div>
+                    <else />
+                    <div class="weui-media-box weui-media-box_small-appmsg" id='auth_div' style="display:none;padding-bottom: 10px;">
 
                         <div class="weui-cells" style="margin-top:0px;">
                             <div class="weui-cell" style="padding-top: 5px;padding-bottom: 5px;border-bottom: 1px solid #f8f8f8;">
@@ -205,6 +231,8 @@
                             </div>
                         </div>
                     </div>
+                </if>
+
                 <!-- 权限详情 END -->
             </div>
         </div>
