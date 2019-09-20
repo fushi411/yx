@@ -27,11 +27,14 @@
     <div class="weui-panel__hd"
         style="color: red;font-size: 18px;font-weight: 800;background-color: #f8f8f8;padding-top: 8px;padding-bottom: 4px;">
         <span>待审批</span> 
+
         <eq name="cost" value='1'>
-            <span id="iconfont" style="font-size: 18px;margin-right: 10px;float: right;color: rgb(167, 167, 167);font-weight: 100;">
-                批量
-                <i class="iconfont icon-shouhuodizhiyebianji"  style="font-size: 18px;margin-right: 10px;float: right;"></i>
-            </span>
+            <eq name="showIs" value='1'>
+                <span id="iconfont" style="font-size: 18px;margin-right: 10px;float: right;color: rgb(167, 167, 167);font-weight: 100;">
+                    批量
+                    <i class="iconfont icon-shouhuodizhiyebianji"  style="font-size: 18px;margin-right: 10px;float: right;"></i>
+                </span>
+            </eq>
         </eq>
     </div>
     <div class="weui-panel__hd weui-cells_checkbox" id='label-all' style="font-size: 18px;background-color: #ffffff;padding-top: 4px;padding-bottom: 4px;display: none;">
@@ -145,6 +148,7 @@
                     $('#foot').hide();
                     $('#btn-all').show();
                     $('#label-all').show();
+                    $('#iconfont').text('返回');
                     $("#noProc").find("a").click(function(e){
                         if ( e && e.preventDefault ) {
                             //阻止默认浏览器动作(W3C) 
@@ -163,6 +167,7 @@
                     $('#foot').show();
                     $('#btn-all').hide();
                     $('#label-all').hide();
+                    $('#iconfont').text('批量');
                     $("#noProc").find("a").unbind('click');
                     proc_btn = 0;
                 }

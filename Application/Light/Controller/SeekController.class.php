@@ -80,9 +80,13 @@ class SeekController  extends BaseController
     public function myApprove(){
         $this->titleArr[0]['on'] = 'weui-bar__item_on';
         $this->assign('titleArr',$this->titleArr);  
-        
+        $model = D('YxDetailAuth');
+        $mod  = $this->flag?array('CostMoney'):'';
+        $auth = $model->getBatchAuth($mod);
+        $showIs = in_array(session('name'),$auth)?1:0;
         $data = $this->noApprove();
         $this->assign('title',$this->titlename);
+        $this->assign('showIs',$showIs);
         $this->assign('cost',$this->flag);
         $this->assign('noApprove',$data);
         $this->display('Seek/myApprove');

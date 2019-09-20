@@ -216,4 +216,37 @@ class YxDetailAuthModel extends Model
         } 
         dump($auth);
     }
+
+    /**
+     * 获取最后审批权限人员 ---seek
+     */
+    public function getBatchAuth($mod){
+        if(!is_array($mod)) return array();
+        $pro = array();
+        foreach($mod as $v){
+            $pro[] = array('eq',$v);
+        }
+        $pro[] = 'OR'; 
+        $map = array(
+            'pro_mod' => $pro,
+            'stat'    => 1,
+            'stage_next' => 0,
+        );
+        $union = array(
+            'table' => 'yxhb_appflowtable',
+            'where' => $map,
+            'field' => 'per_name',
+        );
+        $query = M('kk_appflowtable')
+                ->union($union)
+                ->field('per_name')
+                ->where($map)
+                ->select(false);
+        $data = M()->query("select * from ({$query})t GROUP BY per_name");
+        $res = array();
+        foreach($data as $v){
+            $res[] = $v['per_name'];
+        }
+        return $res;
+    }
 }

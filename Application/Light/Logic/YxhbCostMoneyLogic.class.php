@@ -286,7 +286,7 @@ class YxhbCostMoneyLogic extends Model {
         $ntext = $res['ntext']?$res['ntext']:'无';
         $temp = array(
             array('title' => $first_title , 'content' => $first_content ),
-            array('title' => $second_title , 'content' => $second_content ),
+            array('title' => $second_title , 'content' => $second_content , 'color' => $second_color ),
             array('title' => '用款金额' , 'content' => "&yen;".number_format(-$res['nmoney'],2,'.',',')."元"  ),
             array('title' => '相关说明' , 'content' => $textdata['ntext']?$textdata['ntext']:'无'  ),
         );
