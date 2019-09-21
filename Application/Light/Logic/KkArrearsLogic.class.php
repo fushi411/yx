@@ -171,7 +171,7 @@ class KkArrearsLogic extends Model {
             'auth' => data_auth_sign($id),
             'date' => $date
         );
-        $data = send_post('http://www.fjyuanxin.top/sngl/include/getClientCreditApi.php', $post_data);
+        $data = send_post('http://www.fjyuanxin.com/sngl/include/getClientCreditApi.php', $post_data);
         $data['line'] = $ye;
         return $data;
     }

@@ -7,7 +7,7 @@ class WorkFlowController extends BaseController {
 
     private $receiver = 'wk';
 
-    private $urlHead = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx133a00915c785dec&redirect_uri=http%3a%2f%2fwww.fjyuanxin.top';
+    private $urlHead = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx133a00915c785dec&redirect_uri=http%3a%2f%2fwww.fjyuanxin.com';
 
     private $urlEnd = '&response_type=code&scope=snsapi_base&state=YUANXIN#wechat_redirect';
 

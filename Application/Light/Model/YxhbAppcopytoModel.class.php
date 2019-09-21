@@ -112,7 +112,7 @@ class YxhbAppcopytoModel extends Model {
         $title = '环保'.$mod_cname;
         $copy_man = session('name');
         $WeChat = new \Org\Util\WeChat;
-        $url = "https://www.fjyuanxin.top/WE/index.php?m=Light&c=Apply&a=applyInfo&system=yxhb&aid=".$aid."&modname=".$url_mod;    
+        $url = "https://www.fjyuanxin.com/WE/index.php?m=Light&c=Apply&a=applyInfo&system=yxhb&aid=".$aid."&modname=".$url_mod;    
         if($type == 1 ){
             $str = '抄送了';
             $description = $copy_man.$str.$mod_cname."给你!";

@@ -1,0 +1,239 @@
+<extend name="Apply:base" />
+<block name="table">
+    <style>
+        .font13 {
+            font-size: 13px;
+        }
+
+        .fontth {
+            font-size: 13px;
+            font-weight: 550;
+        }
+
+        #other_page_one .weui-form-preview__bd,
+        #other_page_one .fhindex .weui-cells__title {
+            color: black;
+        }
+
+        #other_page_one .fhindex .weui-cells__title {
+            font-weight: 550;
+        }
+
+        #other_page_one .weui-form-preview__label {
+            text-align-last: auto;
+            min-width: 1em;
+        }
+    </style>
+    <div class="other_page_one" id="other_page_one" style="display: none;    
+            position: fixed;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 100%;
+            z-index: 999;">
+        <div class="container">
+            <div class="page js_show">
+                <div class="weui-cells weui-cells_form">
+                    <div class="weui-cell weui-cell_select weui-cell_select-after">
+                        <div class="weui-cell__hd">
+                            <label class="weui-label">结算类型&nbsp;&nbsp;
+                            </label>
+                        </div>
+                        <div class="weui-cell__bd">
+                            <input class="weui-select" type="text" name="custodian" readonly placeholder=""
+                                value="{$mydata.jslx}" />
+                        </div>
+                    </div>
+                    <div class="weui-cell weui-cell_select weui-cell_select-after">
+                        <div class="weui-cell__hd">
+                            <label class="weui-label">客户名称&nbsp;&nbsp;
+                            </label>
+                        </div>
+                        <div class="weui-cell__bd">
+                            <input class="weui-select" type="text" name="custodian" readonly placeholder=""
+                                value="{$mydata.g_name}" />
+                        </div>
+                    </div>
+                    <div class="weui-cell weui-cell_select weui-cell_select-after">
+                        <div class="weui-cell__hd">
+                            <label class="weui-label">开始日期&nbsp;&nbsp;
+                            </label>
+                        </div>
+                        <div class="weui-cell__bd">
+                            <input class="weui-select" type="text" name="custodian" id="start_date" readonly
+                                placeholder="请选择开始日期" value="{$mydata.js_stday}" />
+                        </div>
+                    </div>
+                    <div class="weui-cell weui-cell_select weui-cell_select-after">
+                        <div class="weui-cell__hd">
+                            <label class="weui-label">结束日期&nbsp;&nbsp;
+                            </label>
+                        </div>
+                        <div class="weui-cell__bd">
+                            <input class="weui-select" type="text" name="custodian" id="end_date" readonly
+                                placeholder="请选择结束日期" value="{$mydata.js_enday}" />
+                        </div>
+                    </div>
+                    <div class="weui-cell weui-cell_select weui-cell_select-after">
+                        <div class="weui-cell__hd">
+                            <label class="weui-label">执行日期&nbsp;&nbsp;
+                            </label>
+                        </div>
+                        <div class="weui-cell__bd">
+                            <input class="weui-select" type="text" name="custodian" readonly placeholder="请选择开始日期"
+                                value="{$mydata.js_date}" />
+                        </div>
+                    </div>
+                </div>
+                <div class="weui-cells__title">
+                    <div style="display: inline-block;width: 40%;">价差详情</div>
+                    <div style="display: inline-block;width: 50%;text-align: right;">
+                        <div id="btn-all" class="btn btn-success btn-sm">返回</div>
+                        <div id="overdue" class="btn btn-success btn-sm">确定</div>
+                    </div>
+                </div>
+                <div class="weui-cells weui-cells_form" style="margin-top: 0;min-height: 101%">
+                    <div class="page__bd">
+                        <div class="weui-cells searchbar-result" id="order_select"
+                            style="background-color:#f8f8f8;margin-top:0;">
+                            <eq name="mydata.js_jslx" value="5">
+                                <volist name='mydata.data' id='val'>
+                                    <div class="weui-cells__title" style="text-align:center;color:black;">{$val.g_name}
+                                    </div>
+                                    <volist name="val.data" id='vo'>
+                                        <div class="weui-cells__title" style="color: black;">日期：{$vo.st}
+                                            至 {$vo.end}
+                                        </div>
+                                        <div class="weui-cells weui-cells_form " style="padding-bottom: 5px;">
+                                            <div class="weui-cells__title" style="color: black;position: relative;">
+                                                <span>
+                                                    {$vo.ppformat} </span>
+                                            </div>
+                                            <div class="weui-flex" style="padding: 2px 15px;">
+                                                <div class="weui-form-preview__item   font13" style="width: 50px;">
+                                                </div>
+                                                <div class="weui-form-preview__item weui-flex__item  fontth">数量</div>
+                                                <div class="weui-form-preview__item weui-flex__item  fontth">单价 [运费]
+                                                </div>
+                                                <div class="weui-form-preview__item weui-flex__item  fontth">小计</div>
+                                            </div>
+                                            <div class="weui-flex" style="padding: 3px 15px;">
+                                                <div class="weui-form-preview__item   fontth" style="width: 50px;">调整前
+                                                </div>
+                                                <div class="weui-form-preview__item weui-flex__item  font13">
+                                                    {$vo.zlformat}
+                                                </div>
+                                                <div class="weui-form-preview__item weui-flex__item  font13">
+                                                    {$vo.djformat} [{$vo.yf}]</div>
+                                                <div class="weui-form-preview__item weui-flex__item  font13">
+                                                    {$vo.xjformat}
+                                                </div>
+                                            </div>
+                                            <div class="weui-flex" style="padding: 3px 15px;">
+                                                <div class="weui-form-preview__item   fontth" style="width: 50px;">调整后
+                                                </div>
+                                                <div class="weui-form-preview__item weui-flex__item  font13 zl0">
+                                                    {$vo.xgzl}
+                                                </div>
+                                                <div class="weui-form-preview__item weui-flex__item  font13 dj0">
+                                                    {$vo.xgdj} [{$vo.xgyf}]</div>
+                                                <div class="weui-form-preview__item weui-flex__item  font13 xj0">
+                                                    {$vo.xgxj}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </volist>
+                                </volist>
+                                <div class="weui-cell__bd weui-cell_primary fhindex" index="0">
+                                    <div class="weui-cells__title">结算汇总</div>
+                                    <div class="weui-form-preview">
+                                        <div class="weui-form-preview__bd">
+                                            <div class="weui-flex">
+                                                <div class="weui-form-preview__item weui-flex__item"><label
+                                                        class="weui-form-preview__label">结算金额</label><span
+                                                        class="weui-form-preview__value"
+                                                        style="text-align:left;">{$mydata.tzje}</span></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </eq>
+                            <eq name="mydata.js_jslx" value="4">
+                                <div class="weui-cells weui-cells_form " style="margin-top: 0;">
+                                    <div class="weui-cell ">
+                                        <div class="weui-cell__hd">
+                                            <label class="weui-label">结算金额&nbsp;&nbsp;
+                                            </label>
+                                        </div>
+                                        <div class="weui-cell__bd ">{$mydata.je}
+                                        </div>
+                                    </div>
+                                    <div class="weui-cell ">
+                                        <div class="weui-cell__hd">
+                                            <label class="weui-label">大写金额&nbsp;&nbsp;
+                                            </label>
+                                        </div>
+                                        <div class="weui-cell__bd ">{$mydata.jestr}
+                                        </div>
+                                    </div>
+                                </div>
+                            </eq>
+                            <eq name="mydata.js_jslx" value="7">
+                                <div class="weui-cells weui-cells_form " style="margin-top: 0;">
+                                    <div class="weui-cell ">
+                                        <div class="weui-cell__hd">
+                                            <label class="weui-label">调整金额&nbsp;&nbsp;
+                                            </label>
+                                        </div>
+                                        <div class="weui-cell__bd ">{$mydata.tzje}
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </eq>
+                            <eq name="mydata.js_jslx" value="8">
+                                <div class="weui-cells weui-cells_form " style="margin-top: 0;">
+                                    <div class="weui-cell ">
+                                        <div class="weui-cell__hd">
+                                            <label class="weui-label">调整金额&nbsp;&nbsp;
+                                            </label>
+                                        </div>
+                                        <div class="weui-cell__bd ">{$mydata.tzje}
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </eq>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</block>
+<block name='js'>
+    <script>
+       var modelFlag = getQueryString('modelflag');
+        if(modelFlag == 'show'){
+            $('#other_page_one').show();
+            $('#btn-all').remove();
+            $('#overdue').remove();
+        }else{
+            div_show();
+        }
+        
+        function div_show(type) {
+            return type == 1 ? $('#other_page_one').fadeIn() : $('#other_page_one').fadeOut();
+        }
+        $('#btnhp').click(function () {
+            div_show(1);
+        });
+        $('#btn-all').click(function () {
+            div_show();
+        });
+        $('#overdue').click(function () {
+            div_show();
+        })
+    </script>
+
+</block>

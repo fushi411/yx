@@ -770,7 +770,7 @@ class ConfigController extends BaseController
                         $columnArr[] = array(
                             'wxid' => $columnId,
                             'name' => $bossInfo['name'],
-                            'avatar' => 'https://www.fjyuanxin.top/fjyxoaSV/Public/assets/i/weui/icon_nav_button.png',
+                            'avatar' => 'https://www.fjyuanxin.com/fjyxoaSV/Public/assets/i/weui/icon_nav_button.png',
                         );
 
                         $columnNmaeArr[] = $columnId;

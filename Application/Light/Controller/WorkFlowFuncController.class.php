@@ -45,7 +45,7 @@ class WorkFlowFuncController extends Controller {
 		$fbsj=date('m月d日H点',strtotime($g['dtime']));
 		$title=$sj.' '."新销售日计划";
 		$description =  '环保'.$rq.'销售计划<br><div class=\"highlight\">发布时间：'.$fbsj.'</div>';
-		$url = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx133a00915c785dec&redirect_uri=http%3a%2f%2fwww.fjyuanxin.top%2fyxhb/add_sale_plan_wx.php?params='.$aid.'&response_type=code&scope=snsapi_base&state=STATE#wechat_redirect';
+		$url = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx133a00915c785dec&redirect_uri=http%3a%2f%2fwww.fjyuanxin.com%2fyxhb/add_sale_plan_wx.php?params='.$aid.'&response_type=code&scope=snsapi_base&state=STATE#wechat_redirect';
 		//新闻消息模式
 		$info=$jssdk->sendCardMessage($receiver,$title,$description,$url,16);
 		$sendStat=json_decode($info);
@@ -83,7 +83,7 @@ class WorkFlowFuncController extends Controller {
 		$fbsj=date('m月d日H点',strtotime($g['dtime']));
 		$title=$sj.' '."新销售月计划";
 		$description = '环保'.$month.'销售计划<br><div class=\"highlight\">发布时间：'.$fbsj.'</div>';
-		$url = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx133a00915c785dec&redirect_uri=http%3a%2f%2fwww.fjyuanxin.top%2fyxhb/add_sale_plan_month_wx.php?params='.$aid.'&response_type=code&scope=snsapi_base&state=STATE#wechat_redirect';
+		$url = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx133a00915c785dec&redirect_uri=http%3a%2f%2fwww.fjyuanxin.com%2fyxhb/add_sale_plan_month_wx.php?params='.$aid.'&response_type=code&scope=snsapi_base&state=STATE#wechat_redirect';
 		//新闻消息模式
 		$info=$jssdk->sendCardMessage($receiver,$title,$description,$url,16);
 		return $resArr;

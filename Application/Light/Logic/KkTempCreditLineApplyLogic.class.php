@@ -135,7 +135,7 @@ class KkTempCreditLineApplyLogic extends Model {
             'auth' => data_auth_sign($name),
             'date' => $date
           );
-        $res = send_post('http://www.fjyuanxin.top/sngl/include/getClientCreditApi.php', $post_data);
+        $res = send_post('http://www.fjyuanxin.com/sngl/include/getClientCreditApi.php', $post_data);
         
         // $result['ye'] = number_format(-($ye-$res['ye']+$res['tmp']),2,'.',',')."元";
         // $result['flag'] = -$res['ye']<20000?true:false;

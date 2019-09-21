@@ -166,7 +166,7 @@ class KkCreditLineApplyfmhLogic extends Model {
             'auth' => data_auth_sign($clientid),
             'date' => $date
           );
-        $res = send_post('http://www.fjyuanxin.top/sngl/getFmhClientCreditApi.php', $post_data);
+        $res = send_post('http://www.fjyuanxin.com/sngl/getFmhClientCreditApi.php', $post_data);
         
         // $result['ye'] = number_format(-($ye-$res['ye']+$res['tmp']),2,'.',',')."元";
 

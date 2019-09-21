@@ -94,7 +94,7 @@ class KkClientStatementUpLogic extends Model {
         $image = array();
         $imgsrc = array_filter($imgsrc);
         foreach ($imgsrc as $key => $value) {
-            $image[] = 'http://www.fjyuanxin.top/WE/Public/upload/dzd/'.$value;
+            $image[] = 'http://www.fjyuanxin.com/WE/Public/upload/dzd/'.$value;
         }
         $result['imgsrc'] = $image;
         $result['applyerName'] = $res['rdy'];
@@ -324,7 +324,7 @@ class KkClientStatementUpLogic extends Model {
         }
 
         //  设置文件路径和文件前缀名称
-        $rootPath = "/data/wwwroot/default/WE/Public/upload/dzd/";
+        $rootPath = "/www/web/default/WE/Public/upload/dzd/";
         /* 检测上传根目录 */
         if(!$uploader->checkRootPath($rootPath)){
             $error = $uploader->getError();

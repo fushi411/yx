@@ -339,7 +339,7 @@ class KkSalesReceiptsApplyLogic extends Model {
         }
 
         //  设置文件路径和文件前缀名称
-        $rootPath = "/data/wwwroot/default/sngl/upload/hp/";
+        $rootPath = "/www/web/default/sngl/upload/hp/";
         /* 检测上传根目录 */
         if(!$uploader->checkRootPath($rootPath)){
             $error = $uploader->getError();

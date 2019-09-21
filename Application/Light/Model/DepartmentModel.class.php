@@ -155,7 +155,7 @@ class DepartmentModel extends Model {
                 'type'   => 'dept',
                 'id'     => $v['id'],
                 'name'   => $v['name'],
-                'avatar' => 'https://www.fjyuanxin.top/fjyxoaSV/Public/assets/i/weui/icon_nav_button.png',
+                'avatar' => 'https://www.fjyuanxin.com/fjyxoaSV/Public/assets/i/weui/icon_nav_button.png',
                 'wx'     => $v['id']
             );
         }

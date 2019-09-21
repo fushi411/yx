@@ -77,11 +77,11 @@
                 var title = '查看客户调价';
                 var censhu = id+'|'+'title='+title;
                 var url = "view_guest_tj_info.php?id="+censhu;
-                // "https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx133a00915c785dec&redirect_uri=http%3a%2f%2fwww.fjyuanxin.top%2fyxhb%2findex_index.php&response_type=code&scope=snsapi_base&state=STATE#wechat_redirect"
-                var url = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx133a00915c785dec&redirect_uri=http%3a%2f%2fwww.fjyuanxin.top%2fyxhb%2findex_redirect_parameter.php?url="+url+"&response_type=code&scope=snsapi_base&state=STATE#wechat_redirect";
+                // "https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx133a00915c785dec&redirect_uri=http%3a%2f%2fwww.fjyuanxin.com%2fyxhb%2findex_index.php&response_type=code&scope=snsapi_base&state=STATE#wechat_redirect"
+                var url = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx133a00915c785dec&redirect_uri=http%3a%2f%2fwww.fjyuanxin.com%2fyxhb%2findex_redirect_parameter.php?url="+url+"&response_type=code&scope=snsapi_base&state=STATE#wechat_redirect";
                 window.location.href = url;
             }else{
-                var url = 'https://www.fjyuanxin.top/yxhb/view_guest_tj_info.php?id='+id+"&type=view";
+                var url = 'https://www.fjyuanxin.com/yxhb/view_guest_tj_info.php?id='+id+"&type=view";
                 var areaArr =  ['750px', '450px'];
                 if( window.innerHeight > 600 ) areaArr =  ['550px', '650px'];
                 layer.open({

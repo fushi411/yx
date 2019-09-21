@@ -102,7 +102,7 @@ class YxhbKfMaterielApplyLogic extends Model {
      * 获取开启双线html
      * @param  datetime $date
      * @return string   $res
-     * https://www.fjyuanxin.top/WE/index.php?m=&&m=Light&c=View&a=View&modname=KfMaterielApply&system=yxhb&systempath=sngl&datetime=1545768000
+     * https://www.fjyuanxin.com/WE/index.php?m=&&m=Light&c=View&a=View&modname=KfMaterielApply&system=yxhb&systempath=sngl&datetime=1545768000
      */
     public function makeDoubleScx($date){
         $date = strtotime($date)+8*3600;

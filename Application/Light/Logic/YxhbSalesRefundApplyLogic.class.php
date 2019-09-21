@@ -335,7 +335,7 @@ class YxhbSalesRefundApplyLogic extends Model {
         }
 
         //  设置文件路径和文件前缀名称
-        $rootPath = "/data/wwwroot/default/yxhb/upload/hp/";
+        $rootPath = "/www/web/default/yxhb/upload/hp/";
         /* 检测上传根目录 */
         if(!$uploader->checkRootPath($rootPath)){
             $error = $uploader->getError();
@@ -384,7 +384,7 @@ class YxhbSalesRefundApplyLogic extends Model {
             'auth'   => data_auth_sign($client_id),
             'type'   => 'add'
         ); 
-        $res = send_post('http://www.fjyuanxin.top/sngl/include/yeinfo_hb_api.php', $post_data);
+        $res = send_post('http://www.fjyuanxin.com/sngl/include/yeinfo_hb_api.php', $post_data);
         $ysye = $res[0];
         $flag = $ysye <20000?1:0;
         $res = array(

@@ -119,7 +119,7 @@ class KkCgFpsmLogic extends Model {
         $image = array();
         $imgsrc = array_filter($imgsrc);
         foreach ($imgsrc as $key => $value) {
-            $image[] = 'http://www.fjyuanxin.top/sngl/upload/fy/'.$value;
+            $image[] = 'http://www.fjyuanxin.com/sngl/upload/fy/'.$value;
         }
         $result['imgsrc'] = $image;
         $result['applyerID'] = D('KkBoss')->getIDFromName($res['jbr']);

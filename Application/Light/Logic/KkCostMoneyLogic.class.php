@@ -136,7 +136,7 @@ class KkCostMoneyLogic extends Model {
         $image = array();
         $imgsrc = array_filter($imgsrc);
         foreach ($imgsrc as $key => $value) {
-            $image[] = 'http://www.fjyuanxin.top/sngl/upload/fy/'.$value;
+            $image[] = 'http://www.fjyuanxin.com/sngl/upload/fy/'.$value;
         }
         $result['imgsrc'] = $image;
         $result['applyerID'] = D('KkBoss')->getIDFromName($res['njbr']);
@@ -473,7 +473,7 @@ class KkCostMoneyLogic extends Model {
         }
 
         //  设置文件路径和文件前缀名称
-        $rootPath = "/data/wwwroot/default/sngl/upload/fy/";
+        $rootPath = "/www/web/default/sngl/upload/fy/";
         /* 检测上传根目录 */
         if(!$uploader->checkRootPath($rootPath)){
             $error = $uploader->getError();

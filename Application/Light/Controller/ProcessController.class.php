@@ -15,19 +15,6 @@ class ProcessController extends Controller
      */
     public function ApplyProcess(){
         $qxc = I('get.qxc', '');
-        $this->assign('qxc',$qxc);
-        $qxcArr = array();
-        $qxcArr[] = array(
-            'list'=>array(
-            array('avatar'=>'http://p.qlogo.cn/bizmail/lYlgHcsdNXFnC1hdemGUtyJIyvezibUiaSbmheTUVXiaYhkTIxEOCFw1Q/100', 'name'=>'张三'),
-            array('avatar'=>'http://p.qlogo.cn/bizmail/lYlgHcsdNXFnC1hdemGUtyJIyvezibUiaSbmheTUVXiaYhkTIxEOCFw1Q/100', 'name'=>'张三')
-            ),
-            'title'=>'查询权限'
-        );
-        $qxcArr[] = array('list'=>array(array('avatar'=>'http://p.qlogo.cn/bizmail/lYlgHcsdNXFnC1hdemGUtyJIyvezibUiaSbmheTUVXiaYhkTIxEOCFw1Q/100', 'name'=>'张三')), 'title'=>'删除权限');
-//        var_dump($qxcArr);exit();
-        $this->assign('purviewList', $qxcArr);
-
         $pro_mod = I('get.modname');
         // $pro_mod 为空的情况
         $system  = I('get.system');
@@ -59,12 +46,26 @@ class ProcessController extends Controller
         $url = $aid?U('Light/Apply/applyInfo',array('modname'=>$pro_mod,'aid'=>$aid,'system'=>$system)):U('Light/View/View',array('modname'=>$pro_mod,'system' => $system)); 
         $show['name'] = $mod_name;
         $show['data'] = $temp;
-        $authGroup  =  $this->getAuthGroup($system,$pro_mod);
+
         $detailModel= D('YxDetailAuth');
         $detailAuth = $detailModel->CueAuthCheck();
         $atten      = $detailModel->ActiveAttention($system,$pro_mod);
-        $this->assign('group',$authGroup);
-        $this->assign('explain',$explain);
+
+        if ($qxc != 'qxc') {
+            $authGroup  =  $this->getAuthGroup($system,$pro_mod);
+            $this->assign('group',$authGroup);
+        }else{
+            $purviewList = array();
+            $ret  =  $this->getAuthGroupNew($system,$pro_mod);
+            if ($ret['code'] == 0) {
+                $purviewList[] = array('list' => $ret['data'], 'title'=>'查询权限');
+            }
+
+            $purviewList[] = array('list'=>array(array('avatar'=>'http://p.qlogo.cn/bizmail/lYlgHcsdNXFnC1hdemGUtyJIyvezibUiaSbmheTUVXiaYhkTIxEOCFw1Q/100', 'name'=>'张三')), 'title'=>'提交权限');
+            $this->assign('purviewList', $purviewList);
+        }
+
+        $this->assign('qxc',$qxc);
         $this->assign('CueConfig',$detailAuth);
         $this->assign('show',$show);
         $this->assign('url',$url);
@@ -72,6 +73,55 @@ class ProcessController extends Controller
         $this->assign('modname',$pro_mod);
         $this->assign('system',$system);
         $this->display('Process/ApplyProcess');
+    }
+
+    /**
+     * 新版本获取权限人员相关数据
+     */
+    private function getAuthGroupNew($system, $modname)
+    {
+        # 权限rule搜索
+        $res = M('auth_rule')->field('id')->where(array('name'=>"Light/{$system}/{$modname}", 'status'=>1))->find();
+        if (empty($res)) {
+            return array('code'=>1, 'msg'=>'无人员有权限!');
+        }
+        $urlId = $res['id'];
+
+        # 拥有权限分组
+        $map = array(
+            'rules'  => array('like',"%{$urlId}%"),
+            'status' => 1,
+            'id'     => array('neq','2'),
+        );
+        $group = M('auth_group')->field('id,rules')->where($map)->select();
+        $groupIdArr = array();
+        if (!empty($group)) {
+            foreach ($group as $key=>$groupInfo) {
+                $temp = explode(',', $groupInfo['rules']);
+                if (in_array($urlId, $temp)){
+                    $groupIdArr[] = $groupInfo['id'];
+                }
+            }
+        }
+        if (empty($groupIdArr)) {
+            return array('code'=>1, 'msg'=>'没有符合要求的权限组!');
+        }
+
+        $leaguer = M('auth_group_access a')
+            ->field('b.name,b.avatar,a.uid')
+            ->join($system.'_boss b on a.uid=b.wxid')
+            ->where(array('group_id'=>array('in', implode(',', $groupIdArr) ) ) )
+            ->group('a.uid')
+            ->select();
+        if (empty($leaguer)) {
+            return array('code'=>1, 'msg'=>'没有符合要求的人员!');
+        }
+
+        $saveData = array();
+        foreach ($leaguer as $leaguerInfo) {
+            $saveData[] = array('name'=>$leaguerInfo['name'], 'avatar'=>$leaguerInfo['avatar']);
+        }
+        return array('code'=>0, 'data'=>$saveData);
     }
 
     /**

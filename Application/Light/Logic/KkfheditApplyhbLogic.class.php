@@ -115,7 +115,7 @@ class KkfheditApplyhbLogic extends Model {
         $image = array();
         $imgsrc = array_filter($imgsrc);
         foreach ($imgsrc as $key => $value) {
-            $image[] = 'http://www.fjyuanxin.top/WE/Public/upload/fh/'.$value;
+            $image[] = 'http://www.fjyuanxin.com/WE/Public/upload/fh/'.$value;
         }
         $result['imgsrc'] = $image;
         $result['applyerID'] =  D('KkBoss')->getIDFromName($res['fh_kpy']);
@@ -657,7 +657,7 @@ class KkfheditApplyhbLogic extends Model {
         }
 
         //  设置文件路径和文件前缀名称
-        $rootPath = "/data/wwwroot/default/WE/Public/upload/fh/";
+        $rootPath = "/www/web/default/WE/Public/upload/fh/";
         /* 检测上传根目录 */
         if(!$uploader->checkRootPath($rootPath)){
             $error = $uploader->getError();

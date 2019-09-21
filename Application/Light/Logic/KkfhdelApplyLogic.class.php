@@ -397,7 +397,7 @@ class KkfhdelApplyLogic extends Model {
         }
 
         //  设置文件路径和文件前缀名称
-        $rootPath = "/data/wwwroot/default/WE/Public/upload/fh/";
+        $rootPath = "/www/web/default/WE/Public/upload/fh/";
         /* 检测上传根目录 */
         if(!$uploader->checkRootPath($rootPath)){
             $error = $uploader->getError();

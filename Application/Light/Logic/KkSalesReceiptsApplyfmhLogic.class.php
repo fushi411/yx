@@ -338,7 +338,7 @@ class KkSalesReceiptsApplyfmhLogic extends Model {
         }
 
         //  设置文件路径和文件前缀名称
-        $rootPath = "/data/wwwroot/default/sngl/upload/hp/";
+        $rootPath = "/www/web/default/sngl/upload/hp/";
         /* 检测上传根目录 */
         if(!$uploader->checkRootPath($rootPath)){
             $error = $uploader->getError();
@@ -377,7 +377,7 @@ class KkSalesReceiptsApplyfmhLogic extends Model {
             'auth' => data_auth_sign($clientid),
           );
         if($date) $post_data['date'] = $date;
-        $res = send_post('http://www.fjyuanxin.top/sngl/getFmhClientCreditApi.php', $post_data);
+        $res = send_post('http://www.fjyuanxin.com/sngl/getFmhClientCreditApi.php', $post_data);
         return $res['ysye'];
     } 
     /**

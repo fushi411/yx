@@ -728,6 +728,11 @@ class MsgdataModel extends Model {
     public function GuestJsApply(){
         return $this->ClientStatementData();
     }
+
+    public function GuestJsApply_fmh(){
+        return $this->ClientStatementData();
+    }
+
     private function ClientStatementData(){
         $result = array();
         $result['url'] = array(
@@ -736,6 +741,7 @@ class MsgdataModel extends Model {
             array('name' => '粉煤灰新增对账单','url' => U('Light/View/View',array('modname'=>'ClientStatementApply_fmh','system' => 'kk')),'modname' => 'kkClientStatementApply_fmh'),
             array('name' => '环保客户结算','url' => U('Light/View/View',array('modname'=>'GuestJsApply','system' => 'yxhb')),'modname' => 'yxhbGuestJsApply'),
             array('name' => '建材客户结算','url' => U('Light/View/View',array('modname'=>'GuestJsApply','system' => 'kk')),'modname' => 'kkGuestJsApply'),
+            array('name' => '粉煤灰客户结算','url' => U('Light/View/View',array('modname'=>'GuestJsApply_fmh','system' => 'kk')),'modname' => 'kkGuestJsApply_fmh'),
         );
 
         $result['yxhbClientStatementApply'] = array(
@@ -757,6 +763,10 @@ class MsgdataModel extends Model {
         $result['kkGuestJsApply'] = array(
             'process'       => U('Light/Process/ApplyProcess',array('modname'=>'GuestJsApply','system' => 'kk')),
             'info'          => U('Light/Apply/applyInfo',array('modname'=>'GuestJsApply','system'=>'kk')),
+        );
+        $result['kkGuestJsApply_fmh'] = array(
+            'process'       => U('Light/Process/ApplyProcess',array('modname'=>'GuestJsApply_fmh','system' => 'kk')),
+            'info'          => U('Light/Apply/applyInfo',array('modname'=>'GuestJsApply_fmh','system'=>'kk')),
         );
         return $result;
     }

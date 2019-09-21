@@ -359,7 +359,7 @@ class YxhbkfScjlLogic extends Model {
             'xd'        => $xd,
             'scx'       => $scx.'生产线',
           );
-        $res = send_post('http://www.fjyuanxin.top/sngl/AlarmInfoApi.php', $post_data);
+        $res = send_post('http://www.fjyuanxin.com/sngl/AlarmInfoApi.php', $post_data);
         return array('code' => 200,'msg' => '提交成功' , 'aid' =>$result);
         
     }

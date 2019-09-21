@@ -297,7 +297,7 @@ class LoginController extends \Think\Controller {
         $mod_cname  = $seek->getTitle($flowName,$system);
         $title = $systemName[$system].$mod_cname.'(催收)';
         if($system == 'kk' && $flowName == 'AddMoneyQtTz') $title = '投资'.$mod_cname.'(催收)';
-        $url = "https://www.fjyuanxin.top/WE/index.php?m=Light&c=Apply&a=applyInfo&system=".$system."&aid=".$id."&modname=".$flowName;
+        $url = "https://www.fjyuanxin.com/WE/index.php?m=Light&c=Apply&a=applyInfo&system=".$system."&aid=".$id."&modname=".$flowName;
         
         $boss = D($system.'_boss');
         $proName = $boss->getusername($pid);

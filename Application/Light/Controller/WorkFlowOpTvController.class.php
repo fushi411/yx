@@ -111,7 +111,7 @@ class WorkFlowOpTvController extends BaseController {
 			$StepInfo = D(ucfirst($system).'Appflowproc')->getStepInfo($mod_name,$id,session($system."_id"));
 			$StepStatus = $StepInfo['app_name'];
             $description = "您有新的{$StepStatus}意见：".$per_name.$sendWord;
-            $url = "https://www.fjyuanxin.top/WE/index.php?m=Light&c=Apply&a=applyInfo&system=".$system."&aid=".$id."&modname=".$mod_name;
+            $url = "https://www.fjyuanxin.com/WE/index.php?m=Light&c=Apply&a=applyInfo&system=".$system."&aid=".$id."&modname=".$mod_name;
             $WeChat = new \Org\Util\WeChat;
             $WeChat->sendCardMessage($temrecevier,$title,$description,$url,15,$mod_name,$system);
 		}
@@ -219,7 +219,7 @@ class WorkFlowOpTvController extends BaseController {
 			$StepInfo = D(ucfirst($system).'Appflowproc')->getStepInfo($mod_name,$id,session($system."_id"));
 			$StepStatus = $StepInfo['app_name'];
             $description = "您有新的{$StepStatus}意见：".$per_name.$sendWord;
-            $url = "https://www.fjyuanxin.top/WE/index.php?m=Light&c=Apply&a=applyInfo&system=".$system."&aid=".$id."&modname=".$mod_name;
+            $url = "https://www.fjyuanxin.com/WE/index.php?m=Light&c=Apply&a=applyInfo&system=".$system."&aid=".$id."&modname=".$mod_name;
             $WeChat = new \Org\Util\WeChat;
             $WeChat->sendCardMessage($temrecevier,$title,$description,$url,15,$mod_name,$system);
 		}
@@ -333,7 +333,7 @@ class WorkFlowOpTvController extends BaseController {
             $mod_cname = $flowTable->getFieldByProMod($mod_name, 'pro_name');
             $title = str_replace('表','',$mod_cname);
             $description = "您有新的签收意见：".$per_name.$sendWord;
-            $url = "https://www.fjyuanxin.top/WE/index.php?m=Light&c=Apply&a=applyInfo&system=".$system."&aid=".$id."&modname=".$mod_name;
+            $url = "https://www.fjyuanxin.com/WE/index.php?m=Light&c=Apply&a=applyInfo&system=".$system."&aid=".$id."&modname=".$mod_name;
             $WeChat = new \Org\Util\WeChat;
             $WeChat->sendCardMessage($temrecevier,$title,$description,$url,15,$mod_name,$system);
 		}
@@ -398,7 +398,7 @@ class WorkFlowOpTvController extends BaseController {
 
 		$allArr = D($system.'Appflowtable')->getAllProc($mod_name);
 		$title  = $seek->getTitle($mod_name,$system);
-        $url    = "https://www.fjyuanxin.top/WE/index.php?m=Light&c=Apply&a=applyInfo&system=".$system."&aid=".$apply_id."&modname=".$mod_name;
+        $url    = "https://www.fjyuanxin.com/WE/index.php?m=Light&c=Apply&a=applyInfo&system=".$system."&aid=".$apply_id."&modname=".$mod_name;
 		
         if($option == 1 ){
 			$description = "您有一个流程已被拒收";
