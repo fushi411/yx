@@ -55,7 +55,7 @@ class KkGuestJsApplyfmhLogic extends Model {
                                      'color' => 'black'
                                     );
         $result['content'][] = array('name'=>'客户名称：',
-                                     'value'=>D('kk_guest2_fmh')->getFmhParentName($res['client']),
+                                     'value'=>D('kk_guest2_fmh')->getParentName($res['client']),
                                      'type'=>'string',
                                      'color' => 'black'
                                     );
@@ -90,7 +90,7 @@ class KkGuestJsApplyfmhLogic extends Model {
                                     );
         $result['mydata']['js_jslx']  = $res['jslx'];
         $result['mydata']['jslx']     = $jslx[$res['jslx']];
-        $result['mydata']['g_name']   = D('kk_guest2_fmh')->getFmhParentName($res['client']);                      
+        $result['mydata']['g_name']   = D('kk_guest2_fmh')->getParentName($res['client']);                      
         $result['mydata']['js_stday'] = $res['js_stday'];
         $result['mydata']['js_enday'] = $res['js_enday'];
         $result['mydata']['js_date']  = $res['js_date'];
@@ -189,7 +189,7 @@ class KkGuestJsApplyfmhLogic extends Model {
         $jslx = array('1'=>'磅差调整', '3'=>'手续费', '4'=>'其他', '5'=>'价差调整', '6'=>'业务费调整',7 => '应收坏账调整',8=>'预收呆账调整');
         $temp = array(
             array('title' => '结算类型' , 'content' => $jslx[$res['jslx']] ),
-            array('title' => '客户名称' , 'content' =>  D('kk_guest2_fmh')->getFmhParentName($res['client'])),
+            array('title' => '客户名称' , 'content' =>  D('kk_guest2_fmh')->getParentName($res['client'])),
             array('title' => '相关说明' , 'content' => $res['js_bz']?$res['js_bz']:'无'  ),
         );
         $result = array(
