@@ -226,7 +226,6 @@ class YxhbAppflowtableModel extends Model {
      */
     public function getProStep($id){
         $data = $this->where(array('stat' => 1,'view_id' => $id))->order('stage_id')->select();
-        var_dump($data);exit();
         $res = array();
         $wx  = array();
         $boss = D('YxhbBoss');

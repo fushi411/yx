@@ -214,7 +214,7 @@ class YxDetailAuthModel extends Model
                 );
             }
         } 
-        dump($auth);
+        return $auth;
     }
 
     /**
