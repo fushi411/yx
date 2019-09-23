@@ -880,7 +880,7 @@ class MsgdataModel extends Model {
         $result['url'] = array(
             array('name' => '环保客户调价','url' => U('Light/View/View',array('modname'=>'GuesttjApply','system' => 'yxhb')),'modname' => 'yxhbGuesttjApply'),
             array('name' => '建材客户调价','url' => U('Light/View/View',array('modname'=>'GuesttjApply','system' => 'kk')),'modname' => 'kkGuesttjApply'),
-            //array('name' => '粉煤灰客户调价','url' => U('Light/View/View',array('modname'=>'GuesttjApply_fmh','system' => 'kk')),'modname' => 'kkGuesttjApply_fmh'),
+            array('name' => '粉煤灰客户调价','url' => U('Light/View/View',array('modname'=>'GuesttjApply_fmh','system' => 'kk')),'modname' => 'kkGuesttjApply_fmh'),
         );
 
         $result['yxhbGuesttjApply'] = array(
@@ -891,9 +891,9 @@ class MsgdataModel extends Model {
             'process'       => U('Light/Process/ApplyProcess',array('modname'=>'GuesttjApply','system' => 'kk')),
             'info'          => U('Light/Apply/applyInfo',array('modname'=>'GuesttjApply','system'=>'kk')),
         );
-        $result['kkkkGuesttjApply_fmh'] = array(
-            'process'       => U('Light/Process/ApplyProcess',array('modname'=>'kkGuesttjApply_fmh','system' => 'kk')),
-            'info'          => U('Light/Apply/applyInfo',array('modname'=>'kkGuesttjApply_fmh','system'=>'kk')),
+        $result['kkGuesttjApply_fmh'] = array(
+            'process'       => U('Light/Process/ApplyProcess',array('modname'=>'GuesttjApply_fmh','system' => 'kk')),
+            'info'          => U('Light/Apply/applyInfo',array('modname'=>'GuesttjApply_fmh','system'=>'kk')),
         );
         return $result;
     }

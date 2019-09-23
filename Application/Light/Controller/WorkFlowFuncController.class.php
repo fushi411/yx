@@ -1142,5 +1142,15 @@ class WorkFlowFuncController extends Controller {
         $resArr = $res?array("status"=>"success"):array("status"=>"failure");
         return $resArr;
     }
+    /**
+     * 粉煤灰客户结算
+     * @param  [integre] $aid [记录ID]
+     * @return [array]      [状态]
+     */
+    public function KkGuestJsApply_fmhEnd($aid){
+        $res = M('kk_js_fmh')->where(array('pid'=>$aid))->setField('js_stat', 2);
+        $resArr = $res?array("status"=>"success"):array("status"=>"failure");
+        return $resArr;
+    }
 // -----END------
 }
