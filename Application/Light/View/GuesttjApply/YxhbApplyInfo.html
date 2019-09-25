@@ -20,7 +20,7 @@
             <div class="container">
                 <div class="page js_show">
                     <h3 class="titleTab" style="text-align: center">调价详情</h3>
-                    <volist name="mydata" id="vo">
+                    <volist name="mydata.modify" id="vo">
                             <div class="weui-cells__title" style="color: black;margin-top: 4.2px;">{$vo.g_name}</div>
                         <div class="weui-cells weui-cells_form " style="padding-bottom: 15px;">
                                 <div class="weui-cells__title" style="color: black;">{$vo.date}</div>
@@ -40,6 +40,29 @@
                             </volist>
                         </div>
                     </volist>
+                    <if condition=" $mydata.flag eq 1">
+                        <div class="weui-panel__hd" style="color:black;font-size: 16px;font-weight: 600; background-color: #ffffff;padding-top: 8px;padding-bottom: 4px;margin-top: 5px;">未调价客户</div>
+                        <volist name="mydata.unmodify" id="vo">
+                            <div class="weui-cells__title" style="color: black;margin-top: 4.2px;">{$vo.g_name}</div>
+                            <div class="weui-cells weui-cells_form " style="padding-bottom: 15px;">
+                                    <div class="weui-cells__title" style="color: black;"></div>
+                                <div class="weui-flex" style="padding: 2px 15px;">
+                                    <div class="weui-form-preview__item weui-flex__item  font13">品种</div>
+                                    <div class="weui-form-preview__item weui-flex__item  font13">当前</div>
+                                    <div class="weui-form-preview__item weui-flex__item  font13">调整</div>
+                                    <div class="weui-form-preview__item weui-flex__item  font13">运费</div>
+                                </div>
+                                <volist name="vo.child" id="val">
+                                    <div class="weui-flex" style="padding: 3px 15px;">
+                                        <div class="weui-form-preview__item weui-flex__item  font13">{$val.cate}</div>
+                                        <div class="weui-form-preview__item weui-flex__item  font13">{$val.now}</div>
+                                        <div class="weui-form-preview__item weui-flex__item  font13">{$val.dj}</div>
+                                        <div class="weui-form-preview__item weui-flex__item  font13">{$val.tj_yf}</div>
+                                    </div>
+                                </volist>
+                            </div>
+                        </volist>
+                    </if>
                     <div class="weui-cells__title" style="height: 10px;"></div>
                 </div>
             </div>

@@ -84,32 +84,60 @@ class KkGuesttjApplyfmhLogic extends Model {
         $system = 'kk';
         $model  = D(ucfirst($system).'Guest2_fmh');
         $client = M('kk_tj_fmh a')
-                ->join('kk_guest2 b on a.tj_client=b.id')
+                ->join('kk_guest2_fmh b on a.tj_client=b.id')
+                ->field('tj_cate,tj_bzfs,tj_client,tj_cate,tj_dj,delta_dj,tj_stday,tj_yf,tj_da')
                 ->where($map)
                 ->order('b.reid,a.tj_client desc,a.tj_bzfs desc,a.tj_cate')
                 ->select();
         $guest = $this->getAllGuestName();  
         $temp = array();
         $tj_da = $client[0]['tj_da'];
+        // 未调价用户
+        $map = array(
+            'ht_stat'  => 2,
+            'ht_stday' => array('elt',$tj_da),
+            'ht_enday' => array('egt',$tj_da),
+            'g_khlx'   => array(array('eq','经销商'),array('eq','直供单位'),'or'),
+        ); 
+        $modify = M($system.'_guest2_fmh as a')
+                ->join($system.'_ht_fmh as b on a.id = b.ht_khmc')
+                ->field('a.id as tj_client')
+                ->where($map)
+                ->group('a.id')
+                ->order('g_khlx,reid')
+                ->select();
+      
+        $check = array();
+        if(count($client) < count($modify)){
+            $clientArr = $this->reData($client);
+            $modifyArr = $this->reData($modify);
+            $check = array_diff($modifyArr,$clientArr);
+            $client_merge = array();
+            foreach ($check as  $v) {
+                $client_merge[] = array('tj_client' => $v); 
+            }
+        }
+        $client   = array_merge($client,$client_merge);
         $temp = array();
-        $item = '';
+        $$tj_client = '';
+        $unModify = array();
         foreach ($client as  $value) {
-           if($value['tj_client'] == $item)  continue;
-           $item = $value['tj_client'];
+           if($value['tj_client'] == $$tj_client)  continue;
+            $tj_client = $value['tj_client'];
             $map = array(
-                'ht_khmc'  => $item,
+                'ht_khmc'  => $tj_client,
                 'ht_stday' => array('elt',$tj_da),
                 'ht_enday' => array('egt',$tj_da),
                 'ht_stat'  => 2
             );
             $pp  = M('kk_ht_fmh')->where($map)->group('ht_cate')->select(false);
             $pp  = M()->query("SELECT ht_cate as pp,ht_bzfs as bz FROM( $pp ) AS tb GROUP BY ht_pp,ht_cate,ht_bzfs,ht_wlfs");
-
+           
             foreach ($pp as  $val) {
                 $flag = 0;
                 foreach ($client as $k=>$vo) {
-                    if($vo['tj_cate'] == $val['pp'] && $vo['tj_bzfs'] == $val['bz'] && $vo['tj_client'] == $value['tj_client']){
-                        $vo['g_name'] = $guest[$vo['tj_client']];
+                    if($vo['tj_cate'] == $val['pp'] && $vo['tj_bzfs'] == $val['bz'] && $vo['tj_client'] == $tj_client){
+                        $vo['g_name'] = $guest[$tj_client];
                         $bzfs         = $vo['tj_bzfs'] == '袋装'?'(袋)':'(散)';
                         $vo['cate']   = $vo['tj_cate'].$bzfs;
                         // 当前价格
@@ -120,9 +148,9 @@ class KkGuesttjApplyfmhLogic extends Model {
                         $tmpl  = "<span style='color:".$color."'>(".$vo['delta_dj']."{$arrow})</span>";
                         $vo['dj'] = $vo['tj_dj'].$tmpl;
                         $vo['tj_yf'] = $vo['tj_yf'] == 0?'自提':$vo['tj_yf'];
-                        $temp[$vo['tj_client']]['g_name']  = $model->getName($vo['tj_client']);  
-                        $temp[$vo['tj_client']]['date']    = '调价日期：'.$vo['tj_stday'];  
-                        $temp[$vo['tj_client']]['child'][] = $vo;    
+                        $temp[$tj_client]['g_name']  = $model->getName($tj_client);  
+                        $temp[$tj_client]['date']    = '调价日期：'.$vo['tj_stday'];  
+                        $temp[$tj_client]['child'][] = $vo;    
                         $flag = 1;
                         unset($client[$k]);
                     }  
@@ -130,19 +158,33 @@ class KkGuesttjApplyfmhLogic extends Model {
                 if($flag == 1) continue;
                 $bz   = $val['bz'] == '散装'?'(散)':'(袋)';
                 $show = $val['pp'].$bz;
-                $wlfs = $this->getWlfs($value['tj_client'],$tj_da,$val['pp'],$val['bz'],$system);
-                $yf   = $this->getfhyf($value['tj_client'],$tj_da,'福源鑫',$val['pp'],$val['bz'],$system);
+                $wlfs = $this->getWlfs($tj_client,$tj_da,$val['pp'],$val['bz'],$system);
+                $yf   = $this->getfhyf($tj_client,$tj_da,'福源鑫',$val['pp'],$val['bz'],$system);
                 $yf   = ($yf == '-'|| $wlfs == '自提')?$wlfs==null?$yf:$wlfs:$yf;
                 if($yf == 0) $yf = '自提';
                 $item = array(
                     'cate' => $show,
-                    'now'  => $this->getfhdj($value['tj_client'],$tj_da,'福源鑫',$val['pp'],$val['bz'],$system),
+                    'now'  => $this->getfhdj($tj_client,$tj_da,'福源鑫',$val['pp'],$val['bz'],$system),
                     'dj'   => '-',
                     'tj_yf' => $yf,
                 );
                 if($item['now'] == '-') continue;
-                $temp[$value['tj_client']]['child'][] = $item; 
+                if( in_array($tj_client,$check) ){
+                    $unModify[$tj_client]['g_name']  = $model->getName($tj_client);
+                    $unModify[$tj_client]['child'][] = $item;
+                }else{
+                    $temp[$tj_client]['child'][] = $item; 
+                }
             }
+        }
+
+        return array('modify' => $temp,'unmodify' => $unModify,'flag' => empty($unModify)?0:1);
+    }
+
+    public function reData($data){
+        $temp = array();
+        foreach( $data as $vo ){
+            $temp[] = $vo['tj_client'];
         }
         return $temp;
     }

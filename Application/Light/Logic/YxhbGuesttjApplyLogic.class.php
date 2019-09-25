@@ -76,6 +76,7 @@ class YxhbGuesttjApplyLogic extends Model {
     }
 
     public function getTjData($aid){
+        $field = 'b.*';
         $map = array(
             'a.id' => $aid,
         );
@@ -95,19 +96,50 @@ class YxhbGuesttjApplyLogic extends Model {
                 ->where($map)
                 ->group('c.reid,tj_client')
                 ->select();
+        
+        $tj_da = $data[0]['tj_da'];
+        // 未调价
+        $map = array(
+            'ht_stat'  => 2,
+            'ht_stday' => array('elt',$tj_da),
+            'ht_enday' => array('egt',$tj_da),
+            'g_khlx'   => array(array('eq','经销商'),array('eq','直供单位'),'or'),
+        ); 
+        $modify = M($system.'_guest2 as a')
+                ->join($system.'_ht as b on a.id = b.ht_khmc')
+                ->field('a.id as tj_client')
+                ->where($map)
+                ->group('a.id')
+                ->order('g_khlx,reid')
+                ->select();
+        $check = array();
+        if(count($client) < count($modify)){
+            $clientArr = $this->reData($client);
+            $modifyArr = $this->reData($modify);
+            $check = array_diff($modifyArr,$clientArr);
+            $client_merge = array();
+            foreach ($check as  $v) {
+                $client_merge[] = array('tj_client' => $v); 
+            }
+        }
         $guest = $this->getAllGuestName();  
         $pp = array(
             array('pp' => 'S95','bz' => '散装'),
             array('pp' => 'F85','bz' => '散装'),
         );
-        $tj_da = $data[0]['tj_da'];
-        $temp = array();
+
+        $client   = array_merge($client,$client_merge);
+        $tj_da    = $data[0]['tj_da'];
+        $temp     = array();
+        $unModify = array();
+
         foreach ($client as  $value) {
+            $tj_client = $value['tj_client'];
             foreach ($pp as  $val) {
                 $flag = 0;
                 foreach ($data as $k=>$vo) {
-                    if($vo['tj_cate'] == $val['pp'] && $vo['tj_bzfs'] == $val['bz'] && $vo['tj_client'] == $value['tj_client']){
-                        $vo['g_name'] = $guest[$vo['tj_client']];
+                    if($vo['tj_cate'] == $val['pp'] && $vo['tj_bzfs'] == $val['bz'] && $vo['tj_client'] == $tj_client){
+                        $vo['g_name'] = $guest[$tj_client];
                         $vo['cate']   = $vo['tj_cate'];
                         // 当前价格
                         $vo['now'] = preg_replace('/\.0+$/', '',bcsub($vo['tj_dj'],$vo['delta_dj'],2));
@@ -117,16 +149,16 @@ class YxhbGuesttjApplyLogic extends Model {
                         $tmpl  = "<span style='color:".$color."'>(".$vo['delta_dj']."{$arrow})</span>";
                         $vo['dj'] = $vo['tj_dj'].$tmpl;
                         $vo['tj_yf'] = $vo['tj_yf'] == 0?'自提':$vo['tj_yf'];
-                        $temp[$vo['tj_client']]['g_name']  = $model->getName($vo['tj_client']);  
-                        $temp[$vo['tj_client']]['date']    = '调价日期：'.$vo['tj_stday'];  
-                        $temp[$vo['tj_client']]['child'][] = $vo;    
+                        $temp[$tj_client]['g_name']  = $model->getName($tj_client);  
+                        $temp[$tj_client]['date']    = '调价日期：'.$vo['tj_stday'];  
+                        $temp[$tj_client]['child'][] = $vo;    
                         $flag = 1;
                         unset($data[$k]);
                     }  
                 }
                 if($flag == 1) continue;
                 $bz   = $val['bz'] == '散装'?'(散)':'(袋)';
-                $show = preg_replace('/[^\d]*/', '', $val['pp']).$bz;
+                $show = $val['pp'].$bz;
                 $wlfs = $this->getWlfs($value['tj_client'],$tj_da,$val['pp'],$system);
                 $yf   = $this->getfhyf($value['tj_client'],$tj_da,$val['pp'],$val['bz'],$wlfs);
                 $yf   = ($yf == '-'|| $wlfs == '自提')?$wlfs==null?$yf:$wlfs:$yf;
@@ -138,13 +170,25 @@ class YxhbGuesttjApplyLogic extends Model {
                     'tj_yf' => $yf,
                 );
                 if($item['now'] == '-') continue;
-                $temp[$value['tj_client']]['child'][] = $item; 
+                if( in_array($value['tj_client'],$check) ){
+                    $unModify[$tj_client]['g_name']  = $model->getName($tj_client);
+                    $unModify[$tj_client]['child'][] = $item;
+                }else{
+                    $temp[$value['tj_client']]['child'][] = $item; 
+                }
             }
         }
-        return $temp;
-        
+        return array('modify' => $temp,'unmodify' => $unModify,'flag' => empty($unModify)?0:1);
     }
 
+    // 用户数组重组
+    public function reData($data){
+        $temp = array();
+        foreach( $data as $vo ){
+            $temp[] = $vo['tj_client'];
+        }
+        return $temp;
+    }
     public function getAllGuestName(){
         $data = M('yxhb_guest2')->select();
         $temp = array('无此客户');
