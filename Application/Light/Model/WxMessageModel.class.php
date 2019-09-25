@@ -232,6 +232,7 @@ class WxMessageModel extends Model {
         $seek  = D('Seek');
         $stat  = $seek->getConfig($mod,$system,'stat');
         $title = $stat==3?'待签收':'待审批'; 
+        if($tyep == 'pass' ) $title = $stat==3?'已签收':'已审批'; 
         $top   = $seek->getModname($mod,$system);
         $title = "{$top}({$title})";
         # 推送人员
