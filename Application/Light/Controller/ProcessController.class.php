@@ -465,6 +465,7 @@ class ProcessController extends Controller
 
         $modname = I('get.modname');
         $system = I('get.system');
+        $aid     = I('get.aid');
         if (empty($modname) || empty($system)) {
             $this->error ('参数异常！ 请重新进入');
         }
@@ -494,12 +495,13 @@ class ProcessController extends Controller
 
         $modInfo = M('yx_config_title')->where(array('name'=>$modname, 'mod_system'=>$system))->field('mod_title')->find();
         $this->assign('titleName', $modInfo['mod_title'].'签收人员');
-
-        $returnUrl = '/WE/index.php?m=Light&c=View&a=View&modname='.$modname.'&system='.$system;
+        
+        $returnUrl = $aid?U('Light/Apply/applyInfo',array('modname'=>$modname,'aid'=>$aid,'system'=>$system)):U('Light/View/View',array('modname'=>$modname,'system' => $system));
         $this->assign('returnUrl', $returnUrl);
 
         $this->assign('system', $system);
         $this->assign('modname', $modname);
+        $this->assign('aid', $aid);
         $this->assign('CueConfig',$detailAuth);
         $this->assign('condition',$temp);
         $this->display('Process/user_deploy');

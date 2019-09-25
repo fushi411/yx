@@ -182,117 +182,158 @@
                     <block name="table"></block>      
                           
                 <block name="work_flow">
-                    <div class="weui-panel" style="margin-top: 0px;" id='weui_panel_table'>
-                        <div class="weui-panel__hd" style="font-size: 16px;background-color: #f8f8f8;color:black;padding-top: 10px;">审批流程
-                            <a href="{:U('Light/Process/ApplyProcess',array('modname'=>$mod_name,'system'=>$system,'aid' => $aid))}">
-                                <i class="iconfont icon-chakan" style="vertical-align: middle;" ></i>
-                            </a> 
-                        </div>
-                        <div class="weui-cells" style="margin-top:0px;">
-                            <div class="weui-cell">
-                                <div class="weui-cell__bd">
-                                    <div class="weui-uploader">
-                                        <div class="weui-uploader__bd" style="height: 70px;">
-                                            <ul class="weui-uploader__files" id="app_pro" style="margin-bottom: 0px;">
-                                               
-                                            <block name="process">
-                                                <volist name="proInfo" id="vo">
-                                                    <if condition="$vo.id eq $first['id']">
-                                                        <li class='weui-uploader__file wk-select__user' id='{$first.id}' style='min-height:70px;width: 45px; margin-bottom: 0;margin-right: 0'>
-                                                    <else/>
-                                                        <li class='weui-uploader__file wk-select__user' id='{$vo.id}' style='min-height:70px;width: 45px; margin-bottom: 0;margin-right: 0;margin-left:8px'>
-                                                    </if>
-                                                    <if condition="$vo.avatar eq ''">
-                                                        <img src='Public/assets/i/defaul.png' class='weui-selet__user' style='margin-right: 6px;margin-top:10px; width: 2em; height: 2em;'>
+                    <if condition="$isqs eq 0">
+                        <div class="weui-panel" style="margin-top: 0px;" id='weui_panel_table'>
+                            <div class="weui-panel__hd" style="font-size: 16px;background-color: #f8f8f8;color:black;padding-top: 10px;">审批流程
+                                <a href="{:U('Light/Process/ApplyProcess',array('modname'=>$mod_name,'system'=>$system,'aid' => $aid))}">
+                                    <i class="iconfont icon-chakan" style="vertical-align: middle;" ></i>
+                                </a> 
+                            </div>
+                            <div class="weui-cells" style="margin-top:0px;">
+                                <div class="weui-cell">
+                                    <div class="weui-cell__bd">
+                                        <div class="weui-uploader">
+                                            <div class="weui-uploader__bd" style="height: 70px;">
+                                                <ul class="weui-uploader__files" id="app_pro" style="margin-bottom: 0px;">
+                                                
+                                                <block name="process">
+                                                    <volist name="proInfo" id="vo">
+                                                        <if condition="$vo.id eq $first['id']">
+                                                            <li class='weui-uploader__file wk-select__user' id='{$first.id}' style='min-height:70px;width: 45px; margin-bottom: 0;margin-right: 0'>
                                                         <else/>
-                                                        <img src={$vo.avatar} class='weui-selet__user' style='margin-right: 6px;margin-top:10px; width: 2em; height: 2em;'>
-                                                    </if>
-                                                    <span style='margin-right: 6px;font-size: 12px;'>{$vo.realname}</span>
-                                                    <if condition="$vo.proc eq 1">
-                                                            <span class="glyphicon glyphicon-arrow-right" style="position: relative;top: -3.3em;right: 2em;font-size: 14px;color:#f12e2e;"></span>
-                                                    </if>
-                                                    <if condition="$vo.proc eq 2">
-                                                            <span style="border-radius: 3px;position: relative;top: -2.3em;right: 1.7em;width: 5px;height: 5px;background-color: #333333"></span>       
-                                                    </if>
-                                                    </li>
-                                                </volist>
-                                            </block>
-                                            </ul>
+                                                            <li class='weui-uploader__file wk-select__user' id='{$vo.id}' style='min-height:70px;width: 45px; margin-bottom: 0;margin-right: 0;margin-left:8px'>
+                                                        </if>
+                                                        <if condition="$vo.avatar eq ''">
+                                                            <img src='Public/assets/i/defaul.png' class='weui-selet__user' style='margin-right: 6px;margin-top:10px; width: 2em; height: 2em;'>
+                                                            <else/>
+                                                            <img src={$vo.avatar} class='weui-selet__user' style='margin-right: 6px;margin-top:10px; width: 2em; height: 2em;'>
+                                                        </if>
+                                                        <span style='margin-right: 6px;font-size: 12px;'>{$vo.realname}</span>
+                                                        <if condition="$vo.proc eq 1">
+                                                                <span class="glyphicon glyphicon-arrow-right" style="position: relative;top: -3.3em;right: 2em;font-size: 14px;color:#f12e2e;"></span>
+                                                        </if>
+                                                        <if condition="$vo.proc eq 2">
+                                                                <span style="border-radius: 3px;position: relative;top: -2.3em;right: 1.7em;width: 5px;height: 5px;background-color: #333333"></span>       
+                                                        </if>
+                                                        </li>
+                                                    </volist>
+                                                </block>
+                                                </ul>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </block>
-
-                <block name="process_record">
-                    <div class="weui-panel" style="margin-top: 0px;" id='weui_panel_proc'>
-                        <div class="weui-panel__hd" style="font-size: 16px;background-color: #f8f8f8;color:black;padding-top: 10px;">审批记录</div>
-                        <div class="weui-panel__bd">
-                            <div class="weui-media-box weui-media-box_small-appmsg" style="padding-bottom: 10px;">
-                                <div class="weui-cells">
-                                   
-                                    <if condition="empty($process)">
-                                            <span class="weui-media-box weui-media-box_appmsg" style="    align-items: flex-start;padding-top: 10px;">
-                                                    <h4 class="weui-media-box__title" style="/*font-weight: 800;*/margin-top: 0px;margin-bottom: 5px;color:grey;">
-                                                        无审批记录
-                                                    </h4>
-                                            </span>
-                                        <else/>
-                                        
-                                        <volist name="process" id="proc">
-                                            <span class="weui-media-box weui-media-box_appmsg" style="    align-items: flex-start;padding-top: 10px;">
-                                                <div class="weui-media-box__hd" style="width: 2.5em;height: 2.5em;">
-                                                    <img class="weui-media-box__thumb" src="{$proc.avatar}" alt="" style="border-radius: 5px;">
-                                                </div>
-                                                <div class="weui-media-box__bd">
-                                                    <h4 class="weui-media-box__title" style="/*font-weight: 800;*/margin-top: 0px;margin-bottom: 5px;color:grey;">
-                                                        <eq name="proc.app_stat" value="0"> {$proc.per_name}&nbsp;&nbsp;&nbsp;&nbsp;
-                                                                <if condition="$proc.app_name neq '会审'">[审批中]
-                                                                    <else/>[会审中]
-                                                                    </if>
-                                                                </eq>
-                                                        <eq name="proc.app_stat" value="1"> {$proc.per_name}&nbsp;&nbsp;&nbsp;&nbsp;
-                                                            <span style="color:red;">[已退审]</span>
-                                                        </eq>
-                                                        <eq name="proc.app_stat" value="2">
-                                                            <if condition="$proc.app_name eq '已转审'">
-                                                                {$proc.per_name}&nbsp;&nbsp;&nbsp;&nbsp;[已转审]
-                                                                <else/> {$proc.per_name}&nbsp;&nbsp;&nbsp;&nbsp;[已同意]   
-                                                                    </eq>
-                                                            </if>
-                                                        </eq>
-                                                        <span  style="float: right;font-size: 15px;line-height: 18px;">{$proc.approve_time|substr=2,14}</span> 
-                                                    </h4>
-                                                    <p class="weui-media-box__desc" style="display: block;overflow: visible; word-break:break-all; word-wrap:break-word;margin-bottom: 0px;color:black;">
-                                                       <if condition="$proc.sign neq '' " >
-                                                           <img src="__PUBLIC__/upload/sign/{$proc.sign}" style="width: 150px;"><br/>
-                                                       </if>
-                                                        {$proc.app_word}
-                                                    </p>
-                                                    <p class="weui-media-box__desc" style="display: block;overflow: visible; word-break:break-all; word-wrap:break-word;font-size: 15px;margin-bottom: 0px;">
-                                                        
-                                                        <neq name="proc.app_stat" value="0">
-                                                            <eq name="Think.session.name" value="$proc.per_name">
-                                                                <eq name="proc.able_del" value="1">
-                                                                    <span style="color:red; cursor: pointer;" class="proc_del" data-id="{$proc.aid}" data-mod="{$proc.mod_name}">
-                                                                    <span style="color:grey; ">（5分钟内）</span>撤回</span>  
+                        <else/>
+                        <div class="weui-panel" style="margin-top: 0px;">
+                            <div class="weui-panel__hd" style="font-size: 16px;background-color: #f8f8f8;color:black;padding-top: 10px;">签收流程
+                                    <a href="{:U('Light/Process/userDeploy', array('modname'=>$mod_name, 'system'=>$system,'aid' => $aid))}">
+                                        <i class="iconfont icon-chakan" style="vertical-align: middle;" ></i>
+                                    </a> 
+                            </div>
+                            <div class="weui-cells" style="margin-top:0px;">
+                                <div class="weui-cell">
+                                    <div class="weui-cell__bd">
+                                        <div class="weui-uploader">
+                                            <div class="weui-uploader__bd" style="height: 85px;">
+                                                <ul class="weui-uploader__files" id="app_pro" style="margin-bottom: 0px;">
+                                                    <volist name="process" id="vo">
+                                                        <if condition="$vo.id eq $first['id']">
+                                                            <li class='weui-uploader__file wk-select__user' id='{$first.id}' style='height:90px;'>
+                                                                <img src={$first.avatar} class='weui-selet__user' style='margin-bottom: 0px;margin-right: 6px;margin-top:10px;'>
+                                                                <span style='margin-right: 6px;font-size: 14px;'>{$first.per_name}</span>
+                                                            </li>
+                                                            <else/>
+                                                            <li class='weui-uploader__file wk-select__user' id='{$vo.id}' style='height:90px;margin-left:8px'>
+                                                                <if condition="$vo.avatar eq ''">
+                                                                    <img src='Public/assets/i/defaul.png' class='weui-selet__user' style='margin-bottom: 0px;margin-right: 6px;margin-top:10px;'>
                                                                     <else/>
-                                                                    <span style="color:grey; ">(超5分钟不可撤回)</span>
-                                                                </eq>
-                                                            </eq>
-                                                        </neq>
-                                                        
-                                                    </p>
-                                                </div>
-                                            </span>
-                                        </volist>
-                                    </if>
+                                                                    <img src={$vo.avatar} class='weui-selet__user' style='margin-bottom: 0px;margin-right: 6px;margin-top:10px;'>
+                                                                </if>
+                                                                <span style='margin-right: 6px;font-size: 14px;'>{$vo.per_name}</span>
+                                                            </li>
+                                                        </if>
+                                                    </volist>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </if>
+                </block>
+
+                <block name="process_record">
+                            <div class="weui-panel" style="margin-top: 0px;" id='weui_panel_proc'>
+                                    <div class="weui-panel__hd" style="font-size: 16px;background-color: #f8f8f8;color:black;padding-top: 10px;">审批记录</div>
+                                    <div class="weui-panel__bd">
+                                        <div class="weui-media-box weui-media-box_small-appmsg" style="padding-bottom: 10px;">
+                                            <div class="weui-cells">
+                                               
+                                                <if condition="empty($process)">
+                                                        <span class="weui-media-box weui-media-box_appmsg" style="    align-items: flex-start;padding-top: 10px;">
+                                                                <h4 class="weui-media-box__title" style="/*font-weight: 800;*/margin-top: 0px;margin-bottom: 5px;color:grey;">
+                                                                    无审批记录
+                                                                </h4>
+                                                        </span>
+                                                    <else/>
+                                                    
+                                                    <volist name="process" id="proc">
+                                                        <span class="weui-media-box weui-media-box_appmsg" style="    align-items: flex-start;padding-top: 10px;">
+                                                            <div class="weui-media-box__hd" style="width: 2.5em;height: 2.5em;">
+                                                                <img class="weui-media-box__thumb" src="{$proc.avatar}" alt="" style="border-radius: 5px;">
+                                                            </div>
+                                                            <div class="weui-media-box__bd">
+                                                                <h4 class="weui-media-box__title" style="/*font-weight: 800;*/margin-top: 0px;margin-bottom: 5px;color:grey;">
+                                                                    <eq name="proc.app_stat" value="0"> {$proc.per_name}&nbsp;&nbsp;&nbsp;&nbsp;
+                                                                            <if condition="$proc.app_name neq '会审'">[审批中]
+                                                                                <else/>[会审中]
+                                                                                </if>
+                                                                            </eq>
+                                                                    <eq name="proc.app_stat" value="1"> {$proc.per_name}&nbsp;&nbsp;&nbsp;&nbsp;
+                                                                        <span style="color:red;">[已退审]</span>
+                                                                    </eq>
+                                                                    <eq name="proc.app_stat" value="2">
+                                                                        <if condition="$proc.app_name eq '已转审'">
+                                                                            {$proc.per_name}&nbsp;&nbsp;&nbsp;&nbsp;[已转审]
+                                                                            <else/> {$proc.per_name}&nbsp;&nbsp;&nbsp;&nbsp;[已同意]   
+                                                                                </eq>
+                                                                        </if>
+                                                                    </eq>
+                                                                    <span  style="float: right;font-size: 15px;line-height: 18px;">{$proc.approve_time|substr=2,14}</span> 
+                                                                </h4>
+                                                                <p class="weui-media-box__desc" style="display: block;overflow: visible; word-break:break-all; word-wrap:break-word;margin-bottom: 0px;color:black;">
+                                                                   <if condition="$proc.sign neq '' " >
+                                                                       <img src="__PUBLIC__/upload/sign/{$proc.sign}" style="width: 150px;"><br/>
+                                                                   </if>
+                                                                    {$proc.app_word}
+                                                                </p>
+                                                                <p class="weui-media-box__desc" style="display: block;overflow: visible; word-break:break-all; word-wrap:break-word;font-size: 15px;margin-bottom: 0px;">
+                                                                    
+                                                                    <neq name="proc.app_stat" value="0">
+                                                                        <eq name="Think.session.name" value="$proc.per_name">
+                                                                            <eq name="proc.able_del" value="1">
+                                                                                <span style="color:red; cursor: pointer;" class="proc_del" data-id="{$proc.aid}" data-mod="{$proc.mod_name}">
+                                                                                <span style="color:grey; ">（5分钟内）</span>撤回</span>  
+                                                                                <else/>
+                                                                                <span style="color:grey; ">(超5分钟不可撤回)</span>
+                                                                            </eq>
+                                                                        </eq>
+                                                                    </neq>
+                                                                    
+                                                                </p>
+                                                            </div>
+                                                        </span>
+                                                    </volist>
+                                                </if>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                       
+                    
                 </block>
 
                 <block name="copyto">

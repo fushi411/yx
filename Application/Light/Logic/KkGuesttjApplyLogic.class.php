@@ -92,11 +92,13 @@ class KkGuesttjApplyLogic extends Model {
 
         $client = M('kk_guest_tj a')
                 ->join('kk_tj b on a.relationid = b.relationid')
+                ->join('kk_guest2 c on b.tj_client = c.id')
                 ->field('tj_client')
                 ->where($map)
-                ->group('tj_client')
+                ->group('c.reid,tj_client')
                 ->select();
         $guest = $this->getAllGuestName();  
+        
         $pp = array(
             array('pp' => 'P.O42.5','bz' => '散装'),
             array('pp' => 'P.S.A32.5','bz' => '散装'),
@@ -363,6 +365,8 @@ class KkGuesttjApplyLogic extends Model {
                     ->select();
             $res = array();
             foreach($dealer as $val){
+                if(!empty($guest[$val['id']])) continue;
+                if(!empty($client) && $val['id'] != $client) continue;
                 $temp = array();
                 $temp['fg_name'] = $model->getParentName($val['id']);
                 $temp['g_name']  = $val['g_name'];

@@ -31,41 +31,7 @@
     </volist>
 </block>
 
-<block name="work_flow">
-    <div class="weui-panel" style="margin-top: 0px;">
-        <div class="weui-panel__hd" style="font-size: 16px;background-color: #f8f8f8;color:black;padding-top: 10px;">签收名单
-        </div>
-        <div class="weui-cells" style="margin-top:0px;">
-            <div class="weui-cell">
-                <div class="weui-cell__bd">
-                    <div class="weui-uploader">
-                        <div class="weui-uploader__bd" style="height: 85px;">
-                            <ul class="weui-uploader__files" id="app_pro" style="margin-bottom: 0px;">
-                                <volist name="process" id="vo">
-                                    <if condition="$vo.id eq $first['id']">
-                                        <li class='weui-uploader__file wk-select__user' id='{$first.id}' style='height:90px;'>
-                                            <img src={$first.avatar} class='weui-selet__user' style='margin-bottom: 0px;margin-right: 6px;margin-top:10px;'>
-                                            <span style='margin-right: 6px;font-size: 14px;'>{$first.per_name}</span>
-                                        </li>
-                                        <else/>
-                                        <li class='weui-uploader__file wk-select__user' id='{$vo.id}' style='height:90px;margin-left:8px'>
-                                            <if condition="$vo.avatar eq ''">
-                                                <img src='Public/assets/i/defaul.png' class='weui-selet__user' style='margin-bottom: 0px;margin-right: 6px;margin-top:10px;'>
-                                                <else/>
-                                                <img src={$vo.avatar} class='weui-selet__user' style='margin-bottom: 0px;margin-right: 6px;margin-top:10px;'>
-                                            </if>
-                                            <span style='margin-right: 6px;font-size: 14px;'>{$vo.per_name}</span>
-                                        </li>
-                                    </if>
-                                </volist>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</block>
+
 
 
 

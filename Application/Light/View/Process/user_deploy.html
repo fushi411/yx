@@ -10,7 +10,7 @@
             <div class="weui-cells__title" style="text-align:right;margin: 0;">
     </if>
     &nbsp;&nbsp;<a href="{:$returnUrl}" class="weui-btn weui-btn_mini weui-btn_default">关闭</a>
-    &nbsp;&nbsp;<a href="{:U('Light/Config/Dispenser',array('robot'=>'upUserDeploy', 'system'=>$system, 'modname'=>$modname))}" class="weui-btn weui-btn_mini weui-btn_primary">新增配置</a>
+    &nbsp;&nbsp;<a href="{:U('Light/Config/Dispenser',array('robot'=>'upUserDeploy', 'system'=>$system, 'modname'=>$modname,'aid'=>$aid))}" class="weui-btn weui-btn_mini weui-btn_primary">新增配置</a>
     <volist name='condition' id='val'>
         <div class="weui-cells__title" style="text-align: left;">{$val.title}
             <if condition=" (empty($atten)) and (!$CueConfig)">
@@ -19,7 +19,7 @@
                 <span style="float:right">
             </if>
             <span style="float:right">
-                <i class="iconfont icon-xiugai" index="{:U('Light/Config/Dispenser',array('robot'=>'upUserDeploy', 'id'=>$val['id']))}" style="vertical-align: middle;margin: 0 5px" ></i>
+                <i class="iconfont icon-xiugai" index="{:U('Light/Config/Dispenser',array('aid'=> $aid,'robot'=>'upUserDeploy','id'=>$val['id']))}" style="vertical-align: middle;margin: 0 5px" ></i>
                 <i class="iconfont icon-shanchu" index="{$val['id']}" style="vertical-align: middle;margin: 0 5px" ></i>
             </span> 
            
@@ -40,7 +40,7 @@
                                 <span style="float:right">
                             </if>
                                 <i class="iconfont icon-shezhi1"
-                                index="{:U('Light/Config/Dispenser',array('robot'=>'upUserConfig','id'=>$val['id']))}"
+                                index="{:U('Light/Config/Dispenser',array('robot'=>'upUserConfig','id'=>$val['id'],'aid' => $aid))}"
                                 style="vertical-align: middle;margin: 0 5px;font-size: 20px;" ></i>
                             </span>
                         </div>

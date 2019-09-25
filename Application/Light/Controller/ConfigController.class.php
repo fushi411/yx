@@ -643,6 +643,7 @@ class ConfigController extends BaseController
     {
         $system = I('get.system');
         $modname = I('get.modname');
+        $aid = I('get.aid');
         $id = I('get.id', 0, 'int');
         $title = '';
         if ($id > 0) {
@@ -657,6 +658,7 @@ class ConfigController extends BaseController
         $this->assign('modname', $modname);
         $this->assign('title', $title);
         $this->assign('id', $id);
+        $this->assign('aid', $aid);
         $this->display('Config/upTitle');
     }
 
@@ -711,6 +713,7 @@ class ConfigController extends BaseController
     public function upUserConfig()
     {
         $id = I('get.id');
+        $aid = I('get.aid');
         $temp = array();
         D('YxhbUserDeploy')->upUserConfig($id);//更新人员名单
 
@@ -791,7 +794,7 @@ class ConfigController extends BaseController
             $this->assign('systems', $deployData[0]['system']);
             $this->assign('modnames', $deployData[0]['modname']);
             $this->assign('id', $id);
-            $this->assign('aid', 0);
+            $this->assign('aid', $aid);
             $this->assign('modname', 'KfRatioApply');
             $this->assign('system', 'yxhb');
             $this->display('Config/upUserConfig');

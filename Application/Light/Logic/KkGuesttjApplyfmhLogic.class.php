@@ -83,9 +83,10 @@ class KkGuesttjApplyfmhLogic extends Model {
         );
         $system = 'kk';
         $model  = D(ucfirst($system).'Guest2_fmh');
-        $client = M('kk_tj_fmh')
+        $client = M('kk_tj_fmh a')
+                ->join('kk_guest2 b on a.tj_client=b.id')
                 ->where($map)
-                ->order('tj_client desc,tj_bzfs desc,tj_cate')
+                ->order('b.reid,a.tj_client desc,a.tj_bzfs desc,a.tj_cate')
                 ->select();
         $guest = $this->getAllGuestName();  
         $temp = array();
@@ -383,20 +384,6 @@ class KkGuesttjApplyfmhLogic extends Model {
         return $res[0]['ht_wlfs'];
     }
     private function getfhdj($client,$day,$pp,$cate,$bzfs,$system){
-        if(($client==260||$client==261||$client==346||$client==339)&&$day>='2013-04-04'&&($cate=='S95'||$cate=='F95')){
-            //所有调价和合同合并查询初始价格
-            $query="select dj from (select ht_dj as dj,ht_yf as yf,ht_khmc as client,ht_stday as stday,ht_pp as pp,ht_cate as cate,ht_bzfs as bzfs,ht_stat as stat,ht_date as date from {$system}_ht_fmh union all select tj_dj as dj,tj_yf as yf,tj_client as client,tj_stday as stday,tj_pp as pp,tj_cate as cate,tj_bzfs as bzfs,tj_stat as stat,tj_da as date from {$system}_tj_fmh  ) as t where pp='$pp' and stday<='$day' and bzfs='$bzfs' and stat=2 and client='".$client."' and cate='外购矿粉' order by stday desc,date desc";
-        
-            $data = M()->query($query);
-            $rowcount = count($data);
-            if($rowcount>0){
-                $row = $data[0];
-                return $row['dj'];
-            }
-            else{
-                return '-';
-            }
-        }
         if($bzfs=='散装'){
              //所有调价和合同合并查询初始价格
             $query="select dj from (select ht_dj as dj,ht_yf as yf,ht_khmc as client,ht_stday as stday,ht_pp as pp,ht_cate as cate,ht_bzfs as bzfs,ht_stat as stat,ht_date as date from {$system}_ht_fmh union all select tj_dj as dj,tj_yf as yf,tj_client as client,tj_stday as stday,tj_pp as pp,tj_cate as cate,tj_bzfs as bzfs,tj_stat as stat,tj_da as date from {$system}_tj_fmh  ) as t where pp='$pp' and stday<='$day' and bzfs='$bzfs' and stat=2 and client='".$client."' and cate='".$cate."' order by stday desc,date desc";
@@ -415,20 +402,6 @@ class KkGuesttjApplyfmhLogic extends Model {
     }
 
     private function getfhyf($client,$day,$pp,$cate,$bzfs,$system){
-        if(($client==260||$client==261||$client==346||$client==339)&&$day>='2013-04-04'&&($cate=='S95'||$cate=='F95')){
-            //所有调价和合同合并查询初始价格
-            $query="select yf from (select ht_dj as dj,ht_yf as yf,ht_khmc as client,ht_stday as stday,ht_pp as pp,ht_cate as cate,ht_bzfs as bzfs,ht_stat as stat,ht_date as date from {$system}_ht_fmh union all select tj_dj as dj,tj_yf as yf,tj_client as client,tj_stday as stday,tj_pp as pp,tj_cate as cate,tj_bzfs as bzfs,tj_stat as stat,tj_da as date from {$system}_tj_fmh  ) as t where pp='$pp' and stday<='$day' and bzfs='$bzfs' and stat=2 and client='".$client."' and cate='外购矿粉' order by stday desc,date desc";
-        
-            $data = M()->query($query);
-            $rowcount = count($data);
-            if($rowcount>0){
-                $row = $data[0];
-                return $row['yf'];
-            }
-            else{
-                return '-';
-            }
-        }
         if($bzfs=='散装'){
              //所有调价和合同合并查询初始价格
             $query="select yf from (select ht_dj as dj,ht_yf as yf,ht_khmc as client,ht_stday as stday,ht_pp as pp,ht_cate as cate,ht_bzfs as bzfs,ht_stat as stat,ht_date as date from {$system}_ht_fmh union all select tj_dj as dj,tj_yf as yf,tj_client as client,tj_stday as stday,tj_pp as pp,tj_cate as cate,tj_bzfs as bzfs,tj_stat as stat,tj_da as date from {$system}_tj_fmh  ) as t where pp='$pp' and stday<='$day' and bzfs='$bzfs' and stat=2 and client='".$client."' and cate='".$cate."' order by stday desc,date desc";

@@ -90,9 +90,10 @@ class YxhbGuesttjApplyLogic extends Model {
 
         $client = M('yxhb_guest_tj a')
                 ->join('yxhb_tj b on a.relationid = b.relationid')
+                ->join('yxhb_guest2 c on b.tj_client = c.id')
                 ->field('tj_client')
                 ->where($map)
-                ->group('tj_client')
+                ->group('c.reid,tj_client')
                 ->select();
         $guest = $this->getAllGuestName();  
         $pp = array(
