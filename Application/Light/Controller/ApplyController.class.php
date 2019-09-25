@@ -287,7 +287,13 @@ class ApplyController extends BaseController {
             $info = $User->getWXInfo($value);
             if (!empty($info)) {
                 $avatar =$info['avatar']?$info['avatar']:'Public/assets/i/defaul.png';
-                $html .= '<a class="weui-cell weui-cell_access select-comment-user" href="javascript:;" data-id="'.$info['id'].'" data-uid="'.$value['userid'].'" data-type="user" data-img="'.$info['avatar'].'" data-name="'.$info['name'].'" style="text-decoration:none;"><div class="weui-cell__hd"><img src="'.$avatar.'" alt="" style="width:20px;margin-right:5px;display:block"></div><div class="weui-cell__bd"><p style="margin-bottom: 0px;">'.$info['name'].'</p></div><div class="weui-cell__ft"></div></a>';
+                $html .= '<a class="weui-cell weui-cell_access select-comment-user" href="javascript:;" data-id="'.$info['id'].'" data-uid="'.$value['userid'].'" data-type="user" data-img="'.$info['avatar'].'" data-name="'.$info['name'].'" style="text-decoration:none;"><div class="weui-cell__hd">
+                    <img src="'.$avatar.'" alt="" style="width:20px;margin-right:5px;display:block"></div>
+                    <div class="weui-cell__bd">
+                        <p style="text-align: left;margin-bottom: 0px;color: black;">'.$info['name'].'</p>
+                    </div>
+                    <div class="weui-cell__ft"></div>
+                </a>';
             }
         }
         $this->ajaxReturn(array("html"=>$html, "keywords"=>$keywords,'user' => $recevier));
