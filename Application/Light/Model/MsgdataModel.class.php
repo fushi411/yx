@@ -897,5 +897,21 @@ class MsgdataModel extends Model {
         );
         return $result;
     }
-    
+
+    public function kpsq_Apply()
+    {
+        $result['url'] = array(
+            array('name' => '环保客户开票申请','url' => U('Light/View/View',array('modname'=>'kpsq_Apply','system' => 'yxhb')),'modname' => 'yxhbkpsq_Apply'),
+            array('name' => '建材客户开票申请','url' => U('Light/View/View',array('modname'=>'kpsq_Apply','system' => 'kk')),'modname' => 'kkkpsq_Apply')
+        );
+        $result['yxhbkpsq_Apply'] = array(
+            'process'       => U('Light/Process/ApplyProcess',array('modname'=>'kpsq_Apply','system' => 'yxhb')),
+            'info'          => U('Light/Apply/applyInfo',array('modname'=>'kpsq_Apply','system'=>'yxhb')),
+        );
+        $result['kkkpsq_Apply'] = array(
+            'process'       => U('Light/Process/ApplyProcess',array('modname'=>'kpsq_Apply','system' => 'kk')),
+            'info'          => U('Light/Apply/applyInfo',array('modname'=>'kpsq_Apply','system'=>'kk')),
+        );
+        return $result;
+    }
 }

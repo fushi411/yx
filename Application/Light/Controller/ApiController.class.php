@@ -510,5 +510,15 @@ class ApiController extends BaseController {
         $res = $logic->$action();
         $this->ajaxReturn($res);
     }
+
+    // 建材开票提货单位获取
+    public function kpsq_ApplyApi(){
+        $system = I('system');
+        $mod    = I('modname');
+        $action = I('action');
+        $logic = D(ucfirst($system).$mod ,'Logic');
+        $res = $logic->$action();
+        $this->ajaxReturn($res);
+    }
     
 }
