@@ -322,7 +322,7 @@ class KkGuesttjApplyfmhLogic extends Model {
                             'delta_yf'   => $vo['xgyf']-$vo['yf'],
                             'rdy'        => session('name'),
                             'pid'        => $relationid,
-                            'wj_wlfs'    => $vo['wlfs'],
+                            'tj_wlfs'    => $vo['wlfs'],
                             'dh'         => $dh,
                         );
                     }
@@ -336,13 +336,13 @@ class KkGuesttjApplyfmhLogic extends Model {
         $copyto_id = trim($copyto_id,',');
         if (!empty($copyto_id)) {
             // 发送抄送消息
-            D('kkAppcopyto')->copyTo($copyto_id,'GuesttjApply_fmh', $result);
+            D('kkAppcopyto')->copyTo($copyto_id,'GuesttjApply_fmh', $relationid);
         }
         // 签收通知
         $wf = A('WorkFlow');
         $salesid = session('kk_id');
-        $res = $wf->setWorkFlowSV('GuesttjApply_fmh', $result, $salesid, 'kk');
-        return array('code' => 200,'msg' => '提交成功' , 'aid' =>$result);
+        $res = $wf->setWorkFlowSV('GuesttjApply_fmh', $relationid, $salesid, 'kk');
+        return array('code' => 200,'msg' => '提交成功' , 'aid' =>$relationid);
     }
 
     public function getRelationid(){
