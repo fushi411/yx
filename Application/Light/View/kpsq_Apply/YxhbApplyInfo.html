@@ -1,0 +1,176 @@
+<extend name="Apply:base" />
+<block name='table'>
+        <style>
+            .tjcenter {
+                text-align: center;
+            }
+    
+            .font13 {
+                font-size: 13px;
+            }
+        </style>
+        <div class="other_page" id="other_page_tj_detail" style="
+            display: none;    
+            position: fixed;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 100%;
+            z-index: 999;">
+            <div class="container">
+                <div class="page js_show">
+                    <h3 class="titleTab" style="text-align: center">开票详情</h3>
+                    <div class="weui-cells__title" style="height: 10px;">
+                        <div id="content" style="display: block;">
+                            <div class="weui-cells" style="display: block;">
+                                <div class="weui-cell ">
+                                    <div class="weui-cell__hd">
+                                        <label class="weui-label">开票日期&nbsp;&nbsp;
+                                        </label>
+                                    </div>
+                                    <div class="weui-cell__bd">
+                                        <input class="weui-input sjfw" type="text" value="{$mydata['kp_da']}" autocomplete="off">
+                                    </div>
+                                </div>
+                                <div class="weui-cell ">
+                                    <div class="weui-cell__hd">
+                                        <label class="weui-label">提货单位&nbsp;&nbsp;
+                                        </label>
+                                    </div>
+                                    <div class="weui-cell__bd">
+                                        <input class="weui-input khmc" type="text" value="{$mydata['kp_thdw']}" autocomplete="off">
+                                    </div>
+                                </div>
+                                <div class="weui-cell ">
+                                    <div class="weui-cell__hd">
+                                        <label class="weui-label">开票单位&nbsp;&nbsp;
+                                        </label>
+                                    </div>
+                                    <div class="weui-cell__bd">
+                                        <input class="weui-input khmc" type="text" value="{$mydata['kp_hkdw']}" autocomplete="off">
+                                    </div>
+                                </div>
+                                <div class="weui-cell ">
+                                    <div class="weui-cell__hd">
+                                        <label class="weui-label">发票种类&nbsp;&nbsp;
+                                        </label>
+                                    </div>
+                                    <div class="weui-cell__bd">
+                                        <input class="weui-input khmc" type="text" value="{$mydata['kp_fpzl']}" autocomplete="off">
+                                    </div>
+                                </div>
+                                <div class="weui-cell ">
+                                    <div class="weui-cell__hd">
+                                        <label class="weui-label">所属时间&nbsp;&nbsp;
+                                        </label>
+                                    </div>
+                                    <div class="weui-cell__bd">
+                                        <input class="weui-input khmc" type="text" value="{$mydata.kp_sda}至{$mydata.kp_eda}" autocomplete="off">
+                                    </div>
+                                </div>
+
+                                <table class="table table-bordered">
+                                    <thead>
+                                    <tr>
+                                        <th>开票种类</th>
+                                        <th>开票金额</th>
+                                        <th>开票单价</th>
+                                        <th>开票数量</th>
+                                    </tr>
+                                    </thead>
+
+                                    <tbody>
+                                    <volist name="mydata.table" id="data">
+                                    <tr>
+                                        <th scope="row">{$data.kp_pz}</th>
+                                        <td>{$data.kp_je}</td>
+                                        <td>{$data.kp_dj}</td>
+                                        <td>{$data.kp_sl}</td>
+                                    </tr>
+                                    </volist>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="btn-all">
+                <a href="javascript:;" class="weui-btn weui-btn_mini weui-btn_primary">返回</a>
+            </div>
+    </block>
+<block name="js">
+    <script src="__PUBLIC__/assets/layer/layer.js"></script>
+    <!--可以打开微信浏览器的控制台-->
+    <!--<script src="__PUBLIC__/assets/js/vconsole.min.js"></script>-->
+    <script type="text/javascript">
+        $(function () {
+            $('#btn-all').hide();
+
+            var id = getQueryString("aid");
+            var show = getQueryString("show");
+            if(show == 'Guesttj') $('#other_page_tj_detail').show();
+           // 内容过滤选择器 选取含有文本内容text的元素
+           $("p:contains('查看开票详情')").children('span :eq(1)').css('style','cursor: pointer');
+           $("p:contains('查看开票详情')").children('span :eq(1)').click(function () {
+               $('#other_page_tj_detail').show();
+               $('#btn-all').show();
+           });
+           $('#btn-all').click(function(){
+                $('#other_page_tj_detail').hide();
+                $('#btn-all').hide();
+            });
+        })
+       
+      
+        function viewSalesPlan(id){
+            //需要判断是否是用浏览器打开这个链接的
+            if(isWeiXin()==true){
+                var title = '查看客户调价';
+                var censhu = id+'|'+'title='+title;
+                var url = "view_guest_tj_info.php?id="+censhu;
+                // "https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx133a00915c785dec&redirect_uri=http%3a%2f%2fwww.fjyuanxin.com%2fyxhb%2findex_index.php&response_type=code&scope=snsapi_base&state=STATE#wechat_redirect"
+                var url = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx133a00915c785dec&redirect_uri=http%3a%2f%2fwww.fjyuanxin.com%2fsngl%2findex_redirect_parameter.php?url="+url+"&response_type=code&scope=snsapi_base&state=STATE#wechat_redirect";
+                window.location.href = url;
+            }else{
+                var url = 'https://www.fjyuanxin.com/sngl/view_guest_tj_info.php?id='+id+"&type=view";
+                var areaArr =  ['750px', '450px'];
+                if( window.innerHeight > 600 ) areaArr =  ['550px', '650px'];
+                layer.open({
+                    type: 2,
+                    title: '查看客户调价',
+                    fixed: false, //不固定
+                    maxmin: true,
+                    area: areaArr,
+                    // offset: '10px',
+                    content: url,
+                    zIndex: 99,     //后生成的弹出框会比前一个的z-index的值+1，要设置一个高度，设置的值需要-1
+                    end: function(){
+
+                    }
+                })
+            }
+        }
+
+        //判断是否是微信内置的浏览器
+        function isWeiXin(){
+            var ua = window.navigator.userAgent.toLowerCase();
+            if(ua.match(/MicroMessenger/i) == 'micromessenger'){
+                return true;
+            }else{
+                return false;
+            }
+        }
+
+        //判断是手机还是电脑点击了链接
+        function isPC() {
+            if(/Android|webOS|iPhone|iPod|BlackBerry/i.test(navigator.userAgent)) {
+                return false;
+            } else {
+                return true;
+            }
+        }
+
+    </script>>
+</block>

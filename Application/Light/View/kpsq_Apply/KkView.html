@@ -92,12 +92,22 @@
             </div>
             <div class="weui-cell ">
                 <div class="weui-cell__hd">
-                    <label class="weui-label">开票所属时间&nbsp;&nbsp;
+                    <label class="weui-label">时间范围&nbsp;&nbsp;
                     </label>
                 </div>
                 <div class="weui-cell__bd">
                     <input class="weui-input qmqk" type="text" name="custodian" id="kpsssj" readonly placeholder="自动填写" />
 <!--                    <span id="kpsssj"></span>-->
+                </div>
+            </div>
+            <div class="weui-cell ">
+                <div class="weui-cell__hd">
+                    <label class="weui-label">开票总金额&nbsp;&nbsp;
+                    </label>
+                </div>
+                <div class="weui-cell__bd">
+                    <input class="weui-input qmqk" type="text" name="custodian" id="kpzje" readonly placeholder="自动填写" />
+                    <!--                    <span id="kpsssj"></span>-->
                 </div>
             </div>
         </div>
@@ -216,6 +226,14 @@
                                         <span class="weui-form-preview__value" style="text-align:left;" id="hkqp_val"></span>
                                     </div>
                                 </div>
+                                <div class="weui-flex">
+                                    <div class="weui-form-preview__item weui-flex__item">
+                                        <label class="weui-form-preview__label">时间范围:</label>
+                                        <span class="weui-form-preview__value" style="text-align:left;" id="date_range"></span>
+                                    </div>
+                                </div>
+                                <div id = "history_data">
+                                </div>
                             </div>
                             <div class="weui-cells__title" style="color: black;position: relative;">
                                 <span>  &nbsp;</span>
@@ -244,7 +262,7 @@
                 <div class="modal-body">
                     <form>
                         <div class="form-group">
-                            <label for="kppz" class="control-label">开票品种 <span style="color:red;">*</span>:</label>
+                            <label for="kppz" class="control-label">开票品种<span style="color:red;">*</span></label>
                             <select id="form_kppz" name="kppz" class="form-control"></select>
                         </div>
                         <div class="form-group">
@@ -263,18 +281,18 @@
                                    id="form_thsl" readonly>
                         </div>
                         <div class="form-group">
-                            <label for="kpje" class="control-label">开票金额 <span style="color:red;">*</span>:<span class="kpje"></span></label>
-                            <input type="text" onkeyup="clearNoNum(this)" onchange="checkNum(this)" onBlur="adjustData('a')" class="form-control"
+                            <label for="kpje" class="control-label">开票金额<span style="color:red;">*</span><span class="kpje"></span></label>
+                            <input type="text" onkeyup="clearNoNum(this)" onchange="checkNum(this)" onBlur="adjustData('a')" class="form-control" placeholder="精确到两位小数（必填）"
                                    id="form_kpje">
                         </div>
                         <div class="form-group">
-                            <label for="kpdj" class="control-label">开票单价 <span style="color:red;">*</span>:<span class="kpdj"></span></label>
-                            <input type="text" onkeyup="clearNoNum(this)" onchange="checkNum(this)" onBlur="adjustData('b')" class="form-control"
+                            <label for="kpdj" class="control-label">开票单价*<span class="kpdj"></span></label>
+                            <input type="text" onkeyup="clearNoNum(this)" onchange="checkNum(this)" onBlur="adjustData('b')" class="form-control" placeholder="单价和数量二选一填写"
                                    id="form_kpdj">
                         </div>
                         <div class="form-group">
-                            <label for="kpsl" class="control-label">开票数量 <span style="color:red;">*</span>:<span class="kpsl"></span></label>
-                            <input type="text" onkeyup="clearNoNum(this)" onchange="checkNum(this)" onBlur="adjustData('c')" class="form-control"
+                            <label for="kpsl" class="control-label">开票数量*<span class="kpsl"></span></label>
+                            <input type="text" onkeyup="clearNoNum(this)" onchange="checkNum(this)" onBlur="adjustData('c')" class="form-control" placeholder="单价和数量二选一填写"
                                    id="form_kpsl">
                         </div>
                     </form>
@@ -364,13 +382,18 @@
             $('#Dialog').hide();
         }
 
+        var kpzje = 0;
         function updateFormData() {
+            kpzje = 0;
             var html = '';
             for (var i=0 ; i < form_data.length ; ++i ){
                 htmla = htmls;
                 arr = form_data[i].split(',');
                 htmla += '<div class="weui-flex" style="padding: 3px 15px; font-size: 14px;">';
                 for(var j in arr){
+                    if (j == 1) {
+                        kpzje = kpzje + Number(arr[j]);
+                    }
                     htmla += '<div class="weui-form-preview__item weui-flex__item font13">'+arr[j]+'</div>';
                 }
                 htmla = htmla.replace('#KEV', i);
@@ -596,8 +619,31 @@
             }
         }
         $('#btn-all').click(function () {
+            var start_date = $('#start_date').val(),
+                end_date = $('#end_date').val();
+            kp_fpzl = $('#kp_fpzl').val();
+            kp_date = $('#kp_date').val();
+
+            ejkh_sel = $('#ejkh_sel').val();
+            new_ejkh = $('#new_ejkh').val();
+            ejkh = ejkh_sel;
+           if(ejkh_sel == 'new_kpdw'){
+                ejkh  = new_ejkh;
+            }
+
+            $('#kprq').val(kp_date);
+            $('#thdw').val(user_name);
+            $('#kpdw').val(ejkh);
+            $('#fpzl').val(kp_fpzl);
+            $('#thqp').val($('#dhqp_val').html());
+            $('#hkqp').val($('#hkqp_val').html());
+            $('#kpsssj').val($('#start_date').val()+'至'+$('#end_date').val());
+            $('#kpzje').val("￥ "+formatMoney(kpzje));
+
+            $('#order_select').fadeIn();
             div_show();
         });
+
         $('#select_ycl').click(function () {
             $('#alter_div').fadeIn();
             div_show(1);
@@ -617,10 +663,12 @@
         });
         // 开始时间
         $('#start_date').on('click', function () {
+            var q = $(this).val();
+            arr = q.split('-');
             weui.datePicker({
                 start: 2018,
                 end: new Date().getFullYear() + 10,
-                defaultValue: [new Date().getFullYear(), new Date().getMonth() + 1, new Date().getDate()],
+                defaultValue: [arr[0], arr[1], arr[2]],
                 onConfirm: function (result) {
                     pickerValue(result, $('#start_date'));
                 },
@@ -629,10 +677,12 @@
         });
         // 结束时间
         $('#end_date').on('click', function () {
+            var q = $(this).val();
+            arr = q.split('-');
             weui.datePicker({
                 start: 2018,
                 end: new Date().getFullYear() + 10,
-                defaultValue: [new Date().getFullYear(), new Date().getMonth() + 1, new Date().getDate()],
+                defaultValue: [arr[0], arr[1], arr[2]],
                 onConfirm: function (result) {
                     pickerValue(result, $('#end_date'));
                 },
@@ -646,6 +696,10 @@
             val += '-';
             val += dateArr[2] > 9 ? dateArr[2] : '0' + dateArr[2];
             dom.val(val);
+            getTempInfo(user_id, user_name, 2);
+            $('#form_xsje').val('');
+            $('#form_dj').val('');
+            $('#form_thsl').val('');
         }
         // 用户选择
         function formatRepo(repo) { return repo.text; }
@@ -713,7 +767,7 @@
         $('#other_page').fadeOut();
 
         //选择提货单位之后获取一些数据
-        function getTempInfo(user_id, user_name) {
+        function getTempInfo(user_id, user_name, type = 1) {
             kp_sda = $('#start_date').val();
             kp_eda = $('#end_date').val();
             kp_date = $('#kp_date').val();
@@ -733,9 +787,25 @@
                     if (res.code != 200) {
                         tooltip('请重新刷新页面！')
                     } else {
-                        $('#dhqp_val').html("￥ "+res.qp_data.thqp);
-                        $('#hkqp_val').html("￥ "+res.qp_data.ghqp);
+                        $('#dhqp_val').html("￥ "+formatMoney(res.qp_data.thqp));
+                        $('#hkqp_val').html("￥ "+formatMoney(res.qp_data.ghqp));
+                        $('#date_range').html($('#start_date').val()+'至'+$('#end_date').val());
                         $('#thdw_val').html(user_name);
+
+                        if (res.table != '') {
+                            history_html = '<table class="table"><thead><tr><td>品种</td><td>销售金额</td><td>单价</td><td>提货数量</td></tr></thead>';
+                            for(key in res.table){
+                                list = res.table[key];
+
+                                history_html += '<thead><tr>';
+                                history_html += '<td scope="row">'+list.name+'</td><td>'+list.je+'</td><td>'+list.dj+'</td><td>'+list.zl+'</td>';
+                                history_html += '</thead></tr>';
+                            }
+                            history_html += '</table>';
+                            $("#history_data").html(history_html);
+                        }else{
+                            $("#history_data").html('');
+                        }
 
                         //表单中的开票品种选择
                         $("#form_kppz").attr('style','');
@@ -744,18 +814,20 @@
                             html += '<option value="'+res.ht_data[key].ht_bzfs+'-'+res.ht_data[key].ht_cate+'-'+res.ht_data[key].ht_khmc+'">'+res.ht_data[key].ht_bzfs+'-'+res.ht_data[key].ht_cate+'</option>'
                         }
                         $('#form_kppz').html(html);
-
                         $('#ejkh').val('');
                         $('#ejkh').hide();
-                        $("#ejkh_sel").attr('style','');
-                        var html = '<option value="-1"  selected="selected" class="weui-select" disabled style="display:none;">请选择开票单位</option>';
-                        for( key in res.invoice_data){
-                            html += '<option value="'+res.invoice_data[key].ang+'">'+res.invoice_data[key].ang+'</option>'
+
+                        if (type == 1) {
+                            $("#ejkh_sel").attr('style','');
+                            var html = '<option value="-1"  selected="selected" class="weui-select" disabled style="display:none;">请选择开票单位</option>';
+                            for( key in res.invoice_data){
+                                html += '<option value="'+res.invoice_data[key].ang+'">'+res.invoice_data[key].ang+'</option>'
+                            }
+                            html += '<option value="new_kpdw">新增开票单位</option>';
+                            $('#ejkh_sel').html(html);
+                            $('#ejkh_sel').show();
                         }
 
-                        html += '<option value="new_kpdw">新增开票单位</option>';
-                        $('#ejkh_sel').html(html);
-                        $('#ejkh_sel').show();
                         $('#mew_kpdw').val('').fadeOut();
 
                         toast.fadeOut(200);

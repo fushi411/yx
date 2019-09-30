@@ -251,8 +251,27 @@ class KkkpsqApplyLogic extends Model {
         );
 
         $qpData = $this->curl_request('http://www.fjyuanxin.com/sngl/include/loadQPSJ.php', $post);
+        $qpData = json_decode($qpData, true);
 
-        return array('code'=>200, 'ht_data'=>$resArr, 'invoice_data'=>$invoiceData, 'qp_data'=>json_decode($qpData, true));
+        $tableArr = array();
+        if (!empty($resArr)) {
+            $arr = array();
+            foreach ($resArr as $resInfo) {
+                $arr['kp_bzfs'] = $resInfo['ht_bzfs'];
+                $arr['kp_pz'] = $resInfo['ht_cate'];
+                $arr['clientid'] = $resInfo['ht_khmc'];
+                $arr['client'] = $id;
+                $arr['sday'] = $bigen;
+                $arr['eday'] = $end;
+                $arr['hash'] = hash('md5', $arr['kp_bzfs'].$arr['kp_pz'].'fa39@q2@E3rdwaijs.*&&23da(&@#dwa');
+                $table = $this->curl_request('http://www.fjyuanxin.com/sngl/include/loadKPStatus.php', $arr);
+                $table = json_decode($table, true);
+                $table['name'] = $resInfo['ht_bzfs'].'-'.$resInfo['ht_cate'];
+                $tableArr[] =  $table;
+            }
+        }
+
+        return array('code'=>200, 'ht_data'=>$resArr, 'invoice_data'=>$invoiceData, 'qp_data'=>$qpData, 'table'=>$tableArr);
     }
 
     /**

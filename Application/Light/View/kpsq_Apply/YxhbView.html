@@ -2,242 +2,788 @@
 
 <!-- 去除不可选择日期 -->
 <block name="disable_date"></block>
-<block name="able_date">
-    <div class="weui-cells weui-cells_form">
-        <div class="weui-cell weui-cell_select weui-cell_select-after">
-            <div class="weui-cell__hd">
-                <label class="weui-label" >开票日期
-                    <span style="color:red;">*</span>
-                </label>
-            </div>
-            <div class="weui-cell__bd">
-                <input class="weui-select" type="text" name="custodian"  id="showDatePicker" readonly value="{$today}" />
-            </div>
-        </div>
-    </div>
-</block>
-
-<!-- 去除不可选择日期 end-->
+<block name="able_date"></block>
 <block name="content_body">
-    <div class="weui-cells" id="content1">
-        <div class="weui-cell weui-cell_select weui-cell_select-after">
-            <div class="weui-cell__hd">
-                <label class="weui-label">提货单位&nbsp;&nbsp;
-                    <span style="color:red;">*</span>
-                </label>
+    <style>
+        #other_page .weui-form-preview__bd,
+        #other_page .fhindex .weui-cells__title {
+            color: black;
+        }
+        #other_page .fhindex .weui-cells__title{
+            font-weight: 550;
+        }
+        #other_page .weui-form-preview__label{
+            text-align-last:auto;
+            min-width:1em;
+        }
+    </style>
+    <div id='content'>
+        <div class="weui-cells">
+            <div class="weui-cell weui-cell_select weui-cell_select-after">
+                <div class="weui-cell__hd">
+                    <label class="weui-label">开票详情&nbsp;&nbsp;
+                        <span style="color:red;">*</span>
+                    </label>
+                </div>
+                <div class="weui-cell__bd">
+                    <input class="weui-select " type="text" readonly id="select_ycl" style="color: #337ab7;"
+                           value="提交开票信息" />
+                </div>
             </div>
-            <div class="weui-cell__bd" id='alter_div'>
-                <select class="weui-select" name="clientname[]" id="user_name" multiple="multiple" style="width: 95%;" data-placeholder="范围：总客户[有效]">
-                </select>
+            <div class="weui-cell ">
+                <div class="weui-cell__hd">
+                    <label class="weui-label">开票日期&nbsp;&nbsp;
+                    </label>
+                </div>
+                <div class="weui-cell__bd">
+                    <input class="weui-input sjfw" type="text" name="custodian" id="kprq" readonly placeholder="自动填写" />
+                    <!--                    <span id="kprq"></span>-->
+                </div>
+            </div>
+            <div class="weui-cell ">
+                <div class="weui-cell__hd">
+                    <label class="weui-label">提货单位&nbsp;&nbsp;
+                    </label>
+                </div>
+                <div class="weui-cell__bd">
+                    <input class="weui-input khmc" type="text" name="custodian"  id="thdw" readonly placeholder="自动填写" />
+                    <!--                    <span id="thdw"></span>-->
+                </div>
+            </div>
+            <div class="weui-cell ">
+                <div class="weui-cell__hd">
+                    <label class="weui-label">开票单位&nbsp;&nbsp;
+                    </label>
+                </div>
+                <div class="weui-cell__bd">
+                    <input class="weui-input qcye" type="text" name="custodian" id="kpdw" readonly placeholder="自动填写" />
+                    <!--                    <span id="kpdw"></span>-->
+                </div>
+            </div>
+            <div class="weui-cell ">
+                <div class="weui-cell__hd">
+                    <label class="weui-label">发票种类&nbsp;&nbsp;
+                    </label>
+                </div>
+                <div class="weui-cell__bd">
+                    <input class="weui-input bqhj" type="text" name="custodian" id="fpzl" readonly placeholder="自动填写" />
+                    <!--                    <span id="fpzl"></span>-->
+                </div>
+            </div>
+            <div class="weui-cell ">
+                <div class="weui-cell__hd">
+                    <label class="weui-label">提货欠票&nbsp;&nbsp;
+                    </label>
+                </div>
+                <div class="weui-cell__bd">
+                    <input class="weui-input bqyf" type="text" name="custodian" id="thqp" readonly placeholder="自动填写" />
+                    <!--                    <span id="thqp"></span>-->
+                </div>
+            </div>
+            <div class="weui-cell ">
+                <div class="weui-cell__hd">
+                    <label class="weui-label">汇款欠票&nbsp;&nbsp;
+                    </label>
+                </div>
+                <div class="weui-cell__bd">
+                    <input class="weui-input bqyf" type="text" name="custodian" id="hkqp" readonly placeholder="自动填写" />
+                    <!--<span id="thqp"></span>-->
+                </div>
+            </div>
+            <div class="weui-cell ">
+                <div class="weui-cell__hd">
+                    <label class="weui-label">时间范围&nbsp;&nbsp;
+                    </label>
+                </div>
+                <div class="weui-cell__bd">
+                    <input class="weui-input qmqk" type="text" name="custodian" id="kpsssj" readonly placeholder="自动填写" />
+                    <!--                    <span id="kpsssj"></span>-->
+                </div>
+            </div>
+            <div class="weui-cell ">
+                <div class="weui-cell__hd">
+                    <label class="weui-label">开票总金额&nbsp;&nbsp;
+                    </label>
+                </div>
+                <div class="weui-cell__bd">
+                    <input class="weui-input qmqk" type="text" name="custodian" id="kpzje" readonly placeholder="自动填写" />
+                    <!--                    <span id="kpsssj"></span>-->
+                </div>
             </div>
         </div>
-        <div class="weui-cell weui-cell_select weui-cell_select-after">
-            <div class="weui-cell__hd">
-                <label class="weui-label">开票单位&nbsp;&nbsp;
-                    <span style="color:red;">*</span>
-                </label>
-            </div>
-            <div class="weui-cell__bd" id='alter_div'>
-                <select class="weui-select" name="kp_hkdw[]" id="user_name" multiple="multiple" style="width: 95%;" data-placeholder="范围：总客户[有效]">
-                </select>
-            </div>
-        </div>
-
-        <div class="weui-cell ">
-            <div class="weui-cell__hd">
-                <label class="weui-label">应收余额&nbsp;&nbsp;
-
-                </label>
-            </div>
-            <div class="weui-cell__bd">
-                <input class="weui-input show_number" type="text" name="custodian" readonly placeholder="自动填写" />
-                <span  id="ysye"></span>
-            </div>
-        </div>
-        <div class="weui-cell">
-            <div class="weui-cell__hd">
-                <label class="weui-label">信用额度&nbsp;&nbsp;
-
-                </label>
-            </div>
-            <div class="weui-cell__bd">
-                <input class="weui-input  show_number" type="text" name="custodian"  readonly placeholder="自动填写" />
-                <span  id="line"></span>
-            </div>
-
-        </div>
-        <div class="weui-cell ">
-            <div class="weui-cell__hd">
-                <label class="weui-label">发货余额&nbsp;&nbsp;
-
-                </label>
-            </div>
-            <div class="weui-cell__bd">
-                <input class="weui-input  show_number" type="text" name="custodian"  readonly placeholder="自动填写" />
-                <span  id="ye"></span>
-            </div>
-        </div>
-        <div class="weui-cell ">
-            <div class="weui-cell__hd">
-                <label class="weui-label">已有临额&nbsp;&nbsp;
-
-                </label>
-            </div>
-            <div class="weui-cell__bd">
-                <input class="weui-input  show_number" type="text" name="custodian" readonly placeholder="自动填写" />
-                <span  id="exist"></span>
-            </div>
-        </div>
-        <div class="weui-cell weui-cell_select weui-cell_select-after">
-            <div class="weui-cell__hd">
-                <label class="weui-label">剩余次数&nbsp;&nbsp;
-
-                </label>
-            </div>
-            <div class="weui-cell__hd">
-                <input class="weui-input color" type="text" name="custodian" id="two" readonly  placeholder="临额二万元 - 剩余提交次数" />
-                <input class="weui-input color" type="text" name="custodian" id="five" readonly  placeholder="临额五万元 - 剩余提交次数" />
-                <input class="weui-input color" type="text" name="custodian" id="ten" readonly   placeholder="临额十万元 - 剩余提交次数" />
-            </div>
-        </div>
-
     </div>
-    <div class="weui-cells" id="content2">
-        <div class="weui-cell weui-cell_select weui-cell_select-after">
-            <div class="weui-cell__hd">
-                <label class="weui-label">申请额度&nbsp;&nbsp;
-                    <span style="color:red;">*</span>
-                </label>
-            </div>
-            <div class="weui-cell__bd">
-                <select class="weui-select iptColor" name="type" id="money">
-                    <option selected="" value="0">二万</option>
-                    <option selected="" value="1">五万</option>
-                    <option selected="" value="2">十万</option>
-                    <option value='-1' disabled selected style='display:none;'>请选择所需额度</option>
-                </select>
+    <div class="other_page" id="other_page">
+        <div class="container">
+            <div class="page js_show">
+                <div class="weui-cells weui-cells_form">
+                    <div class="weui-cell weui-cell_select weui-cell_select-after">
+                        <div class="weui-cell__hd">
+                            <label class="weui-label">开票时间&nbsp;&nbsp;
+                                <span style="color:red;">*</span>
+                            </label>
+                        </div>
+                        <div class="weui-cell__bd">
+                            <input class="weui-select" type="text" name="custodian" id="kp_date" readonly
+                                   placeholder="请选择开票时间" value="{$today}" />
+                        </div>
+                    </div>
+                    <div class="weui-cell weui-cell_select weui-cell_select-after">
+                        <div class="weui-cell__hd">
+                            <label class="weui-label">提货单位&nbsp;&nbsp;
+                                <span style="color:red;">*</span>
+                            </label>
+                        </div>
+                        <div class="weui-cell__bd">
+                            <div class="weui-cell__bd" id="alter_div">
+                                <select class="weui-select" name="user_name[]" id="user_name" multiple="multiple" style="width: 95%;" data-placeholder="客户范围为总客户[有效]">
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="weui-cell weui-cell_select weui-cell_select-after">
+                        <div class="weui-cell__hd">
+                            <label class="weui-label">开票单位&nbsp;&nbsp;
+                                <span style="color:red;">*</span>
+                            </label>
+                        </div>
+                        <div class="weui-cell__bd ">
+                            <input class="weui-select" type="text" id="ejkh" name="custodian" readonly placeholder="请先选择提货单位"/>
+                            <select class="weui-select greyColor" name="type" style='display:none;' id='ejkh_sel'>
+                                <option value='-1' disabled selected style='display:none;'>请选择开票单位</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="weui-cell weui-cell_select weui-cell_select-after" id="mew_kpdw" style="display: none">
+                        <div class="weui-cell__hd">
+                            <label class="weui-label">&nbsp;&nbsp;
+                            </label>
+                        </div>
+                        <div class="weui-cell__bd ">
+                            <input class="weui-select" type="text" id="new_ejkh" name="custodian" placeholder="新增开票单位填写"/>
+                        </div>
+                    </div>
+                    <div class="weui-cell weui-cell_select weui-cell_select-after">
+                        <div class="weui-cell__hd">
+                            <label class="weui-label">发票种类&nbsp;&nbsp;
+                                <span style="color:red;">*</span>
+                            </label>
+                        </div>
+                        <div class="weui-cell__bd">
+                            <select class="weui-select iptColor" name="type" id="kp_fpzl">
+                                <option selected="" value="普票">普票</option>
+                                <option selected="" value="专票">专票</option>
+                                <!--                                <option selected="" value="运票">运票</option>-->
+                                <option value='-1' disabled selected style='display:none;'>选择发票种类</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="weui-cell weui-cell_select weui-cell_select-after">
+                        <div class="weui-cell__hd">
+                            <label class="weui-label">开始日期&nbsp;&nbsp;
+                                <span style="color:red;">*</span>
+                            </label>
+                        </div>
+                        <div class="weui-cell__bd">
+                            <input class="weui-select" type="text" name="custodian" id="start_date" readonly
+                                   placeholder="请选择开始日期" value="{$kp_sda}" />
+                        </div>
+                    </div>
+                    <div class="weui-cell weui-cell_select weui-cell_select-after">
+                        <div class="weui-cell__hd">
+                            <label class="weui-label">结束日期&nbsp;&nbsp;
+                                <span style="color:red;">*</span>
+                            </label>
+                        </div>
+                        <div class="weui-cell__bd">
+                            <input class="weui-select" type="text" name="custodian" id="end_date" readonly
+                                   placeholder="请选择结束日期" value="{$kp_eda}" />
+                        </div>
+                    </div>
+                </div>
+                <div class="weui-cells__title">
+                    <div style="display: inline-block;width: 40%;">开票信息 <span style="color:red;">*</span></div>
+                    <div style="display: inline-block;width: 50%;text-align: right;">
+                        <div id="btn-all" class="btn btn-default btn-sm" style="display: none;">关闭</div>
+                        <div id="overdue" class="btn btn-success btn-sm">确定</div>
+                    </div>
+                </div>
+                <!--             详情部分-->
+                <div class="weui-cells weui-cells_form"  style="margin-top: 0;min-height: 101%" >
+                    <div class="page__bd">
+                        <div class="weui-cells searchbar-result" id="order_select" style="display: none;background-color:#f8f8f8;margin-top:0;">
+                            <div class="weui-form-preview__bd">
+                                <div class="weui-form-preview__item">
+                                    <label class="weui-form-preview__label">提货单位:</label>
+                                    <span class="weui-form-preview__value" style="text-align:left;" id="thdw_val"></span>
+                                </div>
+                                <div class="weui-form-preview__item">
+                                    <label class="weui-form-preview__label">提货欠票:</label>
+                                    <span class="weui-form-preview__value" style="text-align:left;" id="dhqp_val"></span>
+                                </div>
+                                <div class="weui-flex">
+                                    <div class="weui-form-preview__item weui-flex__item">
+                                        <label class="weui-form-preview__label">汇款欠票:</label>
+                                        <span class="weui-form-preview__value" style="text-align:left;" id="hkqp_val"></span>
+                                    </div>
+                                </div>
+                                <div class="weui-flex">
+                                    <div class="weui-form-preview__item weui-flex__item">
+                                        <label class="weui-form-preview__label">时间范围:</label>
+                                        <span class="weui-form-preview__value" style="text-align:left;" id="date_range"></span>
+                                    </div>
+                                </div>
+                                <div id = "history_data">
+                                </div>
+                            </div>
+                            <div class="weui-cells__title" style="color: black;position: relative;">
+                                <span>  &nbsp;</span>
+                                <a href="#" style="position:absolute;right: 25px;"><span style="color:#f12e2e;">点击新增开票→</span>
+                                    <i client="329" index="0" data-toggle="modal" data-target="#exampleModal" data-whatever="@mdo" class="iconfont icon-xiugai tzbtn" style="font-size: 18px;vertical-align: middle;"></i>
+                                </a>
+                            </div>
+                            <div id = 'form_date'>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
-
     </div>
-
 </block>
 <block name="js">
+    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="exampleModalLabel">新开发票</h4>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="form-group">
+                            <label for="kppz" class="control-label">开票品种<span style="color:red;">*</span></label>
+                            <select id="form_kppz" name="kppz" class="form-control"></select>
+                        </div>
+                        <div class="form-group">
+                            <label for="xsje" class="control-label">销售金额:<span class="xsje"></span></label>
+                            <input type="text" class="form-control"
+                                   id="form_xsje" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="dj" class="control-label">单价:<span class="dj"></span></label>
+                            <input type="text" class="form-control"
+                                   id="form_dj" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="thsl" class="control-label">提货数量:<span class="thsl"></span></label>
+                            <input type="text"  class="form-control"
+                                   id="form_thsl" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="kpje" class="control-label">开票金额<span style="color:red;">*</span><span class="kpje"></span></label>
+                            <input type="text" onkeyup="clearNoNum(this)" onchange="checkNum(this)" onBlur="adjustData('a')" class="form-control" placeholder="精确到两位小数（必填）"
+                                   id="form_kpje">
+                        </div>
+                        <div class="form-group">
+                            <label for="kpdj" class="control-label">开票单价*<span class="kpdj"></span></label>
+                            <input type="text" onkeyup="clearNoNum(this)" onchange="checkNum(this)" onBlur="adjustData('b')" class="form-control" placeholder="单价和数量二选一填写"
+                                   id="form_kpdj">
+                        </div>
+                        <div class="form-group">
+                            <label for="kpsl" class="control-label">开票数量*<span class="kpsl"></span></label>
+                            <input type="text" onkeyup="clearNoNum(this)" onchange="checkNum(this)" onBlur="adjustData('c')" class="form-control" placeholder="单价和数量二选一填写"
+                                   id="form_kpsl">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                    <button type="button" class="btn btn-primary" data-dismiss="modal_no" id='btn-sure'>确定</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="sign_dialogs">
+        <div class="js_dialog" id="Dialog" style="display: none;">
+            <div class="weui-mask"></div>
+            <div class="weui-dialog">
+                <div class="weui-dialog__hd">
+                    <strong class="weui-dialog__title" id="dialog_text">确认是否删除？</strong>
+                </div>
+                <div class="weui-dialog__ft">
+                    <a href="javascript:;" onclick="del_dialog_close()" class="weui-dialog__btn weui-dialog__btn_default">取消</a>
+                    <a href="javascript:;" onclick="del_dialog_confirm()" class="weui-dialog__btn weui-dialog__btn_primary">确认</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="__PUBLIC__/assets/js/AmountConversionformat.js"></script>
+
+    <!-- <script src="__PUBLIC__/assets/js/vconsole.min.js"></script> -->
     <script>
-        var user_name = $('#user_name'),
-            user_id = 0,
-            exist = $('#exist'),
-            line = $('#line'),
-            ye = $('#ye'),
-            ysye = $('#ysye'),
-            two = $('#two'),
-            five = $('#five'),
-            ten = $('#ten'),
-            twoTime = 0,
-            fiveTime = 0,
-            tenTime = 0,
-            money = $('#money'),
-            app_pro = $('#app_pro');
+        // form点击确定
+        var form_data = new Array();
+        var form_data_new = new Array();
+        var form_key = 0;
+        var htmls = '<hr><div class="weui-cells__title" style="color: black;">' +
+            '<span>&nbsp; </span>' +
+            '<a href="#" class="tzbtn" client="jxs" style="float:right;margin-right:10px;">' +
+            '<span style="color:#f12e2e;">删除→</span>' +
+            '<i class="iconfont icon-xiugai " style="vertical-align: middle;" id="del_form" data_id="#KEV"></i>' +
+            '</a><div style="clear :both;"></div>' +
+            '</div>' +
+            '<div class="weui-flex" style="padding: 2px 15px;">' +
+            '<div class="weui-form-preview__item weui-flex__item  font13">品种</div>' +
+            '<div class="weui-form-preview__item weui-flex__item  font13">金额</div>' +
+            '<div class="weui-form-preview__item weui-flex__item  font13">单价</div>' +
+            '<div class="weui-form-preview__item weui-flex__item  font13">数量</div>' +
+            '</div>';
+        $('#btn-sure').click(function () {
+            A = $('#form_kpje').val();
+            B = $('#form_kpdj').val();
+            C = $('#form_kpsl').val();
+            D = $('#form_kppz').val();
 
-
-        var appflow = {$appflow};
-        // 2w额度显示推送
-        $('#app_pro .wk-select__user').eq(0).toggle();
-        // 选择临时额度
-        money.change(function () {
-            var val = $(this).val(),html = '';
-            if (user_id == 0) {
-                tooltip('请选择用户');
-                money.val(-1);
-                $('#detail').html(html);
+            if (A == '' || A == 0) {
+                $("#btn-sure").attr('data-dismiss', 'modal_no');
+                return tooltip('请填写开票金额！');
+            }else if(B == '' || B == 0){
+                $("#btn-sure").attr('data-dismiss', 'modal_no');
+                return tooltip('请填写开票单价！');
+            }else if(C == '' || C == 0){
+                $("#btn-sure").attr('data-dismiss', 'modal_no');
+                return adjustData('请填写开票数量');
+            }else if(D == ''){
+                $("#btn-sure").attr('data-dismiss', 'modal_no');
+                return tooltip('请选择开票品种！');
             }
 
-            if(val==0) return app_pro.html(html);;
-            html = app_proHtml(val-1);
-            $('#app_pro .wk-select__user').eq(0).toggle();
+            $("#btn-sure").attr('data-dismiss', 'modal');
+            data = D+','+A+','+B+','+C;
+            form_data.push(data);
+            updateFormData();
+        })
 
-            app_pro.html(html);
-        });
-
-        // 审批流程显示
-        function app_proHtml(val){
-            var html = '';
-
-            for(i=0;i<=val;i++){
-
-                html += "<li class='weui-uploader__file wk-select__user' id='"+appflow[i]['id']+"' style='height:90px;";
-                if(i != 0) html+= "margin-left:8px";
-                html += "'><img src='"+appflow[i]['avatar']+"' class='weui-selet__user' style='margin-bottom: 0px;margin-right: 6px;margin-top:10px;'>"+
-                    "<span style='margin-right: 6px;font-size: 14px;'>"+appflow[i]['name']+"</span>";
-                if(i<=val-1){
-                    html+="<span class='glyphicon glyphicon-arrow-right' style='position: relative;top: -2.8em;right: -1.8em;color:#f12e2e;'></span>";
+        $('#form_date').on('click','#del_form',function(){
+            form_data_new = [];
+            var q = $(this).attr('data_id')
+            for (var i=0 ; i < form_data.length ; ++i ){
+                if (i != q){
+                    form_data_new.push(form_data[i]);
                 }
-                html +=  "</li>";
             }
-            return html;
+            $('#Dialog').show();
+        })
+
+        function del_dialog_close() {
+            form_data_new = form_data;
+            $('#Dialog').hide();
         }
 
-        $(function () {
-            // 用户选择
-            function formatRepo(repo) { return repo.text; }
+        function del_dialog_confirm() {
+            form_data = form_data_new;
+            updateFormData();
+            $('#Dialog').hide();
+        }
 
-            function formatRepoSelection(repo) { return repo.text }
-            $("#user_name").select2({
-                ajax: {
-                    url: "{:U('Light/Api/kpsq_ApplyApi')}"+"&system=yxhb&modname=kpsq_Apply&action=getCustomerList",
+        var kpzje = 0;
+        function updateFormData() {
+            kpzje = 0;
+            var html = '';
+            for (var i=0 ; i < form_data.length ; ++i ){
+                htmla = htmls;
+                arr = form_data[i].split(',');
+                htmla += '<div class="weui-flex" style="padding: 3px 15px; font-size: 14px;">';
+                for(var j in arr){
+                    if (j == 1) {
+                        kpzje = kpzje + Number(arr[j]);
+                    }
+                    htmla += '<div class="weui-form-preview__item weui-flex__item font13">'+arr[j]+'</div>';
+                }
+                htmla = htmla.replace('#KEV', i);
+                htmla += '</div>';
+                html += htmla;
+            }
+
+            $('#form_date').html(html);
+        }
+
+        // 输入限制
+        function clearNoNum(obj) {
+            obj.value = obj.value.replace(/[^\d.-]/g, "");  //清除“数字”和“.”以外的字符
+            obj.value = obj.value.replace(/^(\-)*(\d+)\.(\d\d).*$/, '$1$2.$3');//只能输入两个小数
+        }
+
+        function checkNum(obj) {
+            obj.value = obj.value.replace(/\.{2,}/g, "."); //只保留第一个. 清除多余的
+            obj.value = obj.value.replace(".", "$#$").replace(/\./g, "").replace("$#$", ".");
+
+            //如果没有小数点，不能为类似 01、02的金额
+            if (obj.value.indexOf(".") < 0 && obj.value != "") {
+                obj.value = parseFloat(obj.value);
+            }
+            //如果有小数点，不能为类似 1.10的金额
+            if (obj.value.indexOf(".") > 0 && obj.value.indexOf("0") > 2) {
+                obj.value = parseFloat(obj.value);
+            }
+            //如果有小数点，不能为类似 0.00的金额
+            if (obj.value.indexOf(".") > 0 && obj.value.lastIndexOf("0") > 2) {
+                obj.value = parseFloat(obj.value);
+            }
+        }
+
+        function adjustData(value){
+            var A,B,C;
+            A = $('#form_kpje').val();
+            B = $('#form_kpdj').val();
+            C = $('#form_kpsl').val();
+
+            if (A == '' || A == 0) {
+                return false;//没有填写开票金
+            }
+
+            if (B > 0 || C > 0) {
+                if (B > 0 && C > 0) {
+                    if (value == 'a' || value == 'b') {
+                        C = A/B;
+                        C = C.toFixed(2);
+                        $('#form_kpsl').val(C);
+                    }else{
+                        B = A/C;
+                        B = B.toFixed(2);
+                        $('#form_kpdj').val(B);
+                    }
+                }else if(B > 0){
+                    C = A/B;
+                    C = C.toFixed(2);
+                    $('#form_kpsl').val(C);
+                }else{
+                    B = A/C;
+                    B = B.toFixed(2);
+                    $('#form_kpdj').val(B);
+                }
+            }else{
+                return false;
+            }
+        }
+
+        $("#form_kppz").change(function(){
+            var opt=$("#form_kppz").val();
+            var start_date = $("#start_date").val();
+            var end_date = $("#end_date").val();
+
+            if (opt != '') {
+                var arr = opt.split('-');
+                toastfadeIn(200,'数据加载中');
+                $.ajax({
+                    url: "{:U('Light/Api/kpsq_ApplyApi')}"+"&system=yxhb&modname=kpsq_Apply&action=getFormData",
                     dataType: 'json',
-                    delay: 350,
-                    data: function (params) {
-                        $('#alter_div input').eq(0).attr('placeholder', '请选择客户或拼音缩写');
-                        return {
-                            math: params.term,
-                        };
+                    data: {
+                        'kp_bzfs': arr[0],
+                        'kp_pz': arr[1],
+                        'clientid': arr[2],
+                        'client': user_id,
+                        'sday': start_date,
+                        'eday': end_date
                     },
-                    processResults: function (data) {
-                        return {
-                            results: data
-                        };
-                    },
-                    cache: true
-                },
-                escapeMarkup: function (markup) { return markup; },
-                minimumInputLength: 0,
-                minimumResultsForSearch: 9,
-                // allowClear: true,
-                language: "zh-CN",
-                templateResult: formatRepo,
-                templateSelection: formatRepoSelection
-            });
-            $('#alter_div').on('blur','input',function(){
-                if(!user_id) $('#alter_div input').eq(0).attr('placeholder', '客户范围为客户[有效]');
-            })
-            // select2 点击触发
-            $("#user_name").on("select2:selecting", function (e) {
-                $('.select2-selection__choice__remove').click();
-                var selectArr = e.params.args.data;
-                if(selectArr.jc)  selectArr.text = selectArr.jc;
-
-                $('.select2-selection__choice').text(selectArr.text);
-                getTempInfo(selectArr.id);
-                user_id = selectArr.id;
-
-                money.val('-1');
-            });
-            $("#user_name").on("select2:unselecting", function (e) {
-                app_pro.html('');
-                $('.color').val('');
-                user_id = 0;
-            });
-
+                    dataType: 'json',
+                    success: function (res) {
+                        if (res.code != 200) {
+                            tooltip('请重新刷新页面！')
+                        } else {
+                            $("#form_xsje").val(res.data.je);
+                            $("#form_dj").val(res.data.dj);
+                            $("#form_thsl").val(res.data.zl);
+                            toast.fadeOut(200);
+                        }
+                    }
+                })
+            }
         });
 
-        // 获取客户用户 各项余额
-        function getTempInfo(user_id) {
-            toastfadeIn(200,'数据加载中');
+        // params
+
+        var user_id = '', auth = '', user_name = '',data = '';
+        var nowdays = new Date();
+        var year = nowdays.getFullYear();
+        var month = nowdays.getMonth();
+        if(month==0)
+        {
+            month=12;
+            year=year-1;
+        }
+        if (month < 10) {
+            month = "0" + month;
+        }
+        var firstDay = year + "-" + month + "-" + "01";               //上个月的第一天
+
+        var myDate = new Date(year, month, 0);
+        var lastDay = year + "-" + month + "-" + myDate.getDate();   //上个月的最后一天
+        $('#start_date').val();
+        $('#end_date').val();
+        $('#kp_date').val();
+        // 提交按钮
+        $('#submit').click(function(){
+            if(user_name == '' || user_id == '') return tooltip('请选择提货单位！');
+            if(ejkh == '') return tooltip('请选择开票单位或新增一个开票单位!');
+            var start_date = $('#start_date').val();
+            end_date = $('#end_date').val();
+            kp_date = $('#kp_date').val();
+            kp_fpzl = $('#kp_fpzl').val();
+            reason = $('#reason').val();
+            ejkh_sel = $('#ejkh_sel').val();
+
+            if (reason == '') return tooltip('请输入相关说明');
+            if (kp_fpzl == '' || kp_fpzl == null) return tooltip('请选择发票种类');
+            if (kp_date == '') return tooltip('请选择开票时间');
+            if (start_date == '') return tooltip('请选择开始时间');
+            if (end_date == '') return tooltip('请选择结束时间');
+            if(form_data == '') return tooltip('需新增开票信息！');
+            var reason = $('#reason').val();
+            toast.fadeIn(200);
             $.ajax({
-                url: "{:U('Light/Api/TempCreditLineApplyApi')}"+"&system=yxhb&modname=TempCreditLineApply&action=getCustomerInfo",
+                type: 'POST',
+                url: "{:U('Light/Api/kpsq_ApplyApi')}",
                 dataType: 'json',
                 data: {
+                    system : 'yxhb',
+                    modname : 'kpsq_Apply',
+                    action: 'saveFormData',
+                    data: form_data,
+                    user_name: user_name,
+                    user_id:user_id,
+                    ejkh: ejkh,
+                    ejkh_sel:ejkh_sel,
+                    start_date: start_date,
+                    end_date: end_date,
+                    kp_date: kp_date,
+                    kp_fpzl: kp_fpzl,
+                    reason:reason,
+                    copyto_id: $("#copyto_id").val(),
+                    __hash__ : hash
+                },
+                success: function (res) {
+                    toast.fadeOut(200);
+                    if (res.code == 200) {
+                        window.location.href = "{$fixed['info']}" + "&aid=" + res.aid;
+                    } else {
+                        tooltip(res.msg);
+                    }
+                }
+            });
+        });
+        // 确定按钮点击
+        var ejkh = '';
+        $('#overdue').click(function () {
+            var start_date = $('#start_date').val(),
+                end_date = $('#end_date').val();
+            kp_fpzl = $('#kp_fpzl').val();
+            kp_date = $('#kp_date').val();
+            if (user_id == '') return tooltip('请选择提货单位');
+            if (kp_fpzl == '' || kp_fpzl == null) return tooltip('请选择发票种类');
+            if (start_date == '') return tooltip('请选择开始时间');
+            if (end_date == '') return tooltip('请选择结束时间');
+            if (kp_date == '') return tooltip('请选择开票时间');
+
+            ejkh_sel = $('#ejkh_sel').val();
+            new_ejkh = $('#new_ejkh').val();
+            ejkh = ejkh_sel;
+            if (ejkh_sel == '' || ejkh_sel == null)  {
+                return tooltip('请选择开票单位');
+            }else if(ejkh_sel == 'new_kpdw'){
+                if (new_ejkh == '') {
+                    return tooltip('请填写新增的开票单位!');
+                }
+                ejkh  = new_ejkh;
+            }
+
+            $('#kprq').val(kp_date);
+            $('#thdw').val(user_name);
+            $('#kpdw').val(ejkh);
+            $('#fpzl').val(kp_fpzl);
+            $('#thqp').val($('#dhqp_val').html());
+            $('#hkqp').val($('#hkqp_val').html());
+            $('#kpsssj').val($('#start_date').val()+'至'+$('#end_date').val())
+            $('#order_select').fadeIn();
+        });
+
+        // 显示
+        // div_show();
+        function div_show(type) {
+            if (type == 1) {
+                $('#content').fadeOut();
+                $('.weui-cells').eq(1).fadeOut();
+                $('#other_page').fadeIn();
+                $('#btn-all').fadeIn();
+            } else {
+                $('#content').fadeIn();
+                $('.weui-cells').eq(1).fadeIn();
+                $('#other_page').fadeOut();
+                $('#btn-all').fadeOut();
+            }
+        }
+        $('#btn-all').click(function () {
+            var start_date = $('#start_date').val(),
+                end_date = $('#end_date').val();
+            kp_fpzl = $('#kp_fpzl').val();
+            kp_date = $('#kp_date').val();
+
+            ejkh_sel = $('#ejkh_sel').val();
+            new_ejkh = $('#new_ejkh').val();
+            ejkh = ejkh_sel;
+            if(ejkh_sel == 'new_kpdw'){
+                ejkh  = new_ejkh;
+            }
+
+            $('#kprq').val(kp_date);
+            $('#thdw').val(user_name);
+            $('#kpdw').val(ejkh);
+            $('#fpzl').val(kp_fpzl);
+            $('#thqp').val($('#dhqp_val').html());
+            $('#hkqp').val($('#hkqp_val').html());
+            $('#kpsssj').val($('#start_date').val()+'至'+$('#end_date').val());
+            $('#kpzje').val("￥ "+formatMoney(kpzje));
+
+            $('#order_select').fadeIn();
+            div_show();
+        });
+
+        $('#select_ycl').click(function () {
+            $('#alter_div').fadeIn();
+            div_show(1);
+        })
+
+        // 开票时间
+        $('#kp_date').on('click', function () {
+            weui.datePicker({
+                start: 2018,
+                end: new Date().getFullYear() + 10,
+                defaultValue: [new Date().getFullYear(), new Date().getMonth() + 1, new Date().getDate()],
+                onConfirm: function (result) {
+                    pickerValue(result, $('#kp_date'));
+                },
+                id: 'kp_date'
+            });
+        });
+        // 开始时间
+        $('#start_date').on('click', function () {
+            var q = $(this).val();
+            arr = q.split('-');
+            weui.datePicker({
+                start: 2018,
+                end: new Date().getFullYear() + 10,
+                defaultValue: [arr[0], arr[1], arr[2]],
+                onConfirm: function (result) {
+                    pickerValue(result, $('#start_date'));
+                },
+                id: 'start_date'
+            });
+        });
+        // 结束时间
+        $('#end_date').on('click', function () {
+            var q = $(this).val();
+            arr = q.split('-');
+            weui.datePicker({
+                start: 2018,
+                end: new Date().getFullYear() + 10,
+                defaultValue: [arr[0], arr[1], arr[2]],
+                onConfirm: function (result) {
+                    pickerValue(result, $('#end_date'));
+                },
+                id: 'end_date'
+            });
+        });
+        // 日历填充
+        function pickerValue(dateArr, dom) {
+            var val = dateArr[0] + '-';
+            val += dateArr[1] > 9 ? dateArr[1] : '0' + dateArr[1];
+            val += '-';
+            val += dateArr[2] > 9 ? dateArr[2] : '0' + dateArr[2];
+            dom.val(val);
+            getTempInfo(user_id, user_name, 2);
+            $('#form_xsje').val('');
+            $('#form_dj').val('');
+            $('#form_thsl').val('');
+        }
+        // 用户选择
+        function formatRepo(repo) { return repo.text; }
+        function formatRepoSelection(repo) { return repo.text }
+        $("#user_name").select2({
+            ajax: {
+                url: "{:U('Light/Api/kpsq_ApplyApi')}"+"&system=yxhb&modname=kpsq_Apply&action=getCustomerList",
+                dataType: 'json',
+                delay: 350,
+                data: function (params) {
+                    $('#alter_div input').eq(0).attr('placeholder', '请选择客户或拼音缩写');
+                    return {
+                        math: params.term,
+                    };
+                },
+                processResults: function (data) {
+                    return {
+                        results: data
+                    };
+                },
+                cache: true
+            },
+            escapeMarkup: function (markup) { return markup; },
+            minimumInputLength: 0,
+            minimumResultsForSearch: 9,
+            // allowClear: true,
+            language: "zh-CN",
+            templateResult: formatRepo,
+            templateSelection: formatRepoSelection
+        });
+
+        $('#alter_div').on('blur', 'input', function () {
+            if (!user_id) $('#alter_div input').eq(0).attr('placeholder', '客户范围为总客户[有效]');
+        })
+
+        // select2 点击触发
+        $("#user_name").on("select2:selecting", function (e) {
+            $('.select2-selection__choice__remove').click();
+            var selectArr = e.params.args.data;
+
+            $('.select2-selection__choice').text(selectArr.text);
+
+            user_name = selectArr.text;
+            user_id = selectArr.id;
+            getTempInfo(user_id, user_name);
+        });
+
+        $("#user_name").on("select2:unselecting", function (e) {
+            user_id = 0;
+            user_name = '';
+        });
+
+        // select2 点击触发
+        $("#user_name").on("select2:selecting", function (e) {
+            $('.select2-selection__choice__remove').click();
+            var selectArr = e.params.args.data;
+
+            $('.select2-selection__choice').text(selectArr.text);
+
+            user_name = selectArr.text;
+            user_id = selectArr.id;
+            getTempInfo(user_id, user_name);
+        });
+
+        $('#other_page').fadeOut();
+        //选择提货单位之后获取一些数据
+        function getTempInfo(user_id, user_name, type = 1) {
+            kp_sda = $('#start_date').val();
+            kp_eda = $('#end_date').val();
+            kp_date = $('#kp_date').val();
+            toastfadeIn(200,'数据加载中');
+            $.ajax({
+                url: "{:U('Light/Api/kpsq_ApplyApi')}"+"&system=yxhb&modname=kpsq_Apply&action=getCustomerInfo",
+                dataType: 'json',
+                data: {
+                    'kp_sda': kp_sda,
+                    'kp_eda': kp_eda,
+                    'kp_date': kp_date,
+                    'user_name': user_name,
                     user_id: user_id
                 },
                 dataType: 'json',
@@ -245,126 +791,66 @@
                     if (res.code != 200) {
                         tooltip('请重新刷新页面！')
                     } else {
-                        var data = res.data, info = data.info, classNmae = '';
+                        $('#dhqp_val').html("&yen;"+formatMoney(res.qp_data.thqp));
+                        $('#hkqp_val').html("&yen;"+formatMoney(res.qp_data.ghqp));
+                        $('#date_range').html($('#start_date').val()+'至'+$('#end_date').val());
+                        $('#thdw_val').html(user_name);
 
-                        exist.html("&yen;"+data.exist);
-                        line.html("&yen;"+data.line);
-                        ye.html("&yen;"+data.ye);
-                        ysye.html("&yen;"+data.ysye);
-                        $('.show_number').hide();
+                        if (res.table != '') {
+                            history_html = '<table class="table"><thead><tr><td>品种</td><td>销售金额</td><td>单价</td><td>提货数量</td></tr></thead>';
+                            for(key in res.table){
+                                list = res.table[key];
 
-                        if (data.ysflag) classNmae = 'redColor';
-
-                        ysye.removeClass('redColor').addClass(classNmae);
-
-                        twoTime = info[0].length;
-                        fiveTime = info[1].length;
-                        tenTime = info[2].length;
-                        $('.color').removeClass('redColor greenColor');
-
-                        moneyHtml();
-                        if(5-twoTime>0){
-                            //two.addClass('greenColor')
+                                history_html += '<thead><tr>';
+                                history_html += '<td scope="row">'+list.name+'</td><td>'+list.je+'</td><td>'+list.dj+'</td><td>'+list.zl+'</td>';
+                                history_html += '</thead></tr>';
+                            }
+                            history_html += '</table>';
+                            $("#history_data").html(history_html);
                         }else{
-                            two.addClass('redColor');
-                            $('#money option[value="0"]');
+                            $("#history_data").html('');
                         }
 
-                        if(3-fiveTime>0){
-                            //five.addClass('greenColor')
-                        }else{
-                            five.addClass('redColor');
-                            $('#money option[value="1"]').remove();
+                        //表单中的开票品种选择
+                        $("#form_kppz").attr('style','');
+                        var html = '<option value="" >请选择开票品种</option>';
+                        for(key in res.ht_data){
+                            var string = res.ht_data[key].ht_cate+"-"+res.ht_data[key].ht_wlfs;
 
+                            html += '<option value="'+string+'">'+string+'</option>'
                         }
-                        if(1-tenTime>0){
-                            // ten.addClass('greenColor')
-                        }else{
-                            ten.addClass('redColor');
-                            $('#money option[value="2"]').remove();
+                        $('#form_kppz').html(html);
+
+                        $('#ejkh').val('');
+                        $('#ejkh').hide();
+
+                        if (type == 1) {
+                            $("#ejkh_sel").attr('style','');
+                            var html = '<option value="-1"  selected="selected" class="weui-select" disabled style="display:none;">请选择开票单位</option>';
+                            for( key in res.invoice_data){
+                                html += '<option value="'+res.invoice_data[key].ang+'">'+res.invoice_data[key].ang+'</option>'
+                            }
+
+                            html += '<option value="new_kpdw">新增开票单位</option>';
+                            $('#ejkh_sel').html(html);
+                            $('#ejkh_sel').show();
                         }
 
-                        two.val('临额二万元 - 剩余'+(5-twoTime)+'次提交');
-                        five.val('临额五万元 - 剩余'+(3-fiveTime)+'次提交');
-                        ten.val('临额十万元 - 剩余'+(1-tenTime)+'次提交');
+                        $('#mew_kpdw').val('').fadeOut();
                         toast.fadeOut(200);
                     }
                 }
             })
         }
-        // 选择重置
-        function moneyHtml(){
-            var html = '<option selected="" value="0">二万</option>'+
-                '<option selected="" value="1">五万</option>'+
-                '<option selected="" value="2">十万</option>'+
-                '<option value="-1" disabled selected style="display:none;">请选择所需额度</option>';
-            money.html(html);
-        }
 
-        // 提交申请
-        $('#submit').click(function () {
-
-            if (user_id == 0) {
-                tooltip('请选择用户');
-                return;
+        $("#ejkh_sel").change(function() {
+            var opt = $("#ejkh_sel").val();
+            //新增开票单位
+            if (opt == 'new_kpdw') {
+                $('#mew_kpdw').fadeIn();
+            }else{
+                $('#mew_kpdw').fadeOut();
             }
-
-            if ($('#money')[0].value == -1) {
-                tooltip('请选择增加的额度');
-                return;
-            }
-            // 2w 判断
-            if ($('#money')[0].value == 0 && twoTime >= 5) {
-                tooltip('本月2W临时额度增加次数已达上限！');
-                return;
-            }
-            // 5w 判断
-            if ($('#money')[0].value == 1 && fiveTime >= 3) {
-                tooltip('本月3W临时额度增加次数已达上限！');
-                return;
-            }
-            // 2w 判断
-            if ($('#money')[0].value == 2 && tenTime >= 1) {
-                tooltip('本月10W临时额度增加次数已达上限！');
-                return;
-            }
-            // 留言判断
-            var reason = $('#reason').val();
-            if (reason.length < 5) {
-                tooltip('申请理由不得少于5个字！');
-                return;
-            }
-            if (reason.length > 200) {
-                tooltip('申请理由不得超过200个字！');
-                return;
-            }
-
-            toastfadeIn(200,'数据提交中');
-            $.ajax({
-                type:'POST',
-                url: "{:U('Light/Api/TempCreditLineApplyApi')}",
-                dataType: 'json',
-                data: {
-                    user_id: user_id,
-                    text: reason,
-                    money: money.val(),
-                    copyto_id:$("#copyto_id").val(),
-                    system:"{$system}",
-                    modname:'TempCreditLineApply',
-                    action:'submit',
-                    __hash__: hash
-                },
-                dataType: 'json',
-                success: function (res) {
-                    toast.fadeOut(200);
-                    if (res.code == 200) {
-                        window.location.href = "{$fixed['info']}"+"&aid="+res.aid;
-                    } else {
-                        tooltip(res.msg);
-                    }
-                }
-            });
-
-        });
+        })
     </script>
 </block>

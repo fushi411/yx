@@ -64,8 +64,8 @@ class ViewController  extends BaseController
         $this -> assign('atten',$atten);
         $this -> assign('explain',$explain);
         $this -> assign('CueConfig',$detailAuth);
-        $this -> assign('kp_sda', date('Y-m-01',time()+8*3600));
-        $this -> assign('kp_eda', date('Y-m-d',time()+8*3600));
+        $this -> assign('kp_sda', date('Y-m-01',strtotime('-1 month',strtotime("first day of this month"))));
+        $this -> assign('kp_eda', date('Y-m-t',strtotime('-1 month',strtotime("first day of this month"))));
         if( $special_page){
             $this->display($mod_name.'/'.$special_page);
         }else{
