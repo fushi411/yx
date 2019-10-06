@@ -183,7 +183,7 @@ class YxhbCreditLineApplyLogic extends Model {
      */
     public function sealNeedContent($id){
         $res = $this->record($id);
-        $clientname = M('yxhb_guest2')->field('g_khjc')->where(array('id' => $res['clientid']))->find();
+        $clientname = M('yxhb_guest2')->field('g_khjc,g_name')->where(array('id' => $res['clientid']))->find();
         $temp = array(
             array('title' => '客户名称' , 'content' => $clientname['g_name'] ),
             array('title' => '申请金额' , 'content' => number_format($res['line'],2,'.',',')."元"  ),

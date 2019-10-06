@@ -41,7 +41,9 @@
                         </div>
                     </volist>
                     <if condition=" $mydata.flag eq 1">
-                        <div class="weui-panel__hd" style="color:black;font-size: 16px;font-weight: 600; background-color: #ffffff;padding-top: 8px;padding-bottom: 4px;margin-top: 5px;">未调价客户</div>
+                        <div class="weui-panel__hd" style="color:black;font-size: 16px;font-weight: 600; 
+                        background-color: #ffffff;padding-top: 8px;padding-bottom: 4px;margin-top: 5px;
+                        border-bottom: 1px solid #d4d1d1;border-top: 1px solid #d4d1d1;">未调价客户</div>
                         <volist name="mydata.unmodify" id="vo">
                             <div class="weui-cells__title" style="color: black;margin-top: 4.2px;">{$vo.g_name}</div>
                             <div class="weui-cells weui-cells_form " style="padding-bottom: 15px;">

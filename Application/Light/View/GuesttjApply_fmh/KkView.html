@@ -75,7 +75,7 @@
                     <div style="display: inline-block;width: 40%;">调价详情</div>
                     <div style="display: inline-block;width: 50%;text-align: right;">
                         <div id="btn-all" class="btn btn-default btn-sm">关闭</div>
-                        <div id="overdue" class="btn btn-success btn-sm">确定</div>
+                        <div id="overdue" class="btn btn-success btn-sm">搜索</div>
                     </div>
                 </div>
                 <!-- 价差 -->
@@ -261,6 +261,10 @@
         });
         // 提交
         $('#submit').click(function () {
+            var item_remarks = $('#reason');
+            var remarks_flag = item_remarks.attr('data-must');
+            var reason = item_remarks.val();
+            if ( remarks_flag == 1 && reason.length < 5) return tooltip('相关说明不得少于5个字！');
             toast.fadeIn(200);
             $.ajax({
                 type: 'POST',
@@ -273,6 +277,7 @@
                     modname : 'GuesttjApply_fmh',
                     action  : 'submit',
                     copyto_id: $("#copyto_id").val(),
+                    remarks  : reason,
                     __hash__ : hash
                 },
                 success: function (res) {
@@ -345,59 +350,6 @@
                 obj.value = parseFloat(obj.value);
             }
         }
-        function add(a, b) {
-            var c, d, e;
-            try {
-                c = a.toString().split(".")[1].length;
-            } catch (f) {
-                c = 0;
-            }
-            try {
-                d = b.toString().split(".")[1].length;
-            } catch (f) {
-                d = 0;
-            }
-            return e = Math.pow(10, Math.max(c, d)), (mul(a, e) + mul(b, e)) / e;
-        }
 
-        function sub(a, b) {
-            var c, d, e;
-            try {
-                c = a.toString().split(".")[1].length;
-            } catch (f) {
-                c = 0;
-            }
-            try {
-                d = b.toString().split(".")[1].length;
-            } catch (f) {
-                d = 0;
-            }
-            return e = Math.pow(10, Math.max(c, d)), (mul(a, e) - mul(b, e)) / e;
-        }
-
-        function mul(a, b) {
-            var c = 0,
-                d = a.toString(),
-                e = b.toString();
-            try {
-                c += d.split(".")[1].length;
-            } catch (f) { }
-            try {
-                c += e.split(".")[1].length;
-            } catch (f) { }
-            return Number(d.replace(".", "")) * Number(e.replace(".", "")) / Math.pow(10, c);
-        }
-
-        function div(a, b) {
-            var c, d, e = 0,
-                f = 0;
-            try {
-                e = a.toString().split(".")[1].length;
-            } catch (g) { }
-            try {
-                f = b.toString().split(".")[1].length;
-            } catch (g) { }
-            return c = Number(a.toString().replace(".", "")), d = Number(b.toString().replace(".", "")), mul(c / d, Math.pow(10, f - e));
-        }
     </script>
 </block>

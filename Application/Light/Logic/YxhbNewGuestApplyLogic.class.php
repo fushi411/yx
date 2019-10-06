@@ -147,16 +147,19 @@ class YxhbNewGuestApplyLogic extends Model {
      * @param  integer $id 记录ID
      * @return array    所需内容
      */
+
+     
     public function sealNeedContent($id){
         $res = $this->record($id);
         $temp = array(
             array('title' => '备案名称' , 'content' => $res['name']?$res['name']:'无' ),
-            array('title' => '备案产品' , 'content' => iconv('gbk','UTF-8',$res['product']) ),
+            array('title' => '备案产品' , 'content' => $res['product'] ),
             array('title' => '相关说明' , 'content' => $res['info']?$res['info']:'无' ),
         );
         $result = array(
             'content'        => $temp,
             'stat'           => $res['stat'],
+            'applyerName'    => $res['sales'],
         );
         return $result;
     }

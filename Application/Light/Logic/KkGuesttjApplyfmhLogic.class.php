@@ -51,15 +51,14 @@ class KkGuesttjApplyfmhLogic extends Model {
             'type'=>'date',
             'color' => '#337ab7'
         );
+        $remarks = $res['remarks'];
+        $result['content'][] = array('name'=>'相关说明：',
+                                    'value'=> empty($remarks)?'无':$remarks,
+                                    'type'=>'string',
+                                    'color' => 'black'
+                                );
         $result['mydata'] = $this->getTjData($id);
-//        foreach ($html as $value){
-//            $result['content'][] = array('name'=>'审批信息：',
-//                'value'=>$value,
-//                'type'=>'string',
-//                'color' => 'black'
-//            );
-//        }
-//        $result['abc'] = 'view_guest_tj_info.php?id='.$res['id'].'&type=view';//把路径传递出去
+
         $result['imgsrc'] = '';
         $result['applyerID'] =  D('KkBoss')->getIdFromName($res['rdy']);  //申请者的id
         $result['applyerName'] =  $res['rdy'];                            //申请者的姓名
@@ -119,10 +118,10 @@ class KkGuesttjApplyfmhLogic extends Model {
         }
         $client   = array_merge($client,$client_merge);
         $temp = array();
-        $$tj_client = '';
+        $tj_client = '';
         $unModify = array();
         foreach ($client as  $value) {
-           if($value['tj_client'] == $$tj_client)  continue;
+           if($value['tj_client'] == $tj_client)  continue;
             $tj_client = $value['tj_client'];
             $map = array(
                 'ht_khmc'  => $tj_client,
@@ -298,6 +297,7 @@ class KkGuesttjApplyfmhLogic extends Model {
     public function submit(){
         $data = I('post.data');
         $date = I('post.date');
+        $remarks   = I('post.remarks'); 
         $copyto_id = I('post.copyto_id');
         // 检查是否有修改
         $save = array();
@@ -324,6 +324,7 @@ class KkGuesttjApplyfmhLogic extends Model {
                             'pid'        => $relationid,
                             'tj_wlfs'    => $vo['wlfs'],
                             'dh'         => $dh,
+                            'remarks'    => $remarks,
                         );
                     }
                 }
@@ -398,7 +399,8 @@ class KkGuesttjApplyfmhLogic extends Model {
                     $yf   = $this->getfhyf($val['id'],$date,'福源鑫',$vo['pp'],$vo['bz'],$system);
                     $bz   = $vo['bz'] == '散装'?'(散)':'(袋)';
                     if($dj == '-') continue;
-                    $yf     = ($yf == '-'|| $wlfs == '自提')?($wlfs==null?$yf:$wlfs):$yf;
+                    $yf     = ($yf == '-'|| $wlfs == '自提' || $wlfs==null)?($wlfs==null?($yf==0?'自提':$yf):$wlfs):$yf;
+                    $wlfs   = $yf == '自提'?'自提':$wlfs;
                     $yfflag = ($yf == '-'|| $wlfs == '自提')?0:1;
                     $show =  $vo['pp'].$bz;
                     $temp['data'][] = array(

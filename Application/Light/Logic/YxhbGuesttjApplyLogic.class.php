@@ -47,6 +47,12 @@ class YxhbGuesttjApplyLogic extends Model {
                                     'type'=>'date',
                                     'color' => '#337ab7'
                                 );
+        $remarks = $res['remarks'];
+        $result['content'][] = array('name'=>'相关说明：',
+                                    'value'=> empty($remarks)?'无':$remarks,
+                                    'type'=>'string',
+                                    'color' => 'black'
+                                );
         $result['mydata'] = $this->getTjData($id);
 
         $result['imgsrc'] = '';
@@ -250,10 +256,11 @@ class YxhbGuesttjApplyLogic extends Model {
      */
     public function sealNeedContent($id){
         $res = $this->record($id);
+        $remarks = $res['remarks'];
         $temp = array(
             array('title' => '申请时间' , 'content' => date('Y-m-d',strtotime($res['date'])) ),
             array('title' => '调价日期' , 'content' => date('Y-m-d',strtotime($res['date']))  ),
-            array('title' => '相关说明' , 'content' => '无' ),
+            array('title' => '相关说明' , 'content' => empty($remarks) ? '无' : $remarks  ),
         );
         $result = array(
             'content'        => $temp,
@@ -293,6 +300,7 @@ class YxhbGuesttjApplyLogic extends Model {
     public function submit(){
         $data = I('post.data');
         $date = I('post.date');
+        $remarks   = I('post.remarks');
         $copyto_id = I('post.copyto_id');
         // 检查是否有修改
         $save = array();
@@ -318,6 +326,7 @@ class YxhbGuesttjApplyLogic extends Model {
                             'rdy'        => session('name'),
                             'relationid' => $relationid,
                             'dh'         => $dh,
+                            'remarks'    => $remarks,
                         );
                     }
                 }
@@ -400,7 +409,8 @@ class YxhbGuesttjApplyLogic extends Model {
                     $dj   = $this->getfhdj($val['id'],$date,$vo['pp'],$vo['bz'],$wlfs);
                     $yf   = $this->getfhyf($val['id'],$date,$vo['pp'],$vo['bz'],$wlfs);
                     if($dj == '-') continue;
-                    $yf     = ($yf == '-'|| $wlfs == '自提')?($wlfs==null?$yf:$wlfs):$yf;
+                    $yf     = ($yf == '-'|| $wlfs == '自提' || $wlfs==null)?($wlfs==null?($yf==0?'自提':$yf):$wlfs):$yf;
+                    $wlfs   = $yf == '自提'?'自提':$wlfs;
                     $yfflag = ($yf == '-'|| $wlfs == '自提')?0:1;
                     if($yf === 0) $yf = '自提';
                     $show = $vo['pp'];
