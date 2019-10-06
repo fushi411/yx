@@ -147,8 +147,6 @@ class YxhbNewGuestApplyLogic extends Model {
      * @param  integer $id 记录ID
      * @return array    所需内容
      */
-
-     
     public function sealNeedContent($id){
         $res = $this->record($id);
         $temp = array(

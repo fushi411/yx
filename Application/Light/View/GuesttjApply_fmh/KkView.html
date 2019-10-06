@@ -48,14 +48,14 @@
                 </label>
             </div>
             <div class="weui-cell__bd">
-                <input class="weui-input zmsj" type="text" name="custodian" readonly placeholder="自动填写" />
-                <span id="zmsj"></span>
+                <input class="weui-input tjsj" type="text" name="custodian" readonly placeholder="自动填写" />
+                <span id="tjsj"></span>
             </div>
         </div>
     </div>
 
 
-    <div class="other_page" id="other_page" style="display: none;">
+    <div class="other_page" id="other_page" >
         <div class="container">
             <div class="page js_show">
                 <div class="weui-cells weui-cells_form">
@@ -68,6 +68,18 @@
                         <div class="weui-cell__bd">
                             <input class="weui-select" type="text" name="custodian" id="showDatePicker" readonly
                                 value="{$today}" placeholder="请选择调价日期" />
+                        </div>
+                    </div>
+                    <div class="weui-cell weui-cell_select weui-cell_select-after">
+                        <div class="weui-cell__hd">
+                            <label class="weui-label">客户名称&nbsp;&nbsp;
+                            </label>
+                        </div>
+                        <div class="weui-cell__bd">
+                            <div class="weui-cell__bd" id="alter_div">
+                                <select class="weui-select" name="user_name[]" id="user_name" multiple="multiple" style="width: 95%;" data-placeholder="客户范围为客户[合同有效]">
+                                </select>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -147,15 +159,19 @@
         var indexValue = '';
         var tzData = '';
         var pzIndex = '';
+        var user_id = '';
+        var user_id = '';
         getClientTj();
            // 获取用户调价
         function getClientTj() {
+            date = $('#showDatePicker').val();
             $.ajax({
                 type: 'POST',
                 url: "{:U('Light/Api/GuesttjApply_fmhApi')}",
                 dataType: 'json',
                 data: {
                     date    : date,
+                    user_id : user_id,
                     system  : "{$system}",
                     modname : 'GuesttjApply_fmh',
                     action  : 'getTjInfo',
@@ -203,6 +219,56 @@
                 $('#'+key).html(html);
             }
         }
+                
+         // 用户选择
+         function formatRepo(repo) { return repo.text; }
+
+        function formatRepoSelection(repo) { return repo.text }
+        $("#user_name").select2({
+            ajax: {
+                url: "{:U('Light/Api/GuesttjApply_fmhApi')}",
+                dataType: 'json',
+                delay: 350,
+                data: function (params) {
+                    $('#alter_div input').eq(0).attr('placeholder', '请选择客户或拼音缩写');
+                    return {
+                        math    : params.term,
+                        system  : "{$system}",
+                        modname : 'GuesttjApply_fmh',
+                        action  : 'getCustomerList',
+                        date    :  date,
+                    };
+                },
+                processResults: function (data) {
+                    return {
+                        results: data
+                    };
+                },
+                cache: true
+            },
+            escapeMarkup: function (markup) { return markup; },
+            minimumInputLength: 0,
+            minimumResultsForSearch: 9,
+            // allowClear: true,
+            language: "zh-CN",
+            templateResult: formatRepo,
+            templateSelection: formatRepoSelection
+        });
+        $('#alter_div').on('blur','input',function(){
+            if(!user_id) $('#alter_div input').eq(0).attr('placeholder', '客户范围为客户[合同有效]');
+        })
+        // select2 点击触发
+        $("#user_name").on("select2:selecting", function (e) {
+            $('.select2-selection__choice__remove').click();
+            var selectArr = e.params.args.data;
+            user_id = selectArr.id;
+            $('.select2-selection__choice').text(selectArr.text);
+        });
+        $("#user_name").on("select2:unselecting", function (e) {
+           user_id ='';
+           getClientTj();
+        });  
+        $('#other_page').hide(); 
          // 点击调整按钮 
          $('#other_page').on('click', '.tzbtn', function () {
             var idx = $(this).attr('index');
@@ -265,6 +331,7 @@
             var remarks_flag = item_remarks.attr('data-must');
             var reason = item_remarks.val();
             if ( remarks_flag == 1 && reason.length < 5) return tooltip('相关说明不得少于5个字！');
+            date = $('#showDatePicker').val();
             toast.fadeIn(200);
             $.ajax({
                 type: 'POST',
@@ -301,6 +368,9 @@
         });
         // 点击关闭
         $('#btn-all').click(function () {
+            date = $('#showDatePicker').val();
+            $('.tjsj').hide();
+            $('#tjsj').html(date);
             $('#other_page').hide();
         });
         

@@ -47,7 +47,8 @@ class YxhbGuesttjApplyLogic extends Model {
                                     'type'=>'date',
                                     'color' => '#337ab7'
                                 );
-        $remarks = $res['remarks'];
+        $data = M('yxhb_tj')->where(array('relationid' => $res['relationid']))->find();
+        $remarks = $data['remarks'];        
         $result['content'][] = array('name'=>'相关说明：',
                                     'value'=> empty($remarks)?'无':$remarks,
                                     'type'=>'string',

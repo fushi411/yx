@@ -48,8 +48,8 @@
                 </label>
             </div>
             <div class="weui-cell__bd">
-                <input class="weui-input zmsj" type="text" name="custodian" readonly placeholder="自动填写" />
-                <span id="zmsj"></span>
+                <input class="weui-input tjsj" type="text" name="custodian" readonly placeholder="自动填写" />
+                <span id="tjsj"></span>
             </div>
         </div>
     </div>
@@ -366,6 +366,8 @@
         });
         // 点击关闭
         $('#btn-all').click(function () {
+            $('.tjsj').hide();
+            $('#tjsj').html(date);
             $('#other_page').hide();
         });
         
