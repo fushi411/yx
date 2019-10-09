@@ -10,11 +10,65 @@ use Think\Model;
 class yxhbkpsqApplyLogic extends Model {
 
     // 实际表名
-    protected $trueTableName = 'kk_gys';
+    protected $trueTableName = 'yxhb_xskp';
 
     public function getTableName()
     {
         return $this->trueTableName;
+    }
+
+    public function getSeeFpmx()
+    {
+        $rsdate = I('start_date');
+        $redate = I('end_date');
+        $kp_kpdw = I('ejkh_sel');
+        $kp_thdw = I('user_name');
+        $kp_fpzl = I('kp_fpzl');
+
+        $sql = "SELECT * FROM(
+		SELECT 'a' AS z,kp_stat,kp_da,kp_sda,kp_eda,kp_thdw,kp_kpdw,kp_sl,kp_je,kp_fphm,kp_fpzl,kp_jbr,kp_zy
+		FROM yxhb_kp WHERE kp_da BETWEEN '%s' AND '%s' AND kp_thdw = '%s' AND kp_kpdw = '%s' AND kp_fpzl = '%s' AND kp_stat = '1'
+		UNION
+		SELECT 'b' AS z,kp_stat,kp_da,'' AS kp_sda,'' AS kp_eda,kp_thdw,kp_hkdw AS kp_kpdw,sum(kp_sl) AS kp_sl,sum(kp_je) AS kp_je,'' AS kp_fphm,kp_fpzl,kp_jbr,kp_zy
+		FROM yxhb_xskp WHERE kp_da BETWEEN '%s' AND '%s' AND kp_thdw = '%s' AND kp_hkdw = '%s' AND kp_fpzl = '%s' AND kp_stat2 = 0 AND kp_stat != '0'
+		GROUP BY sqbh) AS t ORDER BY kp_da ASC";
+
+        $data = $this->query($sql, array($rsdate, $redate, $kp_thdw, $kp_kpdw, $kp_fpzl, $rsdate, $redate, $kp_thdw, $kp_kpdw, $kp_fpzl));
+        $saveData = array();
+        $totalSl = $totalDj = $totalJe = 0;
+        if (!empty($data)) {
+            foreach ($data as $key=>$info) {
+                $statusClass = 'label label-success';
+                $statusName = '已开票';
+                if ($info['z'] == 'b') {
+                    $statusClass = 'label label-danger';
+                    if ($info['kp_stat'] == 2) {
+                        $statusName = '申请未审批';
+                    }else{
+                        $statusName = '审批未开票';
+                    }
+                }
+
+                $saveData[$key]['status_class'] = $statusClass;
+                $saveData[$key]['status_name'] = $statusName;
+                $saveData[$key]['kp_da'] = date("y-m-d",strtotime($info['kp_da']));
+                $saveData[$key]['kp_sl'] = $this->sumChuli($info['kp_sl']);
+                $saveData[$key]['kp_je'] = $this->sumChuli($info['kp_je']);
+                $saveData[$key]['kp_dj'] = $this->sumChuli(bcdiv($info['kp_je'], $info['kp_sl'], 4));
+                $saveData[$key]['kp_fphm'] = ($info['kp_fphm'] != '')?$info['kp_fphm']:'无';
+                $saveData[$key]['kp_zy'] = $info['kp_zy'];
+
+                $totalSl = bcadd($totalSl, $saveData[$key]['kp_sl'], 2);
+                $totalJe = bcadd($totalJe, $saveData[$key]['kp_je'], 2);
+            }
+        }
+
+        return array('code'=>200, 'data'=>$saveData, 'totalSl'=>$totalSl, 'totalDj'=>$this->sumChuli(bcdiv($totalJe, $totalSl, 4)), 'totalJe'=>$totalJe);
+    }
+
+    public function sumChuli($sum)
+    {
+        return number_format($sum, 2, '.', '');
     }
 
     public function recordContent($id)
@@ -165,12 +219,12 @@ class yxhbkpsqApplyLogic extends Model {
         $toyear = date("Y", time());
 
         //sqbh 生成
-        $sql = sprintf("select sqbh from  yxhb_xskp  where year(kp_da)='%s' group by sqbh DESC", $toyear);
-        $data = $this->query($sql);
+        $sql = "select sqbh from  yxhb_xskp  where year(kp_da)='%s' group by sqbh DESC";
+        $data = $this->query($sql, array($toyear));
         $sqbh="SQBH".date("Ymd",time()).str_pad((count($data) + 1), 3, '0', STR_PAD_LEFT);
         //pid 生成
-        $sql = sprintf("select * from yxhb_xskp where jl_date >='%s' group by pid DESC", $today);
-        $data = $this->query($sql);
+        $sql = "select * from yxhb_xskp where jl_date >='%s' group by pid DESC";
+        $data = $this->query($sql, array($today));
         $pid = date("Ymd",time()).str_pad((count($data) + 1), 3, '0', STR_PAD_LEFT);
         $saveData = array();
         foreach ($formData as $dataString) {
@@ -228,9 +282,9 @@ class yxhbkpsqApplyLogic extends Model {
         $userName = I('user_name');
 
         $resArr = array();
-        $sql = sprintf("SELECT ht_khmc,ht_dj,ht_yf,ht_bzfs,ht_cate,ht_stat,ht_wlfs FROM yxhb_ht AS a,yxhb_guest2 AS b WHERE a.ht_khmc=b.id AND (b.id='%s' or b.reid='%s') AND
- ht_stat='2' AND ht_enday>='%s' AND ht_stday<='%s' GROUP BY ht_wlfs,ht_cate,ht_bzfs", $id, $id, $bigen, $end);
-        $data = $this->query($sql);
+        $sql = "SELECT ht_khmc,ht_dj,ht_yf,ht_bzfs,ht_cate,ht_stat,ht_wlfs FROM yxhb_ht AS a,yxhb_guest2 AS b WHERE a.ht_khmc=b.id AND (b.id='%s' or b.reid='%s') AND
+ ht_stat='2' AND ht_enday>='%s' AND ht_stday<='%s' GROUP BY ht_wlfs,ht_cate,ht_bzfs";
+        $data = $this->query($sql, array($id, $id, $bigen, $end));
         if (!empty($data)) {
             foreach ($data as $info) {
                 $resArr[] = $info;
@@ -238,14 +292,14 @@ class yxhbkpsqApplyLogic extends Model {
         }
 
         $invoiceData = array();
-        $sql =sprintf("select ang from yxhb_dtg as b,yxhb_guest2 as c where  c.id=b.gid  and ang<>'' and  c.g_name = '%s' GROUP BY gid,ang ORDER BY gid", $userName);
-        $data = $this->query($sql);
+        $sql = "select ang from yxhb_dtg as b,yxhb_guest2 as c where  c.id=b.gid  and ang<>'' and  c.g_name = '%s' GROUP BY gid,ang ORDER BY gid";
+        $data = $this->query($sql, array($userName));
         if (!empty($data)) {
             $invoiceData = array_merge ($invoiceData, $data);
         }
 
-        $sql = sprintf("SELECT invoice_company as ang FROM yxhb_invoice_company WHERE delivery_unit = '%s'", $userName);
-        $data = $this->query($sql);
+        $sql = "SELECT invoice_company as ang FROM yxhb_invoice_company WHERE delivery_unit = '%s'";
+        $data = $this->query($sql, array($userName));
         if (!empty($data)) {
             $invoiceData = array_merge ($invoiceData, $data);
         }

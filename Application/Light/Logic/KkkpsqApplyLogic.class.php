@@ -17,6 +17,60 @@ class KkkpsqApplyLogic extends Model {
         return $this->trueTableName;
     }
 
+    public function getSeeFpmx()
+    {
+        $rsdate = I('start_date');
+        $redate = I('end_date');
+        $kp_kpdw = I('ejkh_sel');
+        $kp_thdw = I('user_name');
+        $kp_fpzl = I('kp_fpzl');
+
+        $sql = "SELECT * FROM(
+		SELECT 'a' AS z,kp_stat,kp_da,kp_sda,kp_eda,kp_thdw,kp_kpdw,kp_sl,kp_je,kp_fphm,kp_fpzl,kp_jbr,kp_zy
+		FROM kk_kp WHERE kp_da BETWEEN '%s' AND '%s' AND kp_thdw = '%s' AND kp_kpdw = '%s' AND kp_fpzl = '%s' AND kp_stat = '1'
+		UNION
+		SELECT 'b' AS z,kp_stat,kp_da,'' AS kp_sda,'' AS kp_eda,kp_thdw,kp_hkdw AS kp_kpdw,sum(kp_sl) AS kp_sl,sum(kp_je) AS kp_je,'' AS kp_fphm,kp_fpzl,kp_jbr,kp_zy
+		FROM kk_xskp WHERE kp_da BETWEEN '%s' AND '%s' AND kp_thdw = '%s' AND kp_hkdw = '%s' AND kp_fpzl = '%s' AND kp_stat2 = 0 AND kp_stat != '0'
+		GROUP BY sqbh) AS t ORDER BY kp_da ASC";
+
+        $data = $this->query($sql, array($rsdate, $redate, $kp_thdw, $kp_kpdw, $kp_fpzl, $rsdate, $redate, $kp_thdw, $kp_kpdw, $kp_fpzl));
+        $saveData = array();
+        $totalSl = $totalDj = $totalJe = 0;
+        if (!empty($data)) {
+            foreach ($data as $key=>$info) {
+                $statusClass = 'label label-success';
+                $statusName = '已开票';
+                if ($info['z'] == 'b') {
+                    $statusClass = 'label label-danger';
+                    if ($info['kp_stat'] == 2) {
+                        $statusName = '申请未审批';
+                    }else{
+                        $statusName = '审批未开票';
+                    }
+                }
+
+                $saveData[$key]['status_class'] = $statusClass;
+                $saveData[$key]['status_name'] = $statusName;
+                $saveData[$key]['kp_da'] = date("y-m-d",strtotime($info['kp_da']));
+                $saveData[$key]['kp_sl'] = $this->sumChuli($info['kp_sl']);
+                $saveData[$key]['kp_je'] = $this->sumChuli($info['kp_je']);
+                $saveData[$key]['kp_dj'] = $this->sumChuli(bcdiv($info['kp_je'], $info['kp_sl'], 4));
+                $saveData[$key]['kp_fphm'] = ($info['kp_fphm'] != '')?$info['kp_fphm']:'无';
+                $saveData[$key]['kp_zy'] = $info['kp_zy'];
+
+                $totalSl = bcadd($totalSl, $saveData[$key]['kp_sl'], 2);
+                $totalJe = bcadd($totalJe, $saveData[$key]['kp_je'], 2);
+            }
+        }
+
+        return array('code'=>200, 'data'=>$saveData, 'totalSl'=>$totalSl, 'totalDj'=>$this->sumChuli(bcdiv($totalJe, $totalSl, 4)), 'totalJe'=>$totalJe);
+    }
+
+    public function sumChuli($sum)
+    {
+        return number_format($sum, 2, '.', '');
+    }
+
     public function recordContent($id)
     {
         $data = D('kk_xskp')->where(array('pid'=>$id))->select();

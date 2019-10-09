@@ -232,6 +232,11 @@
                                         <span class="weui-form-preview__value" style="text-align:left;" id="date_range"></span>
                                     </div>
                                 </div>
+                                <div class="weui-flex">
+                                    <div class="weui-form-preview__item weui-flex__item">
+                                        <div id="seeFpmx" class="btn btn-success btn-sm"> 查看开票明细</div>
+                                        <div id="seeFpmxBut" data-target="#seeKpmx"  data-toggle="modal" data-whatever="@mdo" ></div></div>
+                                </div>
                                 <div id = "history_data">
                                 </div>
                             </div>
@@ -251,6 +256,45 @@
     </div>
 </block>
 <block name="js">
+    <div class="modal fade" id="seeKpmx" tabindex="-1" role="dialog" aria-labelledby="seeKpmxLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="seeKpmxLabel">开票明细</h4>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="weui-form-preview__item">
+                            <h8 class="weui-media-box__title">提货单位:<span id="thdw_total"></span></h8>
+                        </div>
+                        <div class="weui-form-preview__item">
+                            <h8 class="weui-media-box__title">开票单位:<span id="tpdw_total"></span></h8>
+                        </div>
+                        <div class="weui-form-preview__item">
+                            <h8 class="weui-media-box__title">时间范围:<span id="sjhw_total"></span></h8>
+                        </div>
+                        <div class="weui-form-preview__item">
+                            <h8 class="weui-media-box__title">数量总计:<span id="sum_total"></span></h8>
+                        </div>
+                        <div class="weui-form-preview__item">
+                            <h8 class="weui-media-box__title">单价总计:<span  id="dj_total"></span></h8>
+                        </div>
+                        <div class="weui-form-preview__item">
+                            <h8 class="weui-media-box__title">金额总计:<span  id="je_total"></span></h8>
+                        </div>
+                        <hr>
+                        <div id = "kpmx_table">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
@@ -322,6 +366,62 @@
 
     <!-- <script src="__PUBLIC__/assets/js/vconsole.min.js"></script> -->
     <script>
+        // 提交按钮
+        $('#seeFpmx').click(function(){
+            var start_date = $("#start_date").val();
+            var end_date = $("#end_date").val();
+            var ejkh_sel = $("#ejkh_sel").val();
+            var kp_fpzl = $("#kp_fpzl").val();
+
+            toastfadeIn(200,'数据加载中');
+            $.ajax({
+                url: "{:U('Light/Api/kpsq_ApplyApi')}"+"&system=kk&modname=kpsq_Apply&action=getSeeFpmx",
+                dataType: 'json',
+                data: {
+                    'start_date': start_date,
+                    'end_date': end_date,
+                    'ejkh_sel': ejkh_sel,
+                    'kp_fpzl': kp_fpzl,
+                    'user_name': user_name
+                },
+
+                dataType: 'json',
+                success: function (res) {
+                    if (res.code != 200) {
+                        tooltip('请重新刷新页面！')
+                    } else {
+                        $("#sjhw_total").html(start_date+'至'+end_date);
+                        $("#thdw_total").html(user_name);
+                        $("#tpdw_total").html(ejkh_sel);
+                        $("#sum_total").html(res.totalSl);
+                        $("#dj_total").html('&yen; '+formatMoney(res.totalDj));
+                        $("#je_total").html('&yen; '+formatMoney(res.totalJe));
+
+                        var data = res.data;
+                        var html = '';
+                        for (var i=0 ; i < data.length ; ++i ){
+                            htmla = '<div class="weui-media-box_text" style="width: 100%;padding:5px 0px;position: relative;"><div class="weui-flex" style="align-items: center;"><div class="weui-flex__item">'+
+                                '<h4 class="weui-media-box__title">'+ejkh_sel+'</h4></div><div class="weui-flex__item"><span class="'+data[i]['status_class']+'" style="margin-left: 1em;padding-top: 0.3em;padding-bottom: 0.2em;font-weight:300;">'+
+                                data[i]['status_name']+'</span></div><div class="weui-flex__item" style="text-align: right;"><h5>'+data[i]['kp_da']+'</h5></div></div>'+
+
+                                '<p class="weui-media-box__desc " style="margin-bottom: 0px;"><span>数量：</span><span>'+data[i]['kp_sl']+'</span>' +
+                                '</p><p class="weui-media-box__desc " style="margin-bottom: 0px;"><span>单价：</span><span>&yen; '+formatMoney(data[i]['kp_dj'])+'</span></p>'+
+                                '<p class="weui-media-box__desc " style="margin-bottom: 0px;"><span>金额：</span><span>&yen; '+formatMoney(data[i]['kp_je'])+'</span></p>'+
+                                '<p class="weui-media-box__desc " style="margin-bottom: 0px;"><span>号码：</span><span>'+data[i]['kp_fphm']+'</span></p>'+
+                                '<p class="weui-media-box__desc " style="margin-bottom: 0px;"><span>备注：</span><span>'+data[i]['kp_zy']+'</span></p>'+
+                                '</div>';
+
+                            html += htmla;
+                        }
+                        $('#kpmx_table').html(html);
+
+                        $("#seeFpmxBut").trigger("click");
+                        toast.fadeOut(200);
+                    }
+                }
+            })
+        })
+
         // form点击确定
         var form_data = new Array();
         var form_data_new = new Array();
@@ -638,7 +738,7 @@
             $('#thqp').val($('#dhqp_val').html());
             $('#hkqp').val($('#hkqp_val').html());
             $('#kpsssj').val($('#start_date').val()+'至'+$('#end_date').val());
-            $('#kpzje').val("￥ "+formatMoney(kpzje));
+            $('#kpzje').val("&yen; "+formatMoney(kpzje));
 
             $('#order_select').fadeIn();
             div_show();
@@ -787,8 +887,8 @@
                     if (res.code != 200) {
                         tooltip('请重新刷新页面！')
                     } else {
-                        $('#dhqp_val').html("￥ "+formatMoney(res.qp_data.thqp));
-                        $('#hkqp_val').html("￥ "+formatMoney(res.qp_data.ghqp));
+                        $('#dhqp_val').html("&yen; "+formatMoney(res.qp_data.thqp));
+                        $('#hkqp_val').html("&yen; "+formatMoney(res.qp_data.ghqp));
                         $('#date_range').html($('#start_date').val()+'至'+$('#end_date').val());
                         $('#thdw_val').html(user_name);
 
@@ -798,7 +898,7 @@
                                 list = res.table[key];
 
                                 history_html += '<thead><tr>';
-                                history_html += '<td scope="row">'+list.name+'</td><td>'+list.je+'</td><td>'+list.dj+'</td><td>'+list.zl+'</td>';
+                                history_html += '<td scope="row">'+list.name+'-'+list.client+'</td><td>&yen;'+list.je+'</td><td>'+list.dj+'</td><td>'+list.zl+'</td>';
                                 history_html += '</thead></tr>';
                             }
                             history_html += '</table>';
