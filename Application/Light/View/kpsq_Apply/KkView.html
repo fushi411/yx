@@ -907,8 +907,16 @@
                             for(key in res.table){
                                 list = res.table[key];
 
+                                var arrs = list.name.split('-');
+                                names = '散'
+                                if (arrs[0] == '袋装') {
+                                    names = '袋';
+                                }
+                                var price = parseInt(arrs[1].replace(/[^0-9]/ig,""));
+                                list.name = price +'('+names+')';
+
                                 history_html += '<thead><tr>';
-                                history_html += '<td scope="row">'+list.name+'-'+list.client+'</td><td>&yen;'+list.je+'</td><td>'+list.dj+'</td><td>'+list.zl+'</td>';
+                                history_html += '<td scope="row">'+list.name+'</td><td>&yen;'+list.je+'</td><td>'+list.dj+'</td><td>'+list.zl+'</td>';
                                 history_html += '</thead></tr>';
                             }
                             history_html += '</table>';
