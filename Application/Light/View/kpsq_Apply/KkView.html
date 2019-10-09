@@ -493,7 +493,17 @@
                 for(var j in arr){
                     if (j == 1) {
                         kpzje = kpzje + Number(arr[j]);
+                    } else if (j == 0){
+                        var arrs = arr[j].split('-');
+                        names = '散'
+                        if (arrs[0] == '袋装') {
+                            names = '袋';
+                        }
+
+                        var price = parseInt(arrs[1].replace(/[^0-9]/ig,""));
+                        arr[j] = price +'('+names+')';
                     }
+
                     htmla += '<div class="weui-form-preview__item weui-flex__item font13">'+arr[j]+'</div>';
                 }
                 htmla = htmla.replace('#KEV', i);
